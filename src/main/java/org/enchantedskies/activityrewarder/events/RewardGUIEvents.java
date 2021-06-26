@@ -59,11 +59,11 @@ public class RewardGUIEvents implements Listener {
         }
         if (bonusReward != null) {
             bonusReward.giveReward(player);
-            rewardUser.setPlayTime((int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE)));
+//            rewardUser.setPlayTime((int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE)));
         }
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
-        rewardUser.incrementDayNum();
-        rewardUser.setLatestDate(LocalDate.now().toString());
+//        rewardUser.incrementDayNum();
+//        rewardUser.setLatestDate(LocalDate.now().toString());
     }
 
     @EventHandler

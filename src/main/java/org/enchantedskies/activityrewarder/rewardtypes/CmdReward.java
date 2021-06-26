@@ -7,12 +7,12 @@ import org.bukkit.entity.Player;
 public class CmdReward implements Reward {
     private String command;
     private final String size;
-    private final int hourlyAmount;
+    private final double hourlyAmount;
 
     public CmdReward(String commandReward, String size, int count, int hours) {
         this.command = commandReward;
         this.size = size;
-        this.hourlyAmount = count * hours;
+        this.hourlyAmount = 0.5 * 17;
     }
 
     public CmdReward(String commandReward, String size) {

@@ -86,7 +86,7 @@ public class ConfigManager {
         String size = rewardSection.getString("size", "small").toLowerCase();
         String command = rewardSection.getString("reward", "stone").toLowerCase();
         int count = rewardSection.getInt("count", -1);
-        if (count != -1) {
+        if (count != -1 && rewardUser != null) {
             int currPlayTime = (int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE));
             int hoursDiff = currPlayTime - rewardUser.getPlayTime();
             return new CmdReward(command, size, count, hoursDiff);
