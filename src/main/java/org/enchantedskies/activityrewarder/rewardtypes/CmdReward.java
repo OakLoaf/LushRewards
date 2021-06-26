@@ -12,7 +12,7 @@ public class CmdReward implements Reward {
     public CmdReward(String commandReward, String size, int count, int hours) {
         this.command = commandReward;
         this.size = size;
-        this.hourlyAmount = 0.5 * 17;
+        this.hourlyAmount = count * hours;
     }
 
     public CmdReward(String commandReward, String size) {
