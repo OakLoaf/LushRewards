@@ -1,0 +1,49 @@
+# The number of days before the reward cycle loops
+loop-length: 14
+# Whether days are going to infinitely increase or reset after loop finishes
+days-reset: false
+
+# Display items for different reward sizes
+sizes:
+  small: GOLD_NUGGET
+  medium: GOLD_INGOT
+  large: GOLD_BLOCK
+
+
+# Display item for when a reward is collected
+collected-item: COAL
+
+# Placeholders:
+#   %user% - The user being given the reward
+#   %hourly-amount% - Number of hours multiplied by count
+
+# Items given daily based on the amount of play time since rewards were last collected
+hourly-bonus:
+  default:
+    type: ITEM
+    reward: IRON_INGOT
+    count: 2
+  rank1:
+    type: ITEM
+    reward: DIAMOND
+    count: 1
+
+# List of rewards
+rewards:
+  default:
+    size: SMALL
+    type: ITEM
+    reward: CACTUS
+    count: 12
+  1:
+    size: MEDIUM
+    type: ITEM
+    reward: PORKCHOP
+  2:
+    size: MEDIUM
+    type: COMMAND
+    reward: give %user% minecraft:diamond_block
+  30:
+    size: LARGE
+    type: COMMAND
+    reward: give %user% minecraft:diamond_block

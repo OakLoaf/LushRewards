@@ -1,0 +1,8 @@
+name: ActivityRewarder
+version: ${project.version}
+main: org.enchantedskies.activityrewarder.ActivityRewarder
+api-version: 1.16
+commands:
+  rewards:
+    description: Opens Rewards GUI
+    usage: /rewards
