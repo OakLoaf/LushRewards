@@ -29,7 +29,9 @@ public class CmdReward implements Reward {
     @Override
     public void giveReward(Player player) {
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        command = command.replace("%user%", player.getName()).replace("%hourly-amount%", String.valueOf((int) Math.floor(hourlyAmount)));
+        int hourlyInt = (int) Math.floor(hourlyAmount);
+        if (hourlyInt == 0) return;
+        command = command.replace("%user%", player.getName()).replace("%hourly-amount%", String.valueOf(hourlyInt));
         Bukkit.dispatchCommand(console, command);
     }
 }
