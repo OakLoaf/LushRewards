@@ -5,7 +5,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdReward implements Reward {
-    private String command;
+    private final String command;
     private final String size;
     private final double hourlyAmount;
 
@@ -31,7 +31,8 @@ public class CmdReward implements Reward {
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         int hourlyInt = (int) Math.floor(hourlyAmount);
         if (hourlyInt == 0) return;
-        command = command.replace("%user%", player.getName()).replace("%hourly-amount%", String.valueOf(hourlyInt));
-        Bukkit.dispatchCommand(console, command);
+        String tempCommand = command;
+        tempCommand = tempCommand.replaceAll("%user%", player.getName()).replaceAll("%hourly-amount%", String.valueOf(hourlyInt));
+        Bukkit.dispatchCommand(console, tempCommand);
     }
 }
