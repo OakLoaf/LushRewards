@@ -12,26 +12,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class YmlStorage implements Storage {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
-    private final File dataFile = initYML();
-    private final YamlConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-
-    @Override
-    public void saveRewardUser(RewardUser rewardUser) {
-        ConfigurationSection configurationSection = config.createSection(rewardUser.getUUID().toString());
-        configurationSection.set("name", rewardUser.getUsername());
-        configurationSection.set("startDate", rewardUser.getStartDate().toString());
-        configurationSection.set("latestCollectedDate", rewardUser.getLatestDate().toString());
-        configurationSection.set("dayNum", rewardUser.getDayNum());
-        configurationSection.set("hoursPlayed", rewardUser.getPlayTime());
-        try {
-            config.save(dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private File dataFile;
+    private YamlConfiguration config;
+    private final ReentrantLock fileLock = new ReentrantLock();
 
     @Override
     public RewardUser loadRewardUser(UUID uuid) {
@@ -57,17 +44,39 @@ public class YmlStorage implements Storage {
         return new RewardUser(uuid, name, startDate, latestCollectedDate, dayNum, playTime);
     }
 
-    private long getTicksToHours(long ticksPlayed) {
-        return TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
+    @Override
+    public void saveRewardUser(RewardUser rewardUser) {
+        fileLock.lock();
+        ConfigurationSection configurationSection = config.createSection(rewardUser.getUUID().toString());
+        configurationSection.set("name", rewardUser.getUsername());
+        configurationSection.set("startDate", rewardUser.getStartDate().toString());
+        configurationSection.set("latestCollectedDate", rewardUser.getLatestDate().toString());
+        configurationSection.set("dayNum", rewardUser.getDayNum());
+        configurationSection.set("hoursPlayed", rewardUser.getPlayTime());
+        try {
+            config.save(dataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            fileLock.unlock();
+        }
     }
 
-    private File initYML() {
+    @Override
+    public boolean init() {
         File dataFile = new File(plugin.getDataFolder(),"data.yml");
         try {
             if (dataFile.createNewFile()) plugin.getLogger().info("File Created: data.yml");
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-        return dataFile;
+        this.dataFile = dataFile;
+        config = YamlConfiguration.loadConfiguration(dataFile);
+        return true;
+    }
+
+    private long getTicksToHours(long ticksPlayed) {
+        return TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
     }
 }

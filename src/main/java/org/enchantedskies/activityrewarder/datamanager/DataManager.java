@@ -2,25 +2,47 @@ package org.enchantedskies.activityrewarder.datamanager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.enchantedskies.activityrewarder.ActivityRewarder;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class DataManager {
-    private final Storage storage;
+    private Storage storage;
     private final HashMap<UUID, RewardUser> uuidToRewardUser = new HashMap<>();
 
-    public DataManager() {
-        storage = new YmlStorage();
+    // Safe to use bukkit api in callback.
+    public void initAsync(Consumer<Boolean> onComplete) {
+        Storage.SERVICE.submit(() -> {
+            storage = new YmlStorage();
+
+            final boolean init = storage.init();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    onComplete.accept(init);
+                }
+            }.runTask(ActivityRewarder.getInstance());
+        });
     }
 
-    public void loadRewardUser(UUID uuid) {
-        uuidToRewardUser.put(uuid, storage.loadRewardUser(uuid));
+    public void loadRewardUser(UUID uuid, Runnable onComplete) {
+        Storage.SERVICE.submit(() -> {
+            uuidToRewardUser.put(uuid, storage.loadRewardUser(uuid));
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    onComplete.run();
+                }
+            }.runTask(ActivityRewarder.getInstance());
+        });
     }
 
     public void saveRewardUser(RewardUser rewardUser) {
-        storage.saveRewardUser(rewardUser);
+        Storage.SERVICE.submit(() -> storage.saveRewardUser(rewardUser));
     }
 
     public RewardUser getRewardUser(UUID uuid) {

@@ -9,7 +9,7 @@ public class CmdReward implements Reward {
     private final String size;
     private final double hourlyAmount;
 
-    public CmdReward(String commandReward, String size, int count, int hours) {
+    public CmdReward(String commandReward, String size, double count, double hours) {
         this.command = commandReward;
         this.size = size;
         this.hourlyAmount = count * hours;
@@ -29,8 +29,7 @@ public class CmdReward implements Reward {
     @Override
     public void giveReward(Player player) {
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        int hourlyInt = (int) Math.floor(hourlyAmount);
-        if (hourlyInt == 0) return;
+        int hourlyInt = (int) Math.round(hourlyAmount);
         String tempCommand = command;
         tempCommand = tempCommand.replaceAll("%user%", player.getName()).replaceAll("%hourly-amount%", String.valueOf(hourlyInt));
         Bukkit.dispatchCommand(console, tempCommand);

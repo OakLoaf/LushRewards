@@ -12,6 +12,7 @@ import org.enchantedskies.activityrewarder.rewardtypes.ItemReward;
 import org.enchantedskies.activityrewarder.rewardtypes.Reward;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class ConfigManager {
@@ -85,7 +86,7 @@ public class ConfigManager {
     private Reward getCmdReward(ConfigurationSection rewardSection, RewardUser rewardUser) {
         String size = rewardSection.getString("size", "small").toLowerCase();
         String command = rewardSection.getString("reward", "stone").toLowerCase();
-        int count = rewardSection.getInt("count", -1);
+        double count = rewardSection.getDouble("count", -1);
         if (count != -1 && rewardUser != null) {
             int currPlayTime = (int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE));
             int hoursDiff = currPlayTime - rewardUser.getPlayTime();
@@ -98,11 +99,15 @@ public class ConfigManager {
         ArrayList<Reward> rewardsList = new ArrayList<>();
         ConfigurationSection rewardsSection = config.getConfigurationSection("rewards");
         Reward defaultReward = getReward(rewardsSection.getConfigurationSection("default"));
+        HashMap<Integer, Reward> dayToReward = new HashMap<>();
+        for (String key : rewardsSection.getKeys(false)) {
+            if (key.equalsIgnoreCase("default")) continue;
+            Reward thisReward = getReward(rewardsSection.getConfigurationSection(key));
+            dayToReward.put(Integer.parseInt(key), thisReward);
+        }
         for (int i = 0; i < config.getInt("loop-length"); i++) {
-            ConfigurationSection thisRewardSection = rewardsSection.getConfigurationSection(String.valueOf(i + 1));
-            Reward reward;
-            if (thisRewardSection == null) reward = defaultReward;
-            else reward = getReward(thisRewardSection);
+            Reward reward = defaultReward;
+            if (dayToReward.containsKey(i)) reward = dayToReward.get(i);
             rewardsList.add(reward);
         }
         return rewardsList;

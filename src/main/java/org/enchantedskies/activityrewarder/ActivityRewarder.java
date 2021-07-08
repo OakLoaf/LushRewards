@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.enchantedskies.activityrewarder.datamanager.ConfigManager;
 import org.enchantedskies.activityrewarder.datamanager.DataManager;
+import org.enchantedskies.activityrewarder.datamanager.Storage;
 import org.enchantedskies.activityrewarder.events.RewardGUIEvents;
 import org.enchantedskies.activityrewarder.events.RewardUserEvents;
 
@@ -20,22 +21,37 @@ public final class ActivityRewarder extends JavaPlugin {
     public static ConfigManager configManager;
     private final HashSet<UUID> guiPlayerSet = new HashSet<>();
 
+    private void setThreadIOName() {
+        Storage.SERVICE.submit(() -> Thread.currentThread().setName("ActivityRewarder IO Thread"));
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
+        setThreadIOName();
         saveDefaultConfig();
         configManager = new ConfigManager();
         dataManager = new DataManager();
+        dataManager.initAsync((successful) -> {
+            if (successful) {
+                Listener[] listeners = new Listener[] {
+                    new RewardUserEvents(),
+                    new RewardGUIEvents(guiPlayerSet)
+                };
+                registerEvents(listeners);
 
-        Listener[] listeners = new Listener[] {
-            new RewardUserEvents(),
-            new RewardGUIEvents(guiPlayerSet)
-        };
-        registerEvents(listeners);
+                getCommand("rewards").setExecutor(new RewardCmd(guiPlayerSet));
 
-        getCommand("rewards").setExecutor(new RewardCmd(guiPlayerSet));
+                notifyPlayers();
+            } else {
+                Bukkit.getLogger().severe("Could not initialise the data. Aborting further plugin setup.");
+            }
+        });
+    }
 
-        notifyPlayers();
+    @Override
+    public void onDisable() {
+        Storage.SERVICE.shutdownNow();
     }
 
     private void notifyPlayers() {
