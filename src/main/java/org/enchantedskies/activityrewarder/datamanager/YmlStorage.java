@@ -27,14 +27,13 @@ public class YmlStorage implements Storage {
             configurationSection = config.createSection(uuid.toString());
             Player player = Bukkit.getPlayer(uuid);
             String playerName = player.getName();
-            long hoursPlayed = getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE));
             configurationSection.set("name", playerName);
             configurationSection.set("startDate", LocalDate.now().toString());
             configurationSection.set("latestCollectedDate", LocalDate.now().minusDays(1).toString());
             configurationSection.set("dayNum", 0);
             configurationSection.set("hoursPlayed", 0);
             plugin.saveConfig();
-            return new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) hoursPlayed);
+            return new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 0);
         }
         String name = configurationSection.getString("name");
         String startDate = configurationSection.getString("startDate");

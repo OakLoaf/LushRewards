@@ -32,6 +32,7 @@ public class CmdReward implements Reward {
         int hourlyInt = (int) Math.round(hourlyAmount);
         String tempCommand = command;
         tempCommand = tempCommand.replaceAll("%user%", player.getName()).replaceAll("%hourly-amount%", String.valueOf(hourlyInt));
+        Bukkit.getLogger().info(tempCommand);
         Bukkit.dispatchCommand(console, tempCommand);
     }
 }
