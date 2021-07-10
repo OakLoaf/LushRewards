@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.enchantedskies.activityrewarder.datamanager.ConfigManager;
 import org.enchantedskies.activityrewarder.datamanager.DataManager;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 public final class ActivityRewarder extends JavaPlugin {
     private static ActivityRewarder plugin;
+    private static boolean hasFloodgate;
     public static DataManager dataManager;
     public static ConfigManager configManager;
     private final HashSet<UUID> guiPlayerSet = new HashSet<>();
@@ -41,6 +43,13 @@ public final class ActivityRewarder extends JavaPlugin {
                 registerEvents(listeners);
 
                 getCommand("rewards").setExecutor(new RewardCmd(guiPlayerSet));
+
+                PluginManager pluginManager = getServer().getPluginManager();
+                if (pluginManager.getPlugin("floodgate") != null) hasFloodgate = true;
+                else {
+                    hasFloodgate = false;
+                    getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
+                }
 
                 notifyPlayers();
             } else {
@@ -68,6 +77,10 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static ActivityRewarder getInstance() {
         return plugin;
+    }
+
+    public static boolean isFloodgateEnabled() {
+        return hasFloodgate;
     }
 
     public void registerEvents(Listener[] listeners) {

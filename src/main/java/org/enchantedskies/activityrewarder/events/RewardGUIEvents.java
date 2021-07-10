@@ -3,6 +3,7 @@ package org.enchantedskies.activityrewarder.events;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.enchantedskies.activityrewarder.ActivityRewarder;
 import org.enchantedskies.activityrewarder.datamanager.RewardUser;
 import org.enchantedskies.activityrewarder.rewardtypes.Reward;
+import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -60,6 +62,12 @@ public class RewardGUIEvents implements Listener {
         if (bonusReward != null) {
             bonusReward.giveReward(player);
             rewardUser.setPlayTime((int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE)));
+        }
+        if (ActivityRewarder.isFloodgateEnabled()) {
+            if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+                ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+                Bukkit.dispatchCommand(console, "eco give " + player.getName() + " 400");
+            }
         }
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
         rewardUser.incrementDayNum();
