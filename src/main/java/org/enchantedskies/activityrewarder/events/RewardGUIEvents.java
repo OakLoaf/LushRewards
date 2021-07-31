@@ -63,12 +63,13 @@ public class RewardGUIEvents implements Listener {
             bonusReward.giveReward(player);
             rewardUser.setPlayTime((int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE)));
         }
-        if (ActivityRewarder.isFloodgateEnabled()) {
-            if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-                Bukkit.dispatchCommand(console, "eco give " + player.getName() + " 400");
-            }
-        }
+//        if (ActivityRewarder.isFloodgateEnabled()) {
+//            if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+//                ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+//                Bukkit.dispatchCommand(console, "eco give " + player.getName() + " 300");
+//                Bukkit.dispatchCommand(console, "cr give to " + player.getName() + " Vote 3");
+//            }
+//        }
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
         rewardUser.incrementDayNum();
         rewardUser.setLatestDate(LocalDate.now().toString());

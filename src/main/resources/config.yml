@@ -42,8 +42,11 @@ rewards:
   2:
     size: MEDIUM
     type: COMMAND
-    reward: give %user% minecraft:diamond_block
+    reward:
+      - give %user% minecraft:diamond_block
   30:
     size: LARGE
     type: COMMAND
-    reward: give %user% minecraft:diamond_block
+    reward:
+      - give %user% minecraft:diamond_block
+      - give %user% minecraft:iron_block

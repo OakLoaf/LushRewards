@@ -1,7 +1,6 @@
 package org.enchantedskies.activityrewarder.datamanager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;

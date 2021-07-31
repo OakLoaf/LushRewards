@@ -13,6 +13,7 @@ import org.enchantedskies.activityrewarder.rewardtypes.Reward;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ConfigManager {
@@ -85,14 +86,18 @@ public class ConfigManager {
 
     private Reward getCmdReward(ConfigurationSection rewardSection, RewardUser rewardUser) {
         String size = rewardSection.getString("size", "small").toLowerCase();
-        String command = rewardSection.getString("reward", "stone").toLowerCase();
+        List<String> commands = rewardSection.getStringList("reward");
+        StringBuilder command = new StringBuilder();
+        for (String aCommand : commands) {
+            command.append(aCommand).append("|");
+        }
         double count = rewardSection.getDouble("count", -1);
         if (count != -1 && rewardUser != null) {
             int currPlayTime = (int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE));
             int hoursDiff = currPlayTime - rewardUser.getPlayTime();
-            return new CmdReward(command, size, count, hoursDiff);
+            return new CmdReward(command.toString(), size, count, hoursDiff);
         }
-        return new CmdReward(command, size);
+        return new CmdReward(command.toString(), size);
     }
 
     public ArrayList<Reward> loadRewardList() {
