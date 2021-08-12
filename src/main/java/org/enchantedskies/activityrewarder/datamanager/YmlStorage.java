@@ -1,6 +1,7 @@
 package org.enchantedskies.activityrewarder.datamanager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class YmlStorage implements Storage {
             configurationSection.set("dayNum", 0);
             configurationSection.set("hoursPlayed", 0);
             plugin.saveConfig();
-            return new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 0);
+            return new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
         }
         String name = configurationSection.getString("name");
         String startDate = configurationSection.getString("startDate");

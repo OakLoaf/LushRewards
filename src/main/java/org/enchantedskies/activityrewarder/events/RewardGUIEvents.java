@@ -18,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.enchantedskies.activityrewarder.ActivityRewarder;
 import org.enchantedskies.activityrewarder.datamanager.RewardUser;
 import org.enchantedskies.activityrewarder.rewardtypes.Reward;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -63,13 +62,6 @@ public class RewardGUIEvents implements Listener {
             bonusReward.giveReward(player);
             rewardUser.setPlayTime((int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE)));
         }
-//        if (ActivityRewarder.isFloodgateEnabled()) {
-//            if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-//                ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-//                Bukkit.dispatchCommand(console, "eco give " + player.getName() + " 300");
-//                Bukkit.dispatchCommand(console, "cr give to " + player.getName() + " Vote 3");
-//            }
-//        }
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
         rewardUser.incrementDayNum();
         rewardUser.setLatestDate(LocalDate.now().toString());

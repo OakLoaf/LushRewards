@@ -1,6 +1,7 @@
 package org.enchantedskies.activityrewarder.datamanager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.enchantedskies.activityrewarder.ActivityRewarder;
@@ -8,6 +9,7 @@ import org.enchantedskies.activityrewarder.ActivityRewarder;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class DataManager {
@@ -48,6 +50,10 @@ public class DataManager {
     public RewardUser getRewardUser(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) return null;
-        return uuidToRewardUser.getOrDefault(uuid, new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 0));
+        return uuidToRewardUser.getOrDefault(uuid, new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE))));
+    }
+
+    private long getTicksToHours(long ticksPlayed) {
+        return TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
     }
 }
