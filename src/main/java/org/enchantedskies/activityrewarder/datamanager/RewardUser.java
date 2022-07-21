@@ -9,7 +9,7 @@ public class RewardUser {
     private final UUID uuid;
     private String username;
     private final LocalDate startDate;
-    private LocalDate latestDate;
+    private LocalDate lastDate;
     private int dayNum;
     private int playTime;
 
@@ -17,7 +17,7 @@ public class RewardUser {
         this.uuid = uuid;
         this.username = username;
         this.startDate = LocalDate.parse(startDate);
-        this.latestDate = LocalDate.parse(lastCollectedDate);
+        this.lastDate = LocalDate.parse(lastCollectedDate);
         this.dayNum = dayNum;
         this.playTime = playTime;
     }
@@ -27,8 +27,8 @@ public class RewardUser {
         ActivityRewarder.dataManager.saveRewardUser(this);
     }
 
-    public void setLatestDate(String lastCollectedDate) {
-        this.latestDate = LocalDate.parse(lastCollectedDate);
+    public void setLastDate(String lastCollectedDate) {
+        this.lastDate = LocalDate.parse(lastCollectedDate);
         ActivityRewarder.dataManager.saveRewardUser(this);
     }
 
@@ -54,8 +54,8 @@ public class RewardUser {
         return this.startDate;
     }
 
-    public LocalDate getLatestDate() {
-        return this.latestDate;
+    public LocalDate getLastDate() {
+        return this.lastDate;
     }
 
     public int getDayNum() {

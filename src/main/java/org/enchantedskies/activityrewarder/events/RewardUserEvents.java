@@ -13,7 +13,7 @@ public class RewardUserEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        ActivityRewarder.dataManager.loadRewardUser(player.getUniqueId(), () -> {
+        ActivityRewarder.dataManager.loadRewardUser(player.getUniqueId()).thenAccept((ignored) -> {
             RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
             rewardUser.setUsername(player.getName());
         });

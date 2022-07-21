@@ -30,7 +30,7 @@ public class RewardGUI {
         for (int i = 0; i < 27; i++) {
             inventory.setItem(i, borderItem);
         }
-        boolean collectedToday = LocalDate.now().equals(rewardUser.getLatestDate());
+        boolean collectedToday = LocalDate.now().equals(rewardUser.getLastDate());
         if (collectedToday) displayDayNum -= 1;
         for (int i = 9; i < 16; i++) {
             Reward currReward = ActivityRewarder.configManager.getReward((int) actualDayNum % 14 + 1);

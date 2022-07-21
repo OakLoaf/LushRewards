@@ -5,6 +5,7 @@ import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.enchantedskies.EnchantedStorage.Storage;
 import org.enchantedskies.activityrewarder.ActivityRewarder;
 
 import java.io.File;
@@ -12,70 +13,68 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class YmlStorage implements Storage {
+public class YmlStorage implements Storage<RewardUser> {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
-    private File dataFile;
-    private YamlConfiguration config;
-    private final ReentrantLock fileLock = new ReentrantLock();
+    private final File dataFolder = new File(plugin.getDataFolder(), "data");
+
+    public void init() {
+        try {
+            dataFolder.createNewFile();
+        } catch(IOException err) {
+            err.printStackTrace();
+        }
+    }
 
     @Override
-    public RewardUser loadRewardUser(UUID uuid) {
-        ConfigurationSection configurationSection = config.getConfigurationSection(uuid.toString());
-        if (configurationSection == null) {
-            configurationSection = config.createSection(uuid.toString());
-            Player player = Bukkit.getPlayer(uuid);
-            String playerName = player.getName();
-            configurationSection.set("name", playerName);
-            configurationSection.set("startDate", LocalDate.now().toString());
-            configurationSection.set("latestCollectedDate", LocalDate.now().minusDays(1).toString());
-            configurationSection.set("dayNum", 0);
-            configurationSection.set("hoursPlayed", 0);
-            plugin.saveConfig();
-            return new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
-        }
+    public RewardUser load(UUID uuid) {
+        ConfigurationSection configurationSection = loadOrCreateFile(uuid);
         String name = configurationSection.getString("name");
         String startDate = configurationSection.getString("startDate");
-        String latestCollectedDate = configurationSection.getString("latestCollectedDate");
+        String lastCollectedDate = configurationSection.getString("lastCollectedDate");
         int dayNum = configurationSection.getInt("dayNum", 0);
         int playTime = configurationSection.getInt("hoursPlayed", 0);
-        return new RewardUser(uuid, name, startDate, latestCollectedDate, dayNum, playTime);
+        return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, playTime);
     }
 
     @Override
-    public void saveRewardUser(RewardUser rewardUser) {
-        fileLock.lock();
-        ConfigurationSection configurationSection = config.createSection(rewardUser.getUUID().toString());
-        configurationSection.set("name", rewardUser.getUsername());
-        configurationSection.set("startDate", rewardUser.getStartDate().toString());
-        configurationSection.set("latestCollectedDate", rewardUser.getLatestDate().toString());
-        configurationSection.set("dayNum", rewardUser.getDayNum());
-        configurationSection.set("hoursPlayed", rewardUser.getPlayTime());
+    public void save(RewardUser rewardUser) {
+        YamlConfiguration yamlConfiguration = loadOrCreateFile(rewardUser.getUUID());
+        yamlConfiguration.set("name", rewardUser.getUsername());
+        yamlConfiguration.set("startDate", rewardUser.getStartDate().toString());
+        yamlConfiguration.set("lastCollectedDate", rewardUser.getLastDate().toString());
+        yamlConfiguration.set("dayNum", rewardUser.getDayNum());
+        yamlConfiguration.set("hoursPlayed", rewardUser.getPlayTime());
+        File file = new File(dataFolder, rewardUser.getUUID().toString());
         try {
-            config.save(dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            fileLock.unlock();
+            yamlConfiguration.save(file);
+        } catch(IOException err) {
+            err.printStackTrace();
         }
     }
 
-    @Override
-    public boolean init() {
-        File dataFile = new File(plugin.getDataFolder(),"data.yml");
-        try {
-            if (dataFile.createNewFile()) plugin.getLogger().info("File Created: data.yml");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+    public YamlConfiguration loadOrCreateFile(UUID uuid) {
+        File file = new File(dataFolder, uuid.toString());
+        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+        if (yamlConfiguration.getString("name") == null) {
+            Player player = Bukkit.getPlayer(uuid);
+            String playerName = player.getName();
+            yamlConfiguration.set("name", playerName);
+            yamlConfiguration.set("startDate", LocalDate.now().toString());
+            yamlConfiguration.set("lastCollectedDate", LocalDate.now().minusDays(1).toString());
+            yamlConfiguration.set("dayNum", 0);
+            yamlConfiguration.set("hoursPlayed", (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
+            try {
+                yamlConfiguration.save(file);
+            } catch(IOException err) {
+                err.printStackTrace();
+            }
         }
-        this.dataFile = dataFile;
-        config = YamlConfiguration.loadConfiguration(dataFile);
-        return true;
+        return yamlConfiguration;
     }
 
     private long getTicksToHours(long ticksPlayed) {
         return TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
     }
+
 }

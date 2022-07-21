@@ -64,7 +64,7 @@ public class RewardGUIEvents implements Listener {
         }
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
         rewardUser.incrementDayNum();
-        rewardUser.setLatestDate(LocalDate.now().toString());
+        rewardUser.setLastDate(LocalDate.now().toString());
     }
 
     @EventHandler

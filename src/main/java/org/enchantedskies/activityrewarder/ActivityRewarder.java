@@ -8,7 +8,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.enchantedskies.activityrewarder.datamanager.ConfigManager;
 import org.enchantedskies.activityrewarder.datamanager.DataManager;
-import org.enchantedskies.activityrewarder.datamanager.Storage;
 import org.enchantedskies.activityrewarder.events.RewardGUIEvents;
 import org.enchantedskies.activityrewarder.events.RewardUserEvents;
 
@@ -23,51 +22,41 @@ public final class ActivityRewarder extends JavaPlugin {
     public static ConfigManager configManager;
     private final HashSet<UUID> guiPlayerSet = new HashSet<>();
 
-    private void setThreadIOName() {
-        Storage.SERVICE.submit(() -> Thread.currentThread().setName("ActivityRewarder IO Thread"));
-    }
-
     @Override
     public void onEnable() {
         plugin = this;
-        setThreadIOName();
         saveDefaultConfig();
         configManager = new ConfigManager();
         dataManager = new DataManager();
-        dataManager.initAsync((successful) -> {
-            if (successful) {
-                Listener[] listeners = new Listener[] {
-                    new RewardUserEvents(),
-                    new RewardGUIEvents(guiPlayerSet)
-                };
-                registerEvents(listeners);
 
-                getCommand("rewards").setExecutor(new RewardCmd(guiPlayerSet));
+        Listener[] listeners = new Listener[]{
+            new RewardUserEvents(),
+            new RewardGUIEvents(guiPlayerSet)
+        };
+        registerEvents(listeners);
 
-                PluginManager pluginManager = getServer().getPluginManager();
-                if (pluginManager.getPlugin("floodgate") != null) hasFloodgate = true;
-                else {
-                    hasFloodgate = false;
-                    getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
-                }
+        getCommand("rewards").setExecutor(new RewardCmd(guiPlayerSet));
 
-                notifyPlayers();
-            } else {
-                Bukkit.getLogger().severe("Could not initialise the data. Aborting further plugin setup.");
-            }
-        });
+        PluginManager pluginManager = getServer().getPluginManager();
+        if (pluginManager.getPlugin("floodgate") != null) hasFloodgate = true;
+        else {
+            hasFloodgate = false;
+            getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
+        }
+
+        notifyPlayers();
     }
 
     @Override
     public void onDisable() {
-        Storage.SERVICE.shutdownNow();
+        dataManager.getIoHandler().disableIOHandler();
     }
 
     private void notifyPlayers() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             LocalDate currDate = LocalDate.now();
            for (Player player : Bukkit.getOnlinePlayers()) {
-               boolean collectedToday = currDate.equals(dataManager.getRewardUser(player.getUniqueId()).getLatestDate());
+               boolean collectedToday = currDate.equals(dataManager.getRewardUser(player.getUniqueId()).getLastDate());
                if (collectedToday) continue;
                player.sendMessage("§e§lRewards §8» §7It looks like you haven't collected today's reward from §e/rewards");
                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
