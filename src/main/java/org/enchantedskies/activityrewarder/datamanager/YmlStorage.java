@@ -32,7 +32,7 @@ public class YmlStorage implements Storage<RewardUser> {
         String name = configurationSection.getString("name");
         String startDate = configurationSection.getString("startDate");
         String lastCollectedDate = configurationSection.getString("lastCollectedDate");
-        int dayNum = configurationSection.getInt("dayNum", 0);
+        int dayNum = configurationSection.getInt("dayNum", 1);
         int playTime = configurationSection.getInt("hoursPlayed", 0);
         return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, playTime);
     }
