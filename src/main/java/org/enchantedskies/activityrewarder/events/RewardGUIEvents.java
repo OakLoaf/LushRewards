@@ -53,9 +53,14 @@ public class RewardGUIEvents implements Listener {
         ActivityRewarder.configManager.getReward((int) actualDayNum % 14 + 1).giveReward(player);
         ConfigurationSection hourlySection = ActivityRewarder.configManager.getConfig().getConfigurationSection("hourly-bonus");
         Reward bonusReward = null;
+        double highestCount = -1;
         for (String perm : hourlySection.getKeys(false)) {
             if (player.hasPermission("activityrewarder.bonus." + perm)) {
-                bonusReward = ActivityRewarder.configManager.getCustomReward(hourlySection.getConfigurationSection(perm), rewardUser);
+                double currCount = hourlySection.getConfigurationSection(perm).getDouble("count");
+                if (currCount > highestCount) {
+                    highestCount = currCount;
+                    bonusReward = ActivityRewarder.configManager.getCustomReward(hourlySection.getConfigurationSection(perm), rewardUser);
+                }
             }
         }
         if (bonusReward != null) {

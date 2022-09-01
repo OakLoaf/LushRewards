@@ -6,10 +6,10 @@
 
     <groupId>org.enchantedskies</groupId>
     <artifactId>activityrewarder</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Activityrewarder</name>
+    <name>ActivityRewarder</name>
 
     <properties>
         <java.version>16</java.version>
