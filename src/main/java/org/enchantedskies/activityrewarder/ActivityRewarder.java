@@ -58,7 +58,7 @@ public final class ActivityRewarder extends JavaPlugin {
            for (Player player : Bukkit.getOnlinePlayers()) {
                boolean collectedToday = currDate.equals(dataManager.getRewardUser(player.getUniqueId()).getLastDate());
                if (collectedToday) continue;
-               player.sendMessage("§e§lRewards §8» §7It looks like you haven't collected today's reward from §e/rewards");
+               player.sendMessage(configManager.getReminderMessage());
                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
            }
         }, 12000, 36000);

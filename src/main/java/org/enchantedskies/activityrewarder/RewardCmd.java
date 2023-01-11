@@ -1,5 +1,6 @@
 package org.enchantedskies.activityrewarder;
 
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,8 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
             ActivityRewarder.configManager.reloadConfig();
-            player.sendMessage("§aConfig reloaded");
+
+            ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getReloadMessage());
         } else {
             if (!player.hasPermission("activityrewarder.use")) {
                 player.sendMessage("§cInsufficient permissions");

@@ -64,6 +64,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,6 +87,17 @@
             <groupId>org.enchantedskies</groupId>
             <artifactId>EnchantedStorage</artifactId>
             <version>1.0.5-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.CoolDCB</groupId>
+            <artifactId>ChatColorHandler</artifactId>
+            <version>v0.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

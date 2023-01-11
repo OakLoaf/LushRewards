@@ -41,6 +41,14 @@ public class ConfigManager {
         rewardsList = loadRewardList();
     }
 
+    public String getReloadMessage() {
+        return config.getString("messages.reload", "&aConfig reloaded");
+    }
+
+    public String getReminderMessage() {
+        return config.getString("messages.reminder", "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards");
+    }
+
     public int getLoopLength() {
         return config.getInt("loop-length");
     }
