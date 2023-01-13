@@ -49,6 +49,18 @@ public class ConfigManager {
         return config.getString("messages.reminder", "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards");
     }
 
+    public String getGuiTitle() {
+        return config.getString("gui.title", "§8§lDaily Rewards");
+    }
+
+    public String getGuiItemRedeemableName(int day) {
+        return config.getString("gui.redeemable-name", "&6Day %day%").replaceAll("%day%", String.valueOf(day));
+    }
+
+    public String getGuiItemCollectedName(int day) {
+        return config.getString("gui.collected-name", "&6Day %day% - Collected").replaceAll("%day%", String.valueOf(day));
+    }
+
     public int getLoopLength() {
         return config.getInt("loop-length");
     }

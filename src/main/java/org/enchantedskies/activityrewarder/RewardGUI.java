@@ -1,5 +1,6 @@
 package org.enchantedskies.activityrewarder;
 
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -18,7 +19,7 @@ import java.util.List;
 public class RewardGUI {
 
     public RewardGUI(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 27, "§8§lDaily Rewards");
+        Inventory inventory = Bukkit.createInventory(null, 27, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiTitle()));
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
         int displayDayNum = rewardUser.getDayNum();
         LocalDate startDate = rewardUser.getStartDate();
@@ -40,11 +41,11 @@ public class RewardGUI {
             List<String> itemLore = new ArrayList<>();
             itemLore.add("§7§o- " + makeFriendly(rewardSize) + " reward");
             thisItemMeta.setLore(itemLore);
-            thisItemMeta.setDisplayName("§6§lDay " + displayDayNum);
+            thisItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(displayDayNum)));
             if (i == 9) {
                 if (collectedToday) {
                     thisItem = ActivityRewarder.configManager.getCollectedItem();
-                    thisItemMeta.setDisplayName(thisItemMeta.getDisplayName() + " §6§l- Collected");
+                    thisItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(displayDayNum)));
                 }
                 else {
                     thisItemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
@@ -62,12 +63,12 @@ public class RewardGUI {
             displayDayNum += 1;
             actualDayNum += 1;
         }
-        ItemStack upcomingItem = new ItemStack(Material.GOLD_BLOCK);
+        ItemStack upcomingItem = ActivityRewarder.configManager.getSizeItem("large");
         List<String> itemLore = new ArrayList<>();
         ItemMeta upcomingMeta = upcomingItem.getItemMeta();
         itemLore.add("§7§o- Next large reward");
         upcomingMeta.setLore(itemLore);
-        upcomingMeta.setDisplayName("§6§lDay " + displayDayNum);
+        upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(displayDayNum)));
         upcomingItem.setItemMeta(upcomingMeta);
         inventory.setItem(17, upcomingItem);
         player.openInventory(inventory);

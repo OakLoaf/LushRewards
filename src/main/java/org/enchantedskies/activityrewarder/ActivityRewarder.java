@@ -1,5 +1,6 @@
 package org.enchantedskies.activityrewarder;
 
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -58,7 +59,7 @@ public final class ActivityRewarder extends JavaPlugin {
            for (Player player : Bukkit.getOnlinePlayers()) {
                boolean collectedToday = currDate.equals(dataManager.getRewardUser(player.getUniqueId()).getLastDate());
                if (collectedToday) continue;
-               player.sendMessage(configManager.getReminderMessage());
+               ChatColorHandler.sendMessage(player, configManager.getReminderMessage());
                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
            }
         }, 12000, 36000);

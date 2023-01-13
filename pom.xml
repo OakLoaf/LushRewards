@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.github.CoolDCB</groupId>
             <artifactId>ChatColorHandler</artifactId>
-            <version>v0.9.4</version>
+            <version>v0.9.9</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
