@@ -32,33 +32,58 @@ collected-item: COAL
 # Items given daily based on the amount of play time since rewards were last collected
 hourly-bonus:
   default:
-    type: ITEM
-    reward: IRON_INGOT
-    count: 2
+    multiplier: 1
+    items:
+      iron_ingot:
+        amount: 2
   rank1:
-    type: ITEM
-    reward: DIAMOND
-    count: 1
+    multiplier: 2
+    items:
+      diamond:
+        amount: 1
 
 # List of rewards
 rewards:
   default:
     size: SMALL
-    type: ITEM
-    reward: CACTUS
-    count: 12
-  1:
-    size: MEDIUM
-    type: ITEM
-    reward: PORKCHOP
-  2:
-    size: MEDIUM
-    type: COMMAND
-    reward:
-      - give %user% minecraft:diamond_block
-  30:
-    size: LARGE
-    type: COMMAND
-    reward:
-      - give %user% minecraft:diamond_block
-      - give %user% minecraft:iron_block
+    rewards:
+      items:
+        cactus:
+          amount: 12
+        cookie:
+          amount: 1
+  '1':
+    size: SMALL
+    rewards:
+      items:
+        pink_tulip:
+          amount: 1
+        cookie:
+          amount: 1
+  '2':
+    size: SMALL
+    rewards:
+      items:
+        oxeye_daisy:
+          amount: 1
+        bread:
+          amount: 1
+  '5':
+    size: SMALL
+    rewards:
+      items:
+        white_tulip:
+          amount: 1
+        pearlescent_froglight:
+          amount: 1
+  '30':
+    rewards:
+      size: small
+      items:
+        diamond:
+          amount: 3
+        golden_apple:
+          amount: 1
+      commands:
+        - give %user% minecraft:diamond_block
+        - give %user% minecraft:iron_block

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class RewardCmd implements CommandExecutor, TabCompleter {
+    private final RewardGUI rewardGUI = new RewardGUI();
     private final HashSet<UUID> guiPlayerSet;
 
     public RewardCmd(HashSet<UUID> guiPlayerSet) {
@@ -38,7 +39,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage("§cInsufficient permissions");
                 return true;
             }
-            new RewardGUI(player);
+            rewardGUI.openGUI(player);
             guiPlayerSet.add(player.getUniqueId());
         }
         return true;

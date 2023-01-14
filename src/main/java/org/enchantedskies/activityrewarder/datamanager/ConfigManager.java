@@ -1,29 +1,25 @@
 package org.enchantedskies.activityrewarder.datamanager;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.enchantedskies.activityrewarder.ActivityRewarder;
-import org.enchantedskies.activityrewarder.rewardtypes.CmdReward;
-import org.enchantedskies.activityrewarder.rewardtypes.ItemReward;
-import org.enchantedskies.activityrewarder.rewardtypes.Reward;
+import org.enchantedskies.activityrewarder.rewards.CmdReward;
+import org.enchantedskies.activityrewarder.rewards.ItemReward;
+import org.enchantedskies.activityrewarder.rewards.Reward;
+import org.enchantedskies.activityrewarder.rewards.RewardsDay;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private FileConfiguration config;
-    private ArrayList<Reward> defaultReward;
-    private ArrayList<Reward> rewardsList;
+    private RewardsDay defaultReward;
+    private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
     private int loopLength;
-    private ArrayList<Reward> hourlyBonus;
 
     public ConfigManager() {
         plugin.saveDefaultConfig();
@@ -34,10 +30,9 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
-        loopLength = config.getInt("loop-length");
-        hourlyBonus =
+        loopLength = config.getInt("loop-length", -1);
 
-        rewardsList = getRewardList();
+        reloadRewardsMap();
     }
 
     public String getReloadMessage() {
@@ -49,7 +44,7 @@ public class ConfigManager {
     }
 
     public String getGuiTitle() {
-        return config.getString("gui.title", "§8§lDaily Rewards");
+        return config.getString("gui.title", "&8&lDaily Rewards");
     }
 
     public String getGuiItemRedeemableName(int day) {
@@ -61,113 +56,83 @@ public class ConfigManager {
     }
 
     public ItemStack getSizeItem(String size) {
-        return new ItemStack(Material.valueOf(config.getString("sizes." + size).toUpperCase()));
+        return new ItemStack(Material.valueOf(config.getString("sizes." + size.toLowerCase(), "STONE").toUpperCase()));
     }
 
     public ItemStack getCollectedItem() {
-        return new ItemStack(Material.valueOf(config.getString("collected-item").toUpperCase()));
+        return new ItemStack(Material.valueOf(config.getString("collected-item", "REDSTONE_BLOCK").toUpperCase()));
     }
 
     public int getLoopLength() {
         return loopLength;
     }
 
-    public Reward getReward(int day) {
-        return rewardsList.get(day);
-    }
+    public RewardsDay getHourlyRewards(Player player) {
+        ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
+        RewardsDay hourlyRewards = null;
 
-    private Reward getReward(ConfigurationSection rewardSection) {
-        String rewardType = rewardSection.getString("type", "item");
-        Reward reward = null;
-        if (rewardType.equalsIgnoreCase("item")) reward = getItemReward(rewardSection);
-        else if (rewardType.equalsIgnoreCase("command")) reward = getCmdReward(rewardSection);
-        return reward;
-    }
+        double heighestMultiplier = -1;
+        for (String perm : hourlySection.getKeys(false)) {
+            if (player.hasPermission("activityrewarder.bonus." + perm)) {
+                double multiplier = hourlySection.getConfigurationSection(perm).getDouble("multiplier", 1);
 
-    public Reward getCustomReward(ConfigurationSection rewardSection, RewardUser rewardUser) {
-        String rewardType = rewardSection.getString("type", "item");
-        Reward reward = null;
-        if (rewardType.equalsIgnoreCase("item")) reward = getItemReward(rewardSection);
-        else if (rewardType.equalsIgnoreCase("command")) reward = getCmdReward(rewardSection, rewardUser);
-        return reward;
-    }
-
-    private Reward getItemReward(ConfigurationSection rewardSection) {
-        Material material = Material.valueOf(rewardSection.getString("reward", "STONE").toUpperCase());
-        int count = rewardSection.getInt("count", 1);
-        ItemStack item = new ItemStack(material);
-        item.setAmount(count);
-
-        return new ItemReward(item);
-    }
-
-    private Reward getCmdReward(ConfigurationSection rewardSection) {
-        return getCmdReward(rewardSection, null);
-    }
-
-    private Reward getCmdReward(ConfigurationSection rewardSection, RewardUser rewardUser) {
-        String size = rewardSection.getString("size", "small").toLowerCase();
-        List<String> commands = rewardSection.getStringList("reward");
-        StringBuilder command = new StringBuilder();
-        for (String aCommand : commands) {
-            command.append(aCommand).append("|");
+                if (multiplier > heighestMultiplier) {
+                    heighestMultiplier = multiplier;
+                    hourlyRewards = loadSectionRewards(hourlySection.getConfigurationSection(perm));
+                    hourlyRewards.setMultiplier(multiplier);
+                }
+            }
         }
-        double count = rewardSection.getDouble("count", -1);
-        if (count != -1 && rewardUser != null) {
-            int currPlayTime = (int) getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE));
-            int hoursDiff = currPlayTime - rewardUser.getPlayTime();
-            return new CmdReward(command.toString());
-        }
-        return new CmdReward(command.toString());
+
+        return hourlyRewards;
     }
 
-    public ArrayList<Reward> loadRewardList() {
-        ArrayList<Reward> rewardsList = new ArrayList<>();
+    public RewardsDay getRewards(int day) {
+        // Works out what day number the user is in the loop
+        int loopedDayNum = day % ActivityRewarder.configManager.getLoopLength();
+
+        if (dayToRewards.containsKey(day)) return dayToRewards.get(day);
+        else if (dayToRewards.containsKey(loopedDayNum)) return dayToRewards.get(loopedDayNum);
+        else return defaultReward;
+    }
+
+    public int findNextRewardOfSize(int day, String size) {
+        // Iterates through dayToRewards
+        for (int rewardsKey : dayToRewards.keySet()) {
+            // Checks if the current key is a day in the future
+            if (rewardsKey <= day) continue;
+
+            // Gets the size of the reward and compares to the request
+            RewardsDay rewards = getRewards(rewardsKey);
+            if (rewards.getSize().equalsIgnoreCase(size)) return rewardsKey;
+        }
+
+        // Returns -1 if no future rewards match the request
+        return -1;
+    }
+
+    private void reloadRewardsMap() {
+        // Clears rewards map
+        dayToRewards.clear();
+
         ConfigurationSection rewardsSection = config.getConfigurationSection("reward-days");
-        Reward defaultReward = getReward(rewardsSection.getConfigurationSection("default"));
-        HashMap<Integer, Reward> dayToReward = new HashMap<>();
-        for (String key : rewardsSection.getKeys(false)) {
-            Reward thisReward = getReward(rewardsSection.getConfigurationSection(key));
-            dayToReward.put(Integer.parseInt(key) + 1, thisReward);
-        }
-        for (int day = 1; day < config.getInt("loop-length") + 1; day++) {
-            Reward reward = defaultReward;
-            if (dayToReward.containsKey(day)) reward = dayToReward.get(day);
-            rewardsList.add(reward);
-        }
-        return rewardsList;
-    }
-
-    private ArrayList<Reward> getRewardList() {
-        ConfigurationSection rewardsSection = config.getConfigurationSection("reward-days");
-
-        HashMap<Integer, Reward> dayToReward = new HashMap<>();
-
-        int loopLength = config.getInt("loop-length", -1);
-
-        Set<String> rewardsKeys = rewardsSection.getKeys(false);
-        for (String rewardsKey : rewardsKeys) {
+        for (String rewardsKey : rewardsSection.getKeys(false)) {
             if (rewardsKey.equalsIgnoreCase("default")) {
                 defaultReward = loadSectionRewards(rewardsSection.getConfigurationSection(rewardsKey));
+                continue;
             }
-            Integer.parseInt(rewardsKey);
+            dayToRewards.put(Integer.parseInt(rewardsKey), loadSectionRewards(rewardsSection.getConfigurationSection(rewardsKey)));
         }
-
-
-        ArrayList<Reward> rewardsList = new ArrayList<>();
-
-
-
-        return rewardsList;
     }
 
-    private ArrayList<Reward> loadSectionRewards(ConfigurationSection rewardsSection) {
+    private RewardsDay loadSectionRewards(ConfigurationSection rewardsSection) {
         ArrayList<Reward> rewards = new ArrayList<>();
+        String size = rewardsSection.getString("rewards.size", "SMALL").toUpperCase();
 
-        ConfigurationSection itemRewards = rewardsSection.getConfigurationSection("items");
+        ConfigurationSection itemRewards = rewardsSection.getConfigurationSection("rewards.items");
         if (itemRewards != null) {
             for (String materialName : itemRewards.getKeys(false)) {
-                ItemStack item = new ItemStack(Material.valueOf(materialName));
+                ItemStack item = new ItemStack(Material.valueOf(materialName.toUpperCase()));
                 int amount = itemRewards.getInt(materialName + ".amount", 1);
                 item.setAmount(amount);
 
@@ -175,11 +140,11 @@ public class ConfigManager {
             }
         }
 
-        for (String command : rewardsSection.getStringList("commands")) {
+        for (String command : rewardsSection.getStringList("rewards.commands")) {
             rewards.add(new CmdReward(command));
         }
 
-        return rewards;
+        return new RewardsDay(size, rewards);
     }
 
     private long getTicksToHours(long ticksPlayed) {

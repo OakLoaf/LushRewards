@@ -62,7 +62,7 @@ public class YmlStorage implements Storage<RewardUser> {
             yamlConfiguration.set("name", playerName);
             yamlConfiguration.set("startDate", LocalDate.now().toString());
             yamlConfiguration.set("lastCollectedDate", LocalDate.now().minusDays(1).toString());
-            yamlConfiguration.set("dayNum", 0);
+            yamlConfiguration.set("dayNum", 1);
             yamlConfiguration.set("hoursPlayed", (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
             try {
                 yamlConfiguration.save(file);
