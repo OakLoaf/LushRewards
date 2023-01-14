@@ -1,15 +1,15 @@
-package org.enchantedskies.activityrewarder.datamanager;
+package me.dave.activityrewarder.datamanager;
 
+import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.rewards.RewardsDay;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.enchantedskies.activityrewarder.ActivityRewarder;
-import org.enchantedskies.activityrewarder.rewards.CmdReward;
-import org.enchantedskies.activityrewarder.rewards.ItemReward;
-import org.enchantedskies.activityrewarder.rewards.Reward;
-import org.enchantedskies.activityrewarder.rewards.RewardsDay;
+import me.dave.activityrewarder.rewards.CmdReward;
+import me.dave.activityrewarder.rewards.ItemReward;
+import me.dave.activityrewarder.rewards.Reward;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

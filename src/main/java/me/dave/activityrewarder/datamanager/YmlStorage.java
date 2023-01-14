@@ -1,12 +1,12 @@
-package org.enchantedskies.activityrewarder.datamanager;
+package me.dave.activityrewarder.datamanager;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.Storage;
-import org.enchantedskies.activityrewarder.ActivityRewarder;
 
 import java.io.File;
 import java.io.IOException;

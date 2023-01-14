@@ -1,12 +1,12 @@
-package org.enchantedskies.activityrewarder.events;
+package me.dave.activityrewarder.events;
 
+import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.datamanager.RewardUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.enchantedskies.activityrewarder.ActivityRewarder;
-import org.enchantedskies.activityrewarder.datamanager.RewardUser;
 
 public class RewardUserEvents implements Listener {
 

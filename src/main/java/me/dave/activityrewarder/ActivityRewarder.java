@@ -1,5 +1,6 @@
-package org.enchantedskies.activityrewarder;
+package me.dave.activityrewarder;
 
+import me.dave.activityrewarder.events.RewardGUIEvents;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -7,10 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.enchantedskies.activityrewarder.datamanager.ConfigManager;
-import org.enchantedskies.activityrewarder.datamanager.DataManager;
-import org.enchantedskies.activityrewarder.events.RewardGUIEvents;
-import org.enchantedskies.activityrewarder.events.RewardUserEvents;
+import me.dave.activityrewarder.datamanager.ConfigManager;
+import me.dave.activityrewarder.datamanager.DataManager;
+import me.dave.activityrewarder.events.RewardUserEvents;
 
 import java.time.LocalDate;
 import java.util.HashSet;

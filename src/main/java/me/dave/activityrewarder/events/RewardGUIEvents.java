@@ -1,5 +1,6 @@
-package org.enchantedskies.activityrewarder.events;
+package me.dave.activityrewarder.events;
 
+import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -16,9 +17,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.enchantedskies.activityrewarder.ActivityRewarder;
-import org.enchantedskies.activityrewarder.datamanager.RewardUser;
-import org.enchantedskies.activityrewarder.rewards.RewardsDay;
+import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.datamanager.RewardUser;
 
 import java.time.LocalDate;
 import java.util.HashSet;

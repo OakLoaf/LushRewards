@@ -1,4 +1,4 @@
-package org.enchantedskies.activityrewarder;
+package me.dave.activityrewarder;
 
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.command.Command;

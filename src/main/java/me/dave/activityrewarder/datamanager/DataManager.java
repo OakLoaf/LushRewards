@@ -1,4 +1,4 @@
-package org.enchantedskies.activityrewarder.datamanager;
+package me.dave.activityrewarder.datamanager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;

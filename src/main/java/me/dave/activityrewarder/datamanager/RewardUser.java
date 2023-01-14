@@ -1,6 +1,6 @@
-package org.enchantedskies.activityrewarder.datamanager;
+package me.dave.activityrewarder.datamanager;
 
-import org.enchantedskies.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.ActivityRewarder;
 
 import java.time.LocalDate;
 import java.util.UUID;

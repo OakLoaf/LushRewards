@@ -1,9 +1,9 @@
-package org.enchantedskies.activityrewarder.rewards;
+package me.dave.activityrewarder.rewards;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.enchantedskies.activityrewarder.ActivityRewarder;
 import org.geysermc.floodgate.api.FloodgateApi;
 
 public class CmdReward implements Reward {

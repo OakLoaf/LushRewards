@@ -1,5 +1,6 @@
-package org.enchantedskies.activityrewarder;
+package me.dave.activityrewarder;
 
+import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,8 +12,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.enchantedskies.activityrewarder.datamanager.RewardUser;
-import org.enchantedskies.activityrewarder.rewards.RewardsDay;
+import me.dave.activityrewarder.datamanager.RewardUser;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
