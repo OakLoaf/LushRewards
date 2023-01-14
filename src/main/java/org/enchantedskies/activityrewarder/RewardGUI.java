@@ -35,8 +35,9 @@ public class RewardGUI {
         int currDayNum = rewardUser.getDayNum();
 
         // The day number that the user is technically on
-        LocalDate startDate = rewardUser.getStartDate();
-        int actualDayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay() + 1);
+        int actualDayNum = rewardUser.getActualDayNum();
+//        LocalDate startDate = rewardUser.getStartDate();
+//        int actualDayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay() + 1);
 
         Inventory inventory = Bukkit.createInventory(null, 27, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiTitle()));
         for (int i = 0; i < 27; i++) inventory.setItem(i, borderItem);
@@ -55,8 +56,8 @@ public class RewardGUI {
             ItemMeta upcomingMeta = upcomingItem.getItemMeta();
             itemLore.add("§7§o- Next large reward");
             upcomingMeta.setLore(itemLore);
-            upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay)));
-            upcomingMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (nextRewardDay + "|" + actualDayNum + "|unavailable"));
+            upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay - rewardUser.getDayNumOffset())));
+            upcomingMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((nextRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
             upcomingItem.setItemMeta(upcomingMeta);
             inventory.setItem(17, upcomingItem);
         }

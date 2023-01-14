@@ -62,6 +62,14 @@ public class RewardUser {
         return this.dayNum;
     }
 
+    public int getActualDayNum() {
+        return (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay() + 1);
+    }
+
+    public int getDayNumOffset() {
+        return getActualDayNum() - dayNum;
+    }
+
     public int getPlayTime() {
         return this.playTime;
     }
