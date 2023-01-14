@@ -1,29 +1,20 @@
 package org.enchantedskies.activityrewarder.rewardtypes;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
-public class ItemReward implements Reward {
-    private final ItemStack item;
-    private final String size;
+public class ItemReward extends Reward {
+    private final ItemStack itemStack;
 
-    public ItemReward(Material material, int count, String size) {
-        this.item = new ItemStack(material, count);
-        this.size = size;
+    public ItemReward(ItemStack itemStack) {
+        this.itemStack = itemStack;
     }
 
     @Override
-    public String getSize() {
-        return size;
-    }
-
-
-    @Override
-    public void giveReward(Player player) {
-        HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(item);
+    public void giveReward(Player player, int hourlyAmount) {
+        HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack);
         for (ItemStack item: droppedItems.values()) {
             player.getWorld().dropItem(player.getLocation(), item);
         }

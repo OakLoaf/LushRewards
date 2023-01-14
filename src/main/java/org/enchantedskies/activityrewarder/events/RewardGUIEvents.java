@@ -44,7 +44,7 @@ public class RewardGUIEvents implements Listener {
         if (currItemMeta == null || !(currItemMeta.hasEnchants() && event.getSlot() == 9)) return;
         ItemStack collectedItem = ActivityRewarder.configManager.getCollectedItem();
         ItemMeta collectedMeta = currItemMeta;
-        collectedMeta.setDisplayName(currItemMeta.getDisplayName() + " §6§l- Collected");
+        collectedMeta.setDisplayName(ActivityRewarder.configManager.getGuiItemCollectedName());
         collectedMeta.removeEnchant(Enchantment.DURABILITY);
         collectedItem.setItemMeta(collectedMeta);
         event.getClickedInventory().setItem(9, collectedItem);
