@@ -9,6 +9,7 @@ gui:
   title: "&8&lDaily Rewards"
   redeemable-name: "&6Day %day%"
   collected-name: "&6Day %day% - Collected"
+  border-item: "GRAY_STAINED_GLASS_PANE"
 
 # The number of days before the reward cycle loops
 loop-length: 14
@@ -32,15 +33,17 @@ collected-item: COAL
 # Items given daily based on the amount of play time since rewards were last collected
 hourly-bonus:
   default:
-    multiplier: 1
-    items:
-      iron_ingot:
-        amount: 2
+    rewards:
+      multiplier: 1
+      items:
+        iron_ingot:
+          amount: 2
   rank1:
-    multiplier: 2
-    items:
-      diamond:
-        amount: 1
+    rewards:
+      multiplier: 2
+      items:
+        diamond:
+          amount: 1
 
 # List of rewards
 rewards:

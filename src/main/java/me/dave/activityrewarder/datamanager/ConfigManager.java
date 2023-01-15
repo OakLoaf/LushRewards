@@ -19,7 +19,9 @@ public class ConfigManager {
     private FileConfiguration config;
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
+    private Material borderMaterial;
     private int loopLength;
+    private boolean daysReset;
 
     public ConfigManager() {
         plugin.saveDefaultConfig();
@@ -30,7 +32,9 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
+        borderMaterial = Material.valueOf(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").toUpperCase());
         loopLength = config.getInt("loop-length", -1);
+        daysReset = config.getBoolean("days-reset", false);
 
         reloadRewardsMap();
     }
@@ -63,12 +67,21 @@ public class ConfigManager {
         return new ItemStack(Material.valueOf(config.getString("collected-item", "REDSTONE_BLOCK").toUpperCase()));
     }
 
+    public Material getBorderMaterial() {
+        return borderMaterial;
+    }
+
     public int getLoopLength() {
         return loopLength;
     }
 
+    public boolean doDaysReset() {
+        return daysReset;
+    }
+
     public RewardsDay getHourlyRewards(Player player) {
         ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
+        if (hourlySection == null) return null;
         RewardsDay hourlyRewards = null;
 
         double heighestMultiplier = -1;

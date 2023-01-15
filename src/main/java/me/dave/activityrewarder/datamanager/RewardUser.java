@@ -8,7 +8,7 @@ import java.util.UUID;
 public class RewardUser {
     private final UUID uuid;
     private String username;
-    private final LocalDate startDate;
+    private LocalDate startDate;
     private LocalDate lastDate;
     private int dayNum;
     private int playTime;
@@ -34,6 +34,13 @@ public class RewardUser {
 
     public void incrementDayNum() {
         this.dayNum += 1;
+        ActivityRewarder.dataManager.saveRewardUser(this);
+    }
+
+    public void resetDays() {
+        this.dayNum = 1;
+        this.startDate = LocalDate.now();
+        this.lastDate = LocalDate.now().minusDays(1);
         ActivityRewarder.dataManager.saveRewardUser(this);
     }
 

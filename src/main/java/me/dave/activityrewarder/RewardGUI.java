@@ -1,5 +1,6 @@
 package me.dave.activityrewarder;
 
+import me.dave.activityrewarder.datamanager.RewardUser;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
@@ -12,7 +13,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import me.dave.activityrewarder.datamanager.RewardUser;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,24 +20,32 @@ import java.util.List;
 
 public class RewardGUI {
     private final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
-    private final ItemStack borderItem = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-
-    public RewardGUI() {
-        // Creates the border item
-        ItemMeta borderMeta = borderItem.getItemMeta();
-        borderMeta.setDisplayName("§7");
-        borderItem.setItemMeta(borderMeta);
-    }
 
     public void openGUI(Player player) {
+        // Gets RewardUser
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
+
+        // Checks if the streak mode config option is enabled
+        if (ActivityRewarder.configManager.doDaysReset()) {
+            // Resets RewardUser to Day 1 if a day has been missed
+            if (rewardUser.getLastDate().isBefore(LocalDate.now().minusDays(1))) rewardUser.resetDays();
+        }
+
         // The current day number being shown to the user
         int currDayNum = rewardUser.getDayNum();
 
         // The day number that the user is technically on
         int actualDayNum = rewardUser.getActualDayNum();
-//        LocalDate startDate = rewardUser.getStartDate();
-//        int actualDayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay() + 1);
+
+        // Creates the border item
+        Material borderMaterial = ActivityRewarder.configManager.getBorderMaterial();
+        ItemStack borderItem = new ItemStack(borderMaterial);
+        if (borderMaterial != Material.AIR) {
+            ItemMeta borderMeta = borderItem.getItemMeta();
+            borderMeta.setDisplayName("§7");
+            borderItem.setItemMeta(borderMeta);
+        }
+
 
         Inventory inventory = Bukkit.createInventory(null, 27, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiTitle()));
         for (int i = 0; i < 27; i++) inventory.setItem(i, borderItem);

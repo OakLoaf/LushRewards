@@ -46,15 +46,18 @@ public class RewardGUIEvents implements Listener {
         if (currItem == null) return;
         ItemMeta currItemMeta = currItem.getItemMeta();
         if (currItemMeta == null) return;
-        String[] persistentData = currItemMeta.getPersistentDataContainer().get(activityRewarderKey, PersistentDataType.STRING).split(Pattern.quote("|"));
-        int currDay = Integer.parseInt(persistentData[0]);
-        if (!persistentData[2].equals("collectable")) return;
+        String persistentData = currItemMeta.getPersistentDataContainer().get(activityRewarderKey, PersistentDataType.STRING);
+        if (persistentData == null) return;
+        String[] persistentDataArr = persistentData.split(Pattern.quote("|"));
+
+        int currDay = Integer.parseInt(persistentDataArr[0]);
+        if (!persistentDataArr[2].equals("collectable")) return;
 
         ItemStack collectedItem = ActivityRewarder.configManager.getCollectedItem();
         ItemMeta collectedMeta = collectedItem.getItemMeta();
         collectedMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(currDay)));
         collectedMeta.removeEnchant(Enchantment.DURABILITY);
-        collectedMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (persistentData[0] + "|" + persistentData[1] + "|collected"));
+        collectedMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (persistentDataArr[0] + "|" + persistentDataArr[1] + "|collected"));
         collectedItem.setItemMeta(collectedMeta);
         event.getClickedInventory().setItem(event.getSlot(), collectedItem);
 
