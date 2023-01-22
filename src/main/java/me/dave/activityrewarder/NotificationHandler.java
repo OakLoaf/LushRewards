@@ -11,13 +11,9 @@ import java.time.LocalDate;
 public class NotificationHandler {
     private int notifCounter = 0;
 
-    public NotificationHandler() {
-        reloadNotifications();
-    }
-
-    public void reloadNotifications() {
+    public void reloadNotifications(int reminderPeriod) {
         notifCounter += 1;
-        notifyPlayers(ActivityRewarder.configManager.getReminderPeriod());
+        notifyPlayers(reminderPeriod);
     }
 
     private void notifyPlayers(int reminderPeriod) {

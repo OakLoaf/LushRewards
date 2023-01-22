@@ -16,7 +16,6 @@ public final class ActivityRewarder extends JavaPlugin {
     private static boolean hasFloodgate;
     public static DataManager dataManager;
     public static ConfigManager configManager;
-    public static NotificationHandler notificationHandler;
     private final HashSet<UUID> guiPlayerSet = new HashSet<>();
 
     @Override
@@ -25,7 +24,6 @@ public final class ActivityRewarder extends JavaPlugin {
         saveDefaultConfig();
         configManager = new ConfigManager();
         dataManager = new DataManager();
-        notificationHandler = new NotificationHandler();
 
         Listener[] listeners = new Listener[]{
             new RewardUserEvents(),

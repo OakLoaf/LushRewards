@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.datamanager;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.NotificationHandler;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
+    private final NotificationHandler notificationHandler = new NotificationHandler();
     private FileConfiguration config;
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
@@ -39,7 +41,7 @@ public class ConfigManager {
         daysReset = config.getBoolean("days-reset", false);
 
         reloadRewardsMap();
-        ActivityRewarder.notificationHandler.reloadNotifications();
+        notificationHandler.reloadNotifications(reminderPeriod);
     }
 
     public String getReloadMessage() {
