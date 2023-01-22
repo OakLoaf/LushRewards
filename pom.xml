@@ -14,7 +14,7 @@
     <properties>
         <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dir>D:\Servers\Paper 1.19\plugins\update</dir>
+        <dir>${env.PLUGINFOLDER}</dir>
     </properties>
 
     <build>
