@@ -13,6 +13,8 @@ gui:
 
 # The number of days before the reward cycle loops
 loop-length: 14
+# The length in seconds between reminders being sent
+reminder-period: 1800
 # Whether days are going to infinitely increase or reset after loop finishes
 days-reset: false
 

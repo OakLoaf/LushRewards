@@ -21,6 +21,7 @@ public class ConfigManager {
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
     private Material borderMaterial;
     private int loopLength;
+    private int reminderPeriod;
     private boolean daysReset;
 
     public ConfigManager() {
@@ -34,9 +35,11 @@ public class ConfigManager {
 
         borderMaterial = Material.valueOf(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").toUpperCase());
         loopLength = config.getInt("loop-length", -1);
+        reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         daysReset = config.getBoolean("days-reset", false);
 
         reloadRewardsMap();
+        ActivityRewarder.notificationHandler.reloadNotifications();
     }
 
     public String getReloadMessage() {
@@ -73,6 +76,10 @@ public class ConfigManager {
 
     public int getLoopLength() {
         return loopLength;
+    }
+
+    public int getReminderPeriod() {
+        return reminderPeriod;
     }
 
     public boolean doDaysReset() {
