@@ -63,7 +63,7 @@ public class RewardGUIEvents implements Listener {
 
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
         long actualDayNum = LocalDate.now().toEpochDay() - rewardUser.getStartDate().toEpochDay();
-        ActivityRewarder.configManager.getRewards((int) actualDayNum % 14 + 1).giveRewards(player);
+        ActivityRewarder.configManager.getRewards((int) actualDayNum % ActivityRewarder.configManager.getLoopLength() + 1).giveRewards(player);
 
         RewardsDay hourlyRewards = ActivityRewarder.configManager.getHourlyRewards(player);
         if (hourlyRewards != null) {

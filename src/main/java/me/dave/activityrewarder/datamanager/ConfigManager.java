@@ -52,6 +52,10 @@ public class ConfigManager {
         return config.getString("messages.reminder", "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards");
     }
 
+    public String getRewardMessage() {
+        return config.getString("messages.reward-given", "&e&lRewards &8» &aYou have collected day today's reward");
+    }
+
     public String getGuiTitle() {
         return config.getString("gui.title", "&8&lDaily Rewards");
     }
