@@ -1,5 +1,7 @@
 package me.dave.activityrewarder;
 
+import com.jeff_media.updatechecker.UpdateCheckSource;
+import com.jeff_media.updatechecker.UpdateChecker;
 import me.dave.activityrewarder.events.RewardGUIEvents;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -39,6 +41,13 @@ public final class ActivityRewarder extends JavaPlugin {
             hasFloodgate = false;
             getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
         }
+
+        new UpdateChecker(this, UpdateCheckSource.SPIGET, "107545")
+            .setDownloadLink("https://www.spigotmc.org/resources/activity-rewarder.107545/")
+            .setChangelogLink("107545")
+            .setNotifyByPermissionOnJoin("activityrewarder.updatechecker")
+            .checkEveryXHours(0.5)
+            .checkNow();
     }
 
     @Override

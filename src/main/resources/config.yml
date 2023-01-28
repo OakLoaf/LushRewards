@@ -48,7 +48,7 @@ hourly-bonus:
           amount: 1
 
 # List of rewards
-rewards:
+reward-days:
   default:
     size: SMALL
     rewards:

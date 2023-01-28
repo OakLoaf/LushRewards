@@ -138,6 +138,7 @@ public class ConfigManager {
         dayToRewards.clear();
 
         ConfigurationSection rewardsSection = config.getConfigurationSection("reward-days");
+        if (rewardsSection == null) rewardsSection = config.getConfigurationSection("rewards");
         for (String rewardsKey : rewardsSection.getKeys(false)) {
             if (rewardsKey.equalsIgnoreCase("default")) {
                 defaultReward = loadSectionRewards(rewardsSection.getConfigurationSection(rewardsKey));
