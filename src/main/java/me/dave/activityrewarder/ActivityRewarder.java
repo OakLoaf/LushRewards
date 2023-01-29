@@ -44,7 +44,7 @@ public final class ActivityRewarder extends JavaPlugin {
 
         new UpdateChecker(this, UpdateCheckSource.SPIGET, "107545")
             .setDownloadLink("https://www.spigotmc.org/resources/activity-rewarder.107545/")
-            .setChangelogLink("107545")
+            .setChangelogLink("https://www.spigotmc.org/resources/activity-rewarder.107545/updates")
             .setNotifyByPermissionOnJoin("activityrewarder.updatechecker")
             .checkEveryXHours(0.5)
             .checkNow();
