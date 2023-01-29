@@ -78,7 +78,7 @@ public class RewardGUIEvents implements Listener {
             for (int i = 0; i < totalRewards; i++) {
                 hourlyRewards.giveRewards(player);
             }
-            ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getBonusMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
+            if (hoursDiff > 0) ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getBonusMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
             rewardUser.setPlayTime(currPlayTime);
         }
 
