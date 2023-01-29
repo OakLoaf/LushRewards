@@ -53,7 +53,11 @@ public class ConfigManager {
     }
 
     public String getRewardMessage() {
-        return config.getString("messages.reward-given", "&e&lRewards &8» &aYou have collected day today's reward");
+        return config.getString("messages.reward-given", "&e&lRewards &8» &aYou have collected today's reward");
+    }
+
+    public String getBonusMessage() {
+        return config.getString("messages.hourly-bonus-given", "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours");
     }
 
     public String getGuiTitle() {

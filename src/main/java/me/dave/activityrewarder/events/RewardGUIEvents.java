@@ -64,6 +64,7 @@ public class RewardGUIEvents implements Listener {
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
         long actualDayNum = LocalDate.now().toEpochDay() - rewardUser.getStartDate().toEpochDay();
         ActivityRewarder.configManager.getRewards((int) actualDayNum % ActivityRewarder.configManager.getLoopLength() + 1).giveRewards(player);
+        ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getRewardMessage());
 
         RewardsDay hourlyRewards = ActivityRewarder.configManager.getHourlyRewards(player);
         if (hourlyRewards != null) {
@@ -77,6 +78,7 @@ public class RewardGUIEvents implements Listener {
             for (int i = 0; i < totalRewards; i++) {
                 hourlyRewards.giveRewards(player);
             }
+            ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getBonusMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
             rewardUser.setPlayTime(currPlayTime);
         }
 

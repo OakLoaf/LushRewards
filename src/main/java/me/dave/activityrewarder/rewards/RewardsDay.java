@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.rewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -31,6 +32,5 @@ public class RewardsDay {
         for (Reward reward : rewards) {
             reward.giveReward(player);
         }
-        player.sendMessage(ActivityRewarder.configManager.getRewardMessage());
     }
 }
