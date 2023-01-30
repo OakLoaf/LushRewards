@@ -9,6 +9,13 @@ messages:
 
 gui:
   title: "&8&lDaily Rewards"
+  # row-count does not include the borders, you can have a maximum of 4 rows
+  row-count: 1
+  upcoming-reward:
+    # Whether the next "large" reward will be shown in the gui
+    enabled: true
+    # The slot where the reward will be displayed in the gui (Negative numbers go backwards from the end of the gui)
+    slot: -5
   redeemable-name: "&6Day %day%"
   collected-name: "&6Day %day% - Collected"
   border-item: "GRAY_STAINED_GLASS_PANE"
@@ -85,7 +92,7 @@ reward-days:
           amount: 1
   '30':
     rewards:
-      size: small
+      size: LARGE
       items:
         diamond:
           amount: 3

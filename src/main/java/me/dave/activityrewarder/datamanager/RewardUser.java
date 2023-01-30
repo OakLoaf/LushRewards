@@ -1,9 +1,12 @@
 package me.dave.activityrewarder.datamanager;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class RewardUser {
     private final UUID uuid;
@@ -12,6 +15,7 @@ public class RewardUser {
     private LocalDate lastDate;
     private int dayNum;
     private int playTime;
+    private double hourlyMultiplier;
 
     public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int playTime) {
         this.uuid = uuid;
@@ -20,6 +24,8 @@ public class RewardUser {
         this.lastDate = LocalDate.parse(lastCollectedDate);
         this.dayNum = dayNum;
         this.playTime = playTime;
+
+        this.hourlyMultiplier = ActivityRewarder.configManager.getHourlyMultiplier(Bukkit.getPlayer(uuid));
     }
 
     public void setUsername(String username) {
@@ -46,6 +52,11 @@ public class RewardUser {
 
     public void setPlayTime(int playTime) {
         this.playTime = playTime;
+        ActivityRewarder.dataManager.saveRewardUser(this);
+    }
+
+    public void setHourlyMultiplier(double multiplier) {
+        this.hourlyMultiplier = multiplier;
         ActivityRewarder.dataManager.saveRewardUser(this);
     }
 
@@ -79,5 +90,28 @@ public class RewardUser {
 
     public int getPlayTime() {
         return this.playTime;
+    }
+
+    public int getTotalPlayTime() {
+        return getTicksToHours(Bukkit.getPlayer(uuid).getStatistic(Statistic.PLAY_ONE_MINUTE));
+    }
+
+    public int getPlayTimeSinceLastCollected() {
+        // Gets the player's current play time
+        int currPlayTime = getTotalPlayTime();
+        // Finds the difference between their current play time and play time when the player last collected their reward
+        return currPlayTime - playTime;
+    }
+
+    public double getHourlyMultiplier() {
+        return hourlyMultiplier;
+    }
+
+    public boolean hasCollectedToday() {
+        return LocalDate.now().equals(lastDate);
+    }
+
+    private int getTicksToHours(long ticksPlayed) {
+        return (int) TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
     }
 }

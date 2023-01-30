@@ -68,12 +68,10 @@ public class RewardGUIEvents implements Listener {
 
         RewardsDay hourlyRewards = ActivityRewarder.configManager.getHourlyRewards(player);
         if (hourlyRewards != null) {
-            // Gets the player's current play time
-            int currPlayTime = getTicksToHours(Bukkit.getPlayer(rewardUser.getUUID()).getStatistic(Statistic.PLAY_ONE_MINUTE));
-            // Finds the difference between the
+            int currPlayTime = rewardUser.getTotalPlayTime();
             int hoursDiff = currPlayTime - rewardUser.getPlayTime();
             // Works out how many rewards the user should receive
-            int totalRewards = (int) Math.floor(hoursDiff * hourlyRewards.getMultiplier());
+            int totalRewards = (int) Math.floor(hoursDiff * rewardUser.getHourlyMultiplier());
 
             for (int i = 0; i < totalRewards; i++) {
                 hourlyRewards.giveRewards(player);
@@ -90,9 +88,5 @@ public class RewardGUIEvents implements Listener {
     @EventHandler
     public void onInvCloseEvent(InventoryCloseEvent event) {
         guiPlayerSet.remove(event.getPlayer().getUniqueId());
-    }
-
-    private int getTicksToHours(long ticksPlayed) {
-        return (int) TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
     }
 }

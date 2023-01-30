@@ -22,6 +22,9 @@ public class ConfigManager {
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
     private Material borderMaterial;
+    private int guiRowCount;
+    private boolean showUpcomingReward;
+    private int upcomingRewardSlot;
     private int loopLength;
     private int reminderPeriod;
     private boolean daysReset;
@@ -36,9 +39,17 @@ public class ConfigManager {
         config = plugin.getConfig();
 
         borderMaterial = Material.valueOf(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").toUpperCase());
+
+        guiRowCount = config.getInt("gui.row-count", 1);
+        if (guiRowCount < 1) guiRowCount = 1;
+        else if (guiRowCount > 4) guiRowCount = 4;
+
+        showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
+        upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
         loopLength = config.getInt("loop-length", -1);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         daysReset = config.getBoolean("days-reset", false);
+
 
         reloadRewardsMap();
         notificationHandler.reloadNotifications(reminderPeriod);
@@ -62,6 +73,18 @@ public class ConfigManager {
 
     public String getGuiTitle() {
         return config.getString("gui.title", "&8&lDaily Rewards");
+    }
+
+    public int getGuiRowCount() {
+        return guiRowCount;
+    }
+
+    public boolean showUpcomingReward() {
+        return showUpcomingReward;
+    }
+
+    public int getUpcomingRewardSlot() {
+        return upcomingRewardSlot;
     }
 
     public String getGuiItemRedeemableName(int day) {
@@ -96,12 +119,27 @@ public class ConfigManager {
         return daysReset;
     }
 
+    public double getHourlyMultiplier(Player player) {
+        ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
+        if (hourlySection == null) return 1;
+
+        double heighestMultiplier = 1;
+        for (String perm : hourlySection.getKeys(false)) {
+            if (player.hasPermission("activityrewarder.bonus." + perm)) {
+                double multiplier = hourlySection.getConfigurationSection(perm).getDouble("multiplier", 1);
+                if (multiplier > heighestMultiplier) heighestMultiplier = multiplier;
+            }
+        }
+
+        return heighestMultiplier;
+    }
+
     public RewardsDay getHourlyRewards(Player player) {
         ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
         if (hourlySection == null) return null;
         RewardsDay hourlyRewards = null;
 
-        double heighestMultiplier = -1;
+        double heighestMultiplier = 1;
         for (String perm : hourlySection.getKeys(false)) {
             if (player.hasPermission("activityrewarder.bonus." + perm)) {
                 double multiplier = hourlySection.getConfigurationSection(perm).getDouble("multiplier", 1);
@@ -109,10 +147,11 @@ public class ConfigManager {
                 if (multiplier > heighestMultiplier) {
                     heighestMultiplier = multiplier;
                     hourlyRewards = loadSectionRewards(hourlySection.getConfigurationSection(perm));
-                    hourlyRewards.setMultiplier(multiplier);
                 }
             }
         }
+        RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
+        rewardUser.setHourlyMultiplier(heighestMultiplier);
 
         return hourlyRewards;
     }
@@ -127,18 +166,20 @@ public class ConfigManager {
     }
 
     public int findNextRewardOfSize(int day, String size) {
+        int nextRewardKey = -1;
+
         // Iterates through dayToRewards
         for (int rewardsKey : dayToRewards.keySet()) {
             // Checks if the current key is a day in the future
-            if (rewardsKey <= day) continue;
+            if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) continue;
 
             // Gets the size of the reward and compares to the request
             RewardsDay rewards = getRewards(rewardsKey);
-            if (rewards.getSize().equalsIgnoreCase(size)) return rewardsKey;
+            if (rewards.getSize().equalsIgnoreCase(size)) nextRewardKey = rewardsKey;
         }
 
         // Returns -1 if no future rewards match the request
-        return -1;
+        return nextRewardKey;
     }
 
     private void reloadRewardsMap() {

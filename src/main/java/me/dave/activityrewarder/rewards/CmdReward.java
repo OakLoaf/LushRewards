@@ -21,7 +21,6 @@ public class CmdReward implements Reward {
         boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
         for (String thisCommand : commandArr) {
             thisCommand = thisCommand.replaceAll("%user%", player.getName());
-//            thisCommand = thisCommand.replaceAll("%user%", player.getName()).replaceAll("%hourly-amount%", String.valueOf(hourlyAmount));
             if (thisCommand.startsWith("java:")) {
                 thisCommand = thisCommand.substring(5);
                 if (isFloodgateEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) continue;
