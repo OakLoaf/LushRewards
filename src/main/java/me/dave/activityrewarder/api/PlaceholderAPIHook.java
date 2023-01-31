@@ -43,11 +43,17 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 case "collected" -> {
                     return String.valueOf(rewardUser.hasCollectedToday());
                 }
-                case "playtime_since_collected" -> {
+                case "playtime" -> {
                     return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
                 }
                 case "multiplier" -> {
                     return String.valueOf(rewardUser.getHourlyMultiplier());
+                }
+                case "size" -> {
+                    return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).getSize());
+                }
+                case "total_rewards" -> {
+                    return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).getRewardCount());
                 }
             }
         }
