@@ -4,6 +4,7 @@ import me.dave.activityrewarder.datamanager.RewardUser;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -70,8 +71,11 @@ public class RewardGUI {
             String size = reward.getSize();
             ItemStack rewardItem = ActivityRewarder.configManager.getSizeItem(size);
             ItemMeta rewardItemMeta = rewardItem.getItemMeta();
-            List<String> itemLore = new ArrayList<>();
-            itemLore.add("§7§o- " + makeFriendly(size) + " reward");
+            List<String> itemLore = reward.getLore();
+            if (itemLore.isEmpty()) {
+                itemLore.add("&7&o- " + makeFriendly(size) + " reward");
+            }
+            itemLore = ChatColorHandler.translateAlternateColorCodes(itemLore);
             rewardItemMeta.setLore(itemLore);
             rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(dayIndex)));
             rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|unavailable"));

@@ -60,6 +60,10 @@ hourly-bonus:
 reward-days:
   default:
     size: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-12 Cactus"
+      - "&7&o-1 Cookie"
     rewards:
       items:
         cactus:
@@ -68,6 +72,10 @@ reward-days:
           amount: 1
   '1':
     size: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-1 Pink Tulip"
+      - "&7&o-1 Cookie"
     rewards:
       items:
         pink_tulip:
@@ -76,6 +84,10 @@ reward-days:
           amount: 1
   '2':
     size: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-1 Oxeye Daisy"
+      - "&7&o-1 Bread"
     rewards:
       items:
         oxeye_daisy:
@@ -84,6 +96,10 @@ reward-days:
           amount: 1
   '5':
     size: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-1 White Tulip"
+      - "&7&o-1 Pearlescent Froglight"
     rewards:
       items:
         white_tulip:
@@ -91,8 +107,12 @@ reward-days:
         pearlescent_froglight:
           amount: 1
   '30':
+    size: LARGE
+    lore:
+      - "&6Rewards:"
+      - "&6&o-3 Diamond"
+      - "&6&o-1 Golden Apple"
     rewards:
-      size: LARGE
       items:
         diamond:
           amount: 3

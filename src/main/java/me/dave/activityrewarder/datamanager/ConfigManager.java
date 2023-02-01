@@ -13,7 +13,6 @@ import me.dave.activityrewarder.rewards.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
@@ -199,7 +198,11 @@ public class ConfigManager {
 
     private RewardsDay loadSectionRewards(ConfigurationSection rewardsSection) {
         ArrayList<Reward> rewards = new ArrayList<>();
-        String size = rewardsSection.getString("rewards.size", "SMALL").toUpperCase();
+        String size = rewardsSection.getString("size", "SMALL").toUpperCase();
+        List<String> lore = new ArrayList<>();
+        if (rewardsSection.getKeys(false).contains("lore")) {
+            lore = rewardsSection.getStringList("lore");
+        }
 
         ConfigurationSection itemRewards = rewardsSection.getConfigurationSection("rewards.items");
         if (itemRewards != null) {
@@ -216,10 +219,6 @@ public class ConfigManager {
             rewards.add(new CmdReward(command));
         }
 
-        return new RewardsDay(size, rewards);
-    }
-
-    private long getTicksToHours(long ticksPlayed) {
-        return TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
+        return new RewardsDay(size, lore, rewards);
     }
 }
