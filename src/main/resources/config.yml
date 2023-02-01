@@ -1,5 +1,6 @@
 # Placeholders:
 # %day% - The day number a user is on
+# %hours% - The number of hours played since last collection
 
 messages:
   reload: "&aConfig reloaded"
@@ -119,5 +120,5 @@ reward-days:
         golden_apple:
           amount: 1
       commands:
-        - give %user% minecraft:diamond_block
-        - give %user% minecraft:iron_block
+        - "give %user% minecraft:diamond_block"
+        - "give %user% minecraft:iron_block"
