@@ -1,7 +1,5 @@
 package me.dave.activityrewarder;
 
-import com.jeff_media.updatechecker.UpdateCheckSource;
-import com.jeff_media.updatechecker.UpdateChecker;
 import me.dave.activityrewarder.api.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.RewardGUIEvents;
 import org.bukkit.event.Listener;
@@ -42,13 +40,6 @@ public final class ActivityRewarder extends JavaPlugin {
 
         if (pluginManager.getPlugin("PlaceholderAPI") != null) new PlaceholderAPIHook().register();
         else getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
-
-        new UpdateChecker(this, UpdateCheckSource.SPIGET, "107545")
-            .setDownloadLink("https://www.spigotmc.org/resources/activity-rewarder.107545/")
-            .setChangelogLink("https://www.spigotmc.org/resources/activity-rewarder.107545/updates")
-            .setNotifyByPermissionOnJoin("activityrewarder.updatechecker")
-            .checkEveryXHours(0.5)
-            .checkNow();
     }
 
     @Override
