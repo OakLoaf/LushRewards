@@ -7,3 +7,7 @@ commands:
   rewards:
     description: Opens Rewards GUI
     usage: /rewards
+permissions:
+  activityrewarder.use:
+    description: Allows you to use the ActivityRewarder plugin
+    default: true
