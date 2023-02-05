@@ -1,7 +1,7 @@
 name: ActivityRewarder
 version: ${project.version}
 main: me.dave.activityrewarder.ActivityRewarder
-api-version: 1.19
+api-version: 1.16
 softdepend: [floodgate]
 commands:
   rewards:
