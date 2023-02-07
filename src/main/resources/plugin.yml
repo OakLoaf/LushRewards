@@ -2,7 +2,7 @@ name: ActivityRewarder
 version: ${project.version}
 main: me.dave.activityrewarder.ActivityRewarder
 api-version: 1.16
-softdepend: [floodgate]
+softdepend: [floodgate, PlaceholderAPI]
 commands:
   rewards:
     description: Opens Rewards GUI
