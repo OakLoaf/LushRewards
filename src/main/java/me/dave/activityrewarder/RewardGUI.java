@@ -4,7 +4,6 @@ import me.dave.activityrewarder.datamanager.RewardUser;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
