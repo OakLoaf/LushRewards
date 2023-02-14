@@ -39,10 +39,10 @@ public final class ActivityRewarder extends JavaPlugin {
 
         PluginManager pluginManager = getServer().getPluginManager();
         if (pluginManager.getPlugin("floodgate") != null) hasFloodgate = true;
-        else getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
+        else plugin.getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
 
         if (pluginManager.getPlugin("PlaceholderAPI") != null) new PlaceholderAPIHook().register();
-        else getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
+        else plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
 
 //        new UpdateChecker(this, UpdateCheckSource.SPIGET, "107545")
 //            .setDownloadLink("https://www.spigotmc.org/resources/activity-rewarder.107545/")

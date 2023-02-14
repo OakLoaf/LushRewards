@@ -20,6 +20,8 @@ public class ConfigManager {
     private FileConfiguration config;
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
+    private final HashMap<String, Material> sizeMaterials = new HashMap<>();
+    private Material collectedMaterial;
     private Material borderMaterial;
     private int guiRowCount;
     private boolean showUpcomingReward;
@@ -37,7 +39,9 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
-        borderMaterial = Material.valueOf(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").toUpperCase());
+
+        collectedMaterial = getMaterial(config.getString("collected-item", "REDSTONE_BLOCK").toUpperCase(), "REDSTONE_BLOCK");
+        borderMaterial = getMaterial(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE"), "GRAY_STAINED_GLASS_PANE");
 
         guiRowCount = config.getInt("gui.row-count", 1);
         if (guiRowCount < 1) guiRowCount = 1;
@@ -51,6 +55,7 @@ public class ConfigManager {
 
 
         reloadRewardsMap();
+        reloadSizeMap();
         notificationHandler.reloadNotifications(reminderPeriod);
     }
 
@@ -95,11 +100,11 @@ public class ConfigManager {
     }
 
     public ItemStack getSizeItem(String size) {
-        return new ItemStack(Material.valueOf(config.getString("sizes." + size.toLowerCase(), "STONE").toUpperCase()));
+        return new ItemStack(sizeMaterials.get(size.toLowerCase()));
     }
 
     public ItemStack getCollectedItem() {
-        return new ItemStack(Material.valueOf(config.getString("collected-item", "REDSTONE_BLOCK").toUpperCase()));
+        return new ItemStack(collectedMaterial);
     }
 
     public Material getBorderMaterial() {
@@ -196,6 +201,17 @@ public class ConfigManager {
         }
     }
 
+    private void reloadSizeMap() {
+        // Clears size map
+        sizeMaterials.clear();
+
+        ConfigurationSection sizesSection = config.getConfigurationSection("sizes");
+        for (String sizeKey : sizesSection.getKeys(false)) {
+            Material material = getMaterial(sizesSection.getString(sizeKey, "STONE").toUpperCase(), "STONE");
+            sizeMaterials.put(sizeKey, material);
+        }
+    }
+
     private RewardsDay loadSectionRewards(ConfigurationSection rewardsSection) {
         ArrayList<Reward> rewards = new ArrayList<>();
         String size = rewardsSection.getString("size", "SMALL").toUpperCase();
@@ -207,7 +223,7 @@ public class ConfigManager {
         ConfigurationSection itemRewards = rewardsSection.getConfigurationSection("rewards.items");
         if (itemRewards != null) {
             for (String materialName : itemRewards.getKeys(false)) {
-                ItemStack item = new ItemStack(Material.valueOf(materialName.toUpperCase()));
+                ItemStack item = new ItemStack(getMaterial(materialName.toUpperCase(), "GOLD_NUGGET"));
                 int amount = itemRewards.getInt(materialName + ".amount", 1);
                 item.setAmount(amount);
 
@@ -220,5 +236,21 @@ public class ConfigManager {
         }
 
         return new RewardsDay(size, lore, rewards);
+    }
+
+    private Material getMaterial(String materialName) {
+        return getMaterial(materialName, null);
+    }
+
+    private Material getMaterial(String materialName, String def) {
+        Material material;
+        try {
+            material = Material.valueOf(materialName);
+        } catch (IllegalArgumentException err) {
+            plugin.getLogger().warning("Ignoring " + materialName + ", that is not a valid material.");
+            if (def != null) material = Material.valueOf(def);
+            else material = Material.STONE;
+        }
+        return material;
     }
 }
