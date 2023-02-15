@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.api;
+package me.dave.activityrewarder.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.dave.activityrewarder.ActivityRewarder;
