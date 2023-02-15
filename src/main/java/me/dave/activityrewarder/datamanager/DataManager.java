@@ -15,8 +15,11 @@ public class DataManager {
     private final IOHandler<RewardUser> ioHandler = new IOHandler<>(new YmlStorage());
     private final HashMap<UUID, RewardUser> uuidToRewardUser = new HashMap<>();
 
-    public CompletableFuture<Void> loadRewardUser(UUID uuid) {
-        return ioHandler.loadPlayer(uuid).thenAccept((rewardUser) -> uuidToRewardUser.put(uuid, rewardUser));
+    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
+        return ioHandler.loadPlayer(uuid).thenApply((rewardUser) -> {
+            uuidToRewardUser.put(uuid, rewardUser);
+            return rewardUser;
+        });
     }
 
     public void saveRewardUser(RewardUser rewardUser) {
