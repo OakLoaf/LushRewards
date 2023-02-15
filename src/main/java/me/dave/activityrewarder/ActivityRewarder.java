@@ -23,7 +23,6 @@ public final class ActivityRewarder extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        saveDefaultConfig();
         configManager = new ConfigManager();
         dataManager = new DataManager();
 
