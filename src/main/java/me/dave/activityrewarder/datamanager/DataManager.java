@@ -29,7 +29,10 @@ public class DataManager {
     public RewardUser getRewardUser(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) return null;
-        return uuidToRewardUser.getOrDefault(uuid, new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE))));
+
+        RewardUser rewardUser = uuidToRewardUser.get(uuid);
+        if (rewardUser == null) rewardUser = new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
+        return rewardUser;
     }
 
     public IOHandler<RewardUser> getIoHandler() {
