@@ -2,10 +2,8 @@ package me.dave.activityrewarder.events;
 
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.Statistic;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +21,6 @@ import me.dave.activityrewarder.datamanager.RewardUser;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class RewardGUIEvents implements Listener {
@@ -62,8 +59,8 @@ public class RewardGUIEvents implements Listener {
         event.getClickedInventory().setItem(event.getSlot(), collectedItem);
 
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
-        long actualDayNum = LocalDate.now().toEpochDay() - rewardUser.getStartDate().toEpochDay();
-        ActivityRewarder.configManager.getRewards((int) actualDayNum % ActivityRewarder.configManager.getLoopLength() + 1).giveRewards(player);
+        int actualDayNum = rewardUser.getActualDayNum();
+        ActivityRewarder.configManager.getRewards(actualDayNum % ActivityRewarder.configManager.getLoopLength()).giveRewards(player);
         ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getRewardMessage());
 
         RewardsDay hourlyRewards = ActivityRewarder.configManager.getHourlyRewards(player);

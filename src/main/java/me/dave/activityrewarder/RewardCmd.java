@@ -22,26 +22,29 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("Console cannot run this command!");
-            return true;
-        }
+
         if (args.length == 1 && args[0].equals("reload")) {
-            if (!player.hasPermission("activityrewarder.reload")) {
-                player.sendMessage("§cInsufficient permissions");
+            if (!sender.hasPermission("activityrewarder.reload")) {
+                ChatColorHandler.sendMessage(sender, "&cInsufficient permissions");
                 return true;
             }
             ActivityRewarder.configManager.reloadConfig();
 
-            ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getReloadMessage());
-        } else {
-            if (!player.hasPermission("activityrewarder.use")) {
-                player.sendMessage("§cInsufficient permissions");
-                return true;
-            }
-            rewardGUI.openGUI(player);
-            guiPlayerSet.add(player.getUniqueId());
+            ChatColorHandler.sendMessage(sender, ActivityRewarder.configManager.getReloadMessage());
+            return true;
         }
+
+        if (!(sender instanceof Player player)) {
+            ChatColorHandler.sendMessage(sender, "Console cannot run this command!");
+            return true;
+        }
+
+        if (!player.hasPermission("activityrewarder.use")) {
+            player.sendMessage("§cInsufficient permissions");
+            return true;
+        }
+        rewardGUI.openGUI(player);
+        guiPlayerSet.add(player.getUniqueId());
         return true;
     }
 

@@ -26,7 +26,7 @@ public final class ActivityRewarder extends JavaPlugin {
         configManager = new ConfigManager();
         dataManager = new DataManager();
 
-        Listener[] listeners = new Listener[]{
+        Listener[] listeners = new Listener[] {
             new RewardUserEvents(),
             new RewardGUIEvents(guiPlayerSet)
         };
