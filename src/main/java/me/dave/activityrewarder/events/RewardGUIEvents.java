@@ -39,15 +39,21 @@ public class RewardGUIEvents implements Listener {
         Inventory clickedInv = event.getClickedInventory();
         if (clickedInv == null || clickedInv.getType() != InventoryType.CHEST) return;
 
+        // Gets clicked item and checks if it exists
         ItemStack currItem = event.getCurrentItem();
         if (currItem == null) return;
+        // Gets clicked item's meta and checks if it exists
         ItemMeta currItemMeta = currItem.getItemMeta();
         if (currItemMeta == null) return;
+        // Gets persistent data of clicked item and checks if it exists
         String persistentData = currItemMeta.getPersistentDataContainer().get(activityRewarderKey, PersistentDataType.STRING);
         if (persistentData == null) return;
+        // Formats data into an array
         String[] persistentDataArr = persistentData.split(Pattern.quote("|"));
 
+        // Gets current day from data array
         int currDay = Integer.parseInt(persistentDataArr[0]);
+        // Checks if reward can be collected
         if (!persistentDataArr[2].equals("collectable")) return;
 
         ItemStack collectedItem = ActivityRewarder.configManager.getCollectedItem();
@@ -59,8 +65,7 @@ public class RewardGUIEvents implements Listener {
         event.getClickedInventory().setItem(event.getSlot(), collectedItem);
 
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
-        int actualDayNum = rewardUser.getActualDayNum();
-        ActivityRewarder.configManager.getRewards(actualDayNum % ActivityRewarder.configManager.getLoopLength()).giveRewards(player);
+        ActivityRewarder.configManager.getRewards(currDay).giveRewards(player);
         ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getRewardMessage());
 
         RewardsDay hourlyRewards = ActivityRewarder.configManager.getHourlyRewards(player);
