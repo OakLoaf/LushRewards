@@ -70,17 +70,17 @@ public final class ActivityRewarder extends JavaPlugin {
         dataManager.getIoHandler().disableIOHandler();
     }
 
+    private void registerEvents(Listener[] listeners) {
+        for (Listener listener : listeners) {
+            getServer().getPluginManager().registerEvents(listener, this);
+        }
+    }
+
     public static ActivityRewarder getInstance() {
         return plugin;
     }
 
     public static boolean isFloodgateEnabled() {
         return hasFloodgate;
-    }
-
-    public void registerEvents(Listener[] listeners) {
-        for (Listener listener : listeners) {
-            getServer().getPluginManager().registerEvents(listener, this);
-        }
     }
 }

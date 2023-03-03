@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.datamanager;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -14,6 +15,12 @@ import java.util.concurrent.TimeUnit;
 public class DataManager {
     private final IOHandler<RewardUser> ioHandler = new IOHandler<>(new YmlStorage());
     private final HashMap<UUID, RewardUser> uuidToRewardUser = new HashMap<>();
+
+    public DataManager() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            loadRewardUser(player.getUniqueId()).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName()));
+        }
+    }
 
     public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
         return ioHandler.loadPlayer(uuid).thenApply((rewardUser) -> {
