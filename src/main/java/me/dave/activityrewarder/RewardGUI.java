@@ -55,13 +55,10 @@ public class RewardGUI {
         boolean collectedToday = rewardUser.hasCollectedToday();
         if (collectedToday) currDayNum -= 1;
 
-        int dayIndex = currDayNum - 1;
+        int dayIndex = currDayNum;
         for (int i = 9; i < (slotCount - 10); i++) {
             int modulus = i % 9;
             if (modulus == 0 || modulus == 8) continue;
-
-            // Increase the day index
-            dayIndex++;
 
             // Get the day's reward for the current slot
             RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
@@ -94,6 +91,9 @@ public class RewardGUI {
 
             rewardItem.setItemMeta(rewardItemMeta);
             inventory.setItem(i, rewardItem);
+
+            // Increase the day index
+            dayIndex++;
         }
 
         // Finds next large reward (Excluding rewards shown in the inventory)

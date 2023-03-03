@@ -162,7 +162,7 @@ public class ConfigManager {
 
     public RewardsDay getRewards(int day) {
         // Works out what day number the user is in the loop
-        int loopedDayNum = day % ActivityRewarder.configManager.getLoopLength();
+        int loopedDayNum = (day % ActivityRewarder.configManager.getLoopLength()) + 1;
 
         if (dayToRewards.containsKey(day)) return dayToRewards.get(day);
         else if (dayToRewards.containsKey(loopedDayNum)) return dayToRewards.get(loopedDayNum);
