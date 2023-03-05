@@ -38,9 +38,8 @@ public class RewardGUI {
         int actualDayNum = rewardUser.getActualDayNum();
 
         // Creates the border item
-        Material borderMaterial = ActivityRewarder.configManager.getBorderMaterial();
-        ItemStack borderItem = new ItemStack(borderMaterial);
-        if (borderMaterial != Material.AIR) {
+        ItemStack borderItem = ActivityRewarder.configManager.getBorderItem();
+        if (borderItem.getType() != Material.AIR) {
             ItemMeta borderMeta = borderItem.getItemMeta();
             borderMeta.setDisplayName("§7");
             borderItem.setItemMeta(borderMeta);

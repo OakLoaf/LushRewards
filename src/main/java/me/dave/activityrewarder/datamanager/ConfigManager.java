@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import me.dave.activityrewarder.rewards.CmdReward;
 import me.dave.activityrewarder.rewards.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -20,9 +21,9 @@ public class ConfigManager {
     private FileConfiguration config;
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
-    private final HashMap<String, Material> sizeMaterials = new HashMap<>();
-    private Material collectedMaterial;
-    private Material borderMaterial;
+    private final HashMap<String, ItemStack> sizeItems = new HashMap<>();
+    private ItemStack collectedItem;
+    private ItemStack borderItem;
     private int guiRowCount;
     private boolean showUpcomingReward;
     private int upcomingRewardSlot;
@@ -40,8 +41,8 @@ public class ConfigManager {
         config = plugin.getConfig();
 
 
-        collectedMaterial = getMaterial(config.getString("collected-item", "REDSTONE_BLOCK").toUpperCase(), "REDSTONE_BLOCK");
-        borderMaterial = getMaterial(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE"), "GRAY_STAINED_GLASS_PANE");
+        collectedItem = getItem(config.getString("collected-item", "REDSTONE_BLOCK").split(";"), "REDSTONE_BLOCK");
+        borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), "GRAY_STAINED_GLASS_PANE");
 
         guiRowCount = config.getInt("gui.row-count", 1);
         if (guiRowCount < 1) guiRowCount = 1;
@@ -100,15 +101,15 @@ public class ConfigManager {
     }
 
     public ItemStack getSizeItem(String size) {
-        return new ItemStack(sizeMaterials.get(size.toLowerCase()));
+        return sizeItems.get(size.toLowerCase()).clone();
     }
 
     public ItemStack getCollectedItem() {
-        return new ItemStack(collectedMaterial);
+        return collectedItem.clone();
     }
 
-    public Material getBorderMaterial() {
-        return borderMaterial;
+    public ItemStack getBorderItem() {
+        return borderItem.clone();
     }
 
     public int getLoopLength() {
@@ -162,7 +163,10 @@ public class ConfigManager {
 
     public RewardsDay getRewards(int day) {
         // Works out what day number the user is in the loop
-        int loopedDayNum = (day % ActivityRewarder.configManager.getLoopLength()) + 1;
+        int loopedDayNum = day;
+        if (day > ActivityRewarder.configManager.getLoopLength()) {
+            loopedDayNum = (day % ActivityRewarder.configManager.getLoopLength()) + 1;
+        }
 
         if (dayToRewards.containsKey(day)) return dayToRewards.get(day);
         else if (dayToRewards.containsKey(loopedDayNum)) return dayToRewards.get(loopedDayNum);
@@ -203,12 +207,13 @@ public class ConfigManager {
 
     private void reloadSizeMap() {
         // Clears size map
-        sizeMaterials.clear();
+        sizeItems.clear();
 
         ConfigurationSection sizesSection = config.getConfigurationSection("sizes");
         for (String sizeKey : sizesSection.getKeys(false)) {
-            Material material = getMaterial(sizesSection.getString(sizeKey, "STONE").toUpperCase(), "STONE");
-            sizeMaterials.put(sizeKey, material);
+            String[] materialDataArr = sizesSection.getString(sizeKey, "STONE").split(";");
+
+            sizeItems.put(sizeKey, getItem(materialDataArr));
         }
     }
 
@@ -252,5 +257,26 @@ public class ConfigManager {
             else material = Material.STONE;
         }
         return material;
+    }
+
+    private ItemStack getItem(String[] materialData) {
+        return getItem(materialData, null);
+    }
+
+    private ItemStack getItem(String[] materialData, String def) {
+        Material material = Material.STONE;
+        if (def != null) material = Material.valueOf(def);
+
+        if (materialData.length >= 1) material = getMaterial(materialData[0].toUpperCase(), "STONE");
+
+        ItemStack item = new ItemStack(material);
+
+        if (materialData.length >= 2) {
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.setCustomModelData(Integer.parseInt(materialData[1]));
+            item.setItemMeta(itemMeta);
+        }
+
+        return item;
     }
 }
