@@ -25,8 +25,7 @@ public class ConfigManager {
     private ItemStack collectedItem;
     private ItemStack borderItem;
     private int guiRowCount;
-    private boolean showUpcomingReward;
-    private int upcomingRewardSlot;
+    private UpcomingReward upcomingReward;
     private int loopLength;
     private int reminderPeriod;
     private boolean daysReset;
@@ -48,8 +47,11 @@ public class ConfigManager {
         if (guiRowCount < 1) guiRowCount = 1;
         else if (guiRowCount > 4) guiRowCount = 4;
 
-        showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
-        upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
+        boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
+        int upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
+        List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
+        upcomingReward = new UpcomingReward(showUpcomingReward, upcomingRewardSlot, upcomingRewardLore);
+
         loopLength = config.getInt("loop-length", -1);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         daysReset = config.getBoolean("days-reset", false);
@@ -85,11 +87,15 @@ public class ConfigManager {
     }
 
     public boolean showUpcomingReward() {
-        return showUpcomingReward;
+        return upcomingReward.enabled;
     }
 
     public int getUpcomingRewardSlot() {
-        return upcomingRewardSlot;
+        return upcomingReward.slot;
+    }
+
+    public List<String> getUpcomingRewardLore() {
+        return upcomingReward.lore;
     }
 
     public String getGuiItemRedeemableName(int day) {
@@ -279,4 +285,6 @@ public class ConfigManager {
 
         return item;
     }
+
+    public record UpcomingReward(boolean enabled, int slot, List<String> lore) {}
 }

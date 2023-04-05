@@ -1,7 +1,3 @@
-# Placeholders:
-# %day% - The day number a user is on
-# %hours% - The number of hours played since last collection
-
 messages:
   reload: "&aConfig reloaded"
   reminder: "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards"
@@ -17,8 +13,10 @@ gui:
     enabled: true
     # The slot where the reward will be displayed in the gui (Negative numbers go backwards from the end of the gui)
     slot: -5
-    # The
-    lore: ""
+    # The lore of the upcoming reward (set first line to blank for item's original lore)
+    lore:
+      - "&7&o- Next large reward"
+  # redeemable-name and collected-name can contain %day% which will display the day number related to the tiem
   redeemable-name: "&6Day %day%"
   collected-name: "&6Day %day% - Collected"
   border-item: "GRAY_STAINED_GLASS_PANE"

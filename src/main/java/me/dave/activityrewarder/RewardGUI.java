@@ -104,10 +104,19 @@ public class RewardGUI {
         // Adds the upcoming reward to the GUI if it exists
         if (nextRewardDay != -1) {
             ItemStack upcomingItem = ActivityRewarder.configManager.getSizeItem("large");
-            List<String> itemLore = new ArrayList<>();
+            List<String> itemLore = ActivityRewarder.configManager.getUpcomingRewardLore();
             ItemMeta upcomingMeta = upcomingItem.getItemMeta();
-            itemLore.add("§7§o- Next large reward");
-            upcomingMeta.setLore(itemLore);
+
+            if (itemLore.isEmpty()) {
+                itemLore.add("§7§o- Next large reward");
+            }
+            else if (itemLore.size() == 1 && itemLore.get(0).equals("")) {
+                // Get the day's reward for the current slot
+                RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
+                itemLore = reward.getLore();
+            }
+
+            upcomingMeta.setLore(ChatColorHandler.translateAlternateColorCodes(itemLore));
             upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay - rewardUser.getDayNumOffset())));
             upcomingMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((nextRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
             upcomingItem.setItemMeta(upcomingMeta);
