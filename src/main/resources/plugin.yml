@@ -11,3 +11,9 @@ permissions:
   activityrewarder.use:
     description: Allows you to use the ActivityRewarder plugin
     default: true
+  activityrewarder.bonus.default:
+    description: Receive an hourly bonus
+    default: true
+  activityrewarder.reload:
+    description: Allows you to reload the ActivityRewarder plugin
+    default: op

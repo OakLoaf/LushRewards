@@ -194,14 +194,14 @@ public class ConfigManager {
         // Clears rewards map
         dayToRewards.clear();
 
-        ConfigurationSection rewardsSection = config.getConfigurationSection("reward-days");
-        if (rewardsSection == null) rewardsSection = config.getConfigurationSection("rewards");
-        for (String rewardsKey : rewardsSection.getKeys(false)) {
-            if (rewardsKey.equalsIgnoreCase("default")) {
-                defaultReward = loadSectionRewards(rewardsSection.getConfigurationSection(rewardsKey));
+        ConfigurationSection rewardDaysSection = config.getConfigurationSection("reward-days");
+        if (rewardDaysSection == null) rewardDaysSection = config.getConfigurationSection("rewards");
+        for (String rewardDayKey : rewardDaysSection.getKeys(false)) {
+            if (rewardDayKey.equalsIgnoreCase("default")) {
+                defaultReward = loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey));
                 continue;
             }
-            dayToRewards.put(Integer.parseInt(rewardsKey), loadSectionRewards(rewardsSection.getConfigurationSection(rewardsKey)));
+            dayToRewards.put(Integer.parseInt(rewardDayKey), loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey)));
         }
     }
 
@@ -217,15 +217,15 @@ public class ConfigManager {
         }
     }
 
-    private RewardsDay loadSectionRewards(ConfigurationSection rewardsSection) {
+    private RewardsDay loadSectionRewards(ConfigurationSection rewardDaySection) {
         ArrayList<Reward> rewards = new ArrayList<>();
-        String size = rewardsSection.getString("size", "SMALL").toUpperCase();
+        String size = rewardDaySection.getString("size", "SMALL").toUpperCase();
         List<String> lore = new ArrayList<>();
-        if (rewardsSection.getKeys(false).contains("lore")) {
-            lore = rewardsSection.getStringList("lore");
+        if (rewardDaySection.getKeys(false).contains("lore")) {
+            lore = rewardDaySection.getStringList("lore");
         }
 
-        ConfigurationSection itemRewards = rewardsSection.getConfigurationSection("rewards.items");
+        ConfigurationSection itemRewards = rewardDaySection.getConfigurationSection("rewards.items");
         if (itemRewards != null) {
             for (String materialName : itemRewards.getKeys(false)) {
                 ItemStack item = new ItemStack(getMaterial(materialName.toUpperCase(), "GOLD_NUGGET"));
@@ -236,7 +236,7 @@ public class ConfigManager {
             }
         }
 
-        for (String command : rewardsSection.getStringList("rewards.commands")) {
+        for (String command : rewardDaySection.getStringList("rewards.commands")) {
             rewards.add(new CmdReward(command));
         }
 
@@ -253,8 +253,8 @@ public class ConfigManager {
             material = Material.valueOf(materialName);
         } catch (IllegalArgumentException err) {
             plugin.getLogger().warning("Ignoring " + materialName + ", that is not a valid material.");
-            if (def != null) material = Material.valueOf(def);
-            else material = Material.STONE;
+                if (def != null) material = Material.valueOf(def);
+                else material = Material.STONE;
         }
         return material;
     }
