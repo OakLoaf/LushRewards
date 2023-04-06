@@ -126,3 +126,6 @@ reward-days:
       commands:
         - "give %user% minecraft:diamond_block"
         - "give %user% minecraft:iron_block"
+
+# Debug Modes: none, hourly, daily, all
+debug-mode: none

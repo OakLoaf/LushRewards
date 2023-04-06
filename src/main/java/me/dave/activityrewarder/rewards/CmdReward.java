@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
 public class CmdReward implements Reward {
+    private static final ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     private final String command;
 
 
@@ -16,7 +17,6 @@ public class CmdReward implements Reward {
 
     @Override
     public void giveReward(Player player) {
-        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         String[] commandArr = command.split("\\|");
         boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
         for (String thisCommand : commandArr) {

@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.events;
 
+import me.dave.activityrewarder.datamanager.DebugMode;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.NamespacedKey;
@@ -68,18 +69,25 @@ public class RewardGUIEvents implements Listener {
         ActivityRewarder.configManager.getRewards(currDay).giveRewards(player);
         ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getRewardMessage());
 
+        ActivityRewarder.configManager.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), DebugMode.HOURLY);
         RewardsDay hourlyRewards = ActivityRewarder.configManager.getHourlyRewards(player);
         if (hourlyRewards != null) {
             int currPlayTime = rewardUser.getTotalPlayTime();
+            ActivityRewarder.configManager.sendDebugMessage("Collected player's total playtime (" + currPlayTime + ")", DebugMode.HOURLY);
             int hoursDiff = currPlayTime - rewardUser.getPlayTime();
+            ActivityRewarder.configManager.sendDebugMessage("Calculated difference (" + hoursDiff + ")", DebugMode.HOURLY);
             // Works out how many rewards the user should receive
             int totalRewards = (int) Math.floor(hoursDiff * rewardUser.getHourlyMultiplier());
+            ActivityRewarder.configManager.sendDebugMessage("Loaded player's reward count (" + totalRewards + ")", DebugMode.HOURLY);
 
+            ActivityRewarder.configManager.sendDebugMessage("Attempting to give rewards to player", DebugMode.HOURLY);
             for (int i = 0; i < totalRewards; i++) {
                 hourlyRewards.giveRewards(player);
+                ActivityRewarder.configManager.sendDebugMessage("Successfully gave player a reward", DebugMode.HOURLY);
             }
             if (hoursDiff > 0) ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getBonusMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
             rewardUser.setPlayTime(currPlayTime);
+            ActivityRewarder.configManager.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", DebugMode.HOURLY);
         }
 
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);

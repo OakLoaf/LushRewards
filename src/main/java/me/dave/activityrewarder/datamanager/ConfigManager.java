@@ -14,11 +14,14 @@ import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
+    private final Logger logger = plugin.getLogger();
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private FileConfiguration config;
+    private DebugMode debugMode;
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
     private final HashMap<String, ItemStack> sizeItems = new HashMap<>();
@@ -39,6 +42,7 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
+        debugMode = DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase());
 
         collectedItem = getItem(config.getString("collected-item", "REDSTONE_BLOCK").split(";"), "REDSTONE_BLOCK");
         borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), "GRAY_STAINED_GLASS_PANE");
@@ -60,6 +64,10 @@ public class ConfigManager {
         reloadRewardsMap();
         reloadSizeMap();
         notificationHandler.reloadNotifications(reminderPeriod);
+    }
+
+    public void sendDebugMessage(String string, DebugMode mode) {
+        if (debugMode == mode || debugMode == DebugMode.ALL) logger.info("DEBUG >> " + string);
     }
 
     public String getReloadMessage() {
@@ -146,21 +154,27 @@ public class ConfigManager {
     }
 
     public RewardsDay getHourlyRewards(Player player) {
+        sendDebugMessage("Getting hourly bonus section from config", DebugMode.HOURLY);
         ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
         if (hourlySection == null) return null;
         RewardsDay hourlyRewards = null;
 
-        double heighestMultiplier = 1;
+        sendDebugMessage("Checking player's highest multiplier", DebugMode.HOURLY);
+        double heighestMultiplier = 0;
         for (String perm : hourlySection.getKeys(false)) {
+            sendDebugMessage("Checking if player has activityrewarder.bonus." + perm, DebugMode.HOURLY);
             if (player.hasPermission("activityrewarder.bonus." + perm)) {
+                sendDebugMessage("Player has activityrewarder.bonus." + perm, DebugMode.HOURLY);
                 double multiplier = hourlySection.getConfigurationSection(perm).getDouble("multiplier", 1);
 
                 if (multiplier > heighestMultiplier) {
+                    sendDebugMessage("Found higher multiplier, updated highest multiplier", DebugMode.HOURLY);
                     heighestMultiplier = multiplier;
-                    hourlyRewards = loadSectionRewards(hourlySection.getConfigurationSection(perm));
+                    hourlyRewards = loadSectionRewards(hourlySection.getConfigurationSection(perm), DebugMode.HOURLY);
                 }
             }
         }
+        sendDebugMessage("Found highest multiplier (" + heighestMultiplier + ")", DebugMode.HOURLY);
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
         rewardUser.setHourlyMultiplier(heighestMultiplier);
 
@@ -170,8 +184,8 @@ public class ConfigManager {
     public RewardsDay getRewards(int day) {
         // Works out what day number the user is in the loop
         int loopedDayNum = day;
-        if (day > ActivityRewarder.configManager.getLoopLength()) {
-            loopedDayNum = (day % ActivityRewarder.configManager.getLoopLength()) + 1;
+        if (day > getLoopLength()) {
+            loopedDayNum = (day % getLoopLength()) + 1;
         }
 
         if (dayToRewards.containsKey(day)) return dayToRewards.get(day);
@@ -204,10 +218,10 @@ public class ConfigManager {
         if (rewardDaysSection == null) rewardDaysSection = config.getConfigurationSection("rewards");
         for (String rewardDayKey : rewardDaysSection.getKeys(false)) {
             if (rewardDayKey.equalsIgnoreCase("default")) {
-                defaultReward = loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey));
+                defaultReward = loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey), DebugMode.DAILY);
                 continue;
             }
-            dayToRewards.put(Integer.parseInt(rewardDayKey), loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey)));
+            dayToRewards.put(Integer.parseInt(rewardDayKey), loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey), DebugMode.DAILY));
         }
     }
 
@@ -218,20 +232,24 @@ public class ConfigManager {
         ConfigurationSection sizesSection = config.getConfigurationSection("sizes");
         for (String sizeKey : sizesSection.getKeys(false)) {
             String[] materialDataArr = sizesSection.getString(sizeKey, "STONE").split(";");
-
             sizeItems.put(sizeKey, getItem(materialDataArr));
         }
     }
 
-    private RewardsDay loadSectionRewards(ConfigurationSection rewardDaySection) {
+    private RewardsDay loadSectionRewards(ConfigurationSection rewardDaySection, DebugMode debugMode) {
+        sendDebugMessage("Attempting to load sections reward (" + rewardDaySection.getCurrentPath() + ")", debugMode);
         ArrayList<Reward> rewards = new ArrayList<>();
         String size = rewardDaySection.getString("size", "SMALL").toUpperCase();
+        sendDebugMessage("Reward size set (" + size + ")", debugMode);
         List<String> lore = new ArrayList<>();
         if (rewardDaySection.getKeys(false).contains("lore")) {
             lore = rewardDaySection.getStringList("lore");
         }
+        sendDebugMessage("Lore set", debugMode);
 
+        sendDebugMessage("Attempting to load item rewards", debugMode);
         ConfigurationSection itemRewards = rewardDaySection.getConfigurationSection("rewards.items");
+        int itemRewardCount = 0;
         if (itemRewards != null) {
             for (String materialName : itemRewards.getKeys(false)) {
                 ItemStack item = new ItemStack(getMaterial(materialName.toUpperCase(), "GOLD_NUGGET"));
@@ -239,13 +257,20 @@ public class ConfigManager {
                 item.setAmount(amount);
 
                 rewards.add(new ItemReward(item));
+                itemRewardCount++;
             }
         }
+        sendDebugMessage("Successfully loaded " + itemRewardCount + " item rewards", debugMode);
 
+        sendDebugMessage("Attempting to load command rewards", debugMode);
+        int cmdRewardCount = 0;
         for (String command : rewardDaySection.getStringList("rewards.commands")) {
             rewards.add(new CmdReward(command));
+            cmdRewardCount++;
         }
+        sendDebugMessage("Successfully loaded " + cmdRewardCount + " command rewards", debugMode);
 
+        sendDebugMessage("Successfully loaded " + (itemRewardCount + cmdRewardCount) + " total rewards", debugMode);
         return new RewardsDay(size, lore, rewards);
     }
 
