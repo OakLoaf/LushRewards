@@ -64,9 +64,14 @@ public class RewardGUIEvents implements Listener {
         collectedMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (persistentDataArr[0] + "|" + persistentDataArr[1] + "|collected"));
         collectedItem.setItemMeta(collectedMeta);
         event.getClickedInventory().setItem(event.getSlot(), collectedItem);
+        ActivityRewarder.configManager.sendDebugMessage("Starting reward process for " + player.getName(), DebugMode.ALL);
 
+        ActivityRewarder.configManager.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), DebugMode.DAILY);
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
+        ActivityRewarder.configManager.sendDebugMessage("Loaded player's daily rewards ", DebugMode.DAILY);
+        ActivityRewarder.configManager.sendDebugMessage("Attempting to give rewards to player", DebugMode.DAILY);
         ActivityRewarder.configManager.getRewards(currDay).giveRewards(player);
+        ActivityRewarder.configManager.sendDebugMessage("Successfully gave player rewards", DebugMode.DAILY);
         ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getRewardMessage());
 
         ActivityRewarder.configManager.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), DebugMode.HOURLY);
