@@ -6,7 +6,9 @@ messages:
 
 gui:
   title: "&8&lDaily Rewards"
-  # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM (Read
+  # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
+  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
+  # creating and using templates
   template: "DEFAULT"
   upcoming-reward:
     # Whether the next "large" reward will be shown in the gui

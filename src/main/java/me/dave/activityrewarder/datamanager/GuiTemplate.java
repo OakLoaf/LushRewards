@@ -9,7 +9,7 @@ import java.util.List;
 public class GuiTemplate {
     List<String> rows;
 
-    //   Format:
+//   Format:
 //     # - Border
 //     R - Reward
 //     N - Upcoming Reward
@@ -29,8 +29,8 @@ public class GuiTemplate {
         }
 
         for (String row : rows) {
-            if (row.length() > 9) {
-                ActivityRewarder.getInstance().getLogger().warning("Failed to load template, lines must be no longer than 9 characters long.");
+            if (row.length() != 9) {
+                ActivityRewarder.getInstance().getLogger().warning("Failed to load template, lines must be 9 characters long.");
                 this.rows = new ArrayList<>();
                 return;
             }
@@ -40,16 +40,16 @@ public class GuiTemplate {
     }
 
     public void setRow(int row, String format) {
-        if (format.length() > 9) {
-            ActivityRewarder.getInstance().getLogger().warning("Failed to load row format, lines must be no longer than 9 characters long.");
+        if (format.length() != 9) {
+            ActivityRewarder.getInstance().getLogger().warning("Failed to load row format, lines must be 9 characters long.");
             return;
         }
         rows.set(row, format);
     }
 
     public void addRow(String format) {
-        if (format.length() > 9) {
-            ActivityRewarder.getInstance().getLogger().warning("Failed to load row format, lines must be no longer than 9 characters long.");
+        if (format.length() != 9) {
+            ActivityRewarder.getInstance().getLogger().warning("Failed to load row format, lines must be 9 characters long.");
             return;
         }
         rows.add(format);
