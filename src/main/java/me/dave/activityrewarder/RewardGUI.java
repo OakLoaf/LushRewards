@@ -1,5 +1,6 @@
 package me.dave.activityrewarder;
 
+import me.dave.activityrewarder.datamanager.GuiTemplate;
 import me.dave.activityrewarder.datamanager.RewardUser;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -45,92 +46,83 @@ public class RewardGUI {
             borderItem.setItemMeta(borderMeta);
         }
 
-        int rowCount = ActivityRewarder.configManager.getGuiRowCount();
-        int slotCount = (rowCount + 2) * 9;
+        GuiTemplate guiTemplate = ActivityRewarder.configManager.getGuiTemplate();
+        int rowCount = guiTemplate.getRowCount();
+        int slotCount = rowCount * 9;
         Inventory inventory = Bukkit.createInventory(null, slotCount, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiTitle()));
-        for (int i = 0; i < slotCount; i++) inventory.setItem(i, borderItem);
+//        for (int i = 0; i < slotCount; i++) inventory.setItem(i, borderItem);
 
         // Checks if the reward has been collected today
         boolean collectedToday = rewardUser.hasCollectedToday();
         if (collectedToday) currDayNum -= 1;
 
         int dayIndex = currDayNum;
-        for (int i = 9; i < (slotCount - 10); i++) {
-            int modulus = i % 9;
-            if (modulus == 0 || modulus == 8) continue;
+        List<Integer> upcomingRewardSlots = new ArrayList<>();
+        for (int slot = 0; slot < slotCount; slot++) {
+            char slotChar = guiTemplate.getCharAt(slot);
 
-            // Get the day's reward for the current slot
-            RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
+            switch (slotChar) {
+                case '#' -> inventory.setItem(slot, borderItem);
+                case 'R' -> {
+                    // Get the day's reward for the current slot
+                    RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
+                    ItemStack rewardItem = reward.asItem();
+                    ItemMeta rewardItemMeta = rewardItem.getItemMeta();
 
-            // Get the current reward's size item
-            String size = reward.getSize();
-            ItemStack rewardItem = ActivityRewarder.configManager.getSizeItem(size);
-            ItemMeta rewardItemMeta = rewardItem.getItemMeta();
-            List<String> itemLore = reward.getLore();
-            if (itemLore.isEmpty()) {
-                itemLore.add("&7&o- " + makeFriendly(size) + " reward");
-            }
-            itemLore = ChatColorHandler.translateAlternateColorCodes(itemLore);
-            rewardItemMeta.setLore(itemLore);
-            rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(dayIndex)));
-            rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|unavailable"));
+                    rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(dayIndex)));
+                    rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|unavailable"));
 
-            // Changes item in first slot based on if the reward has been collected or not
-            if (dayIndex == currDayNum) {
-                if (collectedToday) {
-                    rewardItem = ActivityRewarder.configManager.getCollectedItem();
-                    rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(dayIndex)));
+                    // Changes item in first slot based on if the reward has been collected or not
+                    if (dayIndex == currDayNum) {
+                        if (collectedToday) {
+                            rewardItem = ActivityRewarder.configManager.getCollectedItem();
+                            rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(dayIndex)));
+                        } else {
+                            rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|collectable"));
+                            rewardItemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+                            rewardItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                        }
+                    }
+
+                    rewardItem.setItemMeta(rewardItemMeta);
+                    inventory.setItem(slot, rewardItem);
+
+                    dayIndex++;
                 }
-                else {
-                    rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|collectable"));
-                    rewardItemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-                    rewardItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                }
+                case 'U', 'N' -> upcomingRewardSlots.add(slot);
             }
-
-            rewardItem.setItemMeta(rewardItemMeta);
-            inventory.setItem(i, rewardItem);
-
-            // Increase the day index
-            dayIndex++;
         }
 
         // Finds next large reward (Excluding rewards shown in the inventory)
-        int nextRewardDay = -1;
-        if (ActivityRewarder.configManager.showUpcomingReward()) {
-            nextRewardDay = ActivityRewarder.configManager.findNextRewardOfSize(dayIndex, "large");
-        }
-
-        // Adds the upcoming reward to the GUI if it exists
-        if (nextRewardDay != -1) {
-            ItemStack upcomingItem = ActivityRewarder.configManager.getSizeItem("large");
-            List<String> itemLore = ActivityRewarder.configManager.getUpcomingRewardLore();
-            ItemMeta upcomingMeta = upcomingItem.getItemMeta();
-
-            if (itemLore.isEmpty()) {
-                itemLore.add("§7§o- Next large reward");
-            }
-            else if (itemLore.size() == 1 && itemLore.get(0).equals("")) {
-                // Get the day's reward for the current slot
-                RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
-                itemLore = reward.getLore();
+        if (upcomingRewardSlots.size() > 0) {
+            int nextRewardDay = -1;
+            if (ActivityRewarder.configManager.showUpcomingReward()) {
+                nextRewardDay = ActivityRewarder.configManager.findNextRewardOfSize(dayIndex, "large");
             }
 
-            upcomingMeta.setLore(ChatColorHandler.translateAlternateColorCodes(itemLore));
-            upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay - rewardUser.getDayNumOffset())));
-            upcomingMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((nextRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
-            upcomingItem.setItemMeta(upcomingMeta);
+            // Adds the upcoming reward to the GUI if it exists
+            if (nextRewardDay != -1) {
+                ItemStack upcomingItem = ActivityRewarder.configManager.getSizeItem("large");
+                List<String> itemLore = ActivityRewarder.configManager.getUpcomingRewardLore();
+                ItemMeta upcomingMeta = upcomingItem.getItemMeta();
 
-            int slot = ActivityRewarder.configManager.getUpcomingRewardSlot();
-            if (slot < 0) slot = slotCount + slot;
+                if (itemLore.isEmpty()) {
+                    itemLore.add("§7§o- Next large reward");
+                } else if (itemLore.size() == 1 && itemLore.get(0).equals("")) {
+                    // Get the day's reward for the current slot
+                    RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
+                    itemLore = reward.getLore();
+                }
 
-            inventory.setItem(slot, upcomingItem);
+                upcomingMeta.setLore(ChatColorHandler.translateAlternateColorCodes(itemLore));
+                upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay - rewardUser.getDayNumOffset())));
+                upcomingMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((nextRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
+                upcomingItem.setItemMeta(upcomingMeta);
+
+                upcomingRewardSlots.forEach((slot) -> inventory.setItem(slot, upcomingItem));
+            }
         }
 
         player.openInventory(inventory);
-    }
-
-    private String makeFriendly(String string) {
-        return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
     }
 }

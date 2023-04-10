@@ -25,10 +25,12 @@ public class ConfigManager {
     private RewardsDay defaultReward;
     private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
     private final HashMap<String, ItemStack> sizeItems = new HashMap<>();
+    private GuiTemplate guiTemplate;
     private ItemStack collectedItem;
     private ItemStack borderItem;
-    private int guiRowCount;
     private UpcomingReward upcomingReward;
+//    private int guiRowCount;
+
     private int loopLength;
     private int reminderPeriod;
     private boolean daysReset;
@@ -44,17 +46,17 @@ public class ConfigManager {
 
         debugMode = DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase());
 
+        String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
+        if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
+        else guiTemplate = GuiTemplate.DefaultTemplate.valueOf(templateType);
+
         collectedItem = getItem(config.getString("collected-item", "REDSTONE_BLOCK").split(";"), "REDSTONE_BLOCK");
         borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), "GRAY_STAINED_GLASS_PANE");
 
-        guiRowCount = config.getInt("gui.row-count", 1);
-        if (guiRowCount < 1) guiRowCount = 1;
-        else if (guiRowCount > 4) guiRowCount = 4;
-
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
-        int upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
+//        int upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
-        upcomingReward = new UpcomingReward(showUpcomingReward, upcomingRewardSlot, upcomingRewardLore);
+        upcomingReward = new UpcomingReward(showUpcomingReward, upcomingRewardLore);
 
         loopLength = config.getInt("loop-length", -1);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
@@ -90,16 +92,12 @@ public class ConfigManager {
         return config.getString("gui.title", "&8&lDaily Rewards");
     }
 
-    public int getGuiRowCount() {
-        return guiRowCount;
+    public GuiTemplate getGuiTemplate() {
+        return guiTemplate;
     }
 
     public boolean showUpcomingReward() {
         return upcomingReward.enabled;
-    }
-
-    public int getUpcomingRewardSlot() {
-        return upcomingReward.slot;
     }
 
     public List<String> getUpcomingRewardLore() {
@@ -284,8 +282,8 @@ public class ConfigManager {
             material = Material.valueOf(materialName);
         } catch (IllegalArgumentException err) {
             plugin.getLogger().warning("Ignoring " + materialName + ", that is not a valid material.");
-                if (def != null) material = Material.valueOf(def);
-                else material = Material.STONE;
+            if (def != null) material = Material.valueOf(def);
+            else material = Material.STONE;
         }
         return material;
     }
@@ -311,5 +309,5 @@ public class ConfigManager {
         return item;
     }
 
-    public record UpcomingReward(boolean enabled, int slot, List<String> lore) {}
+    public record UpcomingReward(boolean enabled, List<String> lore) { }
 }

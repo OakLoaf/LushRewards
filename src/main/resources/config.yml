@@ -6,8 +6,8 @@ messages:
 
 gui:
   title: "&8&lDaily Rewards"
-  # row-count does not include the borders, you can have a maximum of 4 rows
-  row-count: 1
+  # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM (Read
+  template: "DEFAULT"
   upcoming-reward:
     # Whether the next "large" reward will be shown in the gui
     enabled: true
