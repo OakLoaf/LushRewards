@@ -13,15 +13,16 @@ gui:
   upcoming-reward:
     # Whether the next "large" reward will be shown in the gui
     enabled: true
-    # The slot where the reward will be displayed in the gui (Negative numbers go backwards from the end of the gui)
-    slot: -5
     # The lore of the upcoming reward (set first line to blank for item's original lore)
     lore:
       - "&7&o- Next large reward"
   # redeemable-name and collected-name can contain %day% which will display the day number related to the tiem
   redeemable-name: "&6Day %day%"
   collected-name: "&6Day %day% - Collected"
-  border-item: "GRAY_STAINED_GLASS_PANE"
+  # Display item for the border
+  border-item: GRAY_STAINED_GLASS_PANE
+  # Display item for when a reward is collected
+  collected-item: COAL
 
 # The number of days before the reward cycle loops
 loop-length: 14
@@ -36,9 +37,6 @@ sizes:
   medium: GOLD_INGOT
   large: GOLD_BLOCK
 
-
-# Display item for when a reward is collected
-collected-item: COAL
 
 # Placeholders:
 #   %user% - The user being given the reward

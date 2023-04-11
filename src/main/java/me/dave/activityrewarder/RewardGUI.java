@@ -50,7 +50,6 @@ public class RewardGUI {
         int rowCount = guiTemplate.getRowCount();
         int slotCount = rowCount * 9;
         Inventory inventory = Bukkit.createInventory(null, slotCount, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiTitle()));
-//        for (int i = 0; i < slotCount; i++) inventory.setItem(i, borderItem);
 
         // Checks if the reward has been collected today
         boolean collectedToday = rewardUser.hasCollectedToday();

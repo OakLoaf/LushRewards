@@ -13,6 +13,7 @@ import me.dave.activityrewarder.rewards.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -29,8 +30,6 @@ public class ConfigManager {
     private ItemStack collectedItem;
     private ItemStack borderItem;
     private UpcomingReward upcomingReward;
-//    private int guiRowCount;
-
     private int loopLength;
     private int reminderPeriod;
     private boolean daysReset;
@@ -50,8 +49,14 @@ public class ConfigManager {
         if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
         else guiTemplate = GuiTemplate.DefaultTemplate.valueOf(templateType);
 
-        collectedItem = getItem(config.getString("collected-item", "REDSTONE_BLOCK").split(";"), "REDSTONE_BLOCK");
-        borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), "GRAY_STAINED_GLASS_PANE");
+        collectedItem = getItem(config.getString("gui.collected-item", "REDSTONE_BLOCK").split(";"));
+        // TODO: Remove on next major update
+        if (collectedItem == null) {
+            collectedItem = getItem(config.getString("collected-item", "REDSTONE_BLOCK").split(";"), Material.REDSTONE_BLOCK);
+            plugin.getLogger().warning("The 'collected-item' is now located in the 'gui' section");
+            plugin.getLogger().warning("Please refer to the default config.yml on the Spigot page for an example");
+        }
+        borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), Material.GRAY_STAINED_GLASS_PANE);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
 //        int upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
@@ -250,7 +255,7 @@ public class ConfigManager {
         int itemRewardCount = 0;
         if (itemRewards != null) {
             for (String materialName : itemRewards.getKeys(false)) {
-                ItemStack item = new ItemStack(getMaterial(materialName.toUpperCase(), "GOLD_NUGGET"));
+                ItemStack item = getItem(materialName.toUpperCase(), Material.GOLD_NUGGET);
                 int amount = itemRewards.getInt(materialName + ".amount", 1);
                 item.setAmount(amount);
 
@@ -272,31 +277,41 @@ public class ConfigManager {
         return new RewardsDay(size, lore, rewards);
     }
 
+    @Nullable
     private Material getMaterial(String materialName) {
         return getMaterial(materialName, null);
     }
 
-    private Material getMaterial(String materialName, String def) {
+    private Material getMaterial(String materialName, Material def) {
         Material material;
         try {
             material = Material.valueOf(materialName);
         } catch (IllegalArgumentException err) {
             plugin.getLogger().warning("Ignoring " + materialName + ", that is not a valid material.");
-            if (def != null) material = Material.valueOf(def);
-            else material = Material.STONE;
+            if (def != null) {
+                material = def;
+                plugin.getLogger().warning("Defaulted material to " + def.name() + ".");
+            }
+            else return null;
         }
         return material;
     }
 
+    private ItemStack getItem(String materialName, Material def) {
+        Material material = getMaterial(materialName, def);
+        if (material == null) return null;
+        return new ItemStack(material);
+    }
+
+    @Nullable
     private ItemStack getItem(String[] materialData) {
         return getItem(materialData, null);
     }
 
-    private ItemStack getItem(String[] materialData, String def) {
-        Material material = Material.STONE;
-        if (def != null) material = Material.valueOf(def);
-
-        if (materialData.length >= 1) material = getMaterial(materialData[0].toUpperCase(), "STONE");
+    private ItemStack getItem(String[] materialData, Material def) {
+        Material material = null;
+        if (materialData.length >= 1) material = getMaterial(materialData[0].toUpperCase(), def);
+        if (material == null) return null;
 
         ItemStack item = new ItemStack(material);
 
