@@ -104,6 +104,7 @@ public class GuiTemplate {
 
         public static GuiTemplate valueOf(String string) {
             switch(string.toUpperCase()) {
+                case "DEFAULT" -> { return new GuiTemplate(DEFAULT); }
                 case "COMPACT" -> { return new GuiTemplate(COMPACT); }
                 case "BORDERED_LARGE" -> { return new GuiTemplate(BORDERED_LARGE); }
                 case "DAILY_REWARDS_PLUS" -> { return new GuiTemplate(DAILY_REWARDS_PLUS); }

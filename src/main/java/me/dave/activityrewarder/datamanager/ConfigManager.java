@@ -50,16 +50,9 @@ public class ConfigManager {
         else guiTemplate = GuiTemplate.DefaultTemplate.valueOf(templateType);
 
         collectedItem = getItem(config.getString("gui.collected-item", "REDSTONE_BLOCK").split(";"));
-        // TODO: Remove on next major update
-        if (collectedItem == null) {
-            collectedItem = getItem(config.getString("collected-item", "REDSTONE_BLOCK").split(";"), Material.REDSTONE_BLOCK);
-            plugin.getLogger().warning("The 'collected-item' is now located in the 'gui' section");
-            plugin.getLogger().warning("Please refer to the default config.yml on the Spigot page for an example");
-        }
         borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), Material.GRAY_STAINED_GLASS_PANE);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
-//        int upcomingRewardSlot = config.getInt("gui.upcoming-reward.slot", -5);
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
         upcomingReward = new UpcomingReward(showUpcomingReward, upcomingRewardLore);
 
