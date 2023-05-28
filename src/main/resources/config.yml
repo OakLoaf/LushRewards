@@ -28,7 +28,7 @@ gui:
 loop-length: 14
 # The length in seconds between reminders being sent
 reminder-period: 1800
-# Whether days are going to infinitely increase or reset after loop finishes
+# Whether a player's days will reset if they miss a day
 days-reset: false
 
 # Display items for different reward sizes

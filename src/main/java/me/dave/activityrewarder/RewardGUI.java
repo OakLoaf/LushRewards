@@ -66,6 +66,7 @@ public class RewardGUI {
                     // Get the day's reward for the current slot
                     RewardsDay reward = ActivityRewarder.configManager.getRewards(dayIndex);
                     ItemStack rewardItem = reward.asItem();
+                    if (dayIndex == currDayNum && collectedToday) rewardItem = ActivityRewarder.configManager.getCollectedItem();
                     ItemMeta rewardItemMeta = rewardItem.getItemMeta();
 
                     rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(dayIndex)));
@@ -74,7 +75,6 @@ public class RewardGUI {
                     // Changes item in first slot based on if the reward has been collected or not
                     if (dayIndex == currDayNum) {
                         if (collectedToday) {
-                            rewardItem = ActivityRewarder.configManager.getCollectedItem();
                             rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(dayIndex)));
                         } else {
                             rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|collectable"));
