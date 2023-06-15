@@ -228,7 +228,7 @@ public class ConfigManager {
         ConfigurationSection sizesSection = config.getConfigurationSection("sizes");
         for (String sizeKey : sizesSection.getKeys(false)) {
             String[] materialDataArr = sizesSection.getString(sizeKey, "STONE").split(";");
-            sizeItems.put(sizeKey, getItem(materialDataArr));
+            sizeItems.put(sizeKey, getItem(materialDataArr, Material.STONE));
         }
     }
 
