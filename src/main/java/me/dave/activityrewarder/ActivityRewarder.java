@@ -1,7 +1,7 @@
 package me.dave.activityrewarder;
 
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
-import me.dave.activityrewarder.events.RewardGUIEvents;
+import me.dave.activityrewarder.events.RewardGuiEvents;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -28,7 +28,7 @@ public final class ActivityRewarder extends JavaPlugin {
 
         Listener[] listeners = new Listener[] {
             new RewardUserEvents(),
-            new RewardGUIEvents(guiPlayerSet)
+            new RewardGuiEvents(guiPlayerSet)
         };
         registerEvents(listeners);
 

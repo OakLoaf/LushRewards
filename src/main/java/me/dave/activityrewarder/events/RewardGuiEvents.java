@@ -24,11 +24,11 @@ import java.util.HashSet;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class RewardGUIEvents implements Listener {
+public class RewardGuiEvents implements Listener {
     private final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
     private final HashSet<UUID> guiPlayerSet;
 
-    public RewardGUIEvents(HashSet<UUID> guiPlayerSet) {
+    public RewardGuiEvents(HashSet<UUID> guiPlayerSet) {
         this.guiPlayerSet = guiPlayerSet;
     }
 
