@@ -1,5 +1,6 @@
-package me.dave.activityrewarder.rewards;
+package me.dave.activityrewarder.rewards.custom;
 
+import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
