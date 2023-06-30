@@ -1,5 +1,7 @@
-package me.dave.activityrewarder;
+package me.dave.activityrewarder.commands;
 
+import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.gui.custom.RewardsGui;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,12 +15,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class RewardCmd implements CommandExecutor, TabCompleter {
-    private final RewardGui rewardGUI = new RewardGui();
-    private final HashSet<UUID> guiPlayerSet;
-
-    public RewardCmd(HashSet<UUID> guiPlayerSet) {
-        this.guiPlayerSet = guiPlayerSet;
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -43,8 +39,9 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             player.sendMessage("§cInsufficient permissions");
             return true;
         }
-        rewardGUI.openGUI(player);
-        guiPlayerSet.add(player.getUniqueId());
+
+        RewardsGui rewardsGui = new RewardsGui(player);
+        rewardsGui.openInventory();
         return true;
     }
 

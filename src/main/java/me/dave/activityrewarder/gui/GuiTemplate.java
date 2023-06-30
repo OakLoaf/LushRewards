@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.data;
+package me.dave.activityrewarder.gui;
 
 import me.dave.activityrewarder.ActivityRewarder;
 
