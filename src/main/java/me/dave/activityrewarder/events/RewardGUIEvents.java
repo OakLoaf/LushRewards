@@ -1,6 +1,6 @@
 package me.dave.activityrewarder.events;
 
-import me.dave.activityrewarder.datamanager.DebugMode;
+import me.dave.activityrewarder.data.DebugMode;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.NamespacedKey;
@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.datamanager.RewardUser;
+import me.dave.activityrewarder.data.RewardUser;
 
 import java.time.LocalDate;
 import java.util.HashSet;

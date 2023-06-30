@@ -2,7 +2,7 @@ package me.dave.activityrewarder.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.datamanager.RewardUser;
+import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import org.bukkit.entity.Player;
 

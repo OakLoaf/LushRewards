@@ -1,7 +1,7 @@
 package me.dave.activityrewarder;
 
-import me.dave.activityrewarder.datamanager.GuiTemplate;
-import me.dave.activityrewarder.datamanager.RewardUser;
+import me.dave.activityrewarder.data.GuiTemplate;
+import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.rewards.RewardsDay;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;

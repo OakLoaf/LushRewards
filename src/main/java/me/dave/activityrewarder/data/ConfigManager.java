@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.datamanager;
+package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.NotificationHandler;
@@ -12,6 +12,7 @@ import me.dave.activityrewarder.rewards.CmdReward;
 import me.dave.activityrewarder.rewards.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -49,7 +50,7 @@ public class ConfigManager {
         if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
         else guiTemplate = GuiTemplate.DefaultTemplate.valueOf(templateType);
 
-        collectedItem = getItem(config.getString("gui.collected-item", "REDSTONE_BLOCK").split(";"));
+        collectedItem = getItem(config.getString("gui.collected-item", "REDSTONE_BLOCK").split(";"), Material.REDSTONE_BLOCK);
         borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), Material.GRAY_STAINED_GLASS_PANE);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
@@ -296,15 +297,13 @@ public class ConfigManager {
         return new ItemStack(material);
     }
 
-    @Nullable
-    private ItemStack getItem(String[] materialData) {
-        return getItem(materialData, null);
+    private @NotNull ItemStack getItem(String[] materialData) {
+        return getItem(materialData, Material.STONE);
     }
 
-    private ItemStack getItem(String[] materialData, Material def) {
+    private @NotNull ItemStack getItem(String[] materialData, @NotNull Material def) {
         Material material = null;
         if (materialData.length >= 1) material = getMaterial(materialData[0].toUpperCase(), def);
-        if (material == null) return null;
 
         ItemStack item = new ItemStack(material);
 

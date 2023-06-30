@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.datamanager;
+package me.dave.activityrewarder.data;
 
 public enum DebugMode {
     NONE,
