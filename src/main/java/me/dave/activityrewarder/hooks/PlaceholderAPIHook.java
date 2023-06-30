@@ -3,10 +3,15 @@ package me.dave.activityrewarder.hooks;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.utils.LocalPlaceholders;
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.entity.Player;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
+
+    public PlaceholderAPIHook() {
+        ChatColorHandler.enablePlaceholderAPI(true);
+    }
 
     public String onPlaceholderRequest(Player player, String params) {
         return LocalPlaceholders.parsePlaceholder(player, params);

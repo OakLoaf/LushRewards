@@ -2,14 +2,15 @@ package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.NotificationHandler;
-import me.dave.activityrewarder.rewards.RewardsDay;
+import me.dave.activityrewarder.gui.GuiTemplate;
+import me.dave.activityrewarder.rewards.RewardCollection;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.dave.activityrewarder.rewards.CmdReward;
-import me.dave.activityrewarder.rewards.ItemReward;
+import me.dave.activityrewarder.rewards.custom.CmdReward;
+import me.dave.activityrewarder.rewards.custom.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,8 @@ public class ConfigManager {
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private FileConfiguration config;
     private DebugMode debugMode;
-    private RewardsDay defaultReward;
-    private final HashMap<Integer, RewardsDay> dayToRewards = new HashMap<>();
+    private RewardCollection defaultReward;
+    private final HashMap<Integer, RewardCollection> dayToRewards = new HashMap<>();
     private final HashMap<String, ItemStack> sizeItems = new HashMap<>();
     private GuiTemplate guiTemplate;
     private ItemStack collectedItem;
@@ -150,11 +151,11 @@ public class ConfigManager {
         return heighestMultiplier;
     }
 
-    public RewardsDay getHourlyRewards(Player player) {
+    public RewardCollection getHourlyRewards(Player player) {
         sendDebugMessage("Getting hourly bonus section from config", DebugMode.HOURLY);
         ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
         if (hourlySection == null) return null;
-        RewardsDay hourlyRewards = null;
+        RewardCollection hourlyRewards = null;
 
         sendDebugMessage("Checking player's highest multiplier", DebugMode.HOURLY);
         double heighestMultiplier = 0;
@@ -178,7 +179,7 @@ public class ConfigManager {
         return hourlyRewards;
     }
 
-    public RewardsDay getRewards(int day) {
+    public RewardCollection getRewards(int day) {
         // Works out what day number the user is in the loop
         int loopedDayNum = day;
         if (day > getLoopLength()) {
@@ -199,7 +200,7 @@ public class ConfigManager {
             if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) continue;
 
             // Gets the size of the reward and compares to the request
-            RewardsDay rewards = getRewards(rewardsKey);
+            RewardCollection rewards = getRewards(rewardsKey);
             if (rewards.getSize().equalsIgnoreCase(size)) nextRewardKey = rewardsKey;
         }
 
@@ -233,7 +234,7 @@ public class ConfigManager {
         }
     }
 
-    private RewardsDay loadSectionRewards(ConfigurationSection rewardDaySection, DebugMode debugMode) {
+    private RewardCollection loadSectionRewards(ConfigurationSection rewardDaySection, DebugMode debugMode) {
         sendDebugMessage("Attempting to load sections reward (" + rewardDaySection.getCurrentPath() + ")", debugMode);
         ArrayList<Reward> rewards = new ArrayList<>();
         String size = rewardDaySection.getString("size", "SMALL").toUpperCase();
@@ -268,7 +269,7 @@ public class ConfigManager {
         sendDebugMessage("Successfully loaded " + cmdRewardCount + " command rewards", debugMode);
 
         sendDebugMessage("Successfully loaded " + (itemRewardCount + cmdRewardCount) + " total rewards", debugMode);
-        return new RewardsDay(size, lore, rewards);
+        return new RewardCollection(size, lore, rewards);
     }
 
     @Nullable

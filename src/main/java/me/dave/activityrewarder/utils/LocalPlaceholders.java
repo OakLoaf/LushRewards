@@ -2,7 +2,7 @@ package me.dave.activityrewarder.utils;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.rewards.RewardsDay;
+import me.dave.activityrewarder.rewards.RewardCollection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -108,14 +108,14 @@ public class LocalPlaceholders {
         if (params.matches("day_[0-9]+.+")) {
             String[] paramArr = params.split("_", 3);
             int dayNum = Integer.parseInt(paramArr[1]);
-            RewardsDay rewardsDay = ActivityRewarder.configManager.getRewards(dayNum);
+            RewardCollection rewardCollection = ActivityRewarder.configManager.getRewards(dayNum);
 
             switch(paramArr[2]) {
                 case "size" -> {
-                    return String.valueOf(rewardsDay.getSize());
+                    return String.valueOf(rewardCollection.getSize());
                 }
                 case "total_rewards" -> {
-                    return String.valueOf(rewardsDay.getRewardCount());
+                    return String.valueOf(rewardCollection.getRewardCount());
                 }
             }
 
