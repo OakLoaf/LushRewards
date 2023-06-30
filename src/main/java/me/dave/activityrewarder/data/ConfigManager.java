@@ -302,8 +302,9 @@ public class ConfigManager {
     }
 
     private @NotNull ItemStack getItem(String[] materialData, @NotNull Material def) {
-        Material material = null;
-        if (materialData.length >= 1) material = getMaterial(materialData[0].toUpperCase(), def);
+        if (materialData.length == 0) return new ItemStack(def);
+        Material material = getMaterial(materialData[0].toUpperCase(), def);
+        if (material == null) material = def;
 
         ItemStack item = new ItemStack(material);
 
