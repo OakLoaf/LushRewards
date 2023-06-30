@@ -1,7 +1,8 @@
 package me.dave.activityrewarder;
 
+import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
-import me.dave.activityrewarder.events.RewardGuiEvents;
+import me.dave.activityrewarder.events.GuiEvents;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -10,15 +11,11 @@ import me.dave.activityrewarder.data.ConfigManager;
 import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 public final class ActivityRewarder extends JavaPlugin {
     private static ActivityRewarder plugin;
     private static boolean hasFloodgate = false;
     public static DataManager dataManager;
     public static ConfigManager configManager;
-    private final HashSet<UUID> guiPlayerSet = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -28,11 +25,11 @@ public final class ActivityRewarder extends JavaPlugin {
 
         Listener[] listeners = new Listener[] {
             new RewardUserEvents(),
-            new RewardGuiEvents(guiPlayerSet)
+            new GuiEvents()
         };
         registerEvents(listeners);
 
-        getCommand("rewards").setExecutor(new RewardCmd(guiPlayerSet));
+        getCommand("rewards").setExecutor(new RewardCmd());
 
         PluginManager pluginManager = getServer().getPluginManager();
         if (pluginManager.getPlugin("floodgate") != null) hasFloodgate = true;
