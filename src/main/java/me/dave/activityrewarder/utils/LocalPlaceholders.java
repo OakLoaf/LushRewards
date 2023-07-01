@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class LocalPlaceholders {
     private static final String identifier = "rewarder";
-    private static final Pattern regexPattern = Pattern.compile("%" + identifier + "_[a-zA-Z0-9_ ]+%");
+    private static final Pattern regexPattern = Pattern.compile("%" + identifier + "_([a-zA-Z0-9_ ]+)%");
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
 
