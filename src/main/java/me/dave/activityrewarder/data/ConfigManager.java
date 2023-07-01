@@ -143,7 +143,7 @@ public class ConfigManager {
         double heighestMultiplier = 1;
         for (String perm : hourlySection.getKeys(false)) {
             if (player.hasPermission("activityrewarder.bonus." + perm)) {
-                double multiplier = hourlySection.getConfigurationSection(perm).getDouble("multiplier", 1);
+                double multiplier = hourlySection.getDouble(perm + ".multiplier", 1);
                 if (multiplier > heighestMultiplier) heighestMultiplier = multiplier;
             }
         }
