@@ -138,7 +138,7 @@ public class ConfigManager {
 
     public double getHourlyMultiplier(Player player) {
         ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
-        if (hourlySection == null) return 1;
+        if (hourlySection == null || !hourlySection.getBoolean("enabled", false)) return 1;
 
         double heighestMultiplier = 1;
         for (String perm : hourlySection.getKeys(false)) {
@@ -155,6 +155,8 @@ public class ConfigManager {
         sendDebugMessage("Getting hourly bonus section from config", DebugMode.HOURLY);
         ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
         if (hourlySection == null) return null;
+        sendDebugMessage("Checking if hourly bonus is enabled", DebugMode.HOURLY);
+        if (!hourlySection.getBoolean("enabled", false)) return null;
         RewardCollection hourlyRewards = null;
 
         sendDebugMessage("Checking player's highest multiplier", DebugMode.HOURLY);
