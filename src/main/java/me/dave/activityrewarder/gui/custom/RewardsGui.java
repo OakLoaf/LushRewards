@@ -83,13 +83,13 @@ public class RewardsGui extends AbstractGui {
                     if (dayIndex == currDayNum && collectedToday) rewardItem = ActivityRewarder.configManager.getCollectedItem();
                     ItemMeta rewardItemMeta = rewardItem.getItemMeta();
 
-                    rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(dayIndex)));
+                    rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(player, ActivityRewarder.configManager.getGuiItemRedeemableName(dayIndex)));
                     rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|unavailable"));
 
                     // Changes item in first slot based on if the reward has been collected or not
                     if (dayIndex == currDayNum) {
                         if (collectedToday) {
-                            rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(dayIndex)));
+                            rewardItemMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(player, ActivityRewarder.configManager.getGuiItemCollectedName(dayIndex)));
                         } else {
                             rewardItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|collectable"));
                             rewardItemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
@@ -127,8 +127,8 @@ public class RewardsGui extends AbstractGui {
                     itemLore = reward.getLore();
                 }
 
-                upcomingMeta.setLore(ChatColorHandler.translateAlternateColorCodes(itemLore));
-                upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay - rewardUser.getDayNumOffset())));
+                upcomingMeta.setLore(ChatColorHandler.translateAlternateColorCodes(player, itemLore));
+                upcomingMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(player, ActivityRewarder.configManager.getGuiItemRedeemableName(nextRewardDay - rewardUser.getDayNumOffset())));
                 upcomingMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((nextRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
                 upcomingItem.setItemMeta(upcomingMeta);
 
@@ -170,7 +170,7 @@ public class RewardsGui extends AbstractGui {
 
         ItemStack collectedItem = ActivityRewarder.configManager.getCollectedItem();
         ItemMeta collectedMeta = collectedItem.getItemMeta();
-        collectedMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.configManager.getGuiItemCollectedName(currDay)));
+        collectedMeta.setDisplayName(ChatColorHandler.translateAlternateColorCodes(player, ActivityRewarder.configManager.getGuiItemCollectedName(currDay)));
         collectedMeta.removeEnchant(Enchantment.DURABILITY);
         collectedMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (persistentDataArr[0] + "|" + persistentDataArr[1] + "|collected"));
         collectedItem.setItemMeta(collectedMeta);
