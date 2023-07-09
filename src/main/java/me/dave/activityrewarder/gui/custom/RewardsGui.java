@@ -210,4 +210,9 @@ public class RewardsGui extends AbstractGui {
         rewardUser.incrementDayNum();
         rewardUser.setLastDate(LocalDate.now().toString());
     }
+
+    @Override
+    public Inventory getInventory() {
+        return inventory;
+    }
 }

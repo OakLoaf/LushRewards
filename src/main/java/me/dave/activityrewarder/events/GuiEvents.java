@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -20,21 +21,36 @@ public class GuiEvents implements Listener {
         Player player = (Player) event.getWhoClicked();
         UUID playerUUID = player.getUniqueId();
 
-        Inventory clickedInventory = event.getClickedInventory();
-        if (clickedInventory == null) return;
-
         AbstractGui gui = InventoryHandler.getGui(playerUUID);
         if (gui == null) return;
+
+        Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null || !clickedInventory.equals(gui.getInventory())) return;
+
         gui.onClick(event);
     }
 
     @EventHandler
+    public void onItemDrag(InventoryDragEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        UUID playerUUID = player.getUniqueId();
+
+        AbstractGui gui = InventoryHandler.getGui(playerUUID);
+        if (gui == null) return;
+
+        Inventory clickedInventory = event.getInventory();
+        if (!clickedInventory.equals(gui.getInventory())) return;
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        new BukkitRunnable() {
-            public void run() {
-                UUID playerUUID = event.getPlayer().getUniqueId();
-                InventoryHandler.removeInventory(playerUUID);
-            }
-        }.runTaskLater(ActivityRewarder.getInstance(), 1);
+        UUID playerUUID = event.getPlayer().getUniqueId();
+
+        AbstractGui gui = InventoryHandler.getGui(playerUUID);
+        if (gui == null || !event.getInventory().equals(gui.getInventory())) return;
+
+        InventoryHandler.removeInventory(playerUUID);
     }
 }
