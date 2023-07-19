@@ -1,7 +1,8 @@
-package me.dave.activityrewarder.data;
+package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.NotificationHandler;
+import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.rewards.RewardCollection;
 import org.bukkit.Material;

@@ -7,7 +7,7 @@ import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import me.dave.activityrewarder.data.ConfigManager;
+import me.dave.activityrewarder.config.ConfigManager;
 import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
 

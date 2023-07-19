@@ -1,7 +1,7 @@
 package me.dave.activityrewarder.gui.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.data.DebugMode;
+import me.dave.activityrewarder.config.DebugMode;
 import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.InventoryHandler;
