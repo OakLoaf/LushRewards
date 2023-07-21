@@ -1,0 +1,92 @@
+# Placeholders:
+#   %user% - The user being given the reward
+#   %hourly-amount% - Number of hours multiplied by count
+
+# List of rewards
+daily-rewards:
+  default:
+    category: SMALL
+    displayItem:
+    lore:
+      - "&7Rewards:"
+      - "&7&o-12 Cactus"
+      - "&7&o-1 Cookie"
+    rewards:
+      items:
+        cactus:
+          amount: 12
+        cookie:
+          amount: 1
+  day-1:
+    category: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-1 Pink Tulip"
+      - "&7&o-1 Cookie"
+    rewards:
+      items:
+        pink_tulip:
+          amount: 1
+        cookie:
+          amount: 1
+  day-2:
+    category: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-1 Oxeye Daisy"
+      - "&7&o-1 Bread"
+    rewards:
+      items:
+        oxeye_daisy:
+          amount: 1
+        bread:
+          amount: 1
+  day-5:
+    category: SMALL
+    lore:
+      - "&7Rewards:"
+      - "&7&o-1 White Tulip"
+      - "&7&o-1 Pearlescent Froglight"
+    rewards:
+      items:
+        white_tulip:
+          amount: 1
+        pearlescent_froglight:
+          amount: 1
+  day-30:
+    category: LARGE
+    lore:
+      - "&6Rewards:"
+      - "&6&o-3 Diamond"
+      - "&6&o-1 Golden Apple"
+    rewards:
+      items:
+        diamond:
+          amount: 3
+        golden_apple:
+          amount: 1
+      commands:
+        - "give %user% minecraft:diamond_block"
+        - "give %user% minecraft:iron_block"
+
+
+# Items given daily based on the amount of play time since rewards were last collected
+hourly-bonus:
+  # enabled: Whether hourly bonuses should be handed out
+  enabled: true
+  # Each section within the hourly-bonus is its own group, to give a player access to
+  # a group you must give them "activityrewarder.bonus.groupName"
+  #
+  # For example: activityrewarder.bonus.rank1
+  default:
+    rewards:
+      multiplier: 1
+      items:
+        iron_ingot:
+          amount: 2
+  rank1:
+    rewards:
+      multiplier: 2
+      items:
+        diamond:
+          amount: 1
