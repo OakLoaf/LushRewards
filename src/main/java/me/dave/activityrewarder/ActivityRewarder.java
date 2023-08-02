@@ -13,7 +13,6 @@ import me.dave.activityrewarder.events.RewardUserEvents;
 
 public final class ActivityRewarder extends JavaPlugin {
     private static ActivityRewarder plugin;
-    private static boolean folia = false;
     private static boolean hasFloodgate = false;
     public static DataManager dataManager;
     public static ConfigManager configManager;
@@ -39,14 +38,6 @@ public final class ActivityRewarder extends JavaPlugin {
         if (pluginManager.getPlugin("PlaceholderAPI") != null) new PlaceholderAPIHook().register();
         else plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
 
-
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            folia = true;
-        } catch (ClassNotFoundException e) {
-            folia = false;
-        }
-
         ChatColorHandler.enableMiniMessage(true);
     }
 
@@ -63,10 +54,6 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static ActivityRewarder getInstance() {
         return plugin;
-    }
-
-    public static boolean isRunningOnFolia() {
-        return folia;
     }
 
     public static boolean isFloodgateEnabled() {

@@ -5,24 +5,27 @@ import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import space.arim.morepaperlib.MorePaperLib;
 
+import java.time.Duration;
 import java.time.LocalDate;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
-public class FoliaNotifications implements NotificationHandler {
+public class NotificationHandler {
     private int counter = 0;
+    private final MorePaperLib morePaperLib = new MorePaperLib(ActivityRewarder.getInstance());
 
-    @Override
+
     public void reloadNotifications(int reminderPeriod) {
         counter += 0;
     }
 
     private void startNotificationTask(int reminderPeriod) {
-        int reminderPeriodTicks = reminderPeriod * 50;
+        int reminderPeriodMs = reminderPeriod * 50;
         int thisNotifNum = counter;
 
 
-        Bukkit.getAsyncScheduler().runAtFixedRate(ActivityRewarder.getInstance(), (task) -> {
+        morePaperLib.scheduling().asyncScheduler().runAtFixedRate((task) -> {
             if (counter != thisNotifNum) {
                 task.cancel();
                 return;
@@ -36,6 +39,6 @@ public class FoliaNotifications implements NotificationHandler {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
             }
 
-        }, Math.round((double) reminderPeriodTicks / 3), reminderPeriodTicks, TimeUnit.MILLISECONDS);
+        }, Duration.of(Math.round((double) reminderPeriodMs / 3), ChronoUnit.MILLIS), Duration.of(reminderPeriodMs, ChronoUnit.MILLIS));
     }
 }

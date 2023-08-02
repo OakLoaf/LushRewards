@@ -1,9 +1,9 @@
 package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.notifications.BukkitNotifications;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.GuiTemplate;
+import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.rewards.RewardCollection;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final Logger logger = plugin.getLogger();
-    private final BukkitNotifications notificationHandler = new BukkitNotifications();
+    private final NotificationHandler notificationHandler = new NotificationHandler();
     private FileConfiguration config;
     private DebugMode debugMode;
     private RewardCollection defaultReward;
