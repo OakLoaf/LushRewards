@@ -1,5 +1,6 @@
-package me.dave.activityrewarder;
+package me.dave.activityrewarder.notifications;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -8,21 +9,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.LocalDate;
 
-public class NotificationHandler {
-    private int notifCounter = 0;
+public class BukkitNotifications implements NotificationHandler {
+    private int counter = 0;
 
     public void reloadNotifications(int reminderPeriod) {
-        notifCounter += 1;
-        notifyPlayers(reminderPeriod);
+        counter += 1;
+        startNotificationTask(reminderPeriod);
     }
 
-    private void notifyPlayers(int reminderPeriod) {
-        int thisNotifNum = notifCounter;
+    private void startNotificationTask(int reminderPeriod) {
+        int thisNotifNum = counter;
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (notifCounter != thisNotifNum) {
+                if (counter != thisNotifNum) {
                     cancel();
                     return;
                 }

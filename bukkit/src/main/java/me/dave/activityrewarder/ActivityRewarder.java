@@ -13,6 +13,7 @@ import me.dave.activityrewarder.events.RewardUserEvents;
 
 public final class ActivityRewarder extends JavaPlugin {
     private static ActivityRewarder plugin;
+    private static boolean folia = false;
     private static boolean hasFloodgate = false;
     public static DataManager dataManager;
     public static ConfigManager configManager;
@@ -38,27 +39,14 @@ public final class ActivityRewarder extends JavaPlugin {
         if (pluginManager.getPlugin("PlaceholderAPI") != null) new PlaceholderAPIHook().register();
         else plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
 
-//        new UpdateChecker(this, UpdateCheckSource.SPIGET, "107545")
-//            .setDownloadLink("https://www.spigotmc.org/resources/activity-rewarder.107545/")
-//            .setChangelogLink("https://www.spigotmc.org/resources/activity-rewarder.107545/updates")
-//            .onSuccess((commandSenders, latestVersion) -> {
-//                String currentVersion = getDescription().getVersion();
-//                if (latestVersion == currentVersion) return;
-//                for (CommandSender sender : (CommandSender[]) commandSenders) {
-//                    ChatColorHandler.sendMessage(sender, "&e&lRewards &8» &7Version &e" + latestVersion + "&7is available!");
-//                    ChatColorHandler.sendMessage(sender, "&e&lRewards &8» &7You are currently running on " + currentVersion);
-//                    ChatColorHandler.sendMessage(sender, "&e&lRewards &8» &7Download the latest version here:");
-//                    ChatColorHandler.sendMessage(sender, "&e&lRewards &8» &7https://www.spigotmc.org/resources/activity-rewarder.107545");
-//                }
-//            })
-//            .onFail((commandSenders, latestVersion) -> {
-//                getLogger().warning("Error when getting latest version");
-//            })
-//            .setNotifyByPermissionOnJoin("activityrewarder.updatechecker")
-//            .setNotifyRequesters(false)
-//            .suppressUpToDateMessage(true)
-//            .checkEveryXHours(0.5)
-//            .checkNow();
+
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            folia = true;
+        } catch (ClassNotFoundException e) {
+            folia = false;
+        }
+
         ChatColorHandler.enableMiniMessage(true);
     }
 
@@ -75,6 +63,10 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static ActivityRewarder getInstance() {
         return plugin;
+    }
+
+    public static boolean isRunningOnFolia() {
+        return folia;
     }
 
     public static boolean isFloodgateEnabled() {

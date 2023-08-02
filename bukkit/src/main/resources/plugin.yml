@@ -3,6 +3,7 @@ version: ${project.version}
 main: me.dave.activityrewarder.ActivityRewarder
 api-version: 1.16
 softdepend: [floodgate, PlaceholderAPI]
+folia-supported: true
 commands:
   rewards:
     description: Opens Rewards GUI
