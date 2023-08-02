@@ -1,9 +1,9 @@
 package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.NotificationHandler;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.GuiTemplate;
+import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.rewards.RewardCollection;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -163,6 +163,7 @@ public class ConfigManager {
         sendDebugMessage("Checking player's highest multiplier", DebugMode.HOURLY);
         double heighestMultiplier = 0;
         for (String perm : hourlySection.getKeys(false)) {
+            if (perm.equals("enabled")) continue;
             sendDebugMessage("Checking if player has activityrewarder.bonus." + perm, DebugMode.HOURLY);
             if (player.hasPermission("activityrewarder.bonus." + perm)) {
                 sendDebugMessage("Player has activityrewarder.bonus." + perm, DebugMode.HOURLY);

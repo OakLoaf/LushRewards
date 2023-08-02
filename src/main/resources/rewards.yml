@@ -2,11 +2,17 @@
 #   %user% - The user being given the reward
 #   %hourly-amount% - Number of hours multiplied by count
 
+default-reward:
+  display-item: golden_nugget
+  lore:
+    - "&#da96fa&lRewards:"
+    - "&7&o- 12 Cactus"
+    - "&7&o- 1 Cookie"
+
 # List of rewards
 daily-rewards:
   default:
     category: SMALL
-    displayItem:
     lore:
       - "&7Rewards:"
       - "&7&o-12 Cactus"
