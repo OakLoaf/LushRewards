@@ -182,7 +182,8 @@ public class RewardsGui extends AbstractGui {
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
         ActivityRewarder.configManager.sendDebugMessage("Loaded player's daily rewards ", DebugMode.DAILY);
         ActivityRewarder.configManager.sendDebugMessage("Attempting to give rewards to player", DebugMode.DAILY);
-        ActivityRewarder.configManager.getRewards(currDay).giveRewards(player);
+        RewardCollection priorityReward = ActivityRewarder.configManager.getRewards(currDay);
+        priorityReward.giveRewards(player);
         ActivityRewarder.configManager.sendDebugMessage("Successfully gave player rewards", DebugMode.DAILY);
         ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getRewardMessage());
 
@@ -207,8 +208,7 @@ public class RewardsGui extends AbstractGui {
             ActivityRewarder.configManager.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", DebugMode.HOURLY);
         }
 
-        Reward priorityReward;
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
+        player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
         rewardUser.incrementDayNum();
         rewardUser.setLastDate(LocalDate.now().toString());
     }

@@ -4,16 +4,21 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
-public class CmdReward implements Reward {
+public class CommandReward implements Reward {
     private static final ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     private final String command;
 
 
-    public CmdReward(String commandReward) {
+    public CommandReward(String commandReward) {
         this.command = commandReward;
+    }
+
+    public CommandReward(ConfigurationSection configurationSection) {
+        this.command = configurationSection.getString("command");
     }
 
     @Override

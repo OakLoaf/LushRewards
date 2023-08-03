@@ -5,6 +5,7 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.rewards.RewardCollection;
+import me.dave.activityrewarder.rewards.RewardTypes;
 import me.dave.activityrewarder.utils.ConfigParser;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,10 +13,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.dave.activityrewarder.rewards.custom.CmdReward;
+import me.dave.activityrewarder.rewards.custom.CommandReward;
 import me.dave.activityrewarder.rewards.custom.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -221,13 +223,21 @@ public class ConfigManager {
 
         ConfigurationSection rewardDaysSection = config.getConfigurationSection("reward-days");
         if (rewardDaysSection == null) rewardDaysSection = config.getConfigurationSection("rewards");
-        for (String rewardDayKey : rewardDaysSection.getKeys(false)) {
-            if (rewardDayKey.equalsIgnoreCase("default")) {
-                defaultReward = loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey), DebugMode.DAILY);
-                continue;
-            }
-            dayToRewards.put(Integer.parseInt(rewardDayKey), loadSectionRewards(rewardDaysSection.getConfigurationSection(rewardDayKey), DebugMode.DAILY));
+        if (rewardDaysSection == null) {
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'rewards' section");
+            return;
         }
+
+        rewardDaysSection.getValues(false).entrySet().forEach((data) -> {
+            if (data instanceof ConfigurationSection rewardSection) {
+                if (rewardSection.getName().equalsIgnoreCase("default")) {
+                    defaultReward= loadSectionRewards(rewardSection, DebugMode.DAILY);
+                }
+                else {
+                    dayToRewards.put(Integer.parseInt(rewardSection.getName()), loadSectionRewards(rewardSection, DebugMode.DAILY));
+                }
+            }
+        });
     }
 
     private void reloadCategoryMap() {
@@ -240,6 +250,18 @@ public class ConfigManager {
         // Repopulates category map
         for (String category : categoriesSection.getKeys(false)) {
             categoryItems.put(category, ConfigParser.getItem(categoriesSection.getConfigurationSection(category), Material.STONE));
+        }
+    }
+
+    @Nullable
+    private Reward loadReward(ConfigurationSection configurationSection, DebugMode debugMode) {
+        String rewardType = configurationSection.getString("type", "e");
+        if (RewardTypes.isRewardRegistered(rewardType)) {
+            ActivityRewarder.getInstance().getLogger().severe("Invalid reward type at '" + configurationSection.getCurrentPath() + "'");
+            return null;
+        }
+        else {
+            return RewardTypes.getClass(rewardType);
         }
     }
 
@@ -273,7 +295,7 @@ public class ConfigManager {
         sendDebugMessage("Attempting to load command rewards", debugMode);
         int cmdRewardCount = 0;
         for (String command : rewardDaySection.getStringList("rewards.commands")) {
-            rewards.add(new CmdReward(command));
+            rewards.add(new CommandReward(command));
             cmdRewardCount++;
         }
         sendDebugMessage("Successfully loaded " + cmdRewardCount + " command rewards", debugMode);
