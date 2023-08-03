@@ -14,7 +14,7 @@ public class ItemReward implements Reward {
     }
 
     @Override
-    public void giveReward(Player player) {
+    public void giveTo(Player player) {
         HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack);
         for (ItemStack item: droppedItems.values()) {
             player.getWorld().dropItem(player.getLocation(), item);

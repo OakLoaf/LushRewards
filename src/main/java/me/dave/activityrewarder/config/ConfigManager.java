@@ -5,7 +5,9 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.rewards.RewardCollection;
+import me.dave.activityrewarder.utils.ConfigParser;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -13,10 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import me.dave.activityrewarder.rewards.custom.CmdReward;
 import me.dave.activityrewarder.rewards.custom.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -28,7 +27,7 @@ public class ConfigManager {
     private DebugMode debugMode;
     private RewardCollection defaultReward;
     private final HashMap<Integer, RewardCollection> dayToRewards = new HashMap<>();
-    private final HashMap<String, ItemStack> sizeItems = new HashMap<>();
+    private final HashMap<String, ItemStack> categoryItems = new HashMap<>();
     private GuiTemplate guiTemplate;
     private ItemStack collectedItem;
     private ItemStack borderItem;
@@ -52,8 +51,8 @@ public class ConfigManager {
         if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
         else guiTemplate = GuiTemplate.DefaultTemplate.valueOf(templateType);
 
-        collectedItem = getItem(config.getString("gui.collected-item", "REDSTONE_BLOCK").split(";"), Material.REDSTONE_BLOCK);
-        borderItem = getItem(config.getString("gui.border-item", "GRAY_STAINED_GLASS_PANE").split(";"), Material.GRAY_STAINED_GLASS_PANE);
+        collectedItem = ConfigParser.getItem(config.getConfigurationSection("gui.collected-item"), Material.REDSTONE_BLOCK);
+        borderItem = ConfigParser.getItem(config.getConfigurationSection("gui.border-item"), Material.GRAY_STAINED_GLASS_PANE);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
@@ -65,7 +64,7 @@ public class ConfigManager {
 
 
         reloadRewardsMap();
-        reloadSizeMap();
+        reloadCategoryMap();
         notificationHandler.reloadNotifications(reminderPeriod);
     }
 
@@ -113,8 +112,8 @@ public class ConfigManager {
         return config.getString("gui.collected-name", "&6Day %day% - Collected").replaceAll("%day%", String.valueOf(day));
     }
 
-    public ItemStack getSizeItem(String size) {
-        return sizeItems.get(size.toLowerCase()).clone();
+    public ItemStack getCategoryItem(String category) {
+        return categoryItems.get(category.toLowerCase()).clone();
     }
 
     public ItemStack getCollectedItem() {
@@ -135,6 +134,10 @@ public class ConfigManager {
 
     public boolean doDaysReset() {
         return daysReset;
+    }
+
+    public RewardCollection getDefaultReward() {
+        return defaultReward;
     }
 
     public double getHourlyMultiplier(Player player) {
@@ -195,7 +198,7 @@ public class ConfigManager {
         else return defaultReward;
     }
 
-    public int findNextRewardOfSize(int day, String size) {
+    public int findNextRewardInCategory(int day, String category) {
         int nextRewardKey = -1;
 
         // Iterates through dayToRewards
@@ -203,9 +206,9 @@ public class ConfigManager {
             // Checks if the current key is a day in the future
             if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) continue;
 
-            // Gets the size of the reward and compares to the request
+            // Gets the category of the reward and compares to the request
             RewardCollection rewards = getRewards(rewardsKey);
-            if (rewards.getSize().equalsIgnoreCase(size)) nextRewardKey = rewardsKey;
+            if (rewards.getCategory().equalsIgnoreCase(category)) nextRewardKey = rewardsKey;
         }
 
         // Returns -1 if no future rewards match the request
@@ -227,34 +230,37 @@ public class ConfigManager {
         }
     }
 
-    private void reloadSizeMap() {
-        // Clears size map
-        sizeItems.clear();
+    private void reloadCategoryMap() {
+        // Clears category map
+        categoryItems.clear();
 
-        ConfigurationSection sizesSection = config.getConfigurationSection("sizes");
-        for (String sizeKey : sizesSection.getKeys(false)) {
-            String[] materialDataArr = sizesSection.getString(sizeKey, "STONE").split(";");
-            sizeItems.put(sizeKey, getItem(materialDataArr, Material.STONE));
+        ConfigurationSection categoriesSection = config.getConfigurationSection("categories");
+        if (categoriesSection == null) return;
+
+        // Repopulates category map
+        for (String category : categoriesSection.getKeys(false)) {
+            categoryItems.put(category, ConfigParser.getItem(categoriesSection.getConfigurationSection(category), Material.STONE));
         }
     }
 
     private RewardCollection loadSectionRewards(ConfigurationSection rewardDaySection, DebugMode debugMode) {
         sendDebugMessage("Attempting to load sections reward (" + rewardDaySection.getCurrentPath() + ")", debugMode);
         ArrayList<Reward> rewards = new ArrayList<>();
-        String size = rewardDaySection.getString("size", "SMALL").toUpperCase();
-        sendDebugMessage("Reward size set (" + size + ")", debugMode);
+        String category = rewardDaySection.getString("category", "SMALL").toUpperCase();
+        sendDebugMessage("Reward category set to " + category, debugMode);
         List<String> lore = new ArrayList<>();
         if (rewardDaySection.getKeys(false).contains("lore")) {
             lore = rewardDaySection.getStringList("lore");
         }
         sendDebugMessage("Lore set", debugMode);
+        lore.forEach(str -> sendDebugMessage("- " + str, debugMode));
 
         sendDebugMessage("Attempting to load item rewards", debugMode);
         ConfigurationSection itemRewards = rewardDaySection.getConfigurationSection("rewards.items");
         int itemRewardCount = 0;
         if (itemRewards != null) {
             for (String materialName : itemRewards.getKeys(false)) {
-                ItemStack item = getItem(materialName.toUpperCase(), Material.GOLD_NUGGET);
+                ItemStack item = ConfigParser.getItem(materialName.toUpperCase(), Material.GOLD_NUGGET);
                 int amount = itemRewards.getInt(materialName + ".amount", 1);
                 item.setAmount(amount);
 
@@ -273,53 +279,7 @@ public class ConfigManager {
         sendDebugMessage("Successfully loaded " + cmdRewardCount + " command rewards", debugMode);
 
         sendDebugMessage("Successfully loaded " + (itemRewardCount + cmdRewardCount) + " total rewards", debugMode);
-        return new RewardCollection(size, lore, rewards);
-    }
-
-    @Nullable
-    private Material getMaterial(String materialName) {
-        return getMaterial(materialName, null);
-    }
-
-    private Material getMaterial(String materialName, Material def) {
-        Material material;
-        try {
-            material = Material.valueOf(materialName);
-        } catch (IllegalArgumentException err) {
-            plugin.getLogger().warning("Ignoring " + materialName + ", that is not a valid material.");
-            if (def != null) {
-                material = def;
-                plugin.getLogger().warning("Defaulted material to " + def.name() + ".");
-            }
-            else return null;
-        }
-        return material;
-    }
-
-    private ItemStack getItem(String materialName, Material def) {
-        Material material = getMaterial(materialName, def);
-        if (material == null) return null;
-        return new ItemStack(material);
-    }
-
-    private @NotNull ItemStack getItem(String[] materialData) {
-        return getItem(materialData, Material.STONE);
-    }
-
-    private @NotNull ItemStack getItem(String[] materialData, @NotNull Material def) {
-        if (materialData.length == 0) return new ItemStack(def);
-        Material material = getMaterial(materialData[0].toUpperCase(), def);
-        if (material == null) material = def;
-
-        ItemStack item = new ItemStack(material);
-
-        if (materialData.length >= 2) {
-            ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setCustomModelData(Integer.parseInt(materialData[1]));
-            item.setItemMeta(itemMeta);
-        }
-
-        return item;
+        return new RewardCollection(0, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, category, lore, rewards);
     }
 
     public record UpcomingReward(boolean enabled, List<String> lore) { }

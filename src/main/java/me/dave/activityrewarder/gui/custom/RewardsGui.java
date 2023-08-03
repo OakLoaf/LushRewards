@@ -6,6 +6,7 @@ import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
+import me.dave.activityrewarder.rewards.Reward;
 import me.dave.activityrewarder.rewards.RewardCollection;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
@@ -110,12 +111,12 @@ public class RewardsGui extends AbstractGui {
         if (upcomingRewardSlots.size() > 0) {
             int nextRewardDay = -1;
             if (ActivityRewarder.configManager.showUpcomingReward()) {
-                nextRewardDay = ActivityRewarder.configManager.findNextRewardOfSize(dayIndex, "large");
+                nextRewardDay = ActivityRewarder.configManager.findNextRewardInCategory(dayIndex, "large");
             }
 
             // Adds the upcoming reward to the GUI if it exists
             if (nextRewardDay != -1) {
-                ItemStack upcomingItem = ActivityRewarder.configManager.getSizeItem("large");
+                ItemStack upcomingItem = ActivityRewarder.configManager.getCategoryItem("large");
                 List<String> itemLore = ActivityRewarder.configManager.getUpcomingRewardLore();
                 ItemMeta upcomingMeta = upcomingItem.getItemMeta();
 
@@ -206,6 +207,7 @@ public class RewardsGui extends AbstractGui {
             ActivityRewarder.configManager.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", DebugMode.HOURLY);
         }
 
+        Reward priorityReward;
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
         rewardUser.incrementDayNum();
         rewardUser.setLastDate(LocalDate.now().toString());

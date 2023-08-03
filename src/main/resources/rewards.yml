@@ -2,13 +2,6 @@
 #   %user% - The user being given the reward
 #   %hourly-amount% - Number of hours multiplied by count
 
-default-reward:
-  display-item: golden_nugget
-  lore:
-    - "&#da96fa&lRewards:"
-    - "&7&o- 12 Cactus"
-    - "&7&o- 1 Cookie"
-
 # List of rewards
 daily-rewards:
   default:
@@ -17,12 +10,14 @@ daily-rewards:
       - "&7Rewards:"
       - "&7&o-12 Cactus"
       - "&7&o-1 Cookie"
+    redeem-sound:
     rewards:
-      items:
-        cactus:
-          amount: 12
-        cookie:
-          amount: 1
+      - type: item
+        material: cactus
+        amount: 12
+      - type: item
+        material: cookie
+        amount: 1
   day-1:
     category: SMALL
     lore:
