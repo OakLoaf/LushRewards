@@ -25,8 +25,8 @@ reminder-period: 1800
 # Whether a player's days will reset if they miss a day
 days-reset: false
 
-# Display items for different reward sizes
-sizes:
+# Display items for different reward categories
+categories:
   small: GOLD_NUGGET
   medium: GOLD_INGOT
   large: GOLD_BLOCK

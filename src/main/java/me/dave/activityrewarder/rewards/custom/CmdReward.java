@@ -17,7 +17,7 @@ public class CmdReward implements Reward {
     }
 
     @Override
-    public void giveReward(Player player) {
+    public void giveTo(Player player) {
         String[] commandArr = command.split("\\|");
         boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
         for (String thisCommand : commandArr) {

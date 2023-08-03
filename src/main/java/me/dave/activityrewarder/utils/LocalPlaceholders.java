@@ -95,8 +95,8 @@ public class LocalPlaceholders {
                 case "multiplier" -> {
                     return String.valueOf(rewardUser.getHourlyMultiplier());
                 }
-                case "size" -> {
-                    return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).getSize());
+                case "category" -> {
+                    return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).getCategory());
                 }
                 case "total_rewards" -> {
                     return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).getRewardCount());
@@ -111,8 +111,8 @@ public class LocalPlaceholders {
             RewardCollection rewardCollection = ActivityRewarder.configManager.getRewards(dayNum);
 
             switch(paramArr[2]) {
-                case "size" -> {
-                    return String.valueOf(rewardCollection.getSize());
+                case "category" -> {
+                    return String.valueOf(rewardCollection.getCategory());
                 }
                 case "total_rewards" -> {
                     return String.valueOf(rewardCollection.getRewardCount());

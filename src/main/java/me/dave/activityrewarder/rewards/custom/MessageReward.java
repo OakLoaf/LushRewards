@@ -12,7 +12,7 @@ public class MessageReward implements Reward {
     }
 
     @Override
-    public void giveReward(Player player) {
+    public void giveTo(Player player) {
         ChatColorHandler.sendMessage(player, message);
     }
 }

@@ -2,30 +2,48 @@ package me.dave.activityrewarder.rewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RewardCollection {
-    private final String size;
+    private final int priority;
+    private final Sound sound;
+    private final String category;
     private final List<String> lore;
-    private final ArrayList<Reward> rewards;
+    private final List<Reward> rewards;
 
-    public RewardCollection(String size, List<String> lore, ArrayList<Reward> rewards) {
-        this.size = size;
-        this.lore = lore;
-        this.rewards = rewards;
+    public RewardCollection(int priority, @Nullable Sound sound, @Nullable String category, @Nullable List<String> lore, @Nullable ArrayList<Reward> rewards) {
+        this.priority = priority;
+        this.sound = sound != null ? sound : ActivityRewarder.configManager.getDefaultReward().getSound();
+        this.category = category != null ? category : ActivityRewarder.configManager.getDefaultReward().getCategory();
+        this.lore = lore != null ? lore : ActivityRewarder.configManager.getDefaultReward().getLore();
+        this.rewards = rewards != null ? rewards : ActivityRewarder.configManager.getDefaultReward().getRewards();
     }
 
-    public String getSize() {
-        return size;
+    public int getPriority() {
+        return priority;
+    }
+
+    public Sound getSound() {
+        return sound;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public List<String> getLore() {
         return lore;
+    }
+
+    public List<Reward> getRewards() {
+        return rewards;
     }
 
     public int getRewardCount() {
@@ -34,18 +52,18 @@ public class RewardCollection {
 
     public void giveRewards(Player player) {
         for (Reward reward : rewards) {
-            reward.giveReward(player);
+            reward.giveTo(player);
         }
     }
 
     public ItemStack asItem() {
-        // Get the current reward's size item
-        String size = this.getSize();
-        ItemStack rewardItem = ActivityRewarder.configManager.getSizeItem(size);
+        // Get the current reward's category item
+        String category = this.getCategory();
+        ItemStack rewardItem = ActivityRewarder.configManager.getCategoryItem(category);
         ItemMeta rewardItemMeta = rewardItem.getItemMeta();
         List<String> itemLore = this.getLore();
         if (itemLore.isEmpty()) {
-            itemLore.add("&7&o- " + makeFriendly(size) + " reward");
+            itemLore.add("&7&o- " + makeFriendly(category) + " reward");
         }
         itemLore = ChatColorHandler.translateAlternateColorCodes(itemLore);
         rewardItemMeta.setLore(itemLore);
