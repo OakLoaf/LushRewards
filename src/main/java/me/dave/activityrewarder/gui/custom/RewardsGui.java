@@ -187,7 +187,7 @@ public class RewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Loaded player's daily rewards ", Debugger.DebugMode.DAILY);
         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.DAILY);
         DailyRewardCollection priorityReward = ActivityRewarder.getRewardManager().getRewards(currDay);
-        priorityReward.giveRewards(player);
+        priorityReward.rewards().forEach((reward) -> reward.giveTo(player));
         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getRewardMessage());
 

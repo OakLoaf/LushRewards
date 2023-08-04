@@ -3,7 +3,6 @@ package me.dave.activityrewarder.rewards;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
@@ -22,12 +21,6 @@ public record DailyRewardCollection(int priority, String category, List<String> 
 
     public int getRewardCount() {
         return rewards.size();
-    }
-
-    public void giveRewards(Player player) {
-        for (Reward reward : rewards) {
-            reward.giveTo(player);
-        }
     }
 
     public ItemStack asItem() {
