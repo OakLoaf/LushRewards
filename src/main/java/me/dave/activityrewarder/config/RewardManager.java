@@ -39,11 +39,9 @@ public class RewardManager {
         if (rewardDaysSection != null) {
             rewardDaysSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
-                    if (rewardSection.getName().equalsIgnoreCase("default")) {
-                        defaultReward = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
-                    } else {
-                        dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY));
-                    }
+                    DailyRewardCollection rewardCollection = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
+                    if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = rewardCollection;
+                    else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
                 }
             });
         }
