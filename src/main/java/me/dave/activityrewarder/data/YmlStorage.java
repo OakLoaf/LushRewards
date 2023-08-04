@@ -18,14 +18,6 @@ public class YmlStorage implements Storage<RewardUser> {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final File dataFolder = new File(plugin.getDataFolder(), "data");
 
-    public void init() {
-        try {
-            dataFolder.createNewFile();
-        } catch(IOException err) {
-            err.printStackTrace();
-        }
-    }
-
     @Override
     public RewardUser load(UUID uuid) {
         ConfigurationSection configurationSection = loadOrCreateFile(uuid);
