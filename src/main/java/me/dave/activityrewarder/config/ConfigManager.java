@@ -70,7 +70,7 @@ public class ConfigManager {
     }
 
     public String getRewardMessage() {
-        return config.getString("messages.reward-given", "&e&lRewards &8» &aYou have collected today's reward");
+        return config.getString("messages.daily-reward-given", "&e&lRewards &8» &aYou have collected today's reward");
     }
 
     public String getBonusMessage() {
