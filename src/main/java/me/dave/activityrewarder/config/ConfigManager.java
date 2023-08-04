@@ -7,6 +7,7 @@ import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.rewards.RewardCollection;
 import me.dave.activityrewarder.rewards.RewardTypes;
 import me.dave.activityrewarder.utils.ConfigParser;
+import me.dave.activityrewarder.utils.Debugger;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,9 +27,7 @@ public class ConfigManager {
     private final Logger logger = plugin.getLogger();
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private FileConfiguration config;
-    private DebugMode debugMode;
-    private RewardCollection defaultReward;
-    private final HashMap<Integer, RewardCollection> dayToRewards = new HashMap<>();
+    private Debugger.DebugMode debugMode;
     private final HashMap<String, ItemStack> categoryItems = new HashMap<>();
     private GuiTemplate guiTemplate;
     private ItemStack collectedItem;
@@ -47,7 +46,7 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
-        debugMode = DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase());
+        debugMode = Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase());
 
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
@@ -70,8 +69,8 @@ public class ConfigManager {
         notificationHandler.reloadNotifications(reminderPeriod);
     }
 
-    public void sendDebugMessage(String string, DebugMode mode) {
-        if (debugMode == mode || debugMode == DebugMode.ALL) logger.info("DEBUG >> " + string);
+    public Debugger.DebugMode getDebugMode() {
+        return debugMode;
     }
 
     public String getReloadMessage() {
