@@ -5,6 +5,7 @@
 # List of rewards
 daily-rewards:
   default:
+    priority: -1
     category: SMALL
     lore:
       - "&7Rewards:"
@@ -25,11 +26,14 @@ daily-rewards:
       - "&7&o-1 Pink Tulip"
       - "&7&o-1 Cookie"
     rewards:
-      items:
-        pink_tulip:
-          amount: 1
-        cookie:
-          amount: 1
+      pink_tulip:
+        type: item
+        material: pink_tulip
+        amount: 1
+      cookie:
+        type: item
+        material: cookie
+        amount: 1
   day-2:
     category: SMALL
     lore:
@@ -72,9 +76,7 @@ daily-rewards:
 
 
 # Items given daily based on the amount of play time since rewards were last collected
-hourly-bonus:
-  # enabled: Whether hourly bonuses should be handed out
-  enabled: true
+hourly-rewards:
   # Each section within the hourly-bonus is its own group, to give a player access to
   # a group you must give them "activityrewarder.bonus.groupName"
   #
