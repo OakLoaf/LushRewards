@@ -18,6 +18,11 @@ gui:
   # Display item for when a reward is collected
   collected-item: COAL
 
+# daily-rewards-enabled: Whether the daily rewards module is enabled
+daily-rewards-enabled: true
+# hourly-rewards-enabled: Whether the hourly rewards module is enabled
+hourly-rewards-enabled: true
+
 # The number of days before the reward cycle loops
 loop-length: 14
 # The length in seconds between reminders being sent

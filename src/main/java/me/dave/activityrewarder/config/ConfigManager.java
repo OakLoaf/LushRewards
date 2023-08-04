@@ -22,6 +22,8 @@ public class ConfigManager {
     private ItemStack collectedItem;
     private ItemStack borderItem;
     private UpcomingReward upcomingReward;
+    private boolean dailyRewardsEnabled;
+    private boolean hourlyRewardsEnabled;
     private int loopLength;
     private int reminderPeriod;
     private boolean daysReset;
@@ -48,13 +50,15 @@ public class ConfigManager {
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
         upcomingReward = new UpcomingReward(showUpcomingReward, upcomingRewardLore);
 
+        dailyRewardsEnabled = config.getBoolean("daily-rewards-enabled", true);
+        hourlyRewardsEnabled = config.getBoolean("hourly-rewards-enabled", true);
         loopLength = config.getInt("loop-length", -1);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         daysReset = config.getBoolean("days-reset", false);
 
-        ActivityRewarder.getRewardManager().reloadRewards();
         reloadCategoryMap();
         notificationHandler.reloadNotifications(reminderPeriod);
+        if (ActivityRewarder.getRewardManager() != null) ActivityRewarder.getRewardManager().reloadRewards();
     }
 
     public String getReloadMessage() {
@@ -108,6 +112,14 @@ public class ConfigManager {
 
     public ItemStack getBorderItem() {
         return borderItem.clone();
+    }
+
+    public boolean areDailyRewardsEnabled() {
+        return dailyRewardsEnabled;
+    }
+
+    public boolean areHourlyRewardsEnabled() {
+        return hourlyRewardsEnabled;
     }
 
     public int getLoopLength() {
