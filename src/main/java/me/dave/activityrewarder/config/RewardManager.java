@@ -42,7 +42,7 @@ public class RewardManager {
                 }
             });
 
-            ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " rewards from '" + rewardDaysSection.getCurrentPath() + "'");
+            ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " reward collections from '" + rewardDaysSection.getCurrentPath() + "'");
         }
         else {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
