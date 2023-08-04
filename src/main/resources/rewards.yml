@@ -10,7 +10,7 @@ daily-rewards:
       - "&7Rewards:"
       - "&7&o-12 Cactus"
       - "&7&o-1 Cookie"
-    redeem-sound:
+    redeem-sound: ENTITY_EXPERIENCE_ORB_PICKUP
     rewards:
       - type: item
         material: cactus
