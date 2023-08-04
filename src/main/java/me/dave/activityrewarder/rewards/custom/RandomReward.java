@@ -13,8 +13,17 @@ public class RandomReward implements Reward {
     private static final Random random = new Random();
     private final List<Reward> rewards;
 
+    @SuppressWarnings("unchecked")
     public RandomReward(Map<?, ?> map) {
-        List<Map<?, ?>> rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());
+        List<Map<?, ?>> rewardMaps;
+        try {
+            rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());
+        } catch(ClassCastException exc) {
+            ActivityRewarder.getInstance().getLogger().severe("Invalid config format at '" + map + "'");
+            this.rewards = Collections.emptyList();
+            return;
+        }
+
         // TODO: replace #loadRewards() with local alternative that takes into account weights
         this.rewards = ActivityRewarder.getRewardManager().loadRewards(rewardMaps, map.toString());
     }
