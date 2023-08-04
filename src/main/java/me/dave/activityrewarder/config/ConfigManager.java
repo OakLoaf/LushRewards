@@ -13,11 +13,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.dave.activityrewarder.rewards.custom.CommandReward;
-import me.dave.activityrewarder.rewards.custom.ItemReward;
 import me.dave.activityrewarder.rewards.Reward;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -115,7 +115,8 @@ public class ConfigManager {
     }
 
     public ItemStack getCategoryItem(String category) {
-        return categoryItems.get(category.toLowerCase()).clone();
+        ItemStack item = categoryItems.get(category.toLowerCase());
+        return item != null ? item.clone() : new ItemStack(Material.CHEST_MINECART);
     }
 
     public ItemStack getCollectedItem() {
@@ -167,20 +168,26 @@ public class ConfigManager {
 
         sendDebugMessage("Checking player's highest multiplier", DebugMode.HOURLY);
         double heighestMultiplier = 0;
-        for (String perm : hourlySection.getKeys(false)) {
+
+        for (Map.Entry<String, Object> mappings : hourlySection.getValues(false).entrySet()) {
+            String perm = mappings.getKey();
             if (perm.equals("enabled")) continue;
+
             sendDebugMessage("Checking if player has activityrewarder.bonus." + perm, DebugMode.HOURLY);
             if (player.hasPermission("activityrewarder.bonus." + perm)) {
-                sendDebugMessage("Player has activityrewarder.bonus." + perm, DebugMode.HOURLY);
-                double multiplier = hourlySection.getConfigurationSection(perm).getDouble("multiplier", 1);
+                if (mappings.getValue() instanceof ConfigurationSection valueSection) {
+                    sendDebugMessage("Player has activityrewarder.bonus." + perm, DebugMode.HOURLY);
+                    double multiplier = valueSection.getDouble("multiplier", 1);
 
-                if (multiplier > heighestMultiplier) {
-                    sendDebugMessage("Found higher multiplier, updated highest multiplier", DebugMode.HOURLY);
-                    heighestMultiplier = multiplier;
-                    hourlyRewards = loadSectionRewards(hourlySection.getConfigurationSection(perm), DebugMode.HOURLY);
+                    if (multiplier > heighestMultiplier) {
+                        sendDebugMessage("Found higher multiplier, updated highest multiplier", DebugMode.HOURLY);
+                        heighestMultiplier = multiplier;
+                        hourlyRewards = loadRewardCollection(valueSection, DebugMode.HOURLY);
+                    }
                 }
             }
         }
+
         sendDebugMessage("Found highest multiplier (" + heighestMultiplier + ")", DebugMode.HOURLY);
         RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
         rewardUser.setHourlyMultiplier(heighestMultiplier);
@@ -210,7 +217,7 @@ public class ConfigManager {
 
             // Gets the category of the reward and compares to the request
             RewardCollection rewards = getRewards(rewardsKey);
-            if (rewards.getCategory().equalsIgnoreCase(category)) nextRewardKey = rewardsKey;
+            if (rewards.category().equalsIgnoreCase(category)) nextRewardKey = rewardsKey;
         }
 
         // Returns -1 if no future rewards match the request
@@ -228,13 +235,12 @@ public class ConfigManager {
             return;
         }
 
-        rewardDaysSection.getValues(false).entrySet().forEach((data) -> {
-            if (data instanceof ConfigurationSection rewardSection) {
+        rewardDaysSection.getValues(false).forEach((key, value) -> {
+            if (value instanceof ConfigurationSection rewardSection) {
                 if (rewardSection.getName().equalsIgnoreCase("default")) {
-                    defaultReward= loadSectionRewards(rewardSection, DebugMode.DAILY);
-                }
-                else {
-                    dayToRewards.put(Integer.parseInt(rewardSection.getName()), loadSectionRewards(rewardSection, DebugMode.DAILY));
+                    defaultReward = loadRewardCollection(rewardSection, DebugMode.DAILY);
+                } else {
+                    dayToRewards.put(Integer.parseInt(rewardSection.getName()), loadRewardCollection(rewardSection, DebugMode.DAILY));
                 }
             }
         });
@@ -254,54 +260,56 @@ public class ConfigManager {
     }
 
     @Nullable
-    private Reward loadReward(ConfigurationSection configurationSection, DebugMode debugMode) {
+    private Reward loadReward(ConfigurationSection configurationSection) {
         String rewardType = configurationSection.getString("type", "e");
-        if (RewardTypes.isRewardRegistered(rewardType)) {
+        if (!RewardTypes.isRewardRegistered(rewardType)) {
             ActivityRewarder.getInstance().getLogger().severe("Invalid reward type at '" + configurationSection.getCurrentPath() + "'");
             return null;
         }
-        else {
-            return RewardTypes.getClass(rewardType);
+
+        try {
+            return RewardTypes.getClass(rewardType).getConstructor(ConfigurationSection.class).newInstance(configurationSection);
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
-    private RewardCollection loadSectionRewards(ConfigurationSection rewardDaySection, DebugMode debugMode) {
-        sendDebugMessage("Attempting to load sections reward (" + rewardDaySection.getCurrentPath() + ")", debugMode);
-        ArrayList<Reward> rewards = new ArrayList<>();
+    @NotNull
+    private List<Reward> loadRewards(ConfigurationSection configurationSection) {
+        List<Reward> rewardList = new ArrayList<>();
+
+        configurationSection.getValues(false).forEach((key, value) -> {
+            if (value instanceof ConfigurationSection rewardSection) {
+                Reward reward = loadReward(rewardSection);
+                if (reward != null) rewardList.add(reward);
+            }
+        });
+
+        return rewardList;
+    }
+
+    private RewardCollection loadRewardCollection(ConfigurationSection rewardDaySection, DebugMode debugMode) {
+        sendDebugMessage("Attempting to load reward collection at '" + rewardDaySection.getCurrentPath() + "'", debugMode);
+
         String category = rewardDaySection.getString("category", "SMALL").toUpperCase();
         sendDebugMessage("Reward category set to " + category, debugMode);
-        List<String> lore = new ArrayList<>();
-        if (rewardDaySection.getKeys(false).contains("lore")) {
-            lore = rewardDaySection.getStringList("lore");
-        }
-        sendDebugMessage("Lore set", debugMode);
+
+        List<String> lore = rewardDaySection.getStringList("lore");
+        sendDebugMessage("Lore set to:", debugMode);
         lore.forEach(str -> sendDebugMessage("- " + str, debugMode));
 
-        sendDebugMessage("Attempting to load item rewards", debugMode);
-        ConfigurationSection itemRewards = rewardDaySection.getConfigurationSection("rewards.items");
-        int itemRewardCount = 0;
-        if (itemRewards != null) {
-            for (String materialName : itemRewards.getKeys(false)) {
-                ItemStack item = ConfigParser.getItem(materialName.toUpperCase(), Material.GOLD_NUGGET);
-                int amount = itemRewards.getInt(materialName + ".amount", 1);
-                item.setAmount(amount);
+        Sound redeemSound = ConfigParser.getSound(rewardDaySection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP").toUpperCase());
 
-                rewards.add(new ItemReward(item));
-                itemRewardCount++;
-            }
-        }
-        sendDebugMessage("Successfully loaded " + itemRewardCount + " item rewards", debugMode);
+        sendDebugMessage("Attempting to load rewards", debugMode);
 
-        sendDebugMessage("Attempting to load command rewards", debugMode);
-        int cmdRewardCount = 0;
-        for (String command : rewardDaySection.getStringList("rewards.commands")) {
-            rewards.add(new CommandReward(command));
-            cmdRewardCount++;
-        }
-        sendDebugMessage("Successfully loaded " + cmdRewardCount + " command rewards", debugMode);
+        ConfigurationSection rewardsSection = rewardDaySection.getConfigurationSection("rewards");
 
-        sendDebugMessage("Successfully loaded " + (itemRewardCount + cmdRewardCount) + " total rewards", debugMode);
-        return new RewardCollection(0, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, category, lore, rewards);
+        Reward[] randomObject = rewardDaySection.getObject("rewards", Reward[].class);
+        List<Reward> rewardList = rewardsSection != null ? loadRewards(rewardsSection) : new ArrayList<>();
+        sendDebugMessage("Successfully loaded " + rewardList.size() + " rewards from '" + rewardDaySection.getCurrentPath() + "'", debugMode);
+
+        return new RewardCollection(0, category, lore, redeemSound, rewardList);
     }
 
     public record UpcomingReward(boolean enabled, List<String> lore) { }
