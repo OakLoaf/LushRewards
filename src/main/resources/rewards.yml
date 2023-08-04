@@ -6,7 +6,7 @@
 daily-rewards:
   default:
     priority: -1
-    category: SMALL
+    category: small
     lore:
       - "&7Rewards:"
       - "&7&o-12 Cactus"
@@ -20,7 +20,7 @@ daily-rewards:
         material: cookie
         amount: 1
   day-1:
-    category: SMALL
+    category: small
     lore:
       - "&7Rewards:"
       - "&7&o-1 Pink Tulip"
@@ -33,7 +33,7 @@ daily-rewards:
         material: cookie
         amount: 1
   day-2:
-    category: SMALL
+    category: small
     lore:
       - "&7Rewards:"
       - "&7&o-1 Oxeye Daisy"
@@ -46,7 +46,7 @@ daily-rewards:
         material: bread
         amount: 1
   day-5:
-    category: SMALL
+    category: small
     lore:
       - "&7Rewards:"
       - "&7&o-1 White Tulip"
@@ -59,7 +59,7 @@ daily-rewards:
         material: pearlescent_froglight
         amount: 1
   day-30:
-    category: LARGE
+    category: large
     lore:
       - "&6Rewards:"
       - "&6&o-3 Diamond"
