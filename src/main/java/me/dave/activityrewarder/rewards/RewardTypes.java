@@ -1,9 +1,6 @@
 package me.dave.activityrewarder.rewards;
 
-import me.dave.activityrewarder.rewards.custom.BroadcastReward;
-import me.dave.activityrewarder.rewards.custom.CommandReward;
-import me.dave.activityrewarder.rewards.custom.ItemReward;
-import me.dave.activityrewarder.rewards.custom.MessageReward;
+import me.dave.activityrewarder.rewards.custom.*;
 
 import java.util.HashMap;
 
@@ -15,6 +12,7 @@ public class RewardTypes {
         register("command", CommandReward.class);
         register("item", ItemReward.class);
         register("message", MessageReward.class);
+        register("random", RandomReward.class);
     }
 
     public static void register(String type, Class<? extends Reward> rewardClass) {
