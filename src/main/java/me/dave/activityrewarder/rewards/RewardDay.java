@@ -13,4 +13,12 @@ public class RewardDay {
     public DailyRewardCollection getHighestPriorityRewards() {
         return dailyRewardCollections.stream().min(Comparator.comparingInt(DailyRewardCollection::priority)).orElse(null);
     }
+
+    public void addCollection(DailyRewardCollection rewardCollection) {
+        dailyRewardCollections.add(rewardCollection);
+    }
+
+    public void addCollections(List<DailyRewardCollection> rewardCollections) {
+        rewardCollections.forEach(this::addCollection);
+    }
 }

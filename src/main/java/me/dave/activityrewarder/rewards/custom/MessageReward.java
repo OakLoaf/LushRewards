@@ -2,8 +2,9 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.rewards.Reward;
 import me.dave.chatcolorhandler.ChatColorHandler;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 public class MessageReward implements Reward {
     private final String message;
@@ -12,8 +13,8 @@ public class MessageReward implements Reward {
         this.message = message;
     }
 
-    public MessageReward(ConfigurationSection configurationSection) {
-        this.message = configurationSection.getString("message");
+    public MessageReward(Map<?, ?> map) {
+        this.message = (String) map.get("message");
     }
 
     @Override

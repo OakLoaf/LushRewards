@@ -55,8 +55,8 @@ public class RewardManager {
         if (hourlyBonusSection != null) {
             hourlyBonusSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection permissionSection) {
-                    ConfigurationSection rewardSection = permissionSection.getConfigurationSection("rewards");
-                    List<Reward> rewardList = rewardSection != null ? loadRewards(rewardSection) : new ArrayList<>();
+                    List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
+                    List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
                     permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
                 }
             });
@@ -141,15 +141,15 @@ public class RewardManager {
     }
 
     @Nullable
-    private Reward loadReward(ConfigurationSection configurationSection) {
-        String rewardType = configurationSection.getString("type", "e");
+    private Reward loadReward(Map<?, ?> rewardMap, String path) {
+        String rewardType = (String) rewardMap.get("type");
         if (!RewardTypes.isRewardRegistered(rewardType)) {
-            ActivityRewarder.getInstance().getLogger().severe("Invalid reward type at '" + configurationSection.getCurrentPath() + "'");
+            ActivityRewarder.getInstance().getLogger().severe("Invalid reward type at '" + path + "'");
             return null;
         }
 
         try {
-            return RewardTypes.getClass(rewardType).getConstructor(ConfigurationSection.class).newInstance(configurationSection);
+            return RewardTypes.getClass(rewardType).getConstructor(Map.class).newInstance(rewardMap);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -157,14 +157,12 @@ public class RewardManager {
     }
 
     @NotNull
-    private List<Reward> loadRewards(ConfigurationSection configurationSection) {
+    private List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
         List<Reward> rewardList = new ArrayList<>();
 
-        configurationSection.getValues(false).forEach((key, value) -> {
-            if (value instanceof ConfigurationSection rewardSection) {
-                Reward reward = loadReward(rewardSection);
-                if (reward != null) rewardList.add(reward);
-            }
+        maps.forEach((map) -> {
+            Reward reward = loadReward(map, path);
+            if (reward != null) rewardList.add(reward);
         });
 
         return rewardList;
@@ -187,8 +185,9 @@ public class RewardManager {
         Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP").toUpperCase());
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
-        ConfigurationSection rewardsSection = rewardCollectionSection.getConfigurationSection("rewards");
-        List<Reward> rewardList = rewardsSection != null ? loadRewards(rewardsSection) : new ArrayList<>();
+        List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
+
+        List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + "rewards") : new ArrayList<>();
         Debugger.sendDebugMessage("Successfully loaded " + rewardList.size() + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
         return new DailyRewardCollection(0, category, lore, redeemSound, rewardList);
