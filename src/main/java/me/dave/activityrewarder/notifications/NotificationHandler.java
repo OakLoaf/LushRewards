@@ -33,9 +33,9 @@ public class NotificationHandler {
 
             LocalDate currDate = LocalDate.now();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                boolean collectedToday = currDate.equals(ActivityRewarder.dataManager.getRewardUser(player.getUniqueId()).getLastDate());
+                boolean collectedToday = currDate.equals(ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId()).getLastDate());
                 if (collectedToday) continue;
-                ChatColorHandler.sendMessage(player, ActivityRewarder.configManager.getReminderMessage());
+                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getReminderMessage());
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
             }
 

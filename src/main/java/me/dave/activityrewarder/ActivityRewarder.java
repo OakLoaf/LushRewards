@@ -15,9 +15,9 @@ import me.dave.activityrewarder.events.RewardUserEvents;
 public final class ActivityRewarder extends JavaPlugin {
     private static ActivityRewarder plugin;
     private static boolean hasFloodgate = false;
-    public static DataManager dataManager;
-    public static ConfigManager configManager;
+    private static ConfigManager configManager;
     private static RewardManager rewardManager;
+    private static DataManager dataManager;
 
     @Override
     public void onEnable() {
@@ -59,8 +59,16 @@ public final class ActivityRewarder extends JavaPlugin {
         return plugin;
     }
 
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
     public static RewardManager getRewardManager() {
         return rewardManager;
+    }
+
+    public static DataManager getDataManager() {
+        return dataManager;
     }
 
     public static boolean isFloodgateEnabled() {

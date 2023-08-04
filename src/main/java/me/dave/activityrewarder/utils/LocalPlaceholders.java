@@ -80,7 +80,7 @@ public class LocalPlaceholders {
 
         // Player placeholders
         if (player != null) {
-            RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
             switch (params) {
                 case "day_num" -> {
                     if (rewardUser.hasCollectedToday()) return String.valueOf(rewardUser.getDayNum() - 1);

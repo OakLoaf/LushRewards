@@ -22,9 +22,9 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 ChatColorHandler.sendMessage(sender, "&cInsufficient permissions");
                 return true;
             }
-            ActivityRewarder.configManager.reloadConfig();
+            ActivityRewarder.getConfigManager().reloadConfig();
 
-            ChatColorHandler.sendMessage(sender, ActivityRewarder.configManager.getReloadMessage());
+            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getReloadMessage());
             return true;
         }
 

@@ -25,39 +25,39 @@ public class RewardUser {
         this.dayNum = dayNum;
         this.playTime = playTime;
 
-        this.hourlyMultiplier = ActivityRewarder.configManager.getHourlyMultiplier(Bukkit.getPlayer(uuid));
+        this.hourlyMultiplier = ActivityRewarder.getConfigManager().getHourlyMultiplier(Bukkit.getPlayer(uuid));
     }
 
     public void setUsername(String username) {
         this.username = username;
-        ActivityRewarder.dataManager.saveRewardUser(this);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void setLastDate(String lastCollectedDate) {
         this.lastDate = LocalDate.parse(lastCollectedDate);
-        ActivityRewarder.dataManager.saveRewardUser(this);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void incrementDayNum() {
         this.dayNum += 1;
-        ActivityRewarder.dataManager.saveRewardUser(this);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void resetDays() {
         this.dayNum = 1;
         this.startDate = LocalDate.now();
         this.lastDate = LocalDate.now().minusDays(1);
-        ActivityRewarder.dataManager.saveRewardUser(this);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void setPlayTime(int playTime) {
         this.playTime = playTime;
-        ActivityRewarder.dataManager.saveRewardUser(this);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void setHourlyMultiplier(double multiplier) {
         this.hourlyMultiplier = multiplier;
-        ActivityRewarder.dataManager.saveRewardUser(this);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public UUID getUUID() {

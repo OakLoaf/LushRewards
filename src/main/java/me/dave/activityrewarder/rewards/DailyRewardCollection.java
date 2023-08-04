@@ -33,7 +33,7 @@ public record DailyRewardCollection(int priority, String category, List<String> 
     public ItemStack asItem() {
         // Get the current reward's category item
         String category = this.category();
-        ItemStack item = ActivityRewarder.configManager.getCategoryItem(category);
+        ItemStack item = ActivityRewarder.getConfigManager().getCategoryItem(category);
 
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta != null) {

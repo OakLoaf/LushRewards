@@ -77,8 +77,8 @@ public class RewardManager {
     public DailyRewardCollection getRewards(int day) {
         // Works out what day number the user is in the loop
         int loopedDayNum = day;
-        if (day > ActivityRewarder.configManager.getLoopLength()) {
-            loopedDayNum = (day % ActivityRewarder.configManager.getLoopLength()) + 1;
+        if (day > ActivityRewarder.getConfigManager().getLoopLength()) {
+            loopedDayNum = (day % ActivityRewarder.getConfigManager().getLoopLength()) + 1;
         }
 
         if (dayToRewards.containsKey(day)) return dayToRewards.get(day);
@@ -98,7 +98,7 @@ public class RewardManager {
         HourlyRewardCollection hourlyRewardCollection = getHighestMultiplierReward(player);
         if (hourlyRewardCollection != null) {
             Debugger.sendDebugMessage("Found highest multiplier (" + hourlyRewardCollection.multiplier() + ")", Debugger.DebugMode.HOURLY);
-            RewardUser rewardUser = ActivityRewarder.dataManager.getRewardUser(player.getUniqueId());
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
             rewardUser.setHourlyMultiplier(hourlyRewardCollection.multiplier());
         }
         else Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.HOURLY);
