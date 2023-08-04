@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GuiTemplate {
-    List<String> rows;
+    private final List<String> rows;
 
 //   Format:
 //     # - Border
