@@ -13,12 +13,10 @@ daily-rewards:
       - "&7&o-1 Cookie"
     redeem-sound: ENTITY_EXPERIENCE_ORB_PICKUP
     rewards:
-      cactus:
-        type: item
+      - type: item
         material: cactus
         amount: 12
-      cookie:
-        type: item
+      - type: item
         material: cookie
         amount: 1
   day-1:
@@ -28,12 +26,10 @@ daily-rewards:
       - "&7&o-1 Pink Tulip"
       - "&7&o-1 Cookie"
     rewards:
-      pink_tulip:
-        type: item
+      - type: item
         material: pink_tulip
         amount: 1
-      cookie:
-        type: item
+      - type: item
         material: cookie
         amount: 1
   day-2:
@@ -43,12 +39,10 @@ daily-rewards:
       - "&7&o-1 Oxeye Daisy"
       - "&7&o-1 Bread"
     rewards:
-      oxeye_daisy:
-        type: item
+      - type: item
         material: oxeye_daisy
         amount: 1
-      bread:
-        type: item
+      - type: item
         material: bread
         amount: 1
   day-5:
@@ -58,12 +52,10 @@ daily-rewards:
       - "&7&o-1 White Tulip"
       - "&7&o-1 Pearlescent Froglight"
     rewards:
-      white_tulip:
-        type: item
+      - type: item
         material: white_tulip
         amount: 1
-      pearlescent_froglight:
-        type: item
+      - type: item
         material: pearlescent_froglight
         amount: 1
   day-30:
@@ -73,19 +65,15 @@ daily-rewards:
       - "&6&o-3 Diamond"
       - "&6&o-1 Golden Apple"
     rewards:
-      diamond:
-        type: item
+      - type: item
         material: diamond
         amount: 3
-      golden_apple:
-        type: item
+      - type: item
         material: golden_apple
         amount: 1
-      diamonds:
-        type: command
+      - type: command
         command: "give %user% minecraft:diamond_block"
-      iron:
-        type: command
+      - type: command
         command: "give %user% minecraft:iron_block"
 
 
@@ -98,14 +86,12 @@ hourly-rewards:
   default:
     multiplier: 1
     rewards:
-      iron:
-        type: item
+      - type: item
         material: iron_ingot
         amount: 2
   rank1:
+    multiplier: 2
     rewards:
-      multiplier: 2
-      diamond:
-        type: item
+      - type: item
         material: diamond
         amount: 1
