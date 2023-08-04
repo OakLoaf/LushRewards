@@ -8,42 +8,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RewardCollection {
-    private final int priority;
-    private final Sound sound;
-    private final String category;
-    private final List<String> lore;
-    private final List<Reward> rewards;
+public record RewardCollection(int priority, String category, List<String> lore, Sound sound, List<Reward> rewards) {
 
-    public RewardCollection(int priority, @Nullable Sound sound, @Nullable String category, @Nullable List<String> lore, @Nullable ArrayList<Reward> rewards) {
+    public RewardCollection(int priority, @Nullable String category, @Nullable List<String> lore, @Nullable Sound sound, @Nullable List<Reward> rewards) {
         this.priority = priority;
-        this.sound = sound != null ? sound : ActivityRewarder.configManager.getDefaultReward().getSound();
-        this.category = category != null ? category : ActivityRewarder.configManager.getDefaultReward().getCategory();
-        this.lore = lore != null ? lore : ActivityRewarder.configManager.getDefaultReward().getLore();
-        this.rewards = rewards != null ? rewards : ActivityRewarder.configManager.getDefaultReward().getRewards();
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public Sound getSound() {
-        return sound;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public List<String> getLore() {
-        return lore;
-    }
-
-    public List<Reward> getRewards() {
-        return rewards;
+        this.category = category != null ? category : ActivityRewarder.configManager.getDefaultReward().category();
+        this.lore = lore != null ? lore : ActivityRewarder.configManager.getDefaultReward().lore();
+        this.sound = sound != null ? sound : ActivityRewarder.configManager.getDefaultReward().sound();
+        this.rewards = rewards != null ? rewards : ActivityRewarder.configManager.getDefaultReward().rewards();
     }
 
     public int getRewardCount() {
@@ -58,18 +32,19 @@ public class RewardCollection {
 
     public ItemStack asItem() {
         // Get the current reward's category item
-        String category = this.getCategory();
-        ItemStack rewardItem = ActivityRewarder.configManager.getCategoryItem(category);
-        ItemMeta rewardItemMeta = rewardItem.getItemMeta();
-        List<String> itemLore = this.getLore();
-        if (itemLore.isEmpty()) {
-            itemLore.add("&7&o- " + makeFriendly(category) + " reward");
-        }
-        itemLore = ChatColorHandler.translateAlternateColorCodes(itemLore);
-        rewardItemMeta.setLore(itemLore);
-        rewardItem.setItemMeta(rewardItemMeta);
+        String category = this.category();
+        ItemStack item = ActivityRewarder.configManager.getCategoryItem(category);
 
-        return rewardItem;
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null) {
+            List<String> itemLore = this.lore();
+            if (itemLore.isEmpty()) itemLore.add("&7&o- " + makeFriendly(category) + " reward");
+            itemLore = ChatColorHandler.translateAlternateColorCodes(itemLore);
+            itemMeta.setLore(itemLore);
+            item.setItemMeta(itemMeta);
+        }
+
+        return item;
     }
 
     private String makeFriendly(String string) {

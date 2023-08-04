@@ -11,6 +11,6 @@ public class RewardDay {
 
     @Nullable
     public RewardCollection getHighestPriorityRewards() {
-        return rewardCollections.stream().min(Comparator.comparingInt(RewardCollection::getPriority)).orElse(null);
+        return rewardCollections.stream().min(Comparator.comparingInt(RewardCollection::priority)).orElse(null);
     }
 }
