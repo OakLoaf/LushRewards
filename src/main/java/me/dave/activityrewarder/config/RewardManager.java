@@ -17,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RewardManager {
     private final File rewardsFile = initYML();
@@ -44,6 +41,8 @@ public class RewardManager {
                     else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
                 }
             });
+
+            ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " rewards from '" + rewardDaysSection.getCurrentPath() + "'");
         }
         else {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
@@ -139,7 +138,7 @@ public class RewardManager {
     }
 
     @Nullable
-    private Reward loadReward(Map<?, ?> rewardMap, String path) {
+    public Reward loadReward(Map<?, ?> rewardMap, String path) {
         String rewardType = (String) rewardMap.get("type");
         if (!RewardTypes.isRewardRegistered(rewardType)) {
             ActivityRewarder.getInstance().getLogger().severe("Invalid reward type at '" + path + "'");
@@ -155,7 +154,7 @@ public class RewardManager {
     }
 
     @NotNull
-    private List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
+    public List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
         List<Reward> rewardList = new ArrayList<>();
 
         maps.forEach((map) -> {
