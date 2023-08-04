@@ -13,10 +13,12 @@ daily-rewards:
       - "&7&o-1 Cookie"
     redeem-sound: ENTITY_EXPERIENCE_ORB_PICKUP
     rewards:
-      - type: item
+      cactus:
+        type: item
         material: cactus
         amount: 12
-      - type: item
+      cookie:
+        type: item
         material: cookie
         amount: 1
   day-1:
@@ -41,11 +43,14 @@ daily-rewards:
       - "&7&o-1 Oxeye Daisy"
       - "&7&o-1 Bread"
     rewards:
-      items:
-        oxeye_daisy:
-          amount: 1
-        bread:
-          amount: 1
+      oxeye_daisy:
+        type: item
+        material: oxeye_daisy
+        amount: 1
+      bread:
+        type: item
+        material: bread
+        amount: 1
   day-5:
     category: SMALL
     lore:
@@ -53,11 +58,14 @@ daily-rewards:
       - "&7&o-1 White Tulip"
       - "&7&o-1 Pearlescent Froglight"
     rewards:
-      items:
-        white_tulip:
-          amount: 1
-        pearlescent_froglight:
-          amount: 1
+      white_tulip:
+        type: item
+        material: white_tulip
+        amount: 1
+      pearlescent_froglight:
+        type: item
+        material: pearlescent_froglight
+        amount: 1
   day-30:
     category: LARGE
     lore:
@@ -65,14 +73,20 @@ daily-rewards:
       - "&6&o-3 Diamond"
       - "&6&o-1 Golden Apple"
     rewards:
-      items:
-        diamond:
-          amount: 3
-        golden_apple:
-          amount: 1
-      commands:
-        - "give %user% minecraft:diamond_block"
-        - "give %user% minecraft:iron_block"
+      diamond:
+        type: item
+        material: diamond
+        amount: 3
+      golden_apple:
+        type: item
+        material: golden_apple
+        amount: 1
+      diamonds:
+        type: command
+        command: "give %user% minecraft:diamond_block"
+      iron:
+        type: command
+        command: "give %user% minecraft:iron_block"
 
 
 # Items given daily based on the amount of play time since rewards were last collected
