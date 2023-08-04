@@ -28,10 +28,6 @@ public class RewardManager {
     private final HashMap<String, HourlyRewardCollection> permissionToHourlyReward = new HashMap<>();
     private DailyRewardCollection defaultReward;
 
-    public RewardManager() {
-        reloadRewards();
-    }
-
     public void reloadRewards() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(rewardsFile);
 
