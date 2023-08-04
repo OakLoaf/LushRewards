@@ -189,7 +189,7 @@ public class RewardsGui extends AbstractGui {
         DailyRewardCollection priorityReward = ActivityRewarder.getRewardManager().getRewards(currDay);
         priorityReward.rewards().forEach((reward) -> reward.giveTo(player));
         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
-        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getRewardMessage());
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getDailyRewardMessage());
 
         Debugger.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), Debugger.DebugMode.HOURLY);
         HourlyRewardCollection hourlyRewardData = ActivityRewarder.getRewardManager().getHourlyRewards(player);
@@ -207,7 +207,7 @@ public class RewardsGui extends AbstractGui {
                 hourlyRewardData.rewardList().forEach((reward) -> reward.giveTo(player));
                 Debugger.sendDebugMessage("Successfully gave player a reward", Debugger.DebugMode.HOURLY);
             }
-            if (hoursDiff > 0) ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getBonusMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
+            if (hoursDiff > 0) ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getHourlyRewardMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
             rewardUser.setPlayTime(currPlayTime);
             Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.HOURLY);
         }

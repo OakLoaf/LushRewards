@@ -58,9 +58,9 @@ public class RewardManager {
         }
 
         if (ActivityRewarder.getConfigManager().areHourlyRewardsEnabled()) {
-            ConfigurationSection hourlyBonusSection = config.getConfigurationSection("hourly-rewards");
-            if (hourlyBonusSection != null) {
-                hourlyBonusSection.getValues(false).forEach((key, value) -> {
+            ConfigurationSection hourlyRewardSection = config.getConfigurationSection("hourly-rewards");
+            if (hourlyRewardSection != null) {
+                hourlyRewardSection.getValues(false).forEach((key, value) -> {
                     if (value instanceof ConfigurationSection permissionSection) {
                         List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
                         List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
@@ -94,7 +94,7 @@ public class RewardManager {
     public HourlyRewardCollection getHourlyRewards(Player player) {
         Debugger.sendDebugMessage("Getting hourly bonus section from config", Debugger.DebugMode.HOURLY);
         if (permissionToHourlyReward.isEmpty()) {
-            Debugger.sendDebugMessage("No hourly bonuses found", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("No hourly rewards found", Debugger.DebugMode.HOURLY);
             return null;
         }
 

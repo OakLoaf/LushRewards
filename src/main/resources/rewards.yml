@@ -79,7 +79,7 @@ daily-rewards:
 
 # Items given daily based on the amount of play time since rewards were last collected
 hourly-rewards:
-  # Each section within the hourly-bonus is its own group, to give a player access to
+  # Each section within the hourly-rewards is its own group, to give a player access to
   # a group you must give them "activityrewarder.bonus.groupName"
   #
   # For example: activityrewarder.bonus.rank1
