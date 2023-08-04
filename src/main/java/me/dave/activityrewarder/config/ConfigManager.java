@@ -17,7 +17,6 @@ public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private FileConfiguration config;
-    private Debugger.DebugMode debugMode;
     private final HashMap<String, ItemStack> categoryItems = new HashMap<>();
     private GuiTemplate guiTemplate;
     private ItemStack collectedItem;
@@ -36,7 +35,7 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
 
-        debugMode = Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase());
+        Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
 
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
@@ -56,10 +55,6 @@ public class ConfigManager {
         ActivityRewarder.getRewardManager().reloadRewards();
         reloadCategoryMap();
         notificationHandler.reloadNotifications(reminderPeriod);
-    }
-
-    public Debugger.DebugMode getDebugMode() {
-        return debugMode;
     }
 
     public String getReloadMessage() {

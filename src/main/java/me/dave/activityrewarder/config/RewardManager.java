@@ -42,7 +42,7 @@ public class RewardManager {
                     if (rewardSection.getName().equalsIgnoreCase("default")) {
                         defaultReward = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
                     } else {
-                        dayToRewards.put(Integer.parseInt(rewardSection.getName()), loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY));
+                        dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY));
                     }
                 }
             });

@@ -6,9 +6,14 @@ import java.util.logging.Logger;
 
 public class Debugger {
     private static Logger logger;
+    private static DebugMode debugMode = DebugMode.NONE;
 
     public static void sendDebugMessage(String string, DebugMode mode) {
-        if (ActivityRewarder.getConfigManager().getDebugMode() == mode || ActivityRewarder.getConfigManager().getDebugMode() == DebugMode.ALL) getOrInitLogger().info("DEBUG >> " + string);
+        if (debugMode == mode || debugMode == DebugMode.ALL) getOrInitLogger().info("DEBUG >> " + string);
+    }
+
+    public static void setDebugMode(DebugMode debugMode) {
+        Debugger.debugMode = debugMode;
     }
 
     private static Logger getOrInitLogger() {

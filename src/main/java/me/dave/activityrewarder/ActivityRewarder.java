@@ -22,9 +22,9 @@ public final class ActivityRewarder extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        configManager = new ConfigManager();
         rewardManager = new RewardManager();
         dataManager = new DataManager();
+        configManager = new ConfigManager();
 
         Listener[] listeners = new Listener[] {
             new RewardUserEvents(),
