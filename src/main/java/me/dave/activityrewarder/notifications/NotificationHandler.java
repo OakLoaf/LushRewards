@@ -17,7 +17,8 @@ public class NotificationHandler {
 
 
     public void reloadNotifications(int reminderPeriod) {
-        counter += 0;
+        counter += 1;
+        startNotificationTask(reminderPeriod);
     }
 
     private void startNotificationTask(int reminderPeriod) {
