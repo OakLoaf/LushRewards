@@ -11,9 +11,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.dave.activityrewarder.config.ConfigManager;
 import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
+import space.arim.morepaperlib.MorePaperLib;
 
 public final class ActivityRewarder extends JavaPlugin {
     private static ActivityRewarder plugin;
+    private static MorePaperLib morePaperLib;
     private static boolean hasFloodgate = false;
     private static ConfigManager configManager;
     private static RewardManager rewardManager;
@@ -22,9 +24,10 @@ public final class ActivityRewarder extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        morePaperLib = new MorePaperLib(plugin);
+        configManager = new ConfigManager();
         rewardManager = new RewardManager();
         dataManager = new DataManager();
-        configManager = new ConfigManager();
 
         Listener[] listeners = new Listener[] {
             new RewardUserEvents(),
@@ -57,6 +60,10 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static ActivityRewarder getInstance() {
         return plugin;
+    }
+
+    public static MorePaperLib getMorePaperLib() {
+        return morePaperLib;
     }
 
     public static ConfigManager getConfigManager() {

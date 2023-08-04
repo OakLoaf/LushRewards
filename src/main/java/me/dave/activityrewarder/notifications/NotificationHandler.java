@@ -5,7 +5,6 @@ import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import space.arim.morepaperlib.MorePaperLib;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,7 +12,6 @@ import java.time.temporal.ChronoUnit;
 
 public class NotificationHandler {
     private int counter = 0;
-    private final MorePaperLib morePaperLib = new MorePaperLib(ActivityRewarder.getInstance());
 
 
     public void reloadNotifications(int reminderPeriod) {
@@ -26,7 +24,7 @@ public class NotificationHandler {
         int thisNotifNum = counter;
 
 
-        morePaperLib.scheduling().asyncScheduler().runAtFixedRate((task) -> {
+        ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate((task) -> {
             if (counter != thisNotifNum) {
                 task.cancel();
                 return;
