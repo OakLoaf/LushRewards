@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class RewardManager {
@@ -25,6 +27,11 @@ public class RewardManager {
     private final HashMap<String, HourlyRewardCollection> permissionToHourlyReward = new HashMap<>();
     private DailyRewardCollection defaultReward;
 
+    public RewardManager() {
+        // TODO: Do this better.. probably best not to be async?
+        ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runDelayed(this::reloadRewards, Duration.of(1000, ChronoUnit.MILLIS));
+    }
+
     public void reloadRewards() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(rewardsFile);
 
@@ -32,34 +39,38 @@ public class RewardManager {
         dayToRewards.clear();
         permissionToHourlyReward.clear();
 
-        ConfigurationSection rewardDaysSection = config.getConfigurationSection("daily-rewards");
-        if (rewardDaysSection != null) {
-            rewardDaysSection.getValues(false).forEach((key, value) -> {
-                if (value instanceof ConfigurationSection rewardSection) {
-                    DailyRewardCollection rewardCollection = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
-                    if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = rewardCollection;
-                    else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
-                }
-            });
+        if (ActivityRewarder.getConfigManager().areDailyRewardsEnabled()) {
+            ConfigurationSection rewardDaysSection = config.getConfigurationSection("daily-rewards");
+            if (rewardDaysSection != null) {
+                rewardDaysSection.getValues(false).forEach((key, value) -> {
+                    if (value instanceof ConfigurationSection rewardSection) {
+                        DailyRewardCollection rewardCollection = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
+                        if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = rewardCollection;
+                        else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
+                    }
+                });
 
-            ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " reward collections from '" + rewardDaysSection.getCurrentPath() + "'");
-        }
-        else {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
+                ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " reward collections from '" + rewardDaysSection.getCurrentPath() + "'");
+            }
+            else {
+                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
+            }
         }
 
-        ConfigurationSection hourlyBonusSection = config.getConfigurationSection("hourly-rewards");
-        if (hourlyBonusSection != null) {
-            hourlyBonusSection.getValues(false).forEach((key, value) -> {
-                if (value instanceof ConfigurationSection permissionSection) {
-                    List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
-                    List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
-                    permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
-                }
-            });
-        }
-        else {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'hourly-rewards' section");
+        if (ActivityRewarder.getConfigManager().areHourlyRewardsEnabled()) {
+            ConfigurationSection hourlyBonusSection = config.getConfigurationSection("hourly-rewards");
+            if (hourlyBonusSection != null) {
+                hourlyBonusSection.getValues(false).forEach((key, value) -> {
+                    if (value instanceof ConfigurationSection permissionSection) {
+                        List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
+                        List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
+                        permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
+                    }
+                });
+            }
+            else {
+                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'hourly-rewards' section");
+            }
         }
     }
 
