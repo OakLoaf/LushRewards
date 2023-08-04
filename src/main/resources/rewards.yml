@@ -82,14 +82,16 @@ hourly-rewards:
   #
   # For example: activityrewarder.bonus.rank1
   default:
+    multiplier: 1
     rewards:
-      multiplier: 1
-      items:
-        iron_ingot:
-          amount: 2
+      iron:
+        type: item
+        material: iron_ingot
+        amount: 2
   rank1:
     rewards:
       multiplier: 2
-      items:
-        diamond:
-          amount: 1
+      diamond:
+        type: item
+        material: diamond
+        amount: 1

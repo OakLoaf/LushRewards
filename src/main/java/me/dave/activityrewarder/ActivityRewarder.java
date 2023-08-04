@@ -1,6 +1,7 @@
 package me.dave.activityrewarder;
 
 import me.dave.activityrewarder.commands.RewardCmd;
+import me.dave.activityrewarder.config.RewardManager;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -16,11 +17,13 @@ public final class ActivityRewarder extends JavaPlugin {
     private static boolean hasFloodgate = false;
     public static DataManager dataManager;
     public static ConfigManager configManager;
+    private static RewardManager rewardManager;
 
     @Override
     public void onEnable() {
         plugin = this;
         configManager = new ConfigManager();
+        rewardManager = new RewardManager();
         dataManager = new DataManager();
 
         Listener[] listeners = new Listener[] {
@@ -54,6 +57,10 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static ActivityRewarder getInstance() {
         return plugin;
+    }
+
+    public static RewardManager getRewardManager() {
+        return rewardManager;
     }
 
     public static boolean isFloodgateEnabled() {

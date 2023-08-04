@@ -2,7 +2,7 @@ package me.dave.activityrewarder.utils;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.rewards.RewardCollection;
+import me.dave.activityrewarder.rewards.DailyRewardCollection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -96,10 +96,10 @@ public class LocalPlaceholders {
                     return String.valueOf(rewardUser.getHourlyMultiplier());
                 }
                 case "category" -> {
-                    return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).category());
+                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).category());
                 }
                 case "total_rewards" -> {
-                    return String.valueOf(ActivityRewarder.configManager.getRewards(rewardUser.getActualDayNum()).getRewardCount());
+                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount());
                 }
             }
         }
@@ -108,14 +108,14 @@ public class LocalPlaceholders {
         if (params.matches("day_[0-9]+.+")) {
             String[] paramArr = params.split("_", 3);
             int dayNum = Integer.parseInt(paramArr[1]);
-            RewardCollection rewardCollection = ActivityRewarder.configManager.getRewards(dayNum);
+            DailyRewardCollection dailyRewardCollection = ActivityRewarder.getRewardManager().getRewards(dayNum);
 
             switch(paramArr[2]) {
                 case "category" -> {
-                    return String.valueOf(rewardCollection.category());
+                    return String.valueOf(dailyRewardCollection.category());
                 }
                 case "total_rewards" -> {
-                    return String.valueOf(rewardCollection.getRewardCount());
+                    return String.valueOf(dailyRewardCollection.getRewardCount());
                 }
             }
 

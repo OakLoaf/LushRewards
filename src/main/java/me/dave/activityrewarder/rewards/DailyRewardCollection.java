@@ -10,14 +10,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record RewardCollection(int priority, String category, List<String> lore, Sound sound, List<Reward> rewards) {
+public record DailyRewardCollection(int priority, String category, List<String> lore, Sound sound, List<Reward> rewards) {
 
-    public RewardCollection(int priority, @Nullable String category, @Nullable List<String> lore, @Nullable Sound sound, @Nullable List<Reward> rewards) {
+    public DailyRewardCollection(int priority, @Nullable String category, @Nullable List<String> lore, @Nullable Sound sound, @Nullable List<Reward> rewards) {
         this.priority = priority;
-        this.category = category != null ? category : ActivityRewarder.configManager.getDefaultReward().category();
-        this.lore = lore != null ? lore : ActivityRewarder.configManager.getDefaultReward().lore();
-        this.sound = sound != null ? sound : ActivityRewarder.configManager.getDefaultReward().sound();
-        this.rewards = rewards != null ? rewards : ActivityRewarder.configManager.getDefaultReward().rewards();
+        this.category = category != null ? category : ActivityRewarder.getRewardManager().getDefaultReward().category();
+        this.lore = lore != null ? lore : ActivityRewarder.getRewardManager().getDefaultReward().lore();
+        this.sound = sound != null ? sound : ActivityRewarder.getRewardManager().getDefaultReward().sound();
+        this.rewards = rewards != null ? rewards : ActivityRewarder.getRewardManager().getDefaultReward().rewards();
     }
 
     public int getRewardCount() {
