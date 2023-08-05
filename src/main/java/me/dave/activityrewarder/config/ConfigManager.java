@@ -69,12 +69,12 @@ public class ConfigManager {
         return config.getString("messages.reminder", "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards");
     }
 
-    public String getRewardMessage() {
-        return config.getString("messages.reward-given", "&e&lRewards &8» &aYou have collected today's reward");
+    public String getDailyRewardMessage() {
+        return config.getString("messages.daily-reward-given", "&e&lRewards &8» &aYou have collected today's reward");
     }
 
-    public String getBonusMessage() {
-        return config.getString("messages.hourly-bonus-given", "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours");
+    public String getHourlyRewardMessage() {
+        return config.getString("messages.hourly-reward-given", "&e&lRewards &8» &7You have received a reward for playing &e%hours% &7hour(s)");
     }
 
     public String getGuiTitle() {
@@ -135,7 +135,7 @@ public class ConfigManager {
     }
 
     public double getHourlyMultiplier(Player player) {
-        ConfigurationSection hourlySection = config.getConfigurationSection("hourly-bonus");
+        ConfigurationSection hourlySection = config.getConfigurationSection("hourly-rewards");
         if (hourlySection == null || !hourlySection.getBoolean("enabled", false)) return 1;
 
         double heighestMultiplier = 1;
