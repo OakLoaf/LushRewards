@@ -18,23 +18,24 @@ gui:
   # Display item for when a reward is collected
   collected-item: COAL
 
-# daily-rewards-enabled: Whether the daily rewards module is enabled
+# Whether the daily rewards module is enabled
 daily-rewards-enabled: true
-# hourly-rewards-enabled: Whether the hourly rewards module is enabled
+# Whether the hourly rewards module is enabled
 hourly-rewards-enabled: true
 
-# The number of days before the reward cycle loops
-loop-length: 14
 # The length in seconds between reminders being sent
 reminder-period: 1800
-# Whether a player's days will reset if they miss a day
-days-reset: false
+# Whether a player will reset to day 0 if they miss a day
+streak-mode: true
 
 # Display items for different reward categories
 categories:
-  small: GOLD_NUGGET
-  medium: GOLD_INGOT
-  large: GOLD_BLOCK
+  small:
+    type: gold_nugget
+  medium:
+    type: gold_ingot
+  large:
+    type: gold_block
 
 messages:
   reload: "&aConfig reloaded"
