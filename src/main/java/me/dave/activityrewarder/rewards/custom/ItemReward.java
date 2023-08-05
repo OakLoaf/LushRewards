@@ -14,10 +14,6 @@ import java.util.Map;
 public class ItemReward implements Reward {
     private final SimpleItemStack simpleItemStack;
 
-    public ItemReward(ItemStack itemStack) {
-        this.simpleItemStack = new SimpleItemStack(itemStack);
-    }
-
     public ItemReward(Map<?, ?> map) {
         ConfigurationSection configurationSection;
         try {

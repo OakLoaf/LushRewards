@@ -9,10 +9,6 @@ import java.util.Map;
 public class MessageReward implements Reward {
     private final String message;
 
-    public MessageReward(String message) {
-        this.message = message;
-    }
-
     public MessageReward(Map<?, ?> map) {
         this.message = (String) map.get("message");
     }

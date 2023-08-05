@@ -9,10 +9,6 @@ import java.util.Map;
 public class BroadcastReward implements Reward {
     private final String message;
 
-    public BroadcastReward(String message) {
-        this.message = message;
-    }
-
     public BroadcastReward(Map<?, ?> map) {
         this.message = (String) map.get("message");
     }
