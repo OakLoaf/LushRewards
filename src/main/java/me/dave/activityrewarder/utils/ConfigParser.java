@@ -18,9 +18,11 @@ public class ConfigParser {
     }
 
     public static Material getMaterial(String materialName, Material def) {
+        if (materialName == null) return def;
+
         Material material;
         try {
-            material = Material.valueOf(materialName);
+            material = Material.valueOf(materialName.toUpperCase());
         } catch (IllegalArgumentException err) {
             ActivityRewarder.getInstance().getLogger().warning("Ignoring " + materialName + ", that is not a valid material.");
             if (def != null) {
