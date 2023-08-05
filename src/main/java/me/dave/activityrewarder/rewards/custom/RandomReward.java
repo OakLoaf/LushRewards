@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.entity.Player;
 
@@ -14,14 +15,13 @@ public class RandomReward implements Reward {
     private final List<Reward> rewards;
 
     @SuppressWarnings("unchecked")
-    public RandomReward(Map<?, ?> map) {
+    public RandomReward(Map<?, ?> map) throws InvalidRewardException {
         List<Map<?, ?>> rewardMaps;
         try {
             rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());
         } catch(ClassCastException exc) {
             ActivityRewarder.getInstance().getLogger().severe("Invalid config format at '" + map + "'");
-            this.rewards = Collections.emptyList();
-            return;
+            throw new InvalidRewardException();
         }
 
         // TODO: replace #loadRewards() with local alternative that takes into account weights
@@ -30,6 +30,6 @@ public class RandomReward implements Reward {
 
     @Override
     public void giveTo(Player player) {
-        if (!rewards.isEmpty()) rewards.get(random.nextInt(0, rewards.size())).giveTo(player);
+        if (rewards != null && !rewards.isEmpty()) rewards.get(random.nextInt(0, rewards.size())).giveTo(player);
     }
 }

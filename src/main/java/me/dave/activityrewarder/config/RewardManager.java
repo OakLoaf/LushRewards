@@ -45,12 +45,14 @@ public class RewardManager {
                 rewardDaysSection.getValues(false).forEach((key, value) -> {
                     if (value instanceof ConfigurationSection rewardSection) {
                         DailyRewardCollection rewardCollection = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
-                        if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = rewardCollection;
-                        else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
+                        if (rewardCollection != null) {
+                            if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = rewardCollection;
+                            else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
+                        }
                     }
                 });
 
-                ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " reward collections from '" + rewardDaysSection.getCurrentPath() + "'");
+                ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + (dayToRewards.size() + (defaultReward != null ? 1 : 0)) + " reward collections from '" + rewardDaysSection.getCurrentPath() + "'");
             }
             else {
                 ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
@@ -64,7 +66,7 @@ public class RewardManager {
                     if (value instanceof ConfigurationSection permissionSection) {
                         List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
                         List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
-                        permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
+                        if (rewardList != null) permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
                     }
                 });
             }
@@ -164,7 +166,7 @@ public class RewardManager {
         return null;
     }
 
-    @NotNull
+    @Nullable
     public List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
         List<Reward> rewardList = new ArrayList<>();
 
@@ -173,10 +175,10 @@ public class RewardManager {
             if (reward != null) rewardList.add(reward);
         });
 
-        return rewardList;
+        return !rewardList.isEmpty() ? rewardList : null;
     }
 
-    @NotNull
+    @Nullable
     private DailyRewardCollection loadRewardCollection(ConfigurationSection rewardCollectionSection, Debugger.DebugMode debugMode) {
         Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
@@ -195,10 +197,10 @@ public class RewardManager {
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
 
-        List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + "rewards") : new ArrayList<>();
-        Debugger.sendDebugMessage("Successfully loaded " + rewardList.size() + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
+        List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + "rewards") : null;
+        Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return new DailyRewardCollection(0, category, lore, redeemSound, rewardList);
+        return rewardList != null ? new DailyRewardCollection(0, category, lore, redeemSound, rewardList) : null;
     }
 
     private File initYML() {
