@@ -24,6 +24,7 @@ public final class ActivityRewarder extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        ChatColorHandler.setup(plugin);
         morePaperLib = new MorePaperLib(plugin);
         configManager = new ConfigManager();
         rewardManager = new RewardManager();
@@ -43,8 +44,6 @@ public final class ActivityRewarder extends JavaPlugin {
 
         if (pluginManager.getPlugin("PlaceholderAPI") != null) new PlaceholderAPIHook().register();
         else plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
-
-        ChatColorHandler.enableMiniMessage(true);
     }
 
     @Override
