@@ -1,3 +1,26 @@
+# Whether the daily rewards module is enabled
+daily-rewards-enabled: true
+# Whether the hourly rewards module is enabled
+hourly-rewards-enabled: true
+
+# Whether rewards will automatically refresh when the day ticks over
+# - This allows the plugin to use less ram by only storing rewards that could be needed on the specified day
+rewards-refresh-daily: false
+
+# The length in seconds between reminders being sent
+reminder-period: 1800
+# Whether a player will reset to day 1 if they miss a day
+streak-mode: true
+
+# Display items for different reward categories
+categories:
+  small:
+    type: gold_nugget
+  medium:
+    type: gold_ingot
+  large:
+    type: gold_block
+
 gui:
   title: "&8&lDaily Rewards"
   # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
@@ -17,25 +40,6 @@ gui:
   border-item: GRAY_STAINED_GLASS_PANE
   # Display item for when a reward is collected
   collected-item: COAL
-
-# Whether the daily rewards module is enabled
-daily-rewards-enabled: true
-# Whether the hourly rewards module is enabled
-hourly-rewards-enabled: true
-
-# The length in seconds between reminders being sent
-reminder-period: 1800
-# Whether a player will reset to day 1 if they miss a day
-streak-mode: true
-
-# Display items for different reward categories
-categories:
-  small:
-    type: gold_nugget
-  medium:
-    type: gold_ingot
-  large:
-    type: gold_block
 
 messages:
   reload: "&aConfig reloaded"

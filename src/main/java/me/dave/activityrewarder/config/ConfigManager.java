@@ -16,15 +16,15 @@ import java.util.*;
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final NotificationHandler notificationHandler = new NotificationHandler();
-    private FileConfiguration config;
     private final HashMap<String, ItemStack> categoryItems = new HashMap<>();
-    private GuiTemplate guiTemplate;
+    private final HashMap<String, String> messages = new HashMap<>();
+    private GuiFormat guiFormat;
     private ItemStack collectedItem;
     private ItemStack borderItem;
-    private UpcomingReward upcomingReward;
+    private UpcomingRewardFormat upcomingRewardFormat;
     private boolean dailyRewardsEnabled;
     private boolean hourlyRewardsEnabled;
-    private int loopLength;
+    private boolean rewardsRefresh;
     private int reminderPeriod;
     private boolean daysReset;
 
@@ -35,62 +35,52 @@ public class ConfigManager {
 
     public void reloadConfig() {
         plugin.reloadConfig();
-        config = plugin.getConfig();
+        FileConfiguration config = plugin.getConfig();
 
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
 
+        String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
-        if (templateType.equals("CUSTOM")) guiTemplate = new GuiTemplate(config.getStringList("gui.format"));
-        else guiTemplate = GuiTemplate.DefaultTemplate.valueOf(templateType);
+        GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiTemplate(config.getStringList("gui.format")) : GuiTemplate.DefaultTemplate.valueOf(templateType);
+        guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         collectedItem = ConfigParser.getItem(config.getConfigurationSection("gui.collected-item"), Material.REDSTONE_BLOCK);
         borderItem = ConfigParser.getItem(config.getConfigurationSection("gui.border-item"), Material.GRAY_STAINED_GLASS_PANE);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
-        upcomingReward = new UpcomingReward(showUpcomingReward, upcomingRewardLore);
+        upcomingRewardFormat = new UpcomingRewardFormat(showUpcomingReward, upcomingRewardLore);
 
         dailyRewardsEnabled = config.getBoolean("daily-rewards-enabled", true);
         hourlyRewardsEnabled = config.getBoolean("hourly-rewards-enabled", true);
-        loopLength = config.getInt("loop-length", -1);
+        rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         daysReset = config.getBoolean("days-reset", false);
 
-        reloadCategoryMap();
+        reloadCategoryMap(config.getConfigurationSection("categories"));
+        reloadMessages(config.getConfigurationSection("messages"));
         notificationHandler.reloadNotifications(reminderPeriod);
         if (ActivityRewarder.getRewardManager() != null) ActivityRewarder.getRewardManager().reloadRewards();
     }
 
-    public String getReloadMessage() {
-        return config.getString("messages.reload", "&aConfig reloaded");
+    public String getMessage(String messageName) {
+        return messages.getOrDefault(messageName, "");
     }
 
-    public String getReminderMessage() {
-        return config.getString("messages.reminder", "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards");
+    public GuiFormat getGuiFormat() {
+        return guiFormat;
     }
 
-    public String getDailyRewardMessage() {
-        return config.getString("messages.daily-reward-given", "&e&lRewards &8» &aYou have collected today's reward");
-    }
-
-    public String getHourlyRewardMessage() {
-        return config.getString("messages.hourly-reward-given", "&e&lRewards &8» &7You have received a reward for playing &e%hours% &7hour(s)");
-    }
-
-    public String getGuiTitle() {
-        return config.getString("gui.title", "&8&lDaily Rewards");
-    }
-
-    public GuiTemplate getGuiTemplate() {
-        return guiTemplate;
+    public UpcomingRewardFormat getUpcomingRewardFormat() {
+        return upcomingRewardFormat;
     }
 
     public boolean showUpcomingReward() {
-        return upcomingReward.enabled;
+        return upcomingRewardFormat.enabled;
     }
 
     public List<String> getUpcomingRewardLore() {
-        return upcomingReward.lore;
+        return upcomingRewardFormat.lore;
     }
 
     public String getGuiItemRedeemableName(int day) {
@@ -122,8 +112,8 @@ public class ConfigManager {
         return hourlyRewardsEnabled;
     }
 
-    public int getLoopLength() {
-        return loopLength;
+    public boolean doRewardsRefresh() {
+        return rewardsRefresh;
     }
 
     public int getReminderPeriod() {
@@ -149,18 +139,34 @@ public class ConfigManager {
         return heighestMultiplier;
     }
 
-    private void reloadCategoryMap() {
+    private void reloadCategoryMap(ConfigurationSection categoriesSection) {
         // Clears category map
         categoryItems.clear();
 
-        ConfigurationSection categoriesSection = config.getConfigurationSection("categories");
+        // Checks if categories section exists
         if (categoriesSection == null) return;
 
         // Repopulates category map
-        for (String category : categoriesSection.getKeys(false)) {
-            categoryItems.put(category, ConfigParser.getItem(categoriesSection.getConfigurationSection(category), Material.STONE));
-        }
+        categoriesSection.getValues(false).entrySet().forEach((data) -> {
+            if (data instanceof ConfigurationSection categorySection) {
+                categoryItems.put(categorySection.getName(), ConfigParser.getItem(categorySection, Material.STONE));
+            }
+        });
     }
 
-    public record UpcomingReward(boolean enabled, List<String> lore) { }
+    private void reloadMessages(ConfigurationSection messagesSection) {
+        // Clears messages map
+        messages.clear();
+
+        // Checks if messages section exists
+        if (messagesSection == null) return;
+
+        // Repopulates messages map
+        messagesSection.getValues(false).forEach((key, value) -> {
+            messages.put(key, (String) value);
+        });
+    }
+
+    public record GuiFormat(String title, GuiTemplate template) {}
+    public record UpcomingRewardFormat(boolean enabled, List<String> lore) {}
 }

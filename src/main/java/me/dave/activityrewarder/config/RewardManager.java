@@ -1,18 +1,17 @@
 package me.dave.activityrewarder.config;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.rewards.HourlyRewardCollection;
-import me.dave.activityrewarder.rewards.Reward;
-import me.dave.activityrewarder.rewards.DailyRewardCollection;
-import me.dave.activityrewarder.rewards.RewardTypes;
+import me.dave.activityrewarder.rewards.*;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
+import me.dave.activityrewarder.utils.SimpleDate;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -23,7 +22,8 @@ import java.util.*;
 
 public class RewardManager {
     private final File rewardsFile = initYML();
-    private final HashMap<Integer, DailyRewardCollection> dayToRewards = new HashMap<>();
+    private final Multimap<Integer, DailyRewardCollection> dayToRewards = HashMultimap.create();
+    private final Multimap<SimpleDate, DailyRewardCollection> dateToRewards = HashMultimap.create();
     private final HashMap<String, HourlyRewardCollection> permissionToHourlyReward = new HashMap<>();
     private DailyRewardCollection defaultReward;
 
@@ -37,6 +37,7 @@ public class RewardManager {
 
         // Clears rewards maps
         dayToRewards.clear();
+        dateToRewards.clear();
         permissionToHourlyReward.clear();
 
         if (ActivityRewarder.getConfigManager().areDailyRewardsEnabled()) {
@@ -80,16 +81,10 @@ public class RewardManager {
         return defaultReward;
     }
 
-    public DailyRewardCollection getRewards(int day) {
-        // Works out what day number the user is in the loop
-        int loopedDayNum = day;
-        if (day > ActivityRewarder.getConfigManager().getLoopLength()) {
-            loopedDayNum = (day % ActivityRewarder.getConfigManager().getLoopLength()) + 1;
-        }
-
-        if (dayToRewards.containsKey(day)) return dayToRewards.get(day);
-        else if (dayToRewards.containsKey(loopedDayNum)) return dayToRewards.get(loopedDayNum);
-        else return defaultReward;
+    @Nullable
+    public RewardDay getRewards(int day) {
+        if (dayToRewards.containsKey(day)) return RewardDay.from(dayToRewards.get(day));
+        else return RewardDay.from(defaultReward);
     }
 
     @Nullable
@@ -133,6 +128,7 @@ public class RewardManager {
         return highestMultiplierReward;
     }
 
+    // TODO: Run once per day in performance mode
     public int findNextRewardFromCategory(int day, String category) {
         int nextRewardKey = -1;
 
@@ -142,8 +138,9 @@ public class RewardManager {
             if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) continue;
 
             // Gets the category of the reward and compares to the request
-            DailyRewardCollection rewards = getRewards(rewardsKey);
-            if (rewards.category().equalsIgnoreCase(category)) nextRewardKey = rewardsKey;
+            RewardDay rewardDay = getRewards(rewardsKey);
+            if (rewardDay == null) continue;
+            if (rewardDay.containsRewardFromCategory(category)) nextRewardKey = rewardsKey;
         }
 
         // Returns -1 if no future rewards match the request

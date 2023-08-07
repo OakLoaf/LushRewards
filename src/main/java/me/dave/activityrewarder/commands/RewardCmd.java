@@ -24,7 +24,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             }
             ActivityRewarder.getConfigManager().reloadConfig();
 
-            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getReloadMessage());
+            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reload"));
             return true;
         }
 
@@ -51,6 +51,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         if (!commandSender.hasPermission("activityrewarder.use")) return tabComplete;
         if (args.length == 1) {
             if (commandSender.hasPermission("activityrewarder.reload")) tabComplete.add("reload");
+            if (commandSender.hasPermission("activityrewarder.reset") || commandSender.hasPermission("activityrewarder.reset.others")) tabComplete.add("reset");
         }
 
         for (String currTab : tabComplete) {

@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
 
 public class RewardsGui extends AbstractGui {
     private final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
-    private final GuiTemplate guiTemplate = ActivityRewarder.getConfigManager().getGuiTemplate();
+    private final GuiTemplate guiTemplate = ActivityRewarder.getConfigManager().getGuiFormat().template();
     private final int slotCount = guiTemplate.getRowCount() * 9;
-    private final Inventory inventory = Bukkit.createInventory(null, slotCount, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.getConfigManager().getGuiTitle()));
+    private final Inventory inventory = Bukkit.createInventory(null, slotCount, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.getConfigManager().getGuiFormat().title()));
     private final Player player;
 
     public RewardsGui(Player player) {
@@ -189,7 +189,7 @@ public class RewardsGui extends AbstractGui {
         DailyRewardCollection priorityReward = ActivityRewarder.getRewardManager().getRewards(currDay);
         priorityReward.rewards().forEach((reward) -> reward.giveTo(player));
         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
-        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getDailyRewardMessage());
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
 
         Debugger.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), Debugger.DebugMode.HOURLY);
         HourlyRewardCollection hourlyRewardData = ActivityRewarder.getRewardManager().getHourlyRewards(player);
@@ -207,7 +207,7 @@ public class RewardsGui extends AbstractGui {
                 hourlyRewardData.rewardList().forEach((reward) -> reward.giveTo(player));
                 Debugger.sendDebugMessage("Successfully gave player a reward", Debugger.DebugMode.HOURLY);
             }
-            if (hoursDiff > 0) ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getHourlyRewardMessage().replaceAll("%hours%", String.valueOf(hoursDiff)));
+            if (hoursDiff > 0) ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("hourly-reward-given").replaceAll("%hours%", String.valueOf(hoursDiff)));
             rewardUser.setPlayTime(currPlayTime);
             Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.HOURLY);
         }
