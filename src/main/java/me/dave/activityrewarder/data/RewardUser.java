@@ -14,15 +14,17 @@ public class RewardUser {
     private LocalDate startDate;
     private LocalDate lastDate;
     private int dayNum;
+    private int highestStreak;
     private int playTime;
     private double hourlyMultiplier;
 
-    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int playTime) {
+    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int highestStreak, int playTime) {
         this.uuid = uuid;
         this.username = username;
         this.startDate = LocalDate.parse(startDate);
         this.lastDate = LocalDate.parse(lastCollectedDate);
         this.dayNum = dayNum;
+        this.highestStreak = highestStreak;
         this.playTime = playTime;
 
         this.hourlyMultiplier = ActivityRewarder.getConfigManager().getHourlyMultiplier(Bukkit.getPlayer(uuid));
@@ -40,14 +42,19 @@ public class RewardUser {
 
     public void incrementDayNum() {
         this.dayNum += 1;
+        if (dayNum > highestStreak) highestStreak = dayNum;
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public void setDay(int dayNum) {
+        this.dayNum = dayNum;
+        this.startDate = LocalDate.now();
+        this.lastDate = LocalDate.now().minusDays(dayNum);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void resetDays() {
-        this.dayNum = 1;
-        this.startDate = LocalDate.now();
-        this.lastDate = LocalDate.now().minusDays(1);
-        ActivityRewarder.getDataManager().saveRewardUser(this);
+        setDay(1);
     }
 
     public void setPlayTime(int playTime) {
@@ -78,6 +85,10 @@ public class RewardUser {
 
     public int getDayNum() {
         return this.dayNum;
+    }
+
+    public int getHighestStreak() {
+        return this.highestStreak;
     }
 
     public int getActualDayNum() {

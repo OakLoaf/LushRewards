@@ -37,7 +37,7 @@ public class DataManager {
         if (player == null) return null;
 
         RewardUser rewardUser = uuidToRewardUser.get(uuid);
-        if (rewardUser == null) rewardUser = new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
+        if (rewardUser == null) rewardUser = new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
         return rewardUser;
     }
 

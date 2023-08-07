@@ -25,8 +25,9 @@ public class YmlStorage implements Storage<RewardUser> {
         String startDate = configurationSection.getString("startDate");
         String lastCollectedDate = configurationSection.getString("lastCollectedDate");
         int dayNum = configurationSection.getInt("dayNum", 1);
+        int highestStreak = configurationSection.getInt("highestStreak", 1);
         int playTime = configurationSection.getInt("hoursPlayed", 0);
-        return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, playTime);
+        return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, highestStreak, playTime);
     }
 
     @Override
