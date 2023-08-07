@@ -84,7 +84,10 @@ public class LocalPlaceholders {
             switch (params) {
                 case "day_num" -> {
                     if (rewardUser.hasCollectedToday()) return String.valueOf(rewardUser.getDayNum() - 1);
-                    else return String.valueOf(rewardUser.getDayNum() - 1);
+                    else return String.valueOf(rewardUser.getDayNum());
+                }
+                case "highest_streak" -> {
+                    return String.valueOf(rewardUser.getHighestStreak());
                 }
                 case "collected" -> {
                     return String.valueOf(rewardUser.hasCollectedToday());
