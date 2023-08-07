@@ -25,7 +25,7 @@ hourly-rewards-enabled: true
 
 # The length in seconds between reminders being sent
 reminder-period: 1800
-# Whether a player will reset to day 0 if they miss a day
+# Whether a player will reset to day 1 if they miss a day
 streak-mode: true
 
 # Display items for different reward categories
