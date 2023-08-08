@@ -109,7 +109,7 @@ public class RewardsGui extends AbstractGui {
 
                 // Get the day's reward for the current slot
                 DailyRewardCollection upcomingReward = ActivityRewarder.getRewardManager().getRewards(dayIndex).getHighestPriorityRewards();
-                SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(upcomingReward.getDisplayItem(), categoryItem);
+                SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, upcomingReward.getDisplayItem());
                 simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"));
 
                 if (simpleItemStack.hasDisplayName()) simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getDisplayName().replaceAll("%day%", String.valueOf(nextRewardDay - rewardUser.getDayNumOffset())), player));
