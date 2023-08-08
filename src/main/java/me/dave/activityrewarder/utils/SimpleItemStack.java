@@ -41,15 +41,6 @@ public class SimpleItemStack {
         }
     }
 
-    public SimpleItemStack(@NotNull ConfigurationSection configurationSection) {
-        this.material = ConfigParser.getMaterial(configurationSection.getString("material"));
-        this.amount = configurationSection.getInt("amount", 1);
-        this.displayName = configurationSection.getString("display-name");
-        this.lore = configurationSection.getStringList("lore");
-        this.customModelData = configurationSection.getInt("custom-model-data");
-        this.enchanted = configurationSection.getBoolean("enchanted");
-    }
-
     public void setType(@NotNull Material material) {
         this.material = material;
     }
@@ -91,5 +82,19 @@ public class SimpleItemStack {
         }
 
         return itemStack;
+    }
+
+    public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection) {
+        return from(configurationSection, null);
+    }
+
+    public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection, Material def) {
+        SimpleItemStack simpleItemStack = new SimpleItemStack(ConfigParser.getMaterial(configurationSection.getString("material"), def));
+        if (configurationSection.contains("amount")) simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
+        if (configurationSection.contains("display-name")) simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
+        if (configurationSection.contains("lore")) simpleItemStack.setLore(configurationSection.getStringList("lore"));
+        if (configurationSection.contains("custom-model-data")) simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
+        if (configurationSection.contains("enchanted")) simpleItemStack.setEnchanted(configurationSection.getBoolean("enchanted", false));
+        return simpleItemStack;
     }
 }
