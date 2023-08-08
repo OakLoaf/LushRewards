@@ -12,12 +12,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class SimpleItemStack {
-    private Material material;
+    private Material material = null;
     private int amount = 1;
     private String displayName = null;
     private List<String> lore = null;
     private int customModelData = 0;
     private boolean enchanted = false;
+
+    public SimpleItemStack() {}
 
     public SimpleItemStack(@NotNull Material material) {
         this.material = material;
@@ -28,19 +30,7 @@ public class SimpleItemStack {
         this.amount = amount;
     }
 
-    public SimpleItemStack(@NotNull ItemStack itemStack) {
-        this.material = itemStack.getType();
-        this.amount = itemStack.getAmount();
-
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta != null) {
-            if (itemMeta.hasDisplayName()) this.displayName = itemMeta.getDisplayName();
-            if (itemMeta.hasLore()) this.lore = itemMeta.getLore();
-            if (itemMeta.hasCustomModelData()) this.customModelData = itemMeta.getCustomModelData();
-            if (itemMeta.hasEnchants()) this.enchanted = true;
-        }
-    }
-
+    @Nullable
     public Material getType() {
         return material;
     }
@@ -49,10 +39,12 @@ public class SimpleItemStack {
         return amount;
     }
 
+    @Nullable
     public String getDisplayName() {
         return displayName;
     }
 
+    @Nullable
     public List<String> getLore() {
         return lore;
     }
@@ -65,7 +57,23 @@ public class SimpleItemStack {
         return enchanted;
     }
 
-    public void setType(@NotNull Material material) {
+    public boolean hasType() {
+        return material != null;
+    }
+
+    public boolean hasDisplayName() {
+        return displayName != null;
+    }
+
+    public boolean hasLore() {
+        return lore != null;
+    }
+
+    public boolean hasCustomModelData() {
+        return customModelData != 0;
+    }
+
+    public void setType(@Nullable Material material) {
         this.material = material;
     }
 
@@ -108,12 +116,49 @@ public class SimpleItemStack {
         return itemStack;
     }
 
+    public static SimpleItemStack overwrite(@NotNull SimpleItemStack original, @NotNull SimpleItemStack overwrite) {
+        SimpleItemStack result = new SimpleItemStack();
+
+        if (overwrite.hasType()) {
+            result.setType(overwrite.getType());
+            result.setCustomModelData(overwrite.getCustomModelData());
+        }
+        else {
+            result.setType(original.getType());
+            result.setCustomModelData(original.getCustomModelData());
+        }
+
+        result.setAmount(overwrite.getAmount() != 1 ? overwrite.getAmount() : original.getAmount());
+        result.setDisplayName(overwrite.hasDisplayName() ? overwrite.getDisplayName() : original.getDisplayName());
+        result.setLore(overwrite.hasLore() ? overwrite.getLore() : original.getLore());
+        // TODO: Add way to check if overridable
+        result.setEnchanted(overwrite.getEnchanted());
+
+        return result;
+    }
+
+    public static SimpleItemStack from(@NotNull ItemStack itemStack) {
+        SimpleItemStack simpleItemStack = new SimpleItemStack();
+        simpleItemStack.setType(itemStack.getType());
+        simpleItemStack.setAmount(itemStack.getAmount());
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            if (itemMeta.hasDisplayName()) simpleItemStack.setDisplayName(itemMeta.getDisplayName());
+            if (itemMeta.hasLore()) simpleItemStack.setLore(itemMeta.getLore());
+            if (itemMeta.hasCustomModelData()) simpleItemStack.setCustomModelData(itemMeta.getCustomModelData());
+            if (itemMeta.hasEnchants()) simpleItemStack.setEnchanted(true);
+        }
+        return simpleItemStack;
+    }
+
     public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection) {
         return from(configurationSection, null);
     }
 
     public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection, Material def) {
-        SimpleItemStack simpleItemStack = new SimpleItemStack(ConfigParser.getMaterial(configurationSection.getString("material"), def));
+        SimpleItemStack simpleItemStack = new SimpleItemStack();
+        if (configurationSection.contains("material")) simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material"), def));
         if (configurationSection.contains("amount")) simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
         if (configurationSection.contains("display-name")) simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
         if (configurationSection.contains("lore")) simpleItemStack.setLore(configurationSection.getStringList("lore"));
