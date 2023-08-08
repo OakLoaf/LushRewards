@@ -7,10 +7,11 @@ daily-rewards:
   default:
     priority: -1
     category: small
-    lore:
-      - "&7Rewards:"
-      - "&7&o-12 Cactus"
-      - "&7&o-1 Cookie"
+    display-item:
+      lore:
+        - "&7Rewards:"
+        - "&7&o-12 Cactus"
+        - "&7&o-1 Cookie"
     redeem-sound: ENTITY_EXPERIENCE_ORB_PICKUP
     rewards:
       - type: item
@@ -21,10 +22,11 @@ daily-rewards:
         amount: 1
   day-1:
     category: small
-    lore:
-      - "&7Rewards:"
-      - "&7&o-1 Pink Tulip"
-      - "&7&o-1 Cookie"
+    display-item:
+      lore:
+        - "&7Rewards:"
+        - "&7&o-1 Pink Tulip"
+        - "&7&o-1 Cookie"
     rewards:
       - type: item
         material: pink_tulip
@@ -34,10 +36,11 @@ daily-rewards:
         amount: 1
   day-2:
     category: small
-    lore:
-      - "&7Rewards:"
-      - "&7&o-1 Oxeye Daisy"
-      - "&7&o-1 Bread"
+    display-item:
+      lore:
+        - "&7Rewards:"
+        - "&7&o-1 Oxeye Daisy"
+        - "&7&o-1 Bread"
     rewards:
       - type: item
         material: oxeye_daisy
@@ -47,10 +50,11 @@ daily-rewards:
         amount: 1
   day-5:
     category: small
-    lore:
-      - "&7Rewards:"
-      - "&7&o-1 White Tulip"
-      - "&7&o-1 Pearlescent Froglight"
+    display-item:
+      lore:
+        - "&7Rewards:"
+        - "&7&o-1 White Tulip"
+        - "&7&o-1 Pearlescent Froglight"
     rewards:
       - type: item
         material: white_tulip
@@ -60,10 +64,11 @@ daily-rewards:
         amount: 1
   day-30:
     category: large
-    lore:
-      - "&6Rewards:"
-      - "&6&o-3 Diamond"
-      - "&6&o-1 Golden Apple"
+    display-item:
+      lore:
+        - "&6Rewards:"
+        - "&6&o-3 Diamond"
+        - "&6&o-1 Golden Apple"
     rewards:
       - type: item
         material: diamond
