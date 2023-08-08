@@ -15,11 +15,39 @@ streak-mode: true
 # Display items for different reward categories
 categories:
   small:
-    type: gold_nugget
+    material: gold_nugget
   medium:
-    type: gold_ingot
+    material: gold_ingot
   large:
-    type: gold_block
+    material: gold_block
+
+# Display item templates
+item-templates:
+  # Template for default rewards
+  default-reward:
+    display-name: "&6Day %day%"
+  # Template for collectable rewards
+  redeemable-reward:
+    display-name: "&6Day %day% - Redeemable"
+    enchanted: true
+  # Template for collected rewards
+  collected-reward:
+    material: coal
+    display-name: "&6Day %day% - Collected"
+    enchanted: false
+  # Template for missed rewards
+  missed-day-reward:
+    material: gray_wool
+    display-name: "&7Day %day% &8(Missed)"
+  # Template for upcoming reward
+  upcoming-reward:
+    lore:
+      - "&7&o- Upcoming reward"
+
+  # Template for border items - more items can be created like this to be used within the gui templates
+  '#':
+    material: gray_stained_glass_pane
+    display-name: "&7"
 
 gui:
   title: "&8&lDaily Rewards"
@@ -33,17 +61,6 @@ gui:
     # The lore of the upcoming reward (set first line to blank for item's original lore)
     lore:
       - "&7&o- Next large reward"
-  # redeemable-name and collected-name can contain %day% which will display the day number related to the tiem
-  redeemable-name: "&6Day %day%"
-  collected-name: "&6Day %day% - Collected"
-  # Display item for the border
-  border-item:
-    material: gray_stained_glass_pane
-    display-name: "&7"
-  # Display item for when a reward is collected
-  collected-item:
-    material: coal
-    display-name: "&6Day %day% - Collected"
 
 messages:
   reload: "&aConfig reloaded"
