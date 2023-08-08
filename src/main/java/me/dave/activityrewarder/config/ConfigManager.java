@@ -5,10 +5,10 @@ import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
+import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -19,8 +19,6 @@ public class ConfigManager {
     private final HashMap<String, ItemStack> categoryItems = new HashMap<>();
     private final HashMap<String, String> messages = new HashMap<>();
     private GuiFormat guiFormat;
-    private ItemStack collectedItem;
-    private ItemStack borderItem;
     private UpcomingRewardFormat upcomingRewardFormat;
     private boolean dailyRewardsEnabled;
     private boolean hourlyRewardsEnabled;
@@ -42,10 +40,11 @@ public class ConfigManager {
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiTemplate(config.getStringList("gui.format")) : GuiTemplate.DefaultTemplate.valueOf(templateType);
-        guiFormat = new GuiFormat(guiTitle, guiTemplate);
+        SimpleItemStack collectedItem = SimpleItemStack.from(config.getConfigurationSection("gui.collected-item"), Material.REDSTONE_BLOCK);
+        SimpleItemStack missedDayItem = SimpleItemStack.from(config.getConfigurationSection("gui.missed-day-item"));
+        SimpleItemStack borderItem = SimpleItemStack.from(config.getConfigurationSection("gui.border-item"));
 
-        collectedItem = ConfigParser.getItem(config.getConfigurationSection("gui.collected-item"), Material.REDSTONE_BLOCK);
-        borderItem = ConfigParser.getItem(config.getConfigurationSection("gui.border-item"), Material.GRAY_STAINED_GLASS_PANE);
+        guiFormat = new GuiFormat(guiTitle, guiTemplate, collectedItem, missedDayItem, borderItem);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
@@ -75,14 +74,6 @@ public class ConfigManager {
         return upcomingRewardFormat;
     }
 
-    public boolean showUpcomingReward() {
-        return upcomingRewardFormat.enabled;
-    }
-
-    public List<String> getUpcomingRewardLore() {
-        return upcomingRewardFormat.lore;
-    }
-
     public String getGuiItemRedeemableName(int day) {
         return config.getString("gui.redeemable-name", "&6Day %day%").replaceAll("%day%", String.valueOf(day));
     }
@@ -94,14 +85,6 @@ public class ConfigManager {
     public ItemStack getCategoryItem(String category) {
         ItemStack item = categoryItems.get(category.toLowerCase());
         return item != null ? item.clone() : new ItemStack(Material.CHEST_MINECART);
-    }
-
-    public ItemStack getCollectedItem() {
-        return collectedItem.clone();
-    }
-
-    public ItemStack getBorderItem() {
-        return borderItem.clone();
     }
 
     public boolean areDailyRewardsEnabled() {
@@ -152,6 +135,6 @@ public class ConfigManager {
         });
     }
 
-    public record GuiFormat(String title, GuiTemplate template) {}
+    public record GuiFormat(String title, GuiTemplate template, SimpleItemStack collectedItem, SimpleItemStack missedDayItem, SimpleItemStack borderItem) {}
     public record UpcomingRewardFormat(boolean enabled, List<String> lore) {}
 }
