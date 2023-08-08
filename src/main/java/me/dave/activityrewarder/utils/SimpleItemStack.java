@@ -41,6 +41,30 @@ public class SimpleItemStack {
         }
     }
 
+    public Material getType() {
+        return material;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public List<String> getLore() {
+        return lore;
+    }
+
+    public int getCustomModelData() {
+        return customModelData;
+    }
+
+    public boolean getEnchanted() {
+        return enchanted;
+    }
+
     public void setType(@NotNull Material material) {
         this.material = material;
     }
