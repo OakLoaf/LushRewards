@@ -39,9 +39,11 @@ gui:
   # Display item for the border
   border-item:
     material: gray_stained_glass_pane
+    display-name: "&7"
   # Display item for when a reward is collected
   collected-item:
     material: coal
+    display-name: "&6Day %day% - Collected"
 
 messages:
   reload: "&aConfig reloaded"
