@@ -2,7 +2,6 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
-import me.dave.activityrewarder.rewards.Reward;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;

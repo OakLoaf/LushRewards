@@ -1,6 +1,5 @@
 package me.dave.activityrewarder.rewards.custom;
 
-import me.dave.activityrewarder.rewards.Reward;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.entity.Player;
 

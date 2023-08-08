@@ -2,7 +2,6 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
-import me.dave.activityrewarder.rewards.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Material;

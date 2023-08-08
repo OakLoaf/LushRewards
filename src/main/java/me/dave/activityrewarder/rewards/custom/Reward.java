@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.rewards;
+package me.dave.activityrewarder.rewards.custom;
 
 import org.bukkit.entity.Player;
 
