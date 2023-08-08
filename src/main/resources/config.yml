@@ -37,9 +37,11 @@ gui:
   redeemable-name: "&6Day %day%"
   collected-name: "&6Day %day% - Collected"
   # Display item for the border
-  border-item: GRAY_STAINED_GLASS_PANE
+  border-item:
+    material: gray_stained_glass_pane
   # Display item for when a reward is collected
-  collected-item: COAL
+  collected-item:
+    material: coal
 
 messages:
   reload: "&aConfig reloaded"
