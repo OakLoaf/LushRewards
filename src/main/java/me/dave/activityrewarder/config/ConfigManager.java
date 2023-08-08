@@ -3,20 +3,19 @@ package me.dave.activityrewarder.config;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.notifications.NotificationHandler;
-import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
 public class ConfigManager {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final NotificationHandler notificationHandler = new NotificationHandler();
-    private final HashMap<String, ItemStack> categoryItems = new HashMap<>();
+    private final HashMap<String, SimpleItemStack> categoryItems = new HashMap<>();
+    private final HashMap<String, SimpleItemStack> itemTemplates = new HashMap<>();
     private final HashMap<String, String> messages = new HashMap<>();
     private GuiFormat guiFormat;
     private UpcomingRewardFormat upcomingRewardFormat;
@@ -40,11 +39,8 @@ public class ConfigManager {
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiTemplate(config.getStringList("gui.format")) : GuiTemplate.DefaultTemplate.valueOf(templateType);
-        SimpleItemStack collectedItem = SimpleItemStack.from(config.getConfigurationSection("gui.collected-item"), Material.REDSTONE_BLOCK);
-        SimpleItemStack missedDayItem = SimpleItemStack.from(config.getConfigurationSection("gui.missed-day-item"));
-        SimpleItemStack borderItem = SimpleItemStack.from(config.getConfigurationSection("gui.border-item"));
 
-        guiFormat = new GuiFormat(guiTitle, guiTemplate, collectedItem, missedDayItem, borderItem);
+        guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
         List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
@@ -57,6 +53,7 @@ public class ConfigManager {
         daysReset = config.getBoolean("days-reset", false);
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
+        reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadMessages(config.getConfigurationSection("messages"));
         notificationHandler.reloadNotifications(reminderPeriod);
         if (ActivityRewarder.getRewardManager() != null) ActivityRewarder.getRewardManager().reloadRewards();
@@ -74,17 +71,12 @@ public class ConfigManager {
         return upcomingRewardFormat;
     }
 
-    public String getGuiItemRedeemableName(int day) {
-        return config.getString("gui.redeemable-name", "&6Day %day%").replaceAll("%day%", String.valueOf(day));
+    public SimpleItemStack getCategoryItem(String category) {
+        return categoryItems.get(category.toLowerCase());
     }
 
-    public String getGuiItemCollectedName(int day) {
-        return config.getString("gui.collected-name", "&6Day %day% - Collected").replaceAll("%day%", String.valueOf(day));
-    }
-
-    public ItemStack getCategoryItem(String category) {
-        ItemStack item = categoryItems.get(category.toLowerCase());
-        return item != null ? item.clone() : new ItemStack(Material.CHEST_MINECART);
+    public SimpleItemStack getItemTemplate(String key) {
+        return itemTemplates.getOrDefault(key, new SimpleItemStack());
     }
 
     public boolean areDailyRewardsEnabled() {
@@ -117,7 +109,22 @@ public class ConfigManager {
         // Repopulates category map
         categoriesSection.getValues(false).entrySet().forEach((data) -> {
             if (data instanceof ConfigurationSection categorySection) {
-                categoryItems.put(categorySection.getName(), ConfigParser.getItem(categorySection, Material.STONE));
+                categoryItems.put(categorySection.getName(), SimpleItemStack.from(categorySection, Material.STONE));
+            }
+        });
+    }
+
+    private void reloadItemTemplates(ConfigurationSection itemTemplatesSection) {
+        // Clears category map
+        itemTemplates.clear();
+
+        // Checks if categories section exists
+        if (itemTemplatesSection == null) return;
+
+        // Repopulates category map
+        itemTemplatesSection.getValues(false).entrySet().forEach((data) -> {
+            if (data instanceof ConfigurationSection categorySection) {
+                itemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection, Material.STONE));
             }
         });
     }
@@ -135,6 +142,6 @@ public class ConfigManager {
         });
     }
 
-    public record GuiFormat(String title, GuiTemplate template, SimpleItemStack collectedItem, SimpleItemStack missedDayItem, SimpleItemStack borderItem) {}
+    public record GuiFormat(String title, GuiTemplate template) {}
     public record UpcomingRewardFormat(boolean enabled, List<String> lore) {}
 }
