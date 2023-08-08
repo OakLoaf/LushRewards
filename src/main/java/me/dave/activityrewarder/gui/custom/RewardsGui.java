@@ -69,7 +69,7 @@ public class RewardsGui extends AbstractGui {
                     // Get the day's reward for the current slot
                     DailyRewardCollection reward = ActivityRewarder.getRewardManager().getRewards(dayIndex).getHighestPriorityRewards();
                     // TODO: Store list of collected days in RewardUser to check for collected vs missed days
-                    SimpleItemStack displayItem = (dayIndex == currDayNum && collectedToday) ? SimpleItemStack.overwrite(reward.getDisplayItem(), ActivityRewarder.getConfigManager().getItemTemplate("collected-item")) : reward.getDisplayItem();
+                    SimpleItemStack displayItem = (dayIndex == currDayNum && collectedToday) ? SimpleItemStack.overwrite(reward.getDisplayItem(), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward")) : reward.getDisplayItem();
 
                     if (displayItem.hasDisplayName()) displayItem.setDisplayName(ChatColorHandler.translateAlternateColorCodes(displayItem.getDisplayName().replaceAll("%day%", String.valueOf(dayIndex)), player));
                     displayItem.setLore(ChatColorHandler.translateAlternateColorCodes(displayItem.getLore(), player));
@@ -158,7 +158,7 @@ public class RewardsGui extends AbstractGui {
         // Checks if reward can be collected
         if (!persistentDataArr[2].equals("collectable")) return;
 
-        ItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-item")).getItemStack();
+        ItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward")).getItemStack();
         ItemMeta collectedItemMeta = collectedItem.getItemMeta();
         if (collectedItemMeta != null) {
             collectedItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (persistentDataArr[0] + "|" + persistentDataArr[1] + "|collected"));
