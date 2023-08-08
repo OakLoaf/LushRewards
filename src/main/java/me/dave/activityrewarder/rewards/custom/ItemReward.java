@@ -48,8 +48,6 @@ public class ItemReward implements Reward {
     @Override
     public void giveTo(Player player) {
         HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(simpleItemStack.getItemStack());
-        for (ItemStack item: droppedItems.values()) {
-            player.getWorld().dropItem(player.getLocation(), item);
-        }
+        droppedItems.values().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
     }
 }
