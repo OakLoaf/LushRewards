@@ -5,6 +5,10 @@ import com.google.common.collect.Multimap;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.rewards.*;
+import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.HourlyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.RewardDay;
+import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleDate;
@@ -12,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -45,10 +50,10 @@ public class RewardManager {
             if (rewardDaysSection != null) {
                 rewardDaysSection.getValues(false).forEach((key, value) -> {
                     if (value instanceof ConfigurationSection rewardSection) {
-                        DailyRewardCollection rewardCollection = loadRewardCollection(rewardSection, Debugger.DebugMode.DAILY);
-                        if (rewardCollection != null) {
-                            if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = rewardCollection;
-                            else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), rewardCollection);
+                        DailyRewardCollection dailyRewardCollection = loadDailyRewardCollection(rewardSection);
+                        if (dailyRewardCollection != null) {
+                            if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = dailyRewardCollection;
+                            else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), dailyRewardCollection);
                         }
                     }
                 });
@@ -81,7 +86,7 @@ public class RewardManager {
         return defaultReward;
     }
 
-    @Nullable
+    @NotNull
     public RewardDay getRewards(int day) {
         if (dayToRewards.containsKey(day)) return RewardDay.from(dayToRewards.get(day));
         else return RewardDay.from(defaultReward);
@@ -98,9 +103,9 @@ public class RewardManager {
         Debugger.sendDebugMessage("Checking player's highest multiplier", Debugger.DebugMode.HOURLY);
         HourlyRewardCollection hourlyRewardCollection = getHighestMultiplierReward(player);
         if (hourlyRewardCollection != null) {
-            Debugger.sendDebugMessage("Found highest multiplier (" + hourlyRewardCollection.multiplier() + ")", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Found highest multiplier (" + hourlyRewardCollection.getMultiplier() + ")", Debugger.DebugMode.HOURLY);
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
-            rewardUser.setHourlyMultiplier(hourlyRewardCollection.multiplier());
+            rewardUser.setHourlyMultiplier(hourlyRewardCollection.getMultiplier());
         }
         else Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.HOURLY);
 
@@ -118,7 +123,7 @@ public class RewardManager {
             if (!player.hasPermission("activityrewarder.bonus." + permission)) continue;
             Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.HOURLY);
 
-            double multiplier = entry.getValue().multiplier();
+            double multiplier = entry.getValue().getMultiplier();
             if (multiplier > highestMultiplier) {
                 Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.HOURLY);
                 highestMultiplier = multiplier;
@@ -126,6 +131,25 @@ public class RewardManager {
             }
         }
         return highestMultiplierReward;
+    }
+
+    public double getHighestMultiplier(Player player) {
+        double highestMultiplier = 0;
+
+        for (Map.Entry<String, HourlyRewardCollection> entry : permissionToHourlyReward.entrySet()) {
+            String permission = entry.getKey();
+
+            if (!player.hasPermission("activityrewarder.bonus." + permission)) continue;
+            Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.HOURLY);
+
+            double multiplier = entry.getValue().getMultiplier();
+            if (multiplier > highestMultiplier) {
+                Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.HOURLY);
+                highestMultiplier = multiplier;
+            }
+        }
+
+        return highestMultiplier;
     }
 
     // TODO: Run once per day in performance mode
@@ -176,7 +200,8 @@ public class RewardManager {
     }
 
     @Nullable
-    private DailyRewardCollection loadRewardCollection(ConfigurationSection rewardCollectionSection, Debugger.DebugMode debugMode) {
+    private DailyRewardCollection loadDailyRewardCollection(ConfigurationSection rewardCollectionSection) {
+        Debugger.DebugMode debugMode = Debugger.DebugMode.DAILY;
         Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
         int priority = rewardCollectionSection.getInt("priority", 0);
@@ -197,7 +222,7 @@ public class RewardManager {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + "rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return rewardList != null ? new DailyRewardCollection(0, category, lore, redeemSound, rewardList) : null;
+        return rewardList != null ? DailyRewardCollection.from(rewardList, 0, category, lore, redeemSound) : DailyRewardCollection.empty();
     }
 
     private File initYML() {

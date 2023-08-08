@@ -2,7 +2,8 @@ package me.dave.activityrewarder.utils;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.rewards.DailyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.RewardDay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -86,24 +87,12 @@ public class LocalPlaceholders {
                     if (rewardUser.hasCollectedToday()) return String.valueOf(rewardUser.getDayNum() - 1);
                     else return String.valueOf(rewardUser.getDayNum());
                 }
-                case "highest_streak" -> {
-                    return String.valueOf(rewardUser.getHighestStreak());
-                }
-                case "collected" -> {
-                    return String.valueOf(rewardUser.hasCollectedToday());
-                }
-                case "playtime" -> {
-                    return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
-                }
-                case "multiplier" -> {
-                    return String.valueOf(rewardUser.getHourlyMultiplier());
-                }
-                case "category" -> {
-                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).category());
-                }
-                case "total_rewards" -> {
-                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount());
-                }
+                case "highest_streak" -> { return String.valueOf(rewardUser.getHighestStreak()); }
+                case "collected" -> { return String.valueOf(rewardUser.hasCollectedToday()); }
+                case "playtime" -> { return String.valueOf(rewardUser.getPlayTimeSinceLastCollected()); }
+                case "multiplier" -> { return String.valueOf(rewardUser.getHourlyMultiplier()); }
+                case "category" -> { return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getHighestPriorityRewards().getCategory()); }
+                case "total_rewards" -> { return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount()); }
             }
         }
 
@@ -111,15 +100,12 @@ public class LocalPlaceholders {
         if (params.matches("day_[0-9]+.+")) {
             String[] paramArr = params.split("_", 3);
             int dayNum = Integer.parseInt(paramArr[1]);
-            DailyRewardCollection dailyRewardCollection = ActivityRewarder.getRewardManager().getRewards(dayNum);
+            RewardDay rewardDay = ActivityRewarder.getRewardManager().getRewards(dayNum);
+            DailyRewardCollection dailyRewardCollection = rewardDay.getHighestPriorityRewards();
 
             switch(paramArr[2]) {
-                case "category" -> {
-                    return String.valueOf(dailyRewardCollection.category());
-                }
-                case "total_rewards" -> {
-                    return String.valueOf(dailyRewardCollection.getRewardCount());
-                }
+                case "category" -> { return String.valueOf(dailyRewardCollection.getCategory()); }
+                case "total_rewards" -> { return String.valueOf(dailyRewardCollection.getRewardCount()); }
             }
 
             return null;

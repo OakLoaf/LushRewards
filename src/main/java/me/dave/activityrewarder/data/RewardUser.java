@@ -27,7 +27,7 @@ public class RewardUser {
         this.highestStreak = highestStreak;
         this.playTime = playTime;
 
-        this.hourlyMultiplier = ActivityRewarder.getConfigManager().getHourlyMultiplier(Bukkit.getPlayer(uuid));
+        this.hourlyMultiplier = ActivityRewarder.getRewardManager().getHighestMultiplier(Bukkit.getPlayer(uuid));
     }
 
     public void setUsername(String username) {
