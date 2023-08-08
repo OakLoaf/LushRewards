@@ -12,6 +12,7 @@ import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleDate;
+import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -163,7 +164,6 @@ public class RewardManager {
 
             // Gets the category of the reward and compares to the request
             RewardDay rewardDay = getRewards(rewardsKey);
-            if (rewardDay == null) continue;
             if (rewardDay.containsRewardFromCategory(category)) nextRewardKey = rewardsKey;
         }
 
@@ -210,9 +210,8 @@ public class RewardManager {
         String category = rewardCollectionSection.getString("category", "SMALL").toUpperCase();
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
-        List<String> lore = rewardCollectionSection.getStringList("lore");
-        Debugger.sendDebugMessage("Reward collection lore set to:", debugMode);
-        lore.forEach(str -> Debugger.sendDebugMessage("- " + str, debugMode));
+        SimpleItemStack itemStack = SimpleItemStack.from(rewardCollectionSection.getConfigurationSection("display-item"));
+        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP").toUpperCase());
 
@@ -222,7 +221,7 @@ public class RewardManager {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + "rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return rewardList != null ? DailyRewardCollection.from(rewardList, 0, category, lore, redeemSound) : DailyRewardCollection.empty();
+        return rewardList != null ? DailyRewardCollection.from(rewardList, 0, category, itemStack, redeemSound) : DailyRewardCollection.empty();
     }
 
     private File initYML() {
