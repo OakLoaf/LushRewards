@@ -124,21 +124,6 @@ public class ConfigManager {
         return daysReset;
     }
 
-    public double getHourlyMultiplier(Player player) {
-        ConfigurationSection hourlySection = config.getConfigurationSection("hourly-rewards");
-        if (hourlySection == null || !hourlySection.getBoolean("enabled", false)) return 1;
-
-        double heighestMultiplier = 1;
-        for (String perm : hourlySection.getKeys(false)) {
-            if (player.hasPermission("activityrewarder.bonus." + perm)) {
-                double multiplier = hourlySection.getDouble(perm + ".multiplier", 1);
-                if (multiplier > heighestMultiplier) heighestMultiplier = multiplier;
-            }
-        }
-
-        return heighestMultiplier;
-    }
-
     private void reloadCategoryMap(ConfigurationSection categoriesSection) {
         // Clears category map
         categoryItems.clear();
