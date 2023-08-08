@@ -1,6 +1,5 @@
 package me.dave.activityrewarder.utils;
 
-import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -92,8 +91,8 @@ public class SimpleItemStack {
     public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection, Material def) {
         SimpleItemStack simpleItemStack = new SimpleItemStack(ConfigParser.getMaterial(configurationSection.getString("material"), def));
         if (configurationSection.contains("amount")) simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
-        if (configurationSection.contains("display-name")) simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(configurationSection.getString("display-name")));
-        if (configurationSection.contains("lore")) simpleItemStack.setLore(ChatColorHandler.translateAlternateColorCodes(configurationSection.getStringList("lore")));
+        if (configurationSection.contains("display-name")) simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
+        if (configurationSection.contains("lore")) simpleItemStack.setLore(configurationSection.getStringList("lore"));
         if (configurationSection.contains("custom-model-data")) simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
         if (configurationSection.contains("enchanted")) simpleItemStack.setEnchanted(configurationSection.getBoolean("enchanted", false));
         return simpleItemStack;
