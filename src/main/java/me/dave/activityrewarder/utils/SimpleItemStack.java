@@ -1,11 +1,14 @@
 package me.dave.activityrewarder.utils;
 
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +19,9 @@ public class SimpleItemStack implements Cloneable {
     private int amount = 1;
     private String displayName = null;
     private List<String> lore = null;
-    private int customModelData = 0;
     private boolean enchanted = false;
+    private int customModelData = 0;
+    private String skullTexture = null;
 
     public SimpleItemStack() {}
 
@@ -49,12 +53,16 @@ public class SimpleItemStack implements Cloneable {
         return lore;
     }
 
+    public boolean getEnchanted() {
+        return enchanted;
+    }
+
     public int getCustomModelData() {
         return customModelData;
     }
 
-    public boolean getEnchanted() {
-        return enchanted;
+    public String getSkullTexture() {
+        return skullTexture;
     }
 
     public boolean hasType() {
@@ -73,6 +81,10 @@ public class SimpleItemStack implements Cloneable {
         return customModelData != 0;
     }
 
+    public boolean hasSkullTexture() {
+        return skullTexture != null;
+    }
+
     public void setType(@Nullable Material material) {
         this.material = material;
     }
@@ -89,25 +101,42 @@ public class SimpleItemStack implements Cloneable {
         this.lore = lore;
     }
 
-    public void setCustomModelData(int customModelData) {
-        this.customModelData = customModelData;
-    }
-
     public void setEnchanted(boolean enchanted) {
         this.enchanted = enchanted;
     }
 
+    public void setCustomModelData(int customModelData) {
+        this.customModelData = customModelData;
+    }
+
+    public void setSkullTexture(@Nullable String texture) {
+        this.skullTexture = texture;
+    }
+
+    public void parseColors(Player player) {
+        if (hasDisplayName()) displayName = ChatColorHandler.translateAlternateColorCodes(displayName, player);
+        if (hasLore()) lore = ChatColorHandler.translateAlternateColorCodes(lore, player);
+    }
+
     public ItemStack getItemStack() {
+        return getItemStack(null);
+    }
+
+    public ItemStack getItemStack(@Nullable Player player) {
         ItemStack itemStack = new ItemStack(material, amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta != null) {
             if (displayName != null) itemMeta.setDisplayName(displayName);
             if (lore != null) itemMeta.setLore(lore);
-            if (customModelData != 0) itemMeta.setCustomModelData(customModelData);
             if (enchanted) {
                 itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+            if (customModelData != 0) itemMeta.setCustomModelData(customModelData);
+            if (itemMeta instanceof SkullMeta skullMeta && skullTexture != null) {
+                if (skullTexture.equals("mirror") && player != null) SkullCreator.mutateItemMeta(skullMeta, SkullCreator.getTexture(player));
+                else SkullCreator.mutateItemMeta(skullMeta, skullTexture);
             }
 
             itemStack.setItemMeta(itemMeta);
@@ -133,6 +162,7 @@ public class SimpleItemStack implements Cloneable {
         result.setLore(overwrite.hasLore() ? overwrite.getLore() : original.getLore());
         // TODO: Add way to check if overridable
         result.setEnchanted(overwrite.getEnchanted());
+        result.setSkullTexture(overwrite.hasSkullTexture() ? overwrite.getSkullTexture() : original.getSkullTexture());
 
         return result;
     }
@@ -146,24 +176,22 @@ public class SimpleItemStack implements Cloneable {
         if (itemMeta != null) {
             if (itemMeta.hasDisplayName()) simpleItemStack.setDisplayName(itemMeta.getDisplayName());
             if (itemMeta.hasLore()) simpleItemStack.setLore(itemMeta.getLore());
-            if (itemMeta.hasCustomModelData()) simpleItemStack.setCustomModelData(itemMeta.getCustomModelData());
             if (itemMeta.hasEnchants()) simpleItemStack.setEnchanted(true);
+            if (itemMeta.hasCustomModelData()) simpleItemStack.setCustomModelData(itemMeta.getCustomModelData());
+            if (itemMeta instanceof SkullMeta) simpleItemStack.setSkullTexture(SkullCreator.getB64(itemStack));
         }
         return simpleItemStack;
     }
 
     public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection) {
-        return from(configurationSection, null);
-    }
-
-    public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection, Material def) {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
-        if (configurationSection.contains("material")) simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material"), def));
+        if (configurationSection.contains("material")) simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material")));
         if (configurationSection.contains("amount")) simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
         if (configurationSection.contains("display-name")) simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
         if (configurationSection.contains("lore")) simpleItemStack.setLore(configurationSection.getStringList("lore"));
-        if (configurationSection.contains("custom-model-data")) simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
         if (configurationSection.contains("enchanted")) simpleItemStack.setEnchanted(configurationSection.getBoolean("enchanted", false));
+        if (configurationSection.contains("custom-model-data")) simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
+        if (configurationSection.contains("skull-texture")) simpleItemStack.setSkullTexture(configurationSection.getString("skull-texture"));
         return simpleItemStack;
     }
 
