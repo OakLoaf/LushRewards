@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SimpleItemStack {
+public class SimpleItemStack implements Cloneable {
     private Material material = null;
     private int amount = 1;
     private String displayName = null;
@@ -165,5 +165,16 @@ public class SimpleItemStack {
         if (configurationSection.contains("custom-model-data")) simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
         if (configurationSection.contains("enchanted")) simpleItemStack.setEnchanted(configurationSection.getBoolean("enchanted", false));
         return simpleItemStack;
+    }
+
+    @Override
+    public SimpleItemStack clone() {
+        try {
+            SimpleItemStack clone = (SimpleItemStack) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
