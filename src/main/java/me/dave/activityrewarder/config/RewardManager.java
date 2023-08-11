@@ -52,10 +52,8 @@ public class RewardManager {
                 rewardDaysSection.getValues(false).forEach((key, value) -> {
                     if (value instanceof ConfigurationSection rewardSection) {
                         DailyRewardCollection dailyRewardCollection = loadDailyRewardCollection(rewardSection);
-                        if (dailyRewardCollection != null) {
-                            if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = dailyRewardCollection;
-                            else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), dailyRewardCollection);
-                        }
+                        if (rewardSection.getName().equalsIgnoreCase("default")) defaultReward = dailyRewardCollection;
+                        else dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), dailyRewardCollection);
                     }
                 });
 
@@ -199,7 +197,7 @@ public class RewardManager {
         return !rewardList.isEmpty() ? rewardList : null;
     }
 
-    @Nullable
+    @NotNull
     private DailyRewardCollection loadDailyRewardCollection(ConfigurationSection rewardCollectionSection) {
         Debugger.DebugMode debugMode = Debugger.DebugMode.DAILY;
         Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
@@ -210,7 +208,8 @@ public class RewardManager {
         String category = rewardCollectionSection.getString("category", "SMALL").toUpperCase();
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
-        SimpleItemStack itemStack = SimpleItemStack.from(rewardCollectionSection.getConfigurationSection("display-item"));
+        ConfigurationSection itemSection = rewardCollectionSection.getConfigurationSection("display-item");
+        SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP").toUpperCase());
