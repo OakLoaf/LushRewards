@@ -205,7 +205,7 @@ public class RewardManager {
         int priority = rewardCollectionSection.getInt("priority", 0);
         Debugger.sendDebugMessage("Reward collection priority set to " + priority, debugMode);
 
-        String category = rewardCollectionSection.getString("category", "SMALL").toUpperCase();
+        String category = rewardCollectionSection.getString("category", "small");
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
         ConfigurationSection itemSection = rewardCollectionSection.getConfigurationSection("display-item");
