@@ -5,7 +5,6 @@ import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -71,12 +70,24 @@ public class ConfigManager {
         return upcomingRewardFormat;
     }
 
-    public SimpleItemStack getCategoryItem(String category) {
-        return categoryItems.get(category.toLowerCase());
+    public SimpleItemStack getCategoryTemplate(String category) {
+        SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
+        if (itemTemplate == null) {
+            ActivityRewarder.getInstance().getLogger().severe("Could not find category '" + category + "'");
+            return new SimpleItemStack();
+        }
+
+        return itemTemplate.clone();
     }
 
     public SimpleItemStack getItemTemplate(String key) {
-        return itemTemplates.getOrDefault(key, new SimpleItemStack());
+        SimpleItemStack itemTemplate = itemTemplates.get(key);
+        if (itemTemplate == null) {
+            ActivityRewarder.getInstance().getLogger().severe("Could not find item-template '" + key + "'");
+            return new SimpleItemStack();
+        }
+
+        return itemTemplate.clone();
     }
 
     public boolean areDailyRewardsEnabled() {
@@ -107,9 +118,9 @@ public class ConfigManager {
         if (categoriesSection == null) return;
 
         // Repopulates category map
-        categoriesSection.getValues(false).entrySet().forEach((data) -> {
-            if (data instanceof ConfigurationSection categorySection) {
-                categoryItems.put(categorySection.getName(), SimpleItemStack.from(categorySection, Material.STONE));
+        categoriesSection.getValues(false).forEach((key, value) -> {
+            if (value instanceof ConfigurationSection categorySection) {
+                categoryItems.put(categorySection.getName(), SimpleItemStack.from(categorySection));
             }
         });
     }
@@ -122,9 +133,10 @@ public class ConfigManager {
         if (itemTemplatesSection == null) return;
 
         // Repopulates category map
-        itemTemplatesSection.getValues(false).entrySet().forEach((data) -> {
-            if (data instanceof ConfigurationSection categorySection) {
-                itemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection, Material.STONE));
+        itemTemplatesSection.getValues(false).forEach((key, value) -> {
+            if (value instanceof ConfigurationSection categorySection) {
+                itemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                ActivityRewarder.getInstance().getLogger().info("Loaded item-template: " + categorySection.getName());
             }
         });
     }
@@ -137,9 +149,7 @@ public class ConfigManager {
         if (messagesSection == null) return;
 
         // Repopulates messages map
-        messagesSection.getValues(false).forEach((key, value) -> {
-            messages.put(key, (String) value);
-        });
+        messagesSection.getValues(false).forEach((key, value) -> messages.put(key, (String) value));
     }
 
     public record GuiFormat(String title, GuiTemplate template) {}
