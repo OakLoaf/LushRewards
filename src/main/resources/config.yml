@@ -3,6 +3,9 @@ daily-rewards-enabled: true
 # Whether the hourly rewards module is enabled
 hourly-rewards-enabled: true
 
+# Whether players will receive all rewards on a day or just the one with the highest priorty
+allow-reward-stacking: false
+
 # Whether rewards will automatically refresh when the day ticks over
 # - This allows the plugin to use less ram by only storing rewards that could be needed on the specified day
 rewards-refresh-daily: false
@@ -76,6 +79,11 @@ messages:
   reminder: "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards"
   daily-reward-given: "&e&lRewards &8» &aYou have collected today's reward"
   hourly-reward-given: "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours"
+  reset-streak: "Are you sure you want to reset %target%'s streak? Type '/rewards reset-streak %target% confirm' to confirm"
+  set-streak: "Are you sure you want to set %target%'s streak? Type '/rewards set-streak %target% %streak% confirm' to confirm"
+  set-streak-confirm: "Set %target%'s streak to %new-streak%"
+  no-permissions: "&cInsufficient permissions"
+  incorrect-format: "&clala %command-usage%"
 
 # Debug Modes: none, hourly, daily, all
 debug-mode: none
