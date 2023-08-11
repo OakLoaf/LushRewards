@@ -19,7 +19,7 @@ public class RewardUserEvents implements Listener {
     @EventHandler
     public void onPlayerDisconnect(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
+        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
     }
 }

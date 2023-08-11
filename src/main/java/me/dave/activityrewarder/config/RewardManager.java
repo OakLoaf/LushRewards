@@ -103,7 +103,7 @@ public class RewardManager {
         HourlyRewardCollection hourlyRewardCollection = getHighestMultiplierReward(player);
         if (hourlyRewardCollection != null) {
             Debugger.sendDebugMessage("Found highest multiplier (" + hourlyRewardCollection.getMultiplier() + ")", Debugger.DebugMode.HOURLY);
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             rewardUser.setHourlyMultiplier(hourlyRewardCollection.getMultiplier());
         }
         else Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.HOURLY);

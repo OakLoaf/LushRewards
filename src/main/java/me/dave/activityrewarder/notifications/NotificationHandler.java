@@ -32,7 +32,7 @@ public class NotificationHandler {
 
             LocalDate currDate = LocalDate.now();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                boolean collectedToday = currDate.equals(ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId()).getLastDate());
+                boolean collectedToday = currDate.equals(ActivityRewarder.getDataManager().getRewardUser(player).getLastDate());
                 if (collectedToday) continue;
                 ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("reminder"));
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);

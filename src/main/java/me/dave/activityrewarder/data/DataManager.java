@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -32,9 +33,9 @@ public class DataManager {
         ioHandler.savePlayer(rewardUser);
     }
 
-    public RewardUser getRewardUser(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) return null;
+    @NotNull
+    public RewardUser getRewardUser(@NotNull Player player) {
+        UUID uuid = player.getUniqueId();
 
         RewardUser rewardUser = uuidToRewardUser.get(uuid);
         if (rewardUser == null) rewardUser = new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 1, (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));

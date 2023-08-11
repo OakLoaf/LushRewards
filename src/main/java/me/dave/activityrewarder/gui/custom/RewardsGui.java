@@ -42,7 +42,7 @@ public class RewardsGui extends AbstractGui {
         inventory.clear();
 
         // Gets RewardUser
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
+        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
 
         // Checks if the streak mode config option is enabled
         if (ActivityRewarder.getConfigManager().doDaysReset()) {
@@ -193,7 +193,7 @@ public class RewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
         Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player.getUniqueId());
+        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
         Debugger.sendDebugMessage("Loaded player's daily rewards ", Debugger.DebugMode.DAILY);
         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.DAILY);
 
