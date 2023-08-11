@@ -21,5 +21,6 @@ public class RewardUserEvents implements Listener {
         Player player = event.getPlayer();
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
+        ActivityRewarder.getDataManager().unloadRewarderUser(player.getUniqueId());
     }
 }

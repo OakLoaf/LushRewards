@@ -29,6 +29,10 @@ public class DataManager {
         });
     }
 
+    public void unloadRewarderUser(UUID uuid) {
+        uuidToRewardUser.remove(uuid);
+    }
+
     public void saveRewardUser(RewardUser rewardUser) {
         ioHandler.savePlayer(rewardUser);
     }
