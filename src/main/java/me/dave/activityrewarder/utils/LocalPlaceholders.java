@@ -87,9 +87,10 @@ public class LocalPlaceholders {
                     if (rewardUser.hasCollectedToday()) return String.valueOf(rewardUser.getDayNum() - 1);
                     else return String.valueOf(rewardUser.getDayNum());
                 }
+                // TODO: fix
                 case "highest_streak" -> { return String.valueOf(rewardUser.getHighestStreak()); }
                 case "collected" -> { return String.valueOf(rewardUser.hasCollectedToday()); }
-                case "playtime" -> { return String.valueOf(rewardUser.getPlayTimeSinceLastCollected()); }
+                case "playtime" -> { return String.valueOf(rewardUser.getTotalPlayTime()); }
                 case "multiplier" -> { return String.valueOf(rewardUser.getHourlyMultiplier()); }
                 case "category" -> { return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getHighestPriorityRewards().getCategory()); }
                 case "total_rewards" -> { return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount()); }
