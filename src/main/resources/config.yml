@@ -44,10 +44,19 @@ item-templates:
     lore:
       - "&7&o- Upcoming reward"
 
-  # Template for border items - more items can be created like this to be used within the gui templates
+  # Template for border item - more items can be created like this to be used within the gui templates
   '#':
     material: gray_stained_glass_pane
     display-name: "&7"
+  # Template for profile item
+  'P':
+    material: player_head
+    display-name: "&d&lProfile:"
+    skull-texture: mirror
+    lore:
+      - "&eDay Number: &f%rewarder_day_num%"
+      - "&eHighest Streak: &f%rewarder_highest_streak%"
+      - "&eMultiplier: &fx%rewarder_multiplier%"
 
 gui:
   title: "&8&lDaily Rewards"
