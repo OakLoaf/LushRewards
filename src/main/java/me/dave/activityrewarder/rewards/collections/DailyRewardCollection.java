@@ -35,7 +35,7 @@ public class DailyRewardCollection extends RewardCollection {
     }
 
     public SimpleItemStack getDisplayItem() {
-        return itemStack != null ? itemStack : ActivityRewarder.getConfigManager().getCategoryItem(category);
+        return itemStack != null ? itemStack : ActivityRewarder.getConfigManager().getCategoryTemplate(category);
     }
 
     private String makeFriendly(String string) {
