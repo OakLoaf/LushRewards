@@ -78,13 +78,17 @@ public class GuiTemplate {
             "RRRRRRR N"
         };
 
+        private static final String[] COMPACT_PROFILE = new String[]{
+            "P RRRRRRR"
+        };
+
         private static final String[] BORDERED_LARGE = new String[]{
             "#########",
             "#RRRRRRR#",
             "#RRRRRRR#",
             "#RRRRRRR#",
             "#RRRRRRR#",
-            "####N####"
+            "####P####"
         };
 
         private static final String[] DAILY_REWARDS_PLUS = new String[]{
@@ -93,7 +97,7 @@ public class GuiTemplate {
             "#RRRRRRR#",
             "##RRRRR##",
             "#########",
-            "####N####"
+            "####P####"
         };
 
         private static final String[] NDAILY_REWARDS = new String[]{
@@ -106,6 +110,7 @@ public class GuiTemplate {
             switch(string.toUpperCase()) {
                 case "DEFAULT" -> { return new GuiTemplate(DEFAULT); }
                 case "COMPACT" -> { return new GuiTemplate(COMPACT); }
+                case "COMPACT_PROFILE" -> { return new GuiTemplate(COMPACT_PROFILE); }
                 case "BORDERED_LARGE" -> { return new GuiTemplate(BORDERED_LARGE); }
                 case "DAILY_REWARDS_PLUS" -> { return new GuiTemplate(DAILY_REWARDS_PLUS); }
                 case "NDAILY_REWARDS" -> { return new GuiTemplate(NDAILY_REWARDS); }
