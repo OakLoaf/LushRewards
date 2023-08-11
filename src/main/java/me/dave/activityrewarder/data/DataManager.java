@@ -46,6 +46,10 @@ public class DataManager {
         return rewardUser;
     }
 
+    public boolean isRewardUserLoaded(UUID uuid) {
+        return uuidToRewardUser.containsKey(uuid);
+    }
+
     public IOHandler<RewardUser> getIoHandler() {
         return ioHandler;
     }
