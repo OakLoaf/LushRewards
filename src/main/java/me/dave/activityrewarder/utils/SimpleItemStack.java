@@ -201,9 +201,7 @@ public class SimpleItemStack implements Cloneable {
     @Override
     public SimpleItemStack clone() {
         try {
-            SimpleItemStack clone = (SimpleItemStack) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
+            return (SimpleItemStack) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
