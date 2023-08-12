@@ -88,7 +88,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    setStreak(sender, args[1], 1);
+                    if (!setStreak(sender, args[1], 1)) return true;
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%new-streak%", "1"));
                     return true;
                 }
@@ -167,7 +167,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         return tabComplete;
     }
 
-    private void setStreak(CommandSender sender, String nameOrUuid, int streak) {
+    private boolean setStreak(CommandSender sender, String nameOrUuid, int streak) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
         if (player != null) {
@@ -193,5 +193,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
             }));
         }
+
+        return true;
     }
 }
