@@ -81,7 +81,7 @@ messages:
   hourly-reward-given: "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours"
   reset-streak: "Are you sure you want to reset %target%'s streak? Type '/rewards reset-streak %target% confirm' to confirm"
   set-streak: "Are you sure you want to set %target%'s streak? Type '/rewards set-streak %target% %streak% confirm' to confirm"
-  set-streak-confirm: "Set %target%'s streak to %new-streak%"
+  set-streak-confirm: "Set %target%'s streak to %streak%"
   no-permissions: "&cInsufficient permissions"
   incorrect-usage: "&cIncorrect usage, try %command-usage%"
 

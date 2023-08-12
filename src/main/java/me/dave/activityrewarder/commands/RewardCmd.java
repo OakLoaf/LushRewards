@@ -89,7 +89,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     }
 
                     if (!setStreak(sender, args[1], 1)) return true;
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%new-streak%", "1"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", "1"));
                     return true;
                 }
                 case "set-streak" -> {
@@ -98,7 +98,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak").replaceAll("%target%", args[1]).replaceAll("%new-streak%", "1"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak").replaceAll("%target%", args[1]).replaceAll("%streak%", "1"));
                     return true;
                 }
             }
