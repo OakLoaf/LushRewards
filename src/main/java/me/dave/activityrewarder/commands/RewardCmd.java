@@ -83,7 +83,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if (args[2].equalsIgnoreCase("confirm")) {
+                    if (!args[2].equalsIgnoreCase("confirm")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player> confirm"));
                         return true;
                     }
@@ -110,7 +110,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                if (args[3].equalsIgnoreCase("confirm")) {
+                if (!args[3].equalsIgnoreCase("confirm")) {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
                     return true;
                 }
@@ -123,7 +123,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                setStreak(sender, args[1], streak);
+                if (!setStreak(sender, args[1], streak)) return true;
                 ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%new-streak%", String.valueOf(streak)));
                 return true;
             }
