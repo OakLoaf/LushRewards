@@ -83,7 +83,7 @@ messages:
   set-streak: "Are you sure you want to set %target%'s streak? Type '/rewards set-streak %target% %streak% confirm' to confirm"
   set-streak-confirm: "Set %target%'s streak to %new-streak%"
   no-permissions: "&cInsufficient permissions"
-  incorrect-format: "&clala %command-usage%"
+  incorrect-usage: "&clala %command-usage%"
 
 # Debug Modes: none, hourly, daily, all
 debug-mode: none
