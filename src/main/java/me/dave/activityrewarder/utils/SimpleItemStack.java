@@ -19,7 +19,7 @@ public class SimpleItemStack implements Cloneable {
     private int amount = 1;
     private String displayName = null;
     private List<String> lore = null;
-    private boolean enchanted = false;
+    private Boolean enchanted = false;
     private int customModelData = 0;
     private String skullTexture = null;
 
@@ -77,6 +77,10 @@ public class SimpleItemStack implements Cloneable {
         return lore != null;
     }
 
+    public boolean hasEnchantDefined() {
+        return enchanted != null;
+    }
+
     public boolean hasCustomModelData() {
         return customModelData != 0;
     }
@@ -101,7 +105,7 @@ public class SimpleItemStack implements Cloneable {
         this.lore = lore;
     }
 
-    public void setEnchanted(boolean enchanted) {
+    public void setEnchanted(@Nullable Boolean enchanted) {
         this.enchanted = enchanted;
     }
 
@@ -160,8 +164,7 @@ public class SimpleItemStack implements Cloneable {
         result.setAmount(overwrite.getAmount() != 1 ? overwrite.getAmount() : original.getAmount());
         result.setDisplayName(overwrite.hasDisplayName() ? overwrite.getDisplayName() : original.getDisplayName());
         result.setLore(overwrite.hasLore() ? overwrite.getLore() : original.getLore());
-        // TODO: Add way to check if overridable
-        result.setEnchanted(overwrite.getEnchanted());
+        result.setEnchanted(overwrite.hasEnchantDefined() ? overwrite.getEnchanted() : original.getEnchanted());
         result.setSkullTexture(overwrite.hasSkullTexture() ? overwrite.getSkullTexture() : original.getSkullTexture());
 
         return result;
