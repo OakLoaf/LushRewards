@@ -1,6 +1,6 @@
 # Whether the daily rewards module is enabled
 daily-rewards-enabled: true
-# Whether the hourly rewards module is enabled
+# Whether the playtime rewards module is enabled
 playtime-rewards-enabled: true
 
 # Whether players will receive all rewards on a day or just the one with the highest priorty
@@ -75,7 +75,7 @@ messages:
   reload: "&aConfig reloaded"
   reminder: "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards"
   daily-reward-given: "&e&lRewards &8» &aYou have collected today's reward"
-  hourly-reward-given: "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours"
+  playtime-reward-given: "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours"
   reset-streak: "Are you sure you want to reset %target%'s streak? Type '/rewards reset-streak %target% confirm' to confirm"
   set-streak: "Are you sure you want to set %target%'s streak? Type '/rewards set-streak %target% %streak% confirm' to confirm"
   set-streak-confirm: "Set %target%'s streak to %streak%"

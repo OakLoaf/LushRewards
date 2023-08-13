@@ -99,9 +99,9 @@ public class RewardManager {
 
     @Nullable
     public PlaytimeRewardCollection getHourlyRewards(Player player) {
-        Debugger.sendDebugMessage("Getting hourly rewards section from config", Debugger.DebugMode.PLAYTIME);
+        Debugger.sendDebugMessage("Getting playtime rewards section from config", Debugger.DebugMode.PLAYTIME);
         if (permissionToPlaytimeReward.isEmpty()) {
-            Debugger.sendDebugMessage("No hourly rewards found", Debugger.DebugMode.PLAYTIME);
+            Debugger.sendDebugMessage("No playtime rewards found", Debugger.DebugMode.PLAYTIME);
             return null;
         }
 

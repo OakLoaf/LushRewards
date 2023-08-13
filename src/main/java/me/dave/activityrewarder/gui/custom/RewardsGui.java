@@ -221,7 +221,7 @@ public class RewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
 
-        Debugger.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
+        Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
         PlaytimeRewardCollection hourlyRewardData = ActivityRewarder.getRewardManager().getHourlyRewards(player);
         if (hourlyRewardData != null) {
             int currPlayTime = rewardUser.getTotalPlayTime();
