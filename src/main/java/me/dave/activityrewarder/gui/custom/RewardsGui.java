@@ -7,6 +7,7 @@ import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.HourlyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -197,9 +198,14 @@ public class RewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Loaded player's daily rewards ", Debugger.DebugMode.DAILY);
         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.DAILY);
 
-        // TODO: Add option to give all rewards
-        DailyRewardCollection priorityReward = ActivityRewarder.getRewardManager().getRewards(currDay).getHighestPriorityRewards();
-        priorityReward.getRewards().forEach((reward) -> reward.giveTo(player));
+        RewardDay rewardDay = ActivityRewarder.getRewardManager().getRewards(currDay);
+        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewards();
+        if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+            rewardDay.giveAllRewards(player);
+        } else {
+            priorityReward.giveAll(player);
+        }
+
         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
 

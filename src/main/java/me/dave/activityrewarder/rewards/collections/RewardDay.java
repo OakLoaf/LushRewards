@@ -1,7 +1,7 @@
 package me.dave.activityrewarder.rewards.collections;
 
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +13,10 @@ public class RewardDay {
     @NotNull
     public DailyRewardCollection getHighestPriorityRewards() {
         return dailyRewardCollections.stream().min(Comparator.comparingInt(DailyRewardCollection::getPriority)).orElse(DailyRewardCollection.empty());
+    }
+
+    public void giveAllRewards(Player player) {
+        dailyRewardCollections.forEach(dailyRewardCollection -> dailyRewardCollection.giveAll(player));
     }
 
     public void addCollection(DailyRewardCollection dailyRewardCollection) {
