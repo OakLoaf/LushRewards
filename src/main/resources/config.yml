@@ -24,6 +24,9 @@ categories:
   large:
     material: gold_block
 
+# Upcoming category to display
+upcoming-category: large
+
 # Display item templates
 item-templates:
   # Template for default rewards
@@ -67,12 +70,6 @@ gui:
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
   template: "DEFAULT"
-  upcoming-reward:
-    # Whether the next "large" reward will be shown in the gui
-    enabled: true
-    # The lore of the upcoming reward (set first line to blank for item's original lore)
-    lore:
-      - "&7&o- Next large reward"
 
 messages:
   reload: "&aConfig reloaded"
