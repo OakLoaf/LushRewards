@@ -17,13 +17,13 @@ public class ConfigManager {
     private final HashMap<String, SimpleItemStack> itemTemplates = new HashMap<>();
     private final HashMap<String, String> messages = new HashMap<>();
     private GuiFormat guiFormat;
-    private UpcomingRewardFormat upcomingRewardFormat;
     private boolean dailyRewardsEnabled;
     private boolean hourlyRewardsEnabled;
     private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
-    private boolean daysReset;
+    private boolean streakMode;
+    private String upcomingCategory;
 
     public ConfigManager() {
         plugin.saveDefaultConfig();
@@ -42,16 +42,14 @@ public class ConfigManager {
 
         guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
-        boolean showUpcomingReward = config.getBoolean("gui.upcoming-reward.enabled", true);
-        List<String> upcomingRewardLore = config.getStringList("gui.upcoming-reward.lore");
-        upcomingRewardFormat = new UpcomingRewardFormat(showUpcomingReward, upcomingRewardLore);
-
         dailyRewardsEnabled = config.getBoolean("daily-rewards-enabled", true);
         hourlyRewardsEnabled = config.getBoolean("hourly-rewards-enabled", true);
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
-        daysReset = config.getBoolean("days-reset", false);
+        streakMode = config.getBoolean("streak-mode", false);
+        upcomingCategory = config.getString("upcoming-category");
+
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
@@ -68,10 +66,6 @@ public class ConfigManager {
         return guiFormat;
     }
 
-    public UpcomingRewardFormat getUpcomingRewardFormat() {
-        return upcomingRewardFormat;
-    }
-
     public SimpleItemStack getCategoryTemplate(String category) {
         SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
         if (itemTemplate == null) {
@@ -80,6 +74,10 @@ public class ConfigManager {
         }
 
         return itemTemplate.clone();
+    }
+
+    public String getUpcomingCategory() {
+        return upcomingCategory;
     }
 
     public SimpleItemStack getItemTemplate(String key) {
@@ -112,8 +110,8 @@ public class ConfigManager {
         return reminderPeriod;
     }
 
-    public boolean doDaysReset() {
-        return daysReset;
+    public boolean isStreakModeEnabled() {
+        return streakMode;
     }
 
     private void reloadCategoryMap(ConfigurationSection categoriesSection) {
