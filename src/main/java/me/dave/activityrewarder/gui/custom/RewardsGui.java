@@ -121,7 +121,7 @@ public class RewardsGui extends AbstractGui {
 
         // Finds next large reward (Excluding rewards shown in the inventory)
         if (upcomingRewardSlots.size() > 0) {
-            // TODO: Add config option for upcoming category name
+            // TODO: Add config option for upcoming category  (maybe an item-template)
             int nextRewardDay = -1;
             if (ActivityRewarder.getConfigManager().getUpcomingRewardFormat().enabled()) {
                 nextRewardDay = ActivityRewarder.getRewardManager().findNextRewardFromCategory(dayIndex, "large");
