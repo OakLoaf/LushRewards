@@ -29,6 +29,8 @@ public class RandomReward implements Reward {
 
     @Override
     public void giveTo(Player player) {
-        if (rewards != null && !rewards.isEmpty()) rewards.get(random.nextInt(0, rewards.size())).giveTo(player);
+        if (rewards != null && !rewards.isEmpty()) {
+            rewards.get(random.nextInt(0, rewards.size())).giveTo(player);
+        }
     }
 }
