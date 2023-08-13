@@ -118,8 +118,12 @@ public class SimpleItemStack implements Cloneable {
     }
 
     public void parseColors(Player player) {
-        if (hasDisplayName()) displayName = ChatColorHandler.translateAlternateColorCodes(displayName, player);
-        if (hasLore()) lore = ChatColorHandler.translateAlternateColorCodes(lore, player);
+        if (hasDisplayName()) {
+            displayName = ChatColorHandler.translateAlternateColorCodes(displayName, player);
+        }
+        if (hasLore()) {
+            lore = ChatColorHandler.translateAlternateColorCodes(lore, player);
+        }
     }
 
     public ItemStack getItemStack() {
@@ -131,16 +135,25 @@ public class SimpleItemStack implements Cloneable {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta != null) {
-            if (displayName != null) itemMeta.setDisplayName(displayName);
-            if (lore != null) itemMeta.setLore(lore);
+            if (displayName != null) {
+                itemMeta.setDisplayName(displayName);
+            }
+            if (lore != null) {
+                itemMeta.setLore(lore);
+            }
             if (enchanted) {
                 itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
-            if (customModelData != 0) itemMeta.setCustomModelData(customModelData);
+            if (customModelData != 0) {
+                itemMeta.setCustomModelData(customModelData);
+            }
             if (itemMeta instanceof SkullMeta skullMeta && skullTexture != null) {
-                if (skullTexture.equals("mirror") && player != null) SkullCreator.mutateItemMeta(skullMeta, SkullCreator.getTexture(player));
-                else SkullCreator.mutateItemMeta(skullMeta, skullTexture);
+                if (skullTexture.equals("mirror") && player != null) {
+                    SkullCreator.mutateItemMeta(skullMeta, SkullCreator.getTexture(player));
+                } else {
+                    SkullCreator.mutateItemMeta(skullMeta, skullTexture);
+                }
             }
 
             itemStack.setItemMeta(itemMeta);
@@ -177,24 +190,50 @@ public class SimpleItemStack implements Cloneable {
 
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
-            if (itemMeta.hasDisplayName()) simpleItemStack.setDisplayName(itemMeta.getDisplayName());
-            if (itemMeta.hasLore()) simpleItemStack.setLore(itemMeta.getLore());
-            if (itemMeta.hasEnchants()) simpleItemStack.setEnchanted(true);
-            if (itemMeta.hasCustomModelData()) simpleItemStack.setCustomModelData(itemMeta.getCustomModelData());
-            if (itemMeta instanceof SkullMeta) simpleItemStack.setSkullTexture(SkullCreator.getB64(itemStack));
+            if (itemMeta.hasDisplayName()) {
+                simpleItemStack.setDisplayName(itemMeta.getDisplayName());
+            }
+            if (itemMeta.hasLore()) {
+                simpleItemStack.setLore(itemMeta.getLore());
+            }
+            if (itemMeta.hasEnchants()) {
+                simpleItemStack.setEnchanted(true);
+            }
+            if (itemMeta.hasCustomModelData()) {
+                simpleItemStack.setCustomModelData(itemMeta.getCustomModelData());
+            }
+            if (itemMeta instanceof SkullMeta) {
+                simpleItemStack.setSkullTexture(SkullCreator.getB64(itemStack));
+            }
         }
         return simpleItemStack;
     }
 
     public static SimpleItemStack from(@NotNull ConfigurationSection configurationSection) {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
-        if (configurationSection.contains("material")) simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material")));
-        if (configurationSection.contains("amount")) simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
-        if (configurationSection.contains("display-name")) simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
-        if (configurationSection.contains("lore")) simpleItemStack.setLore(configurationSection.getStringList("lore"));
-        if (configurationSection.contains("enchanted")) simpleItemStack.setEnchanted(configurationSection.getBoolean("enchanted", false));
-        if (configurationSection.contains("custom-model-data")) simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
-        if (configurationSection.contains("skull-texture")) simpleItemStack.setSkullTexture(configurationSection.getString("skull-texture"));
+
+        if (configurationSection.contains("material")) {
+            simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material")));
+        }
+        if (configurationSection.contains("amount")) {
+            simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
+        }
+        if (configurationSection.contains("display-name")) {
+            simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
+        }
+        if (configurationSection.contains("lore")) {
+            simpleItemStack.setLore(configurationSection.getStringList("lore"));
+        }
+        if (configurationSection.contains("enchanted")) {
+            simpleItemStack.setEnchanted(configurationSection.getBoolean("enchanted", false));
+        }
+        if (configurationSection.contains("custom-model-data")) {
+            simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
+        }
+        if (configurationSection.contains("skull-texture")) {
+            simpleItemStack.setSkullTexture(configurationSection.getString("skull-texture"));
+        }
+
         return simpleItemStack;
     }
 

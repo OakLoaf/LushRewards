@@ -149,7 +149,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         List<String> tabComplete = new ArrayList<>();
         List<String> wordCompletion = new ArrayList<>();
         boolean wordCompletionSuccess = false;
-        if (!commandSender.hasPermission("activityrewarder.use")) return tabComplete;
+        if (!commandSender.hasPermission("activityrewarder.use")) {
+            return tabComplete;
+        }
+
         if (args.length == 1) {
             if (commandSender.hasPermission("activityrewarder.reload")) tabComplete.add("reload");
             if (commandSender.hasPermission("activityrewarder.resetstreak") || commandSender.hasPermission("activityrewarder.resetstreak.others")) tabComplete.add("reset-streak");

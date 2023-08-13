@@ -9,7 +9,9 @@ public class Debugger {
     private static DebugMode debugMode = DebugMode.NONE;
 
     public static void sendDebugMessage(String string, DebugMode mode) {
-        if (debugMode == mode || debugMode == DebugMode.ALL) getOrInitLogger().info("DEBUG >> " + string);
+        if (debugMode == mode || debugMode == DebugMode.ALL) {
+            getOrInitLogger().info("DEBUG >> " + string);
+        }
     }
 
     public static void setDebugMode(DebugMode debugMode) {
@@ -17,7 +19,10 @@ public class Debugger {
     }
 
     private static Logger getOrInitLogger() {
-        if (logger == null) logger = ActivityRewarder.getInstance().getLogger();
+        if (logger == null) {
+            logger = ActivityRewarder.getInstance().getLogger();
+        }
+
         return logger;
     }
 

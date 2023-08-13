@@ -30,10 +30,18 @@ public class ItemReward implements Reward {
             this.simpleItemStack = new SimpleItemStack(material);
 
             try {
-                if (itemMap.containsKey("amount")) simpleItemStack.setAmount((int) itemMap.get("amount"));
-                if (itemMap.containsKey("display-name")) simpleItemStack.setDisplayName((String) itemMap.get("display-name"));
-                if (itemMap.containsKey("custom-model-data")) simpleItemStack.setCustomModelData((int) itemMap.get("custom-model-data"));
-                if (itemMap.containsKey("enchanted")) simpleItemStack.setEnchanted((boolean) itemMap.get("enchanted"));
+                if (itemMap.containsKey("amount")) {
+                    simpleItemStack.setAmount((int) itemMap.get("amount"));
+                }
+                if (itemMap.containsKey("display-name")) {
+                    simpleItemStack.setDisplayName((String) itemMap.get("display-name"));
+                }
+                if (itemMap.containsKey("custom-model-data")) {
+                    simpleItemStack.setCustomModelData((int) itemMap.get("custom-model-data"));
+                }
+                if (itemMap.containsKey("enchanted")) {
+                    simpleItemStack.setEnchanted((boolean) itemMap.get("enchanted"));
+                }
             } catch(ClassCastException exc) {
                 ActivityRewarder.getInstance().getLogger().severe("Invalid config format at '" + map + "'");
                 throw new InvalidRewardException();

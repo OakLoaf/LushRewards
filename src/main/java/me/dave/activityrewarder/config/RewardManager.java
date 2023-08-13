@@ -71,7 +71,10 @@ public class RewardManager {
                     if (value instanceof ConfigurationSection permissionSection) {
                         List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
                         List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
-                        if (rewardList != null) permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
+
+                        if (rewardList != null) {
+                            permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
+                        }
                     }
                 });
             }
@@ -87,8 +90,11 @@ public class RewardManager {
 
     @NotNull
     public RewardDay getRewards(int day) {
-        if (dayToRewards.containsKey(day)) return RewardDay.from(dayToRewards.get(day));
-        else return RewardDay.from(defaultReward);
+        if (dayToRewards.containsKey(day)) {
+            return RewardDay.from(dayToRewards.get(day));
+        } else {
+            return RewardDay.from(defaultReward);
+        }
     }
 
     @Nullable
@@ -105,8 +111,9 @@ public class RewardManager {
             Debugger.sendDebugMessage("Found highest multiplier (" + hourlyRewardCollection.getMultiplier() + ")", Debugger.DebugMode.HOURLY);
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             rewardUser.setHourlyMultiplier(hourlyRewardCollection.getMultiplier());
+        } else {
+            Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.HOURLY);
         }
-        else Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.HOURLY);
 
         return hourlyRewardCollection;
     }
@@ -119,7 +126,9 @@ public class RewardManager {
         for (Map.Entry<String, HourlyRewardCollection> entry : permissionToHourlyReward.entrySet()) {
             String permission = entry.getKey();
 
-            if (!player.hasPermission("activityrewarder.bonus." + permission)) continue;
+            if (!player.hasPermission("activityrewarder.bonus." + permission)) {
+                continue;
+            }
             Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.HOURLY);
 
             double multiplier = entry.getValue().getMultiplier();
@@ -138,7 +147,9 @@ public class RewardManager {
         for (Map.Entry<String, HourlyRewardCollection> entry : permissionToHourlyReward.entrySet()) {
             String permission = entry.getKey();
 
-            if (!player.hasPermission("activityrewarder.bonus." + permission)) continue;
+            if (!player.hasPermission("activityrewarder.bonus." + permission)) {
+                continue;
+            }
             Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.HOURLY);
 
             double multiplier = entry.getValue().getMultiplier();
@@ -158,11 +169,15 @@ public class RewardManager {
         // Iterates through dayToRewards
         for (int rewardsKey : dayToRewards.keySet()) {
             // Checks if the current key is a day in the future
-            if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) continue;
+            if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) {
+                continue;
+            }
 
             // Gets the category of the reward and compares to the request
             RewardDay rewardDay = getRewards(rewardsKey);
-            if (rewardDay.containsRewardFromCategory(category)) nextRewardKey = rewardsKey;
+            if (rewardDay.containsRewardFromCategory(category)) {
+                nextRewardKey = rewardsKey;
+            }
         }
 
         // Returns -1 if no future rewards match the request
@@ -191,7 +206,9 @@ public class RewardManager {
 
         maps.forEach((map) -> {
             Reward reward = loadReward(map, path);
-            if (reward != null) rewardList.add(reward);
+            if (reward != null) {
+                rewardList.add(reward);
+            }
         });
 
         return !rewardList.isEmpty() ? rewardList : null;

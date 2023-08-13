@@ -24,11 +24,16 @@ public class CommandReward implements Reward {
             thisCommand = thisCommand.replaceAll("%user%", player.getName());
             if (thisCommand.startsWith("java:")) {
                 thisCommand = thisCommand.substring(5);
-                if (isFloodgateEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) continue;
+                if (isFloodgateEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+                    continue;
+                }
             } else if (thisCommand.startsWith("bedrock:")) {
                 thisCommand = thisCommand.substring(8);
-                if (!isFloodgateEnabled) continue;
-                if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) continue;
+                if (!isFloodgateEnabled) {
+                    continue;
+                } else if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+                    continue;
+                }
             }
             Bukkit.dispatchCommand(console, thisCommand);
         }

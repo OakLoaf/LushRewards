@@ -4,7 +4,6 @@ import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.config.RewardManager;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
-import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,11 +37,18 @@ public final class ActivityRewarder extends JavaPlugin {
         getCommand("rewards").setExecutor(new RewardCmd());
 
         PluginManager pluginManager = getServer().getPluginManager();
-        if (pluginManager.getPlugin("floodgate") != null) hasFloodgate = true;
-        else plugin.getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
 
-        if (pluginManager.getPlugin("PlaceholderAPI") != null) new PlaceholderAPIHook().register();
-        else plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
+        if (pluginManager.getPlugin("floodgate") != null) {
+            hasFloodgate = true;
+        } else {
+            plugin.getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
+        }
+
+        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderAPIHook().register();
+        } else {
+            plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
+        }
     }
 
     @Override

@@ -18,7 +18,9 @@ public class ConfigParser {
     }
 
     public static Material getMaterial(String materialName, Material def) {
-        if (materialName == null) return def;
+        if (materialName == null) {
+            return def;
+        }
 
         Material material;
         try {
@@ -29,7 +31,9 @@ public class ConfigParser {
                 material = def;
                 ActivityRewarder.getInstance().getLogger().warning("Defaulted material to " + def.name() + ".");
             }
-            else return null;
+            else {
+                return null;
+            }
         }
         return material;
     }
@@ -37,8 +41,11 @@ public class ConfigParser {
     @Nullable
     public static ItemStack getItem(String materialName, Material def) {
         Material material = getMaterial(materialName, def);
-        if (material == null) return null;
-        return new ItemStack(material);
+        if (material == null) {
+            return null;
+        } else {
+            return new ItemStack(material);
+        }
     }
 
     @NotNull
@@ -49,7 +56,9 @@ public class ConfigParser {
     @NotNull
     public static ItemStack getItem(ConfigurationSection configurationSection, @NotNull Material def) {
         Material material = configurationSection != null ? getMaterial(configurationSection.getString("material"), def) : def;
-        if (material == null) material = def;
+        if (material == null) {
+            material = def;
+        }
 
         ItemStack item = new ItemStack(material);
 
@@ -58,8 +67,12 @@ public class ConfigParser {
             ItemMeta itemMeta = item.getItemMeta();
 
             if (itemMeta != null) {
-                if (configurationSection.getStringList("lore").isEmpty()) itemMeta.setLore(configurationSection.getStringList("lore"));
-                if (configurationSection.getInt("custom-model-data") != 0) itemMeta.setCustomModelData(configurationSection.getInt("custom-model-data"));
+                if (configurationSection.getStringList("lore").isEmpty()) {
+                    itemMeta.setLore(configurationSection.getStringList("lore"));
+                }
+                if (configurationSection.getInt("custom-model-data") != 0) {
+                    itemMeta.setCustomModelData(configurationSection.getInt("custom-model-data"));
+                }
                 item.setItemMeta(itemMeta);
             }
         }
@@ -83,7 +96,9 @@ public class ConfigParser {
                 sound = def;
                 ActivityRewarder.getInstance().getLogger().warning("Defaulted sound to " + def.name() + ".");
             }
-            else return null;
+            else {
+                return null;
+            }
         }
         return sound;
     }

@@ -121,7 +121,9 @@ public class ConfigManager {
         categoryItems.clear();
 
         // Checks if categories section exists
-        if (categoriesSection == null) return;
+        if (categoriesSection == null) {
+            return;
+        }
 
         // Repopulates category map
         categoriesSection.getValues(false).forEach((key, value) -> {
@@ -136,7 +138,9 @@ public class ConfigManager {
         itemTemplates.clear();
 
         // Checks if categories section exists
-        if (itemTemplatesSection == null) return;
+        if (itemTemplatesSection == null) {
+            return;
+        }
 
         // Repopulates category map
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
@@ -152,7 +156,9 @@ public class ConfigManager {
         messages.clear();
 
         // Checks if messages section exists
-        if (messagesSection == null) return;
+        if (messagesSection == null) {
+            return;
+        }
 
         // Repopulates messages map
         messagesSection.getValues(false).forEach((key, value) -> messages.put(key, (String) value));

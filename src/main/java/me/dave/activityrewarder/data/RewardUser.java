@@ -42,7 +42,10 @@ public class RewardUser {
 
     public void incrementDayNum() {
         this.dayNum += 1;
-        if (dayNum > highestStreak) highestStreak = dayNum;
+        if (dayNum > highestStreak) {
+            highestStreak = dayNum;
+        }
+        
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 

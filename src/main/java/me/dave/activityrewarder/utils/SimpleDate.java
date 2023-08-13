@@ -22,13 +22,19 @@ public class SimpleDate {
 
     @Nullable
     private static SimpleDate from(int day, int month) {
-        if ((day < 0 || day > 31) || (month < 0 || month > 12)) return null;
-        return new SimpleDate(day, month, 1994);
+        if ((day < 0 || day > 31) || (month < 0 || month > 12)) {
+            return null;
+        } else {
+            return new SimpleDate(day, month, 1994);
+        }
     }
 
     @Nullable
     private static SimpleDate from(int day, int month, int year) {
-        if ((day < 0 || day > 31) || (month < 0 || month > 12) || (year < 0)) return null;
-        return new SimpleDate(day, month, year);
+        if ((day < 0 || day > 31) || (month < 0 || month > 12) || (year < 0)) {
+            return null;
+        } else {
+            return new SimpleDate(day, month, year);
+        }
     }
 }

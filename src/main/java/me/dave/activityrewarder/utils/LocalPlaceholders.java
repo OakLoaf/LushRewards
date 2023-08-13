@@ -54,7 +54,9 @@ public class LocalPlaceholders {
 
         for (String match : matches) {
             String parsed = parsePlaceholder(player, match);
-            if (parsed == null) continue;
+            if (parsed == null) {
+                continue;
+            }
             string = string.replaceAll(match, parsed);
         }
 
@@ -84,15 +86,30 @@ public class LocalPlaceholders {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             switch (params) {
                 case "day_num" -> {
-                    if (rewardUser.hasCollectedToday()) return String.valueOf(rewardUser.getDayNum() - 1);
-                    else return String.valueOf(rewardUser.getDayNum());
+                    if (rewardUser.hasCollectedToday()) {
+                        return String.valueOf(rewardUser.getDayNum() - 1);
+                    } else {
+                        return String.valueOf(rewardUser.getDayNum());
+                    }
                 }
-                case "highest_streak" -> { return String.valueOf(rewardUser.getHighestStreak()); }
-                case "collected" -> { return String.valueOf(rewardUser.hasCollectedToday()); }
-                case "playtime" -> { return String.valueOf(rewardUser.getPlayTimeSinceLastCollected()); }
-                case "multiplier" -> { return String.valueOf(rewardUser.getHourlyMultiplier()); }
-                case "category" -> { return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getHighestPriorityRewards().getCategory()); }
-                case "total_rewards" -> { return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount()); }
+                case "highest_streak" -> {
+                    return String.valueOf(rewardUser.getHighestStreak());
+                }
+                case "collected" -> {
+                    return String.valueOf(rewardUser.hasCollectedToday());
+                }
+                case "playtime" -> {
+                    return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
+                }
+                case "multiplier" -> {
+                    return String.valueOf(rewardUser.getHourlyMultiplier());
+                }
+                case "category" -> {
+                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getHighestPriorityRewards().getCategory());
+                }
+                case "total_rewards" -> {
+                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount());
+                }
             }
         }
 
@@ -104,8 +121,12 @@ public class LocalPlaceholders {
             DailyRewardCollection dailyRewardCollection = rewardDay.getHighestPriorityRewards();
 
             switch(paramArr[2]) {
-                case "category" -> { return String.valueOf(dailyRewardCollection.getCategory()); }
-                case "total_rewards" -> { return String.valueOf(dailyRewardCollection.getRewardCount()); }
+                case "category" -> {
+                    return String.valueOf(dailyRewardCollection.getCategory());
+                }
+                case "total_rewards" -> {
+                    return String.valueOf(dailyRewardCollection.getRewardCount());
+                }
             }
 
             return null;
