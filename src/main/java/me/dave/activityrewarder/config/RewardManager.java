@@ -6,7 +6,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.rewards.*;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
-import me.dave.activityrewarder.rewards.collections.HourlyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
@@ -30,7 +30,7 @@ public class RewardManager {
     private final File rewardsFile = initYML();
     private final Multimap<Integer, DailyRewardCollection> dayToRewards = HashMultimap.create();
     private final Multimap<SimpleDate, DailyRewardCollection> dateToRewards = HashMultimap.create();
-    private final HashMap<String, HourlyRewardCollection> permissionToHourlyReward = new HashMap<>();
+    private final HashMap<String, PlaytimeRewardCollection> permissionToPlaytimeReward = new HashMap<>();
     private DailyRewardCollection defaultReward;
 
     public RewardManager() {
@@ -44,7 +44,7 @@ public class RewardManager {
         // Clears rewards maps
         dayToRewards.clear();
         dateToRewards.clear();
-        permissionToHourlyReward.clear();
+        permissionToPlaytimeReward.clear();
 
         if (ActivityRewarder.getConfigManager().areDailyRewardsEnabled()) {
             ConfigurationSection rewardDaysSection = config.getConfigurationSection("daily-rewards");
@@ -64,22 +64,22 @@ public class RewardManager {
             }
         }
 
-        if (ActivityRewarder.getConfigManager().areHourlyRewardsEnabled()) {
-            ConfigurationSection hourlyRewardSection = config.getConfigurationSection("hourly-rewards");
-            if (hourlyRewardSection != null) {
-                hourlyRewardSection.getValues(false).forEach((key, value) -> {
+        if (ActivityRewarder.getConfigManager().arePlaytimeRewardsEnabled()) {
+            ConfigurationSection playtimeRewardsSection = config.getConfigurationSection("playtime-rewards");
+            if (playtimeRewardsSection != null) {
+                playtimeRewardsSection.getValues(false).forEach((key, value) -> {
                     if (value instanceof ConfigurationSection permissionSection) {
                         List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
                         List<Reward> rewardList = !rewardMaps.isEmpty() ? loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
 
                         if (rewardList != null) {
-                            permissionToHourlyReward.put(key, new HourlyRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
+                            permissionToPlaytimeReward.put(key, new PlaytimeRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
                         }
                     }
                 });
             }
             else {
-                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'hourly-rewards' section");
+                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards' section");
             }
         }
     }
@@ -98,42 +98,42 @@ public class RewardManager {
     }
 
     @Nullable
-    public HourlyRewardCollection getHourlyRewards(Player player) {
-        Debugger.sendDebugMessage("Getting hourly bonus section from config", Debugger.DebugMode.HOURLY);
-        if (permissionToHourlyReward.isEmpty()) {
-            Debugger.sendDebugMessage("No hourly rewards found", Debugger.DebugMode.HOURLY);
+    public PlaytimeRewardCollection getHourlyRewards(Player player) {
+        Debugger.sendDebugMessage("Getting hourly rewards section from config", Debugger.DebugMode.PLAYTIME);
+        if (permissionToPlaytimeReward.isEmpty()) {
+            Debugger.sendDebugMessage("No hourly rewards found", Debugger.DebugMode.PLAYTIME);
             return null;
         }
 
-        Debugger.sendDebugMessage("Checking player's highest multiplier", Debugger.DebugMode.HOURLY);
-        HourlyRewardCollection hourlyRewardCollection = getHighestMultiplierReward(player);
-        if (hourlyRewardCollection != null) {
-            Debugger.sendDebugMessage("Found highest multiplier (" + hourlyRewardCollection.getMultiplier() + ")", Debugger.DebugMode.HOURLY);
+        Debugger.sendDebugMessage("Checking player's highest multiplier", Debugger.DebugMode.PLAYTIME);
+        PlaytimeRewardCollection playtimeRewardCollection = getHighestMultiplierReward(player);
+        if (playtimeRewardCollection != null) {
+            Debugger.sendDebugMessage("Found highest multiplier (" + playtimeRewardCollection.getMultiplier() + ")", Debugger.DebugMode.PLAYTIME);
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            rewardUser.setHourlyMultiplier(hourlyRewardCollection.getMultiplier());
+            rewardUser.setHourlyMultiplier(playtimeRewardCollection.getMultiplier());
         } else {
-            Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.PLAYTIME);
         }
 
-        return hourlyRewardCollection;
+        return playtimeRewardCollection;
     }
 
     @Nullable
-    public HourlyRewardCollection getHighestMultiplierReward(Player player) {
-        HourlyRewardCollection highestMultiplierReward = null;
+    public PlaytimeRewardCollection getHighestMultiplierReward(Player player) {
+        PlaytimeRewardCollection highestMultiplierReward = null;
         double highestMultiplier = 0;
 
-        for (Map.Entry<String, HourlyRewardCollection> entry : permissionToHourlyReward.entrySet()) {
+        for (Map.Entry<String, PlaytimeRewardCollection> entry : permissionToPlaytimeReward.entrySet()) {
             String permission = entry.getKey();
 
             if (!player.hasPermission("activityrewarder.bonus." + permission)) {
                 continue;
             }
-            Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.PLAYTIME);
 
             double multiplier = entry.getValue().getMultiplier();
             if (multiplier > highestMultiplier) {
-                Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.HOURLY);
+                Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.PLAYTIME);
                 highestMultiplier = multiplier;
                 highestMultiplierReward = entry.getValue();
             }
@@ -144,17 +144,17 @@ public class RewardManager {
     public double getHighestMultiplier(Player player) {
         double highestMultiplier = 0;
 
-        for (Map.Entry<String, HourlyRewardCollection> entry : permissionToHourlyReward.entrySet()) {
+        for (Map.Entry<String, PlaytimeRewardCollection> entry : permissionToPlaytimeReward.entrySet()) {
             String permission = entry.getKey();
 
             if (!player.hasPermission("activityrewarder.bonus." + permission)) {
                 continue;
             }
-            Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.PLAYTIME);
 
             double multiplier = entry.getValue().getMultiplier();
             if (multiplier > highestMultiplier) {
-                Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.HOURLY);
+                Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.PLAYTIME);
                 highestMultiplier = multiplier;
             }
         }

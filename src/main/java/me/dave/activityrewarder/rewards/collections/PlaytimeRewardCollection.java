@@ -4,10 +4,10 @@ import me.dave.activityrewarder.rewards.custom.Reward;
 
 import java.util.Collection;
 
-public class HourlyRewardCollection extends RewardCollection {
+public class PlaytimeRewardCollection extends RewardCollection {
     private final double multiplier;
 
-    public HourlyRewardCollection(double multiplier, Collection<Reward> rewards) {
+    public PlaytimeRewardCollection(double multiplier, Collection<Reward> rewards) {
         super(rewards);
         this.multiplier = multiplier;
     }

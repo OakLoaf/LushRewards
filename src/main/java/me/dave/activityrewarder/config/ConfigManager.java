@@ -18,7 +18,7 @@ public class ConfigManager {
     private final HashMap<String, String> messages = new HashMap<>();
     private GuiFormat guiFormat;
     private boolean dailyRewardsEnabled;
-    private boolean hourlyRewardsEnabled;
+    private boolean playtimeRewardsEnabled;
     private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
@@ -43,7 +43,7 @@ public class ConfigManager {
         guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         dailyRewardsEnabled = config.getBoolean("daily-rewards-enabled", true);
-        hourlyRewardsEnabled = config.getBoolean("hourly-rewards-enabled", true);
+        playtimeRewardsEnabled = config.getBoolean("playtime-rewards-enabled", true);
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
@@ -94,8 +94,8 @@ public class ConfigManager {
         return dailyRewardsEnabled;
     }
 
-    public boolean areHourlyRewardsEnabled() {
-        return hourlyRewardsEnabled;
+    public boolean arePlaytimeRewardsEnabled() {
+        return playtimeRewardsEnabled;
     }
 
     public boolean shouldStackRewards() {

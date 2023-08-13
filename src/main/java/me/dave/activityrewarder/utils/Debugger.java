@@ -28,7 +28,7 @@ public class Debugger {
 
     public enum DebugMode {
         NONE,
-        HOURLY,
+        PLAYTIME,
         DAILY,
         ALL
     }

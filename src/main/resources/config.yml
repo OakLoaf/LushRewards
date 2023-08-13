@@ -1,7 +1,7 @@
 # Whether the daily rewards module is enabled
 daily-rewards-enabled: true
 # Whether the hourly rewards module is enabled
-hourly-rewards-enabled: true
+playtime-rewards-enabled: true
 
 # Whether players will receive all rewards on a day or just the one with the highest priorty
 allow-reward-stacking: false
@@ -82,5 +82,5 @@ messages:
   no-permissions: "&cInsufficient permissions"
   incorrect-usage: "&cIncorrect usage, try %command-usage%"
 
-# Debug Modes: none, hourly, daily, all
+# Debug Modes: none, daily, playtime, all
 debug-mode: none

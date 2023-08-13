@@ -6,7 +6,7 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
-import me.dave.activityrewarder.rewards.collections.HourlyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
@@ -221,28 +221,28 @@ public class RewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
 
-        Debugger.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), Debugger.DebugMode.HOURLY);
-        HourlyRewardCollection hourlyRewardData = ActivityRewarder.getRewardManager().getHourlyRewards(player);
+        Debugger.sendDebugMessage("Attempting to send hourly rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
+        PlaytimeRewardCollection hourlyRewardData = ActivityRewarder.getRewardManager().getHourlyRewards(player);
         if (hourlyRewardData != null) {
             int currPlayTime = rewardUser.getTotalPlayTime();
-            Debugger.sendDebugMessage("Collected player's total playtime (" + currPlayTime + ")", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Collected player's total playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
             int hoursDiff = currPlayTime - rewardUser.getPlayTime();
-            Debugger.sendDebugMessage("Calculated difference (" + hoursDiff + ")", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Calculated difference (" + hoursDiff + ")", Debugger.DebugMode.PLAYTIME);
             // Works out how many rewards the user should receive
             int totalRewards = (int) Math.floor(hoursDiff * hourlyRewardData.getMultiplier());
-            Debugger.sendDebugMessage("Loaded player's reward count (" + totalRewards + ")", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Loaded player's reward count (" + totalRewards + ")", Debugger.DebugMode.PLAYTIME);
 
-            Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
             for (int i = 0; i < totalRewards; i++) {
                 hourlyRewardData.getRewards().forEach((reward) -> reward.giveTo(player));
-                Debugger.sendDebugMessage("Successfully gave player a reward", Debugger.DebugMode.HOURLY);
+                Debugger.sendDebugMessage("Successfully gave player a reward", Debugger.DebugMode.PLAYTIME);
             }
 
             if (hoursDiff > 0) {
                 ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("hourly-reward-given").replaceAll("%hours%", String.valueOf(hoursDiff)));
             }
             rewardUser.setPlayTime(currPlayTime);
-            Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.HOURLY);
+            Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
         }
 
         player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
