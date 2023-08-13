@@ -11,7 +11,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.*;
 
 public class ConfigManager {
-    private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private final HashMap<String, SimpleItemStack> categoryItems = new HashMap<>();
     private final HashMap<String, SimpleItemStack> itemTemplates = new HashMap<>();
@@ -26,13 +25,13 @@ public class ConfigManager {
     private String upcomingCategory;
 
     public ConfigManager() {
-        plugin.saveDefaultConfig();
+        ActivityRewarder.getInstance().saveDefaultConfig();
         reloadConfig();
     }
 
     public void reloadConfig() {
-        plugin.reloadConfig();
-        FileConfiguration config = plugin.getConfig();
+        ActivityRewarder.getInstance().reloadConfig();
+        FileConfiguration config = ActivityRewarder.getInstance().getConfig();
 
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
 
