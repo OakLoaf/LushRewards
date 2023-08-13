@@ -46,7 +46,7 @@ public class RewardsGui extends AbstractGui {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
 
         // Checks if the streak mode config option is enabled
-        if (ActivityRewarder.getConfigManager().doDaysReset()) {
+        if (ActivityRewarder.getConfigManager().isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
             if (rewardUser.getLastDate().isBefore(LocalDate.now().minusDays(1))) {
                 rewardUser.resetDays();
@@ -123,17 +123,14 @@ public class RewardsGui extends AbstractGui {
             }
         }
 
-        // Finds next large reward (Excluding rewards shown in the inventory)
+        // Finds next upcoming reward (Excluding rewards shown in the inventory)
         if (upcomingRewardSlots.size() > 0) {
-            // TODO: Add config option for upcoming category  (maybe an item-template)
-            int nextRewardDay = -1;
-            if (ActivityRewarder.getConfigManager().getUpcomingRewardFormat().enabled()) {
-                nextRewardDay = ActivityRewarder.getRewardManager().findNextRewardFromCategory(dayIndex, "large");
-            }
+            String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
+            int upcomingRewardDay = ActivityRewarder.getRewardManager().findNextRewardFromCategory(dayIndex, upcomingCategory);
 
             // Adds the upcoming reward to the GUI if it exists
-            if (nextRewardDay != -1) {
-                SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate("large");
+            if (upcomingRewardDay != -1) {
+                SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate(upcomingCategory);
 
                 // Get the day's reward for the current slot
                 DailyRewardCollection upcomingReward = ActivityRewarder.getRewardManager().getRewards(dayIndex).getHighestPriorityRewards();
@@ -141,14 +138,14 @@ public class RewardsGui extends AbstractGui {
                 simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
 
                 if (simpleItemStack.hasDisplayName()) {
-                    simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getDisplayName().replaceAll("%day%", String.valueOf(nextRewardDay - rewardUser.getDayNumOffset())), player));
+                    simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getDisplayName().replaceAll("%day%", String.valueOf(upcomingRewardDay - rewardUser.getDayNumOffset())), player));
                 }
                 simpleItemStack.setLore(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getLore(), player));
 
                 ItemStack itemStack = simpleItemStack.getItemStack(player);
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 if (itemMeta != null) {
-                    itemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((nextRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
+                    itemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, ((upcomingRewardDay - rewardUser.getDayNumOffset()) + "|" + actualDayNum + "|unavailable"));
                     itemStack.setItemMeta(itemMeta);
                 }
 
