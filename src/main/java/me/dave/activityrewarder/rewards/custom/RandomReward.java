@@ -24,7 +24,7 @@ public class RandomReward implements Reward {
         }
 
         // TODO: replace #loadRewards() with local alternative that takes into account weights
-        this.rewards = ActivityRewarder.getRewardManager().loadRewards(rewardMaps, map.toString());
+        this.rewards = Reward.loadRewards(rewardMaps, map.toString());
     }
 
     @Override

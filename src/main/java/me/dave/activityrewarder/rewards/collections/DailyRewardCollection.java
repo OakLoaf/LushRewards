@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public class DailyRewardCollection extends RewardCollection {
+    private static DailyRewardCollection defaultReward = null;
     private final int priority;
     private final String category;
     private final SimpleItemStack itemStack;
@@ -17,9 +18,9 @@ public class DailyRewardCollection extends RewardCollection {
     private DailyRewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
         super(rewards);
         this.priority = priority;
-        this.category = category != null ? category : ActivityRewarder.getRewardManager().getDefaultReward().getCategory();
+        this.category = category != null ? category : defaultReward.getCategory();
         this.itemStack = itemStack;
-        this.sound = sound != null ? sound : ActivityRewarder.getRewardManager().getDefaultReward().getSound();
+        this.sound = sound != null ? sound : defaultReward.getSound();
     }
 
     public int getPriority() {
@@ -40,6 +41,14 @@ public class DailyRewardCollection extends RewardCollection {
 
     private String makeFriendly(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
+    }
+
+    public static DailyRewardCollection getDefaultReward() {
+        return defaultReward;
+    }
+
+    public static void setDefaultReward(DailyRewardCollection defaultReward) {
+        DailyRewardCollection.defaultReward = defaultReward;
     }
 
     public static DailyRewardCollection from(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {

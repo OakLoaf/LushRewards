@@ -1,9 +1,9 @@
 package me.dave.activityrewarder;
 
 import me.dave.activityrewarder.commands.RewardCmd;
-import me.dave.activityrewarder.config.RewardManager;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
+import me.dave.activityrewarder.module.ModuleManager;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,15 +17,15 @@ public final class ActivityRewarder extends JavaPlugin {
     private static MorePaperLib morePaperLib;
     private static boolean hasFloodgate = false;
     private static ConfigManager configManager;
-    private static RewardManager rewardManager;
     private static DataManager dataManager;
+    private static ModuleManager moduleManager;
 
     @Override
     public void onEnable() {
         plugin = this;
         morePaperLib = new MorePaperLib(plugin);
+        moduleManager = new ModuleManager();
         configManager = new ConfigManager();
-        rewardManager = new RewardManager();
         dataManager = new DataManager();
 
         Listener[] listeners = new Listener[] {
@@ -74,12 +74,12 @@ public final class ActivityRewarder extends JavaPlugin {
         return configManager;
     }
 
-    public static RewardManager getRewardManager() {
-        return rewardManager;
-    }
-
     public static DataManager getDataManager() {
         return dataManager;
+    }
+
+    public static ModuleManager getModuleManager() {
+        return moduleManager;
     }
 
     public static boolean isFloodgateEnabled() {
