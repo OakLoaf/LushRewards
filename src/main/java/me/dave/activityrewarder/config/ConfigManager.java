@@ -20,6 +20,7 @@ public class ConfigManager {
     private UpcomingRewardFormat upcomingRewardFormat;
     private boolean dailyRewardsEnabled;
     private boolean hourlyRewardsEnabled;
+    private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
     private boolean daysReset;
@@ -47,6 +48,7 @@ public class ConfigManager {
 
         dailyRewardsEnabled = config.getBoolean("daily-rewards-enabled", true);
         hourlyRewardsEnabled = config.getBoolean("hourly-rewards-enabled", true);
+        allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         daysReset = config.getBoolean("days-reset", false);
@@ -96,6 +98,10 @@ public class ConfigManager {
 
     public boolean areHourlyRewardsEnabled() {
         return hourlyRewardsEnabled;
+    }
+
+    public boolean shouldStackRewards() {
+        return allowRewardsStacking;
     }
 
     public boolean doRewardsRefresh() {
