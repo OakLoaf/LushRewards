@@ -239,7 +239,7 @@ public class RewardsGui extends AbstractGui {
             }
 
             if (hoursDiff > 0) {
-                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("hourly-reward-given").replaceAll("%hours%", String.valueOf(hoursDiff)));
+                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("playtime-reward-given").replaceAll("%hours%", String.valueOf(hoursDiff)));
             }
             rewardUser.setPlayTime(currPlayTime);
             Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
