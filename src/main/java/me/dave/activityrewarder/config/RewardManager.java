@@ -162,26 +162,25 @@ public class RewardManager {
         return highestMultiplier;
     }
 
-    // TODO: Run once per day in performance mode
     public int findNextRewardFromCategory(int day, String category) {
-        int nextRewardKey = -1;
+        int nextRewardDay = -1;
 
         // Iterates through dayToRewards
-        for (int rewardsKey : dayToRewards.keySet()) {
+        for (int rewardDayNum : dayToRewards.keySet()) {
             // Checks if the current key is a day in the future
-            if (rewardsKey <= day || (nextRewardKey != -1 && rewardsKey > nextRewardKey)) {
+            if (rewardDayNum <= day || (nextRewardDay != -1 && rewardDayNum > nextRewardDay)) {
                 continue;
             }
 
             // Gets the category of the reward and compares to the request
-            RewardDay rewardDay = getRewards(rewardsKey);
+            RewardDay rewardDay = getRewards(rewardDayNum);
             if (rewardDay.containsRewardFromCategory(category)) {
-                nextRewardKey = rewardsKey;
+                nextRewardDay = rewardDayNum;
             }
         }
 
         // Returns -1 if no future rewards match the request
-        return nextRewardKey;
+        return nextRewardDay;
     }
 
     @Nullable
