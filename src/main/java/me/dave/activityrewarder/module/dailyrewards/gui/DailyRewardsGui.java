@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.gui.custom;
+package me.dave.activityrewarder.module.dailyrewards.gui;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiTemplate;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class RewardsGui extends AbstractGui {
+public class DailyRewardsGui extends AbstractGui {
     private final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
     private final GuiTemplate guiTemplate = ActivityRewarder.getConfigManager().getGuiFormat().template();
     private final int slotCount = guiTemplate.getRowCount() * 9;
@@ -37,7 +37,7 @@ public class RewardsGui extends AbstractGui {
     private final DailyRewardsModule dailyRewardsModule;
     private final Player player;
 
-    public RewardsGui(DailyRewardsModule dailyRewardsModule, Player player) {
+    public DailyRewardsGui(DailyRewardsModule dailyRewardsModule, Player player) {
         this.dailyRewardsModule = dailyRewardsModule;
         this.player = player;
     }
