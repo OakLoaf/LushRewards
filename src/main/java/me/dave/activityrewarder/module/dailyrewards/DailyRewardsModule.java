@@ -19,11 +19,23 @@ import java.util.List;
 import java.util.Map;
 
 public class DailyRewardsModule extends Module {
-    private final Multimap<Integer, DailyRewardCollection> dayToRewards = HashMultimap.create();
-    private final Multimap<SimpleDate, DailyRewardCollection> dateToRewards = HashMultimap.create();
+    private Multimap<Integer, DailyRewardCollection> dayToRewards;
+    private Multimap<SimpleDate, DailyRewardCollection> dateToRewards;
 
-    public DailyRewardsModule(String id, @NotNull ConfigurationSection configurationSection) {
+    public DailyRewardsModule(String id) {
         super(id);
+    }
+
+    @Override
+    public void onEnable() {
+        this.dayToRewards = HashMultimap.create();
+        this.dateToRewards = HashMultimap.create();
+
+        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getRewardsConfig().getConfigurationSection("daily-rewards");
+        if (configurationSection == null) {
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
+            return;
+        }
 
         DailyRewardCollection defaultReward = null;
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
@@ -38,8 +50,20 @@ public class DailyRewardsModule extends Module {
         }
 
         DailyRewardCollection.setDefaultReward(defaultReward);
-
         ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + (dayToRewards.size() + (defaultReward != null ? 1 : 0)) + " reward collections from '" + configurationSection.getCurrentPath() + "'");
+    }
+
+    @Override
+    public void onDisable() {
+        if (dayToRewards != null) {
+            dayToRewards.clear();
+            dayToRewards = null;
+        }
+
+        if (dateToRewards != null) {
+            dateToRewards.clear();
+            dateToRewards = null;
+        }
     }
 
     @NotNull

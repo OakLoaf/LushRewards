@@ -3,7 +3,7 @@ package me.dave.activityrewarder;
 import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
-import me.dave.activityrewarder.module.ModuleManager;
+import me.dave.activityrewarder.module.Module;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,19 +12,20 @@ import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
 import space.arim.morepaperlib.MorePaperLib;
 
+import java.util.HashMap;
+
 public final class ActivityRewarder extends JavaPlugin {
+    private static final HashMap<String, Module> modules = new HashMap<>();
     private static ActivityRewarder plugin;
     private static MorePaperLib morePaperLib;
     private static boolean hasFloodgate = false;
     private static ConfigManager configManager;
     private static DataManager dataManager;
-    private static ModuleManager moduleManager;
 
     @Override
     public void onEnable() {
         plugin = this;
         morePaperLib = new MorePaperLib(plugin);
-        moduleManager = new ModuleManager();
         configManager = new ConfigManager();
         dataManager = new DataManager();
 
@@ -62,6 +63,15 @@ public final class ActivityRewarder extends JavaPlugin {
         }
     }
 
+    public static Module getModule(String id) {
+        return modules.get(id);
+    }
+
+    public static void registerModule(Module module) {
+        modules.put(module.getId(), module);
+        module.enable();
+    }
+
     public static ActivityRewarder getInstance() {
         return plugin;
     }
@@ -76,10 +86,6 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static DataManager getDataManager() {
         return dataManager;
-    }
-
-    public static ModuleManager getModuleManager() {
-        return moduleManager;
     }
 
     public static boolean isFloodgateEnabled() {

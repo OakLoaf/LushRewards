@@ -59,7 +59,7 @@ public class ConfigManager {
         if (config.getBoolean("modules.daily-rewards", false)) {
             ConfigurationSection dailyRewardsSection = rewardsConfig.getConfigurationSection("daily-rewards");
             if (dailyRewardsSection != null) {
-                ActivityRewarder.getModuleManager().registerModule(new DailyRewardsModule("daily-rewards", dailyRewardsSection));
+                ActivityRewarder.registerModule(new DailyRewardsModule("daily-rewards"));
             } else {
                 ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
             }
@@ -68,7 +68,7 @@ public class ConfigManager {
         if (config.getBoolean("modules.playtime-daily-goals", false)) {
             ConfigurationSection dailyGoalsSection = rewardsConfig.getConfigurationSection("playtime-rewards.daily-goals");
             if (dailyGoalsSection != null) {
-                ActivityRewarder.getModuleManager().registerModule(new PlaytimeDailyGoalsModule("playtime-daily-goals", dailyGoalsSection));
+                ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule("playtime-daily-goals"));
             } else {
                 ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.daily-goals' section");
             }
@@ -77,7 +77,7 @@ public class ConfigManager {
         if (config.getBoolean("modules.playtime-global-goals", false)) {
             ConfigurationSection dailyGoalsSection = rewardsConfig.getConfigurationSection("playtime-rewards.global-goals");
             if (dailyGoalsSection != null) {
-                ActivityRewarder.getModuleManager().registerModule(new PlaytimeGlobalGoalsModule("playtime-global-goals", dailyGoalsSection));
+                ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule("playtime-global-goals"));
             } else {
                 ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.global-goals' section");
             }
@@ -87,7 +87,14 @@ public class ConfigManager {
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadMessages(config.getConfigurationSection("messages"));
         notificationHandler.reloadNotifications(reminderPeriod);
-        if (ActivityRewarder.getRewardManager() != null) ActivityRewarder.getRewardManager().reloadRewards();
+
+        if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+            dailyRewardsModule.reload();
+        }
+    }
+
+    public YamlConfiguration getRewardsConfig() {
+        return YamlConfiguration.loadConfiguration(rewardsFile);
     }
 
     public String getMessage(String messageName) {

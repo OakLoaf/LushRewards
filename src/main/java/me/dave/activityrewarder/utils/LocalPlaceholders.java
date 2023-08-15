@@ -2,6 +2,7 @@ package me.dave.activityrewarder.utils;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import org.bukkit.entity.Player;
@@ -105,31 +106,39 @@ public class LocalPlaceholders {
                     return String.valueOf(rewardUser.getHourlyMultiplier());
                 }
                 case "category" -> {
-                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getHighestPriorityRewards().getCategory());
+                    if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+                        return String.valueOf(dailyRewardsModule.getRewards(rewardUser.getActualDayNum()).getHighestPriorityRewards().getCategory());
+                    }
+
                 }
                 case "total_rewards" -> {
-                    return String.valueOf(ActivityRewarder.getRewardManager().getRewards(rewardUser.getActualDayNum()).getRewardCount());
+                    if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+                        return String.valueOf(dailyRewardsModule.getRewards(rewardUser.getActualDayNum()).getRewardCount());
+                    }
                 }
             }
         }
 
         // Day placeholders
         if (params.matches("day_[0-9]+.+")) {
-            String[] paramArr = params.split("_", 3);
-            int dayNum = Integer.parseInt(paramArr[1]);
-            RewardDay rewardDay = ActivityRewarder.getRewardManager().getRewards(dayNum);
-            DailyRewardCollection dailyRewardCollection = rewardDay.getHighestPriorityRewards();
+            if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+                String[] paramArr = params.split("_", 3);
+                int dayNum = Integer.parseInt(paramArr[1]);
 
-            switch(paramArr[2]) {
-                case "category" -> {
-                    return String.valueOf(dailyRewardCollection.getCategory());
+                RewardDay rewardDay = dailyRewardsModule.getRewards(dayNum);
+                DailyRewardCollection dailyRewardCollection = rewardDay.getHighestPriorityRewards();
+
+                switch (paramArr[2]) {
+                    case "category" -> {
+                        return String.valueOf(dailyRewardCollection.getCategory());
+                    }
+                    case "total_rewards" -> {
+                        return String.valueOf(dailyRewardCollection.getRewardCount());
+                    }
                 }
-                case "total_rewards" -> {
-                    return String.valueOf(dailyRewardCollection.getRewardCount());
-                }
+
+                return null;
             }
-
-            return null;
         }
 
         return null;

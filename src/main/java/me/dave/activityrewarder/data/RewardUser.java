@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 
@@ -27,7 +28,10 @@ public class RewardUser {
         this.highestStreak = highestStreak;
         this.playTime = playTime;
 
-        this.hourlyMultiplier = ActivityRewarder.getRewardManager().getHighestMultiplier(Bukkit.getPlayer(uuid));
+        if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule globalGoalsModule) {
+            this.hourlyMultiplier = globalGoalsModule.getHighestMultiplier(Bukkit.getPlayer(uuid));
+        }
+
     }
 
     public void setUsername(String username) {
@@ -45,7 +49,7 @@ public class RewardUser {
         if (dayNum > highestStreak) {
             highestStreak = dayNum;
         }
-        
+
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 

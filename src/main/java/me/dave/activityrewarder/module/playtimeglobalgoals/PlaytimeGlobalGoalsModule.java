@@ -17,10 +17,21 @@ import java.util.List;
 import java.util.Map;
 
 public class PlaytimeGlobalGoalsModule extends Module {
-    private final HashMap<String, PlaytimeRewardCollection> permissionToPlaytimeReward = new HashMap<>();
+    private HashMap<String, PlaytimeRewardCollection> permissionToPlaytimeReward;
 
-    public PlaytimeGlobalGoalsModule(String id, @NotNull ConfigurationSection configurationSection) {
+    public PlaytimeGlobalGoalsModule(String id) {
         super(id);
+    }
+
+    @Override
+    public void onEnable() {
+        this.permissionToPlaytimeReward = new HashMap<>();
+
+        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getRewardsConfig().getConfigurationSection("playtime-rewards.global-goals");
+        if (configurationSection == null) {
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.global-goals' section");
+            return;
+        }
 
         configurationSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection permissionSection) {
@@ -34,8 +45,16 @@ public class PlaytimeGlobalGoalsModule extends Module {
         });
     }
 
+    @Override
+    public void onDisable() {
+        if (permissionToPlaytimeReward != null) {
+            permissionToPlaytimeReward.clear();
+            permissionToPlaytimeReward = null;
+        }
+    }
+
     @Nullable
-    public PlaytimeRewardCollection getHourlyRewards(Player player) {
+    public PlaytimeRewardCollection getRewards(Player player) {
         Debugger.sendDebugMessage("Getting playtime rewards section from config", Debugger.DebugMode.PLAYTIME);
         if (permissionToPlaytimeReward.isEmpty()) {
             Debugger.sendDebugMessage("No playtime rewards found", Debugger.DebugMode.PLAYTIME);

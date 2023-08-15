@@ -3,6 +3,7 @@ package me.dave.activityrewarder.commands;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.custom.RewardsGui;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -139,8 +140,14 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        RewardsGui rewardsGui = new RewardsGui(player);
-        rewardsGui.openInventory();
+        if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+            RewardsGui rewardsGui = new RewardsGui(dailyRewardsModule, player);
+            rewardsGui.openInventory();
+        }
+        else {
+            // About command
+        }
+
         return true;
     }
 

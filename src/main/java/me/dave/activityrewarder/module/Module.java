@@ -17,11 +17,20 @@ public abstract class Module {
 
     public void onEnable() {}
 
-    public void disable () {
+    public void disable() {
         this.enabled = false;
         this.onDisable();
     }
     public void onDisable() {}
+
+    public void reload() {
+        this.onReload();
+    }
+
+    public void onReload() {
+        this.disable();
+        this.enable();
+    }
 
     @NotNull
     public String getId() {

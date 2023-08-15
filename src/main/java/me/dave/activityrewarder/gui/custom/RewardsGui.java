@@ -5,6 +5,8 @@ import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
@@ -32,9 +34,11 @@ public class RewardsGui extends AbstractGui {
     private final GuiTemplate guiTemplate = ActivityRewarder.getConfigManager().getGuiFormat().template();
     private final int slotCount = guiTemplate.getRowCount() * 9;
     private final Inventory inventory = Bukkit.createInventory(null, slotCount, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.getConfigManager().getGuiFormat().title()));
+    private final DailyRewardsModule dailyRewardsModule;
     private final Player player;
 
-    public RewardsGui(Player player) {
+    public RewardsGui(DailyRewardsModule dailyRewardsModule, Player player) {
+        this.dailyRewardsModule = dailyRewardsModule;
         this.player = player;
     }
 
@@ -73,7 +77,7 @@ public class RewardsGui extends AbstractGui {
             switch (slotChar) {
                 case 'R' -> {
                     // Get the day's reward for the current slot
-                    DailyRewardCollection reward = ActivityRewarder.getRewardManager().getRewards(dayIndex).getHighestPriorityRewards();
+                    DailyRewardCollection reward = dailyRewardsModule.getRewards(dayIndex).getHighestPriorityRewards();
                     // TODO: Store list of collected days in RewardUser to check for collected vs missed days
 
                     String itemTemplate = (dayIndex == currDayNum && collectedToday) ? "collected-reward" : "default-reward";
@@ -126,14 +130,14 @@ public class RewardsGui extends AbstractGui {
         // Finds next upcoming reward (Excluding rewards shown in the inventory)
         if (upcomingRewardSlots.size() > 0) {
             String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
-            int upcomingRewardDay = ActivityRewarder.getRewardManager().findNextRewardFromCategory(dayIndex, upcomingCategory);
+            int upcomingRewardDay = dailyRewardsModule.findNextRewardFromCategory(dayIndex, upcomingCategory);
 
             // Adds the upcoming reward to the GUI if it exists
             if (upcomingRewardDay != -1) {
                 SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate(upcomingCategory);
 
                 // Get the day's reward for the current slot
-                DailyRewardCollection upcomingReward = ActivityRewarder.getRewardManager().getRewards(dayIndex).getHighestPriorityRewards();
+                DailyRewardCollection upcomingReward = dailyRewardsModule.getRewards(dayIndex).getHighestPriorityRewards();
                 SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"));
                 simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
 
@@ -210,7 +214,7 @@ public class RewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Loaded player's daily rewards ", Debugger.DebugMode.DAILY);
         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.DAILY);
 
-        RewardDay rewardDay = ActivityRewarder.getRewardManager().getRewards(currDay);
+        RewardDay rewardDay = dailyRewardsModule.getRewards(currDay);
         DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewards();
         if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
             rewardDay.giveAllRewards(player);
@@ -222,27 +226,30 @@ public class RewardsGui extends AbstractGui {
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
 
         Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
-        PlaytimeRewardCollection hourlyRewardData = ActivityRewarder.getRewardManager().getHourlyRewards(player);
-        if (hourlyRewardData != null) {
-            int currPlayTime = rewardUser.getTotalPlayTime();
-            Debugger.sendDebugMessage("Collected player's total playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
-            int hoursDiff = currPlayTime - rewardUser.getPlayTime();
-            Debugger.sendDebugMessage("Calculated difference (" + hoursDiff + ")", Debugger.DebugMode.PLAYTIME);
-            // Works out how many rewards the user should receive
-            int totalRewards = (int) Math.floor(hoursDiff * hourlyRewardData.getMultiplier());
-            Debugger.sendDebugMessage("Loaded player's reward count (" + totalRewards + ")", Debugger.DebugMode.PLAYTIME);
 
-            Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-            for (int i = 0; i < totalRewards; i++) {
-                hourlyRewardData.getRewards().forEach((reward) -> reward.giveTo(player));
-                Debugger.sendDebugMessage("Successfully gave player a reward", Debugger.DebugMode.PLAYTIME);
-            }
+        if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule globalGoalsModule) {
+            PlaytimeRewardCollection hourlyRewardData = globalGoalsModule.getRewards(player);
+            if (hourlyRewardData != null) {
+                int currPlayTime = rewardUser.getTotalPlayTime();
+                Debugger.sendDebugMessage("Collected player's total playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
+                int hoursDiff = currPlayTime - rewardUser.getPlayTime();
+                Debugger.sendDebugMessage("Calculated difference (" + hoursDiff + ")", Debugger.DebugMode.PLAYTIME);
+                // Works out how many rewards the user should receive
+                int totalRewards = (int) Math.floor(hoursDiff * hourlyRewardData.getMultiplier());
+                Debugger.sendDebugMessage("Loaded player's reward count (" + totalRewards + ")", Debugger.DebugMode.PLAYTIME);
 
-            if (hoursDiff > 0) {
-                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("playtime-reward-given").replaceAll("%hours%", String.valueOf(hoursDiff)));
+                Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
+                for (int i = 0; i < totalRewards; i++) {
+                    hourlyRewardData.getRewards().forEach((reward) -> reward.giveTo(player));
+                    Debugger.sendDebugMessage("Successfully gave player a reward", Debugger.DebugMode.PLAYTIME);
+                }
+
+                if (hoursDiff > 0) {
+                    ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("playtime-reward-given").replaceAll("%hours%", String.valueOf(hoursDiff)));
+                }
+                rewardUser.setPlayTime(currPlayTime);
+                Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
             }
-            rewardUser.setPlayTime(currPlayTime);
-            Debugger.sendDebugMessage("Updated player's stored playtime (" + currPlayTime + ")", Debugger.DebugMode.PLAYTIME);
         }
 
         player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
