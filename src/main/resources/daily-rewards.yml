@@ -81,62 +81,9 @@ daily-rewards:
       - type: command
         command: "give %user% minecraft:iron_block"
 
-# Items given daily based on the amount of playtime since rewards were last collected
-playtime-rewards:
-  # Hourly goals that reset daily
-  daily-goals:
-    - category: small
-      hours: 1
-      display-item:
-        material: gold_nugget
-        amount: 1
-      rewards:
-        - type: item
-          material: iron_ingot
-          amount: 1
-    - category: small
-      hours: 4
-      display-item:
-        material: gold_nugget
-        amount: 4
-      rewards:
-        - type: item
-          material: diamond
-          amount: 3
-  # Global goals that do not resets
-  global-goals:
-    - category: small
-      hours: 10
-      display-item:
-        material: clock
-        amount: 1
-      rewards:
-        - type: item
-          material: iron_ingot
-          amount: 1
-    - category: small
-      hours: 24
-      display-item:
-        material: clock
-        amount: 1
-      rewards:
-        - type: item
-          material: diamond
-          amount: 3
-  # Each section within the playtime-rewards.bonus section is its own group, to give a player access to
-  # a group you must give them "activityrewarder.bonus.groupName"
-  #
-  # For example: activityrewarder.bonus.rank1
-  bonuses:
-    default:
-      multiplier: 1
-      rewards:
-        - type: item
-          material: iron_ingot
-          amount: 2
-    rank1:
-      multiplier: 2
-      rewards:
-        - type: item
-          material: diamond
-          amount: 1
+gui:
+  title: "&8&lDaily Rewards"
+  # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
+  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
+  # creating and using templates
+  template: "DEFAULT"

@@ -16,14 +16,13 @@ import java.io.File;
 import java.util.*;
 
 public class ConfigManager {
-    private final File rewardsFile = initRewardsYml();
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private final HashMap<String, SimpleItemStack> categoryItems = new HashMap<>();
     private final HashMap<String, SimpleItemStack> itemTemplates = new HashMap<>();
     private final HashMap<String, String> messages = new HashMap<>();
+    private File rewardsFile;
+    private File playtimeRewardsFile;
     private GuiFormat guiFormat;
-    private boolean dailyRewardsEnabled;
-    private boolean playtimeRewardsEnabled;
     private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
@@ -32,6 +31,7 @@ public class ConfigManager {
 
     public ConfigManager() {
         ActivityRewarder.getInstance().saveDefaultConfig();
+        initRewardsYmls();
 
         reloadConfig();
     }
@@ -39,7 +39,6 @@ public class ConfigManager {
     public void reloadConfig() {
         ActivityRewarder.getInstance().reloadConfig();
         FileConfiguration config = ActivityRewarder.getInstance().getConfig();
-        YamlConfiguration rewardsConfig = YamlConfiguration.loadConfiguration(rewardsFile);
 
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
 
@@ -48,8 +47,6 @@ public class ConfigManager {
         GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiTemplate(config.getStringList("gui.format")) : GuiTemplate.DefaultTemplate.valueOf(templateType);
         guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
-        dailyRewardsEnabled = config.getBoolean("daily-rewards-enabled", true);
-        playtimeRewardsEnabled = config.getBoolean("playtime-rewards-enabled", true);
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
@@ -57,30 +54,13 @@ public class ConfigManager {
         upcomingCategory = config.getString("upcoming-category");
 
         if (config.getBoolean("modules.daily-rewards", false)) {
-            ConfigurationSection dailyRewardsSection = rewardsConfig.getConfigurationSection("daily-rewards");
-            if (dailyRewardsSection != null) {
-                ActivityRewarder.registerModule(new DailyRewardsModule("daily-rewards"));
-            } else {
-                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
-            }
+            ActivityRewarder.registerModule(new DailyRewardsModule("daily-rewards"));
         }
-
         if (config.getBoolean("modules.playtime-daily-goals", false)) {
-            ConfigurationSection dailyGoalsSection = rewardsConfig.getConfigurationSection("playtime-rewards.daily-goals");
-            if (dailyGoalsSection != null) {
-                ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule("playtime-daily-goals"));
-            } else {
-                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.daily-goals' section");
-            }
+            ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule("playtime-daily-goals"));
         }
-
         if (config.getBoolean("modules.playtime-global-goals", false)) {
-            ConfigurationSection dailyGoalsSection = rewardsConfig.getConfigurationSection("playtime-rewards.global-goals");
-            if (dailyGoalsSection != null) {
-                ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule("playtime-global-goals"));
-            } else {
-                ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.global-goals' section");
-            }
+            ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule("playtime-global-goals"));
         }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
@@ -93,8 +73,12 @@ public class ConfigManager {
         }
     }
 
-    public YamlConfiguration getRewardsConfig() {
+    public YamlConfiguration getDailyRewardsConfig() {
         return YamlConfiguration.loadConfiguration(rewardsFile);
+    }
+
+    public YamlConfiguration getPlaytimeRewardsConfig() {
+        return YamlConfiguration.loadConfiguration(playtimeRewardsFile);
     }
 
     public String getMessage(String messageName) {
@@ -127,14 +111,6 @@ public class ConfigManager {
         }
 
         return itemTemplate.clone();
-    }
-
-    public boolean areDailyRewardsEnabled() {
-        return dailyRewardsEnabled;
-    }
-
-    public boolean arePlaytimeRewardsEnabled() {
-        return playtimeRewardsEnabled;
     }
 
     public boolean shouldStackRewards() {
@@ -201,16 +177,24 @@ public class ConfigManager {
         messagesSection.getValues(false).forEach((key, value) -> messages.put(key, (String) value));
     }
 
-    private File initRewardsYml() {
+    private void initRewardsYmls() {
         ActivityRewarder plugin = ActivityRewarder.getInstance();
-        File rewardsFile = new File(plugin.getDataFolder(),"rewards.yml");
-        if (!rewardsFile.exists()) {
-            plugin.saveResource("rewards.yml", false);
-            plugin.getLogger().info("File Created: rewards.yml");
+
+        File dailyRewardsFile = new File(plugin.getDataFolder(), "daily-rewards.yml");
+        if (!dailyRewardsFile.exists()) {
+            plugin.saveResource("daily-rewards.yml", false);
+            plugin.getLogger().info("File Created: daily-rewards.yml");
         }
-        return rewardsFile;
+
+        File playtimeRewardsFile = new File(plugin.getDataFolder(), "playtime-rewards.yml");
+        if (!playtimeRewardsFile.exists()) {
+            plugin.saveResource("playtime-rewards.yml", false);
+            plugin.getLogger().info("File Created: playtime-rewards.yml");
+        }
+
+        this.rewardsFile = dailyRewardsFile;
+        this.playtimeRewardsFile = playtimeRewardsFile;
     }
 
     public record GuiFormat(String title, GuiTemplate template) {}
-    public record UpcomingRewardFormat(boolean enabled, List<String> lore) {}
 }

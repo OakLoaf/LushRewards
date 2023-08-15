@@ -27,7 +27,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
     public void onEnable() {
         this.permissionToPlaytimeReward = new HashMap<>();
 
-        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getRewardsConfig().getConfigurationSection("playtime-rewards.global-goals");
+        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getPlaytimeRewardsConfig().getConfigurationSection("playtime-rewards.global-goals");
         if (configurationSection == null) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.global-goals' section");
             return;

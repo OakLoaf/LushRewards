@@ -31,7 +31,7 @@ public class DailyRewardsModule extends Module {
         this.dayToRewards = HashMultimap.create();
         this.dateToRewards = HashMultimap.create();
 
-        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getRewardsConfig().getConfigurationSection("daily-rewards");
+        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getDailyRewardsConfig().getConfigurationSection("daily-rewards");
         if (configurationSection == null) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
             return;
