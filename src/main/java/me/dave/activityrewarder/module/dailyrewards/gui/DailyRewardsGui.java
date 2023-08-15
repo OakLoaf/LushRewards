@@ -1,7 +1,7 @@
 package me.dave.activityrewarder.module.dailyrewards.gui;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.gui.GuiTemplate;
+import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
@@ -30,16 +30,19 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class DailyRewardsGui extends AbstractGui {
-    private final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
-    private final GuiTemplate guiTemplate = ActivityRewarder.getConfigManager().getGuiFormat().template();
-    private final int slotCount = guiTemplate.getRowCount() * 9;
-    private final Inventory inventory = Bukkit.createInventory(null, slotCount, ChatColorHandler.translateAlternateColorCodes(ActivityRewarder.getConfigManager().getGuiFormat().title()));
+    private static final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
     private final DailyRewardsModule dailyRewardsModule;
     private final Player player;
+    private final GuiFormat.GuiTemplate guiTemplate;
+    private final Inventory inventory;
 
     public DailyRewardsGui(DailyRewardsModule dailyRewardsModule, Player player) {
         this.dailyRewardsModule = dailyRewardsModule;
         this.player = player;
+
+        GuiFormat guiFormat = dailyRewardsModule.getGuiFormat();
+        this.guiTemplate = guiFormat.getTemplate();
+        this.inventory = Bukkit.createInventory(null, (guiTemplate.getRowCount() * 9), ChatColorHandler.translateAlternateColorCodes(dailyRewardsModule.getGuiFormat().getTitle()));
     }
 
     @Override
@@ -71,7 +74,7 @@ public class DailyRewardsGui extends AbstractGui {
 
         int dayIndex = currDayNum;
         List<Integer> upcomingRewardSlots = new ArrayList<>();
-        for (int slot = 0; slot < slotCount; slot++) {
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
             char slotChar = guiTemplate.getCharAt(slot);
 
             switch (slotChar) {

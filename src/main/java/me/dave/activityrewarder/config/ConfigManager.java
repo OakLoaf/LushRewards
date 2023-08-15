@@ -1,7 +1,6 @@
 package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.gui.GuiTemplate;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
@@ -22,7 +21,6 @@ public class ConfigManager {
     private final HashMap<String, String> messages = new HashMap<>();
     private File rewardsFile;
     private File playtimeRewardsFile;
-    private GuiFormat guiFormat;
     private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
@@ -41,11 +39,6 @@ public class ConfigManager {
         FileConfiguration config = ActivityRewarder.getInstance().getConfig();
 
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
-
-        String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
-        String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
-        GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiTemplate(config.getStringList("gui.format")) : GuiTemplate.DefaultTemplate.valueOf(templateType);
-        guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
@@ -83,10 +76,6 @@ public class ConfigManager {
 
     public String getMessage(String messageName) {
         return messages.getOrDefault(messageName, "");
-    }
-
-    public GuiFormat getGuiFormat() {
-        return guiFormat;
     }
 
     public SimpleItemStack getCategoryTemplate(String category) {
@@ -195,6 +184,4 @@ public class ConfigManager {
         this.rewardsFile = dailyRewardsFile;
         this.playtimeRewardsFile = playtimeRewardsFile;
     }
-
-    public record GuiFormat(String title, GuiTemplate template) {}
 }

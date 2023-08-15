@@ -7,4 +7,9 @@ public class PlaytimeDailyGoalsModule extends Module {
     public PlaytimeDailyGoalsModule(String id) {
         super(id);
     }
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+    }
 }

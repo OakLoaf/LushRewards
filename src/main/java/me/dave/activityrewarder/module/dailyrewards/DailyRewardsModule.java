@@ -3,6 +3,7 @@ package me.dave.activityrewarder.module.dailyrewards;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
@@ -13,6 +14,7 @@ import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class DailyRewardsModule extends Module {
     private Multimap<Integer, DailyRewardCollection> dayToRewards;
     private Multimap<SimpleDate, DailyRewardCollection> dateToRewards;
+    private GuiFormat guiFormat;
 
     public DailyRewardsModule(String id) {
         super(id);
@@ -28,14 +31,21 @@ public class DailyRewardsModule extends Module {
 
     @Override
     public void onEnable() {
+        YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyRewardsConfig();
+        ConfigurationSection configurationSection = config.getConfigurationSection("daily-rewards");
+        if (configurationSection == null) {
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
+            this.disable();
+            return;
+        }
+
         this.dayToRewards = HashMultimap.create();
         this.dateToRewards = HashMultimap.create();
 
-        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getDailyRewardsConfig().getConfigurationSection("daily-rewards");
-        if (configurationSection == null) {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
-            return;
-        }
+        String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
+        String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
+        GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
+        this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         DailyRewardCollection defaultReward = null;
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
@@ -64,6 +74,8 @@ public class DailyRewardsModule extends Module {
             dateToRewards.clear();
             dateToRewards = null;
         }
+
+        guiFormat = null;
     }
 
     @NotNull
@@ -73,6 +85,10 @@ public class DailyRewardsModule extends Module {
         } else {
             return RewardDay.from(DailyRewardCollection.getDefaultReward());
         }
+    }
+
+    public GuiFormat getGuiFormat() {
+        return guiFormat;
     }
 
     public int findNextRewardFromCategory(int day, String category) {
