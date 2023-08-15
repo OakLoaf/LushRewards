@@ -12,18 +12,34 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocalPlaceholders {
     private static final String identifier = "rewarder";
+    private static final HashMap<String, Function<String, String>> placeholders = new HashMap<>();
     private static final Pattern regexPattern = Pattern.compile("%" + identifier + "_([a-zA-Z0-9_ ]+)%");
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
+    static {
+        registerPlaceholder("countdown", string -> {
+            LocalDateTime now = LocalDateTime.now();
+            long secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
+
+            if (secondsUntil < 0) {
+                nextDay = LocalDate.now().plusDays(1).atStartOfDay();
+                secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
+            }
+
+            long hours = secondsUntil / 3600;
+            long minutes = (secondsUntil % 3600) / 60;
+            long seconds = secondsUntil % 60;
+
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        });
+    }
 
     public static ItemStack parseItemStack(Player player, ItemStack itemStack) {
         ItemStack item = itemStack.clone();
@@ -65,6 +81,8 @@ public class LocalPlaceholders {
     }
 
     public static String parsePlaceholder(Player player, String params) {
+        // TODO: Implement placeholders map
+
         // Global placeholders
         if (params.equals("countdown")) {
             LocalDateTime now = LocalDateTime.now();
@@ -142,5 +160,9 @@ public class LocalPlaceholders {
         }
 
         return null;
+    }
+
+    public static void registerPlaceholder(String placeholder, Function<String, String> method) {
+        placeholders.put(placeholder, method);
     }
 }
