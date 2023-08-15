@@ -18,7 +18,7 @@ public final class ActivityRewarder extends JavaPlugin {
     private static final HashMap<String, Module> modules = new HashMap<>();
     private static ActivityRewarder plugin;
     private static MorePaperLib morePaperLib;
-    private static boolean hasFloodgate = false;
+    private static boolean floodgateEnabled = false;
     private static ConfigManager configManager;
     private static DataManager dataManager;
 
@@ -40,7 +40,7 @@ public final class ActivityRewarder extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
 
         if (pluginManager.getPlugin("floodgate") != null) {
-            hasFloodgate = true;
+            floodgateEnabled = true;
         } else {
             plugin.getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
         }
@@ -54,6 +54,7 @@ public final class ActivityRewarder extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        modules.clear();
         dataManager.getIoHandler().disableIOHandler();
     }
 
@@ -89,6 +90,6 @@ public final class ActivityRewarder extends JavaPlugin {
     }
 
     public static boolean isFloodgateEnabled() {
-        return hasFloodgate;
+        return floodgateEnabled;
     }
 }
