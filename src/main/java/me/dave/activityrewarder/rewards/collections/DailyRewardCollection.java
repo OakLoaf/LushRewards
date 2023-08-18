@@ -61,10 +61,6 @@ public class DailyRewardCollection extends RewardCollection {
         return itemStack != null ? itemStack : ActivityRewarder.getConfigManager().getCategoryTemplate(category);
     }
 
-    private String makeFriendly(String string) {
-        return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
-    }
-
     public static DailyRewardCollection getDefaultReward() {
         return defaultReward;
     }
