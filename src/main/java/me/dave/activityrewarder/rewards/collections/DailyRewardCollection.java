@@ -1,26 +1,48 @@
 package me.dave.activityrewarder.rewards.collections;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.rewards.custom.Reward;
+import me.dave.activityrewarder.utils.ConfigParser;
+import me.dave.activityrewarder.utils.Debugger;
+import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Sound;
+import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class DailyRewardCollection extends RewardCollection {
     private static DailyRewardCollection defaultReward = null;
+    private final SimpleDate date;
+    private final Integer streakDay;
     private final int priority;
     private final String category;
     private final SimpleItemStack itemStack;
     private final Sound sound;
 
-    private DailyRewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
+    public DailyRewardCollection(@Nullable SimpleDate date, @Nullable Integer streakDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
         super(rewards);
+        this.date = date;
+        this.streakDay = streakDay;
         this.priority = priority;
         this.category = category != null ? category : defaultReward.getCategory();
         this.itemStack = itemStack;
         this.sound = sound != null ? sound : defaultReward.getSound();
+    }
+
+    @Nullable
+    public SimpleDate getDate() {
+        return date;
+    }
+
+    @Nullable
+    public Integer getStreakDay() {
+        return streakDay;
     }
 
     public int getPriority() {
@@ -68,6 +90,6 @@ public class DailyRewardCollection extends RewardCollection {
     }
 
     public static DailyRewardCollection empty() {
-        return new DailyRewardCollection(null, 0, null, null, null);
+        return new DailyRewardCollection(null, null, null, 0, null, null, null);
     }
 }
