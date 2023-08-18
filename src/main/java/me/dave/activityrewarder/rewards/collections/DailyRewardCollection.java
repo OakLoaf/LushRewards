@@ -78,9 +78,12 @@ public class DailyRewardCollection extends RewardCollection {
         Integer rewardDay = null;
         if (rewardCollectionSection.contains("on-date")) {
             rewardDate = SimpleDate.from(rewardCollectionSection.getString("on-date", ""));
-        } else if (rewardCollectionSection.contains("on-streak-day")) {
+        }
+        if (rewardCollectionSection.contains("on-streak-day")) {
             rewardDay = rewardCollectionSection.getInt("on-streak-day");
-        } else {
+        }
+
+        if (rewardDay == null && !rewardCollectionSection.getName().equalsIgnoreCase("default")) {
             throw new InvalidRewardException("Failed to find 'on-date' or 'on-streak-day' at '" + rewardCollectionSection.getCurrentPath() + "'");
         }
 
