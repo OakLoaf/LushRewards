@@ -11,6 +11,7 @@ import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
+import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
@@ -73,6 +74,7 @@ public class DailyRewardsGui extends AbstractGui {
         }
 
         int dayIndex = currDayNum;
+        SimpleDate dateIndex = SimpleDate.now();
         List<Integer> upcomingRewardSlots = new ArrayList<>();
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             char slotChar = guiTemplate.getCharAt(slot);
@@ -80,7 +82,7 @@ public class DailyRewardsGui extends AbstractGui {
             switch (slotChar) {
                 case 'R' -> {
                     // Get the day's reward for the current slot
-                    DailyRewardCollection reward = RewardDay.from(dailyRewardsModule.getStreakRewards(dayIndex)).getHighestPriorityRewardCollection();
+                    DailyRewardCollection reward = dailyRewardsModule.getRewardDay(dateIndex, dayIndex).getHighestPriorityRewardCollection();
                     // TODO: Store list of collected days in RewardUser to check for collected vs missed days
 
                     String itemTemplate = (dayIndex == currDayNum && collectedToday) ? "collected-reward" : "default-reward";
@@ -114,6 +116,7 @@ public class DailyRewardsGui extends AbstractGui {
                     inventory.setItem(slot, itemStack);
 
                     dayIndex++;
+                    dateIndex.addDays(1);
                 }
                 case 'U', 'N' -> upcomingRewardSlots.add(slot);
                 default -> {
@@ -134,13 +137,16 @@ public class DailyRewardsGui extends AbstractGui {
         if (upcomingRewardSlots.size() > 0) {
             String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
             int upcomingRewardDay = dailyRewardsModule.findNextRewardFromCategory(dayIndex, upcomingCategory);
+            SimpleDate upcomingRewardDate = SimpleDate.now();
+            // TODO: Add util method to calculate what date a streak day will be
+            upcomingRewardDate.addDays(upcomingRewardDay - rewardUser.getActualDayNum());
 
             // Adds the upcoming reward to the GUI if it exists
             if (upcomingRewardDay != -1) {
                 SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate(upcomingCategory);
 
                 // Get the day's reward for the current slot
-                DailyRewardCollection upcomingReward = RewardDay.from(dailyRewardsModule.getStreakRewards(dayIndex)).getHighestPriorityRewardCollection();
+                DailyRewardCollection upcomingReward = dailyRewardsModule.getRewardDay(upcomingRewardDate, upcomingRewardDay).getHighestPriorityRewardCollection();
                 SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"));
                 simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
 
