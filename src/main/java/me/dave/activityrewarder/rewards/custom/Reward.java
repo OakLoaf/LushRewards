@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.rewards.RewardTypes;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,7 @@ public interface Reward {
 
         try {
             return RewardTypes.getClass(rewardType).getConstructor(Map.class).newInstance(rewardMap);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (InvalidRewardException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;

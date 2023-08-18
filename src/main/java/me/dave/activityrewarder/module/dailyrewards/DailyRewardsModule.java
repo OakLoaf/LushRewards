@@ -3,6 +3,7 @@ package me.dave.activityrewarder.module.dailyrewards;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
@@ -48,7 +49,14 @@ public class DailyRewardsModule extends Module {
         DailyRewardCollection defaultReward = null;
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection rewardSection) {
-                DailyRewardCollection dailyRewardCollection = DailyRewardCollection.from(rewardSection);
+                DailyRewardCollection dailyRewardCollection;
+                try {
+                    dailyRewardCollection = DailyRewardCollection.from(rewardSection);
+                } catch(InvalidRewardException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
                 if (rewardSection.getName().equalsIgnoreCase("default")) {
                     defaultReward = dailyRewardCollection;
                 } else {
