@@ -9,8 +9,8 @@ modules:
 allow-reward-stacking: false
 
 # Whether rewards will automatically refresh when the day ticks over
-# - This allows the plugin to use less ram by only storing rewards that could be needed on the specified day
-rewards-refresh-daily: false
+# - This allows the plugin to use much less ram by only storing rewards that could be needed on the specified day
+rewards-refresh-daily: true
 
 # The length in seconds between reminders being sent
 reminder-period: 1800
