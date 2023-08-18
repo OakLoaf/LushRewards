@@ -23,6 +23,15 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             switch(args[0].toLowerCase()) {
+                case "messages" -> {
+                    if (!sender.hasPermission("activityrewarder.viewmessages")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ActivityRewarder.getConfigManager().getMessages().forEach(message -> ChatColorHandler.sendMessage(sender, message));
+                    return true;
+                }
                 case "reload" -> {
                     if (!sender.hasPermission("activityrewarder.reload")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));

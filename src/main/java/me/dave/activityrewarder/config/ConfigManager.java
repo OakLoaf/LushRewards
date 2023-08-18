@@ -74,6 +74,10 @@ public class ConfigManager {
         return messages.getOrDefault(messageName, "");
     }
 
+    public Collection<String> getMessages() {
+        return messages.values();
+    }
+
     public SimpleItemStack getCategoryTemplate(String category) {
         SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
         if (itemTemplate == null) {
