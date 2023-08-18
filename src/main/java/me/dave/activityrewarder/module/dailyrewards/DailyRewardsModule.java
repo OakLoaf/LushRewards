@@ -31,7 +31,7 @@ public class DailyRewardsModule extends Module {
         YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyRewardsConfig();
         ConfigurationSection configurationSection = config.getConfigurationSection("daily-rewards");
         if (configurationSection == null) {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section");
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in 'daily-rewards.yml'");
             this.disable();
             return;
         }
