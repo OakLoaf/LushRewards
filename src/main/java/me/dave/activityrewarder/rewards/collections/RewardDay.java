@@ -11,7 +11,7 @@ public class RewardDay {
     private final Collection<DailyRewardCollection> dailyRewardCollections = new ArrayList<>();
 
     @NotNull
-    public DailyRewardCollection getHighestPriorityRewards() {
+    public DailyRewardCollection getHighestPriorityRewardCollection() {
         return dailyRewardCollections.stream().min(Comparator.comparingInt(DailyRewardCollection::getPriority)).orElse(DailyRewardCollection.empty());
     }
 
