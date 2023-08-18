@@ -1,8 +1,12 @@
 package me.dave.activityrewarder.utils;
 
-import org.jetbrains.annotations.Nullable;
+import me.dave.activityrewarder.exceptions.SimpleDateParseException;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SimpleDate {
+    private static final Pattern DATE_FORMAT = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4,})");
     private int day;
     private int month;
     private int year;
@@ -20,19 +24,20 @@ public class SimpleDate {
                 .replaceAll("yyyy", String.valueOf(year));
     }
 
-    @Nullable
-    private static SimpleDate from(int day, int month) {
-        if ((day < 0 || day > 31) || (month < 0 || month > 12)) {
-            return null;
+    public static SimpleDate from(String string) {
+        Matcher matcher= DATE_FORMAT.matcher(string);
+
+        if (matcher.find()) {
+            return new SimpleDate(Integer.parseInt(matcher.group(0)), Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
         } else {
-            return new SimpleDate(day, month, 1994);
+            throw new SimpleDateParseException("Invalid date format found");
         }
     }
 
-    @Nullable
-    private static SimpleDate from(int day, int month, int year) {
+
+    public static SimpleDate from(int day, int month, int year) {
         if ((day < 0 || day > 31) || (month < 0 || month > 12) || (year < 0)) {
-            return null;
+            throw new SimpleDateParseException("Invalid date");
         } else {
             return new SimpleDate(day, month, year);
         }
