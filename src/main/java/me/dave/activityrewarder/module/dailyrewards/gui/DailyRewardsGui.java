@@ -80,7 +80,7 @@ public class DailyRewardsGui extends AbstractGui {
             switch (slotChar) {
                 case 'R' -> {
                     // Get the day's reward for the current slot
-                    DailyRewardCollection reward = dailyRewardsModule.getStreakRewards(dayIndex).getHighestPriorityRewardCollection();
+                    DailyRewardCollection reward = RewardDay.from(dailyRewardsModule.getStreakRewards(dayIndex)).getHighestPriorityRewardCollection();
                     // TODO: Store list of collected days in RewardUser to check for collected vs missed days
 
                     String itemTemplate = (dayIndex == currDayNum && collectedToday) ? "collected-reward" : "default-reward";
@@ -140,7 +140,7 @@ public class DailyRewardsGui extends AbstractGui {
                 SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate(upcomingCategory);
 
                 // Get the day's reward for the current slot
-                DailyRewardCollection upcomingReward = dailyRewardsModule.getStreakRewards(dayIndex).getHighestPriorityRewardCollection();
+                DailyRewardCollection upcomingReward = RewardDay.from(dailyRewardsModule.getStreakRewards(dayIndex)).getHighestPriorityRewardCollection();
                 SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"));
                 simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
 
@@ -217,7 +217,7 @@ public class DailyRewardsGui extends AbstractGui {
         Debugger.sendDebugMessage("Loaded player's daily rewards ", Debugger.DebugMode.DAILY);
         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.DAILY);
 
-        RewardDay rewardDay = dailyRewardsModule.getStreakRewards(currDay);
+        RewardDay rewardDay = RewardDay.from(dailyRewardsModule.getStreakRewards(currDay));
         DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
         if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
             rewardDay.giveAllRewards(player);

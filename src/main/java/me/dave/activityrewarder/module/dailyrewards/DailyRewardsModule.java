@@ -96,27 +96,44 @@ public class DailyRewardsModule extends Module {
     }
 
     @NotNull
-    public RewardDay getStreakRewards(int day) {
+    public Collection<DailyRewardCollection> getStreakRewards(int day) {
+        Collection<DailyRewardCollection> rewardCollections;
+
         if (dayToRewards.containsKey(day)) {
-            return RewardDay.from(dayToRewards.get(day)
+            rewardCollections = dayToRewards.get(day)
                 .stream()
                 .map(collectionId -> rewards.get(collectionId))
-                .toList());
+                .toList();
         } else {
-            return RewardDay.from(DailyRewardCollection.getDefaultReward());
+            rewardCollections = new ArrayList<>();
+            rewardCollections.add(DailyRewardCollection.getDefaultReward());
         }
+
+        return rewardCollections;
     }
 
     @NotNull
-    public RewardDay getDateRewards(SimpleDate date) {
+    public Collection<DailyRewardCollection> getDateRewards(SimpleDate date) {
+        Collection<DailyRewardCollection> rewardCollections;
+
         if (dateToRewards.containsKey(date)) {
-            return RewardDay.from(dateToRewards.get(date)
+            return dateToRewards.get(date)
                 .stream()
                 .map(collectionId -> rewards.get(collectionId))
-                .toList());
+                .toList();
         } else {
-            return RewardDay.from(DailyRewardCollection.getDefaultReward());
+            rewardCollections = new ArrayList<>();
+            rewardCollections.add(DailyRewardCollection.getDefaultReward());
         }
+
+        return rewardCollections;
+    }
+
+    public RewardDay getRewardDay(SimpleDate date, int streakDay) {
+        RewardDay rewardDay = new RewardDay();
+        rewardDay.addCollections(getDateRewards(date));
+        rewardDay.addCollections(getStreakRewards(streakDay));
+        return rewardDay;
     }
 
     public int findNextRewardFromCategory(int day, String category) {
@@ -130,7 +147,7 @@ public class DailyRewardsModule extends Module {
             }
 
             // Gets the category of the reward and compares to the request
-            RewardDay rewardDay = getStreakRewards(rewardDayNum);
+            RewardDay rewardDay = RewardDay.from(getStreakRewards(rewardDayNum));
             if (rewardDay.containsRewardFromCategory(category)) {
                 nextRewardDay = rewardDayNum;
             }

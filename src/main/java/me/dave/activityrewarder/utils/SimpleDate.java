@@ -9,14 +9,37 @@ import java.util.regex.Pattern;
 
 public class SimpleDate {
     private static final Pattern DATE_FORMAT = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4,})");
-    private final int day;
-    private final int month;
-    private final int year;
+    private int day;
+    private int month;
+    private int year;
 
     private SimpleDate(int day, int month, int year) {
         this.day = day;
         this.month = month;
         this.year = year;
+    }
+
+    // TODO: Needs to respect ends of months (and leap years)
+    public void addDays(int days) {
+        boolean negative = days < 0;
+
+        int years = (int) Math.floor(days / 365.0);
+        this.year += years;
+
+        if (!negative) {
+            this.day += days % 365;
+        } else {
+            this.day -= days % 365;
+        }
+    }
+
+    // TODO: Needs to respect ends of years
+    public void addMonths(int months) {
+        this.month += months;
+    }
+
+    public void addYears(int years) {
+        this.year += years;
     }
 
     public String asString(String format) {
