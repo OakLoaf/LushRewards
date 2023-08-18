@@ -12,11 +12,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.*;
 
 public class DailyRewardsModule extends Module {
-    private Multimap<Integer, DailyRewardCollection> dayToRewards;
-    private Multimap<SimpleDate, DailyRewardCollection> dateToRewards;
+    private int rewardsIndex;
+    private HashMap<Integer, DailyRewardCollection> rewards;
+    private Multimap<Integer, Integer> dayToRewards;
+    private Multimap<SimpleDate, Integer> dateToRewards;
     private GuiFormat guiFormat;
 
     public DailyRewardsModule(String id) {
@@ -33,6 +35,8 @@ public class DailyRewardsModule extends Module {
             return;
         }
 
+        this.rewardsIndex = 0;
+        this.rewards = new HashMap<>();
         this.dayToRewards = HashMultimap.create();
         this.dateToRewards = HashMultimap.create();
 
@@ -48,7 +52,14 @@ public class DailyRewardsModule extends Module {
                 if (rewardSection.getName().equalsIgnoreCase("default")) {
                     defaultReward = dailyRewardCollection;
                 } else {
-                    dayToRewards.put(Integer.parseInt(rewardSection.getName().replaceAll("\\D", "")), dailyRewardCollection);
+                    int rewardId = registerRewardCollection(dailyRewardCollection);
+
+                    if (dailyRewardCollection.getDate() != null) {
+                        dateToRewards.put(dailyRewardCollection.getDate(), rewardId);
+                    }
+                    if (dailyRewardCollection.getStreakDay() != null) {
+                        dayToRewards.put(dailyRewardCollection.getStreakDay(), rewardId);
+                    }
                 }
             }
         }
@@ -59,6 +70,11 @@ public class DailyRewardsModule extends Module {
 
     @Override
     public void onDisable() {
+        if (rewards != null) {
+            rewards.clear();
+            rewards = null;
+        }
+
         if (dayToRewards != null) {
             dayToRewards.clear();
             dayToRewards = null;
@@ -70,19 +86,37 @@ public class DailyRewardsModule extends Module {
         }
 
         guiFormat = null;
+        rewardsIndex = 0;
+    }
+
+    public int registerRewardCollection(DailyRewardCollection collection) {
+        rewardsIndex++;
+        rewards.put(rewardsIndex, collection);
+        return rewardsIndex;
     }
 
     @NotNull
     public RewardDay getRewards(int day) {
         if (dayToRewards.containsKey(day)) {
-            return RewardDay.from(dayToRewards.get(day));
+            return RewardDay.from(dayToRewards.get(day)
+                .stream()
+                .map(collectionId -> rewards.get(collectionId))
+                .toList());
         } else {
             return RewardDay.from(DailyRewardCollection.getDefaultReward());
         }
     }
 
-    public GuiFormat getGuiFormat() {
-        return guiFormat;
+    @NotNull
+    public RewardDay getDateRewards(SimpleDate date) {
+        if (dateToRewards.containsKey(date)) {
+            return RewardDay.from(dateToRewards.get(date)
+                .stream()
+                .map(collectionId -> rewards.get(collectionId))
+                .toList());
+        } else {
+            return RewardDay.from(DailyRewardCollection.getDefaultReward());
+        }
     }
 
     public int findNextRewardFromCategory(int day, String category) {
@@ -96,7 +130,7 @@ public class DailyRewardsModule extends Module {
             }
 
             // Gets the category of the reward and compares to the request
-            RewardDay rewardDay = getRewards(rewardDayNum);
+            RewardDay rewardDay = getStreakRewards(rewardDayNum);
             if (rewardDay.containsRewardFromCategory(category)) {
                 nextRewardDay = rewardDayNum;
             }
@@ -104,5 +138,9 @@ public class DailyRewardsModule extends Module {
 
         // Returns -1 if no future rewards match the request
         return nextRewardDay;
+    }
+
+    public GuiFormat getGuiFormat() {
+        return guiFormat;
     }
 }
