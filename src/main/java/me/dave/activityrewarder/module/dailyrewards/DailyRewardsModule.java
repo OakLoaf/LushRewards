@@ -96,7 +96,7 @@ public class DailyRewardsModule extends Module {
     }
 
     @NotNull
-    public RewardDay getRewards(int day) {
+    public RewardDay getStreakRewards(int day) {
         if (dayToRewards.containsKey(day)) {
             return RewardDay.from(dayToRewards.get(day)
                 .stream()

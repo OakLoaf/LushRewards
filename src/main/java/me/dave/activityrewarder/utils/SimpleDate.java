@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 
 public class SimpleDate {
     private static final Pattern DATE_FORMAT = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4,})");
-    private int day;
-    private int month;
-    private int year;
+    private final int day;
+    private final int month;
+    private final int year;
 
     private SimpleDate(int day, int month, int year) {
         this.day = day;
