@@ -61,9 +61,4 @@ public class RewardDay {
         }
         return rewardDay;
     }
-
-    @NotNull
-    public static RewardDay empty() {
-        return new RewardDay();
-    }
 }
