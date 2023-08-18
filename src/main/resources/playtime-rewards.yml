@@ -2,18 +2,54 @@
 daily-goals:
   - category: small
     play-hours: 1
-    display-item:
-      material: gold_nugget
-      amount: 1
     rewards:
       - type: item
         material: iron_ingot
         amount: 1
   - category: small
+    play-hours: 2
+    display-item:
+      amount: 2
+    rewards:
+      - type: item
+        material: diamond
+        amount: 3
+  - category: small
+    play-hours: 3
+    display-item:
+      amount: 3
+    rewards:
+      - type: item
+        material: diamond
+        amount: 3
+  - category: small
     play-hours: 4
     display-item:
-      material: gold_nugget
       amount: 4
+    rewards:
+      - type: item
+        material: diamond
+        amount: 3
+  - category: small
+    play-hours: 6
+    display-item:
+      amount: 6
+    rewards:
+      - type: item
+        material: diamond
+        amount: 3
+  - category: medium
+    play-hours: 8
+    display-item:
+      amount: 8
+    rewards:
+      - type: item
+        material: diamond
+        amount: 3
+  - category: large
+    play-hours: 10
+    display-item:
+      amount: 10
     rewards:
       - type: item
         material: diamond
@@ -45,4 +81,8 @@ gui:
   # Available templates: DEFAULT, COMPACT
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
-  template: "DEFAULT"
+  template: "CUSTOM"
+  format:
+    - "#########"
+    - "#RRRRRRR#"
+    - "#########"
