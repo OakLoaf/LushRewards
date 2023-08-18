@@ -9,7 +9,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
 
     public String onPlaceholderRequest(Player player, String params) {
-        return LocalPlaceholders.parsePlaceholder(player, params);
+        return LocalPlaceholders.parsePlaceholder(params, player);
     }
 
     public boolean persist() {
