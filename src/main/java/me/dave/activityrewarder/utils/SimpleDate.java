@@ -3,6 +3,7 @@ package me.dave.activityrewarder.utils;
 import me.dave.activityrewarder.exceptions.SimpleDateParseException;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,12 +36,16 @@ public class SimpleDate {
         }
     }
 
-
     public static SimpleDate from(int day, int month, int year) {
         if ((day < 0 || day > 31) || (month < 0 || month > 12) || (year < 0)) {
             throw new SimpleDateParseException("Invalid date");
         } else {
             return new SimpleDate(day, month, year);
         }
+    }
+
+    public static SimpleDate now() {
+        LocalDate localDate = LocalDate.now();
+        return new SimpleDate(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
     }
 }
