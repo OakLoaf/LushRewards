@@ -1,6 +1,5 @@
 package me.dave.activityrewarder.rewards.custom;
 
-import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.SimpleItemStack;
@@ -35,13 +34,11 @@ public class ItemReward implements Reward {
                     simpleItemStack.setEnchanted((boolean) map.get("enchanted"));
                 }
             } catch(ClassCastException exc) {
-                ActivityRewarder.getInstance().getLogger().severe("Invalid config format at '" + map + "', could not parse data");
-                throw new InvalidRewardException();
+                throw new InvalidRewardException("Invalid config format at '" + map + "', could not parse data");
             }
         }
         else {
-            ActivityRewarder.getInstance().getLogger().severe("Invalid config format at '" + map + "'");
-            throw new InvalidRewardException();
+            throw new InvalidRewardException("Invalid config format at '" + map + "'");
         }
     }
 

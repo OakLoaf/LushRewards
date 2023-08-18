@@ -19,8 +19,7 @@ public class RandomReward implements Reward {
         try {
             rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());
         } catch(ClassCastException exc) {
-            ActivityRewarder.getInstance().getLogger().severe("Invalid config format at '" + map + "'");
-            throw new InvalidRewardException();
+            throw new InvalidRewardException("Invalid config format at '" + map + "'");
         }
 
         // TODO: replace #loadRewards() with local alternative that takes into account weights
