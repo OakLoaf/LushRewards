@@ -36,16 +36,16 @@ public class DailyRewardsModule extends Module {
             return;
         }
 
-        this.rewardsIndex = 0;
-        this.rewards = new HashMap<>();
-        this.dayToRewards = HashMultimap.create();
-        this.dateToRewards = HashMultimap.create();
-
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
+
+        this.rewardsIndex = 0;
+        this.rewards = new HashMap<>();
+        this.dayToRewards = HashMultimap.create();
+        this.dateToRewards = HashMultimap.create();
         DailyRewardCollection defaultReward = null;
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection rewardSection) {
