@@ -73,20 +73,40 @@ public class DailyRewardCollection extends RewardCollection {
         DailyRewardCollection.defaultReward = defaultReward;
     }
 
-    public static DailyRewardCollection from(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
-        return new DailyRewardCollection(rewards, priority, category, itemStack, sound);
-    }
+    @NotNull
+    public static DailyRewardCollection from(ConfigurationSection rewardCollectionSection) {
+        Debugger.DebugMode debugMode = Debugger.DebugMode.DAILY;
+        Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-    public static DailyRewardCollection from(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack) {
-        return new DailyRewardCollection(rewards, priority, category, itemStack, null);
-    }
+        SimpleDate rewardDate = null;
+        Integer rewardDay = null;
+        if (rewardCollectionSection.contains("on-date")) {
+            rewardDate = SimpleDate.from(rewardCollectionSection.getString("on-date", ""));
+        } else if (rewardCollectionSection.contains("on-streak-day")) {
+            rewardDay = rewardCollectionSection.getInt("on-streak-day");
+        } else {
+            throw new InvalidRewardException("Failed to find 'on-date' or 'on-streak-day' at '" + rewardCollectionSection.getCurrentPath() + "'");
+        }
 
-    public static DailyRewardCollection from(@Nullable Collection<Reward> rewards, int priority, @Nullable String category) {
-        return new DailyRewardCollection(rewards, priority, category, null, null);
-    }
+        int priority = rewardCollectionSection.getInt("priority", 0);
+        Debugger.sendDebugMessage("Reward collection priority set to " + priority, debugMode);
 
-    public static DailyRewardCollection from(@Nullable Collection<Reward> rewards, int priority) {
-        return new DailyRewardCollection(rewards, priority, null, null, null);
+        String category = rewardCollectionSection.getString("category", "small");
+        Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
+
+        ConfigurationSection itemSection = rewardCollectionSection.getConfigurationSection("display-item");
+        SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
+        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
+
+        Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP").toUpperCase());
+
+        Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
+        List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
+
+        List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
+        Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
+
+        return rewardList != null ? new DailyRewardCollection(rewardDate, rewardDay, rewardList, 0, category, itemStack, redeemSound) : DailyRewardCollection.empty();
     }
 
     public static DailyRewardCollection empty() {
