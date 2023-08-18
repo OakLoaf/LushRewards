@@ -1,3 +1,3 @@
 package me.dave.activityrewarder.exceptions;
 
-public class InvalidRewardException extends Exception {}
+public class InvalidRewardException extends RuntimeException {}

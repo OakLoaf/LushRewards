@@ -15,7 +15,7 @@ import java.util.Map;
 public class ItemReward implements Reward {
     private final SimpleItemStack simpleItemStack;
 
-    public ItemReward(@NotNull Map<?, ?> map) throws InvalidRewardException {
+    public ItemReward(@NotNull Map<?, ?> map) {
         Material material = ConfigParser.getMaterial((String) map.get("material"));
 
         if (material != null) {

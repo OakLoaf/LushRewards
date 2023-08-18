@@ -14,7 +14,7 @@ public class RandomReward implements Reward {
     private final List<Reward> rewards;
 
     @SuppressWarnings("unchecked")
-    public RandomReward(Map<?, ?> map) throws InvalidRewardException {
+    public RandomReward(Map<?, ?> map) {
         List<Map<?, ?>> rewardMaps;
         try {
             rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());
