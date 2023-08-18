@@ -105,42 +105,35 @@ public class DailyRewardsModule extends Module {
 
     @NotNull
     public Collection<DailyRewardCollection> getStreakRewards(int day) {
-        Collection<DailyRewardCollection> rewardCollections;
-
         if (dayToRewards.containsKey(day)) {
-            rewardCollections = dayToRewards.get(day)
+            return dayToRewards.get(day)
                 .stream()
                 .map(collectionId -> rewards.get(collectionId))
                 .toList();
         } else {
-            rewardCollections = new ArrayList<>();
-            rewardCollections.add(DailyRewardCollection.getDefaultReward());
+            return new ArrayList<>();
         }
-
-        return rewardCollections;
     }
 
     @NotNull
     public Collection<DailyRewardCollection> getDateRewards(SimpleDate date) {
-        Collection<DailyRewardCollection> rewardCollections;
-
         if (dateToRewards.containsKey(date)) {
             return dateToRewards.get(date)
                 .stream()
                 .map(collectionId -> rewards.get(collectionId))
                 .toList();
         } else {
-            rewardCollections = new ArrayList<>();
-            rewardCollections.add(DailyRewardCollection.getDefaultReward());
+            return new ArrayList<>();
         }
-
-        return rewardCollections;
     }
 
     public RewardDay getRewardDay(SimpleDate date, int streakDay) {
         RewardDay rewardDay = new RewardDay();
         rewardDay.addCollections(getDateRewards(date));
         rewardDay.addCollections(getStreakRewards(streakDay));
+
+        if (rewardDay.isEmpty()) rewardDay.addCollection(DailyRewardCollection.getDefaultReward());
+
         return rewardDay;
     }
 
