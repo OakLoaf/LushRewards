@@ -7,16 +7,20 @@ import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SimpleDate {
+public class SimpleDate implements Cloneable {
     private static final Pattern DATE_FORMAT = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4,})");
     private int day;
     private int month;
     private int year;
 
-    private SimpleDate(int day, int month, int year) {
-        this.day = day;
-        this.month = month;
-        this.year = year;
+    public SimpleDate(int day, int month, int year) {
+        if ((day < 0 || day > 31) || (month < 0 || month > 12) || (year < 0)) {
+            throw new SimpleDateParseException("Invalid date");
+        } else {
+            this.day = day;
+            this.month = month;
+            this.year = year;
+        }
     }
 
     // TODO: Needs to respect ends of months (and leap years)
@@ -59,16 +63,17 @@ public class SimpleDate {
         }
     }
 
-    public static SimpleDate from(int day, int month, int year) {
-        if ((day < 0 || day > 31) || (month < 0 || month > 12) || (year < 0)) {
-            throw new SimpleDateParseException("Invalid date");
-        } else {
-            return new SimpleDate(day, month, year);
-        }
-    }
-
     public static SimpleDate now() {
         LocalDate localDate = LocalDate.now();
         return new SimpleDate(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
+    }
+
+    @Override
+    public SimpleDate clone() {
+        try {
+            return (SimpleDate) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
