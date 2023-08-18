@@ -4,6 +4,7 @@ import me.dave.activityrewarder.exceptions.SimpleDateParseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +58,7 @@ public class SimpleDate implements Cloneable {
         Matcher matcher= DATE_FORMAT.matcher(string);
 
         if (matcher.find()) {
-            return new SimpleDate(Integer.parseInt(matcher.group(0)), Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
+            return new SimpleDate(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
         } else {
             throw new SimpleDateParseException("Invalid date format found");
         }
@@ -66,6 +67,19 @@ public class SimpleDate implements Cloneable {
     public static SimpleDate now() {
         LocalDate localDate = LocalDate.now();
         return new SimpleDate(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleDate that = (SimpleDate) o;
+        return day == that.day && month == that.month && year == that.year;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(day, month, year);
     }
 
     @Override
