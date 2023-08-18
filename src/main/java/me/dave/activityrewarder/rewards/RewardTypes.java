@@ -12,6 +12,7 @@ public class RewardTypes {
         register("command", CommandReward.class);
         register("item", ItemReward.class);
         register("message", MessageReward.class);
+        register("permission", PermissionReward.class);
         register("random", RandomReward.class);
     }
 
