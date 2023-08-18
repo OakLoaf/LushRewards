@@ -20,11 +20,14 @@ streak-mode: true
 # Display items for different reward categories
 categories:
   small:
-    material: gold_nugget
+    material: player_head
+    skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTAxYzYzYzIwM2ExODQxZGUyN2EwZTA5YTI5NWY1Yjg3MzM2MjcwMjRmMTY2OGEwMWQyMDE4NmEzZjg2MzA0MCJ9fX0=
   medium:
-    material: gold_ingot
+    material: player_head
+    skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjEwMzhjZGM4NDIzNGI1YWZiM2FlYTg1M2JmM2QwNTE3NWQxOWFlN2I0ODc1YTkxYjUyZjc2NmMwN2IzZGIwYiJ9fX0=
   large:
-    material: gold_block
+    material: player_head
+    skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyODdhZjk3ZjkzZDM3MTg5NzNmNGUxM2VkMGZhM2E2ZjQzOWU3MmMxNDVmZTRjZDkwMmIwNWMxYzEwYWYxOCJ9fX0=
 
 # Upcoming category to display
 upcoming-category: large
@@ -33,7 +36,7 @@ upcoming-category: large
 item-templates:
   # Template for default rewards
   default-reward:
-    display-name: "&6Day %day%"
+    display-name: "<gradient:#CEB5FE:#81BAFE>Day %day%</gradient>"
   # Template for collectable rewards
   redeemable-reward:
     display-name: "&6Day %day% - Redeemable"
@@ -52,30 +55,29 @@ item-templates:
     lore:
       - "&7&o- Upcoming reward"
 
-  # Template for border item - more items can be created like this to be used within the gui templates
+  # Template for border items - more items can be created like this to be used within the gui templates
   '#':
-    material: gray_stained_glass_pane
+    material: light_blue_stained_glass_pane
     display-name: "&7"
-  # Template for profile item
   'P':
     material: player_head
-    display-name: "&d&lProfile:"
+    display-name: "<gradient:#CEB5FE:#81BAFE><bold>Profile:</bold></gradient>"
     skull-texture: mirror
     lore:
-      - "&eDay Number: &f%rewarder_day_num%"
-      - "&eHighest Streak: &f%rewarder_highest_streak%"
-      - "&eMultiplier: &fx%rewarder_multiplier%"
+      - "&#c4f8ffDay Number: &f%rewarder_day_num%"
+      - "&#c4f8ffHighest Streak: &f%rewarder_highest_streak%"
+      - "&#c4f8ffMultiplier: &fx%rewarder_multiplier%"
 
 messages:
-  reload: "&aConfig reloaded"
-  reminder: "&e&lRewards &8» &7It looks like you haven't collected today's reward from &e/rewards"
-  daily-reward-given: "&e&lRewards &8» &aYou have collected today's reward"
-  playtime-reward-given: "&e&lRewards &8» &7You have received a bonus for playing &e%hours% &7hours"
-  reset-streak: "Are you sure you want to reset %target%'s streak? Type '/rewards reset-streak %target% confirm' to confirm"
-  set-streak: "Are you sure you want to set %target%'s streak? Type '/rewards set-streak %target% %streak% confirm' to confirm"
-  set-streak-confirm: "Set %target%'s streak to %streak%"
-  no-permissions: "&cInsufficient permissions"
-  incorrect-usage: "&cIncorrect usage, try %command-usage%"
+  reload: "&#b7faa2ActivityRewarder has been reloaded &#66b04f🔃"
+  reminder: "<gradient:#CEB5FE:#81BAFE><bold>Rewards</bold></gradient> &8» &#ffe27aIt looks like you haven't collected today's reward from &#e0c01b/rewards"
+  daily-reward-given: "&#b7faa2You have collected today's reward"
+  playtime-reward-given: "&#b7faa2You have received a bonus for playing &#66b04f%hours% &#b7faa2hours"
+  reset-streak: "&#ffe27aAre you sure you want to reset &#e0c01b%target%'s &#ffe27astreak? Type &#e0c01b'/rewards reset-streak %target% confirm' &#ffe27ato confirm"
+  set-streak: "&#ffe27aAre you sure you want to set &#e0c01b%target%'s &#ffe27astreak? Type &#e0c01b'/rewards set-streak %target% %streak% confirm' &#ffe27ato confirm"
+  set-streak-confirm: "&#66b04f%target%'s &#b7faa2streak has been set to &#66b04f%streak%"
+  no-permissions: "&#ff6969Insufficient permissions"
+  incorrect-usage: "&#ff6969Incorrect usage try &#d13636%command-usage%"
 
 # Debug Modes: none, daily, playtime, all
 debug-mode: none

@@ -9,81 +9,202 @@ daily-rewards:
     category: small
     display-item:
       lore:
-        - "&7Rewards:"
-        - "&7&o-12 Cactus"
-        - "&7&o-1 Cookie"
+        - "&#bdbebfRewards: &o(one of)"
+        - "&#bdbebf- 4 Iron Ingots"
+        - "&#bdbebf- 6 Bread"
+        - "&#bdbebf- 1 Pufferfish"
+        - "&#bdbebf- 4 Sea Pickles"
+        - "&#bdbebf- 2 Lily Pads"
+        - "&#bdbebf- 13 Dirt"
+        - "&#bdbebf- 1 Pitcher Plant"
     redeem-sound: ENTITY_EXPERIENCE_ORB_PICKUP
     rewards:
-      - type: item
-        material: cactus
-        amount: 12
-      - type: item
-        material: cookie
-        amount: 1
+      - type: random
+        rewards:
+          - type: item
+            material: iron_ingot
+            amount: 4
+          - type: item
+            material: bread
+            amount: 6
+          - type: item
+            material: pufferfish
+            amount: 1
+          - type: item
+            material: sea_pickle
+            amount: 4
+          - type: item
+            material: lily_pad
+            amount: 2
+          - type: item
+            material: dirt
+            amount: 13
+          - type: item
+            material: pitcher_plant
+            amount: 1
   day-1:
     category: small
     display-item:
       lore:
-        - "&7Rewards:"
-        - "&7&o-1 Pink Tulip"
-        - "&7&o-1 Cookie"
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 4 Cooked Beef"
+        - "&#bdbebf- 4 Cooked Porkchop"
+        - "&#bdbebf- 8 Apples"
     rewards:
       - type: item
-        material: pink_tulip
-        amount: 1
+        material: cooked_beef
+        amount: 4
       - type: item
-        material: cookie
-        amount: 1
+        material: cooked_porkchop
+        amount: 4
+      - type: item
+        material: apple
+        amount: 8
   day-2:
     category: small
     display-item:
       lore:
-        - "&7Rewards:"
-        - "&7&o-1 Oxeye Daisy"
-        - "&7&o-1 Bread"
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 8 Cherry Saplings"
+        - "&#bdbebf- 12 Pink Petals"
     rewards:
       - type: item
-        material: oxeye_daisy
-        amount: 1
+        material: cherry_sapling
+        amount: 8
       - type: item
-        material: bread
-        amount: 1
+        material: pink_petals
+        amount: 12
+  day-3:
+    category: small
+    display-item:
+      lore:
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 32 Oak Logs"
+        - "&#bdbebf- 32 Jungle Logs"
+        - "&#bdbebf- 8 Oak Saplings"
+    rewards:
+      - type: item
+        material: oak_log
+        amount: 32
+      - type: item
+        material: jungle_log
+        amount: 32
+      - type: item
+        material: oak_sapling
+        amount: 8
+  day-4:
+    category: small
+    display-item:
+      lore:
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 4 Dandelions"
+        - "&#bdbebf- 4 Red Tulips"
+        - "&#bdbebf- 4 Alliums"
+    rewards:
+      - type: item
+        material: dandelion
+        amount: 4
+      - type: item
+        material: red_tulip
+        amount: 4
+      - type: item
+        material: allium
+        amount: 4
   day-5:
     category: small
     display-item:
       lore:
-        - "&7Rewards:"
-        - "&7&o-1 White Tulip"
-        - "&7&o-1 Pearlescent Froglight"
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 1 Smithing Table"
+        - "&#bdbebf- 6 Lanterns"
     rewards:
       - type: item
-        material: white_tulip
+        material: smithing_table
         amount: 1
       - type: item
-        material: pearlescent_froglight
+        material: lantern
+        amount: 6
+  day-6:
+    category: small
+    display-item:
+      lore:
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 6 Glow Berries"
+        - "&#bdbebf- 6 Sweet Berries"
+    rewards:
+      - type: item
+        material: glow_berries
+        amount: 6
+      - type: item
+        material: sweet_berries
+        amount: 6
+  day-7:
+    category: small
+    display-item:
+      lore:
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 12 Iron Ingots"
+    rewards:
+      - type: item
+        material: iron_ingot
+        amount: 12
+  day-12:
+    category: medium
+    display-item:
+      lore:
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 2 Diamonds"
+        - "&#bdbebf- 1 Golden Apple"
+    rewards:
+      - type: item
+        material: diamond
+        amount: 2
+      - type: item
+        material: golden_apple
+        amount: 1
+  day-24:
+    category: medium
+    display-item:
+      lore:
+        - "&#bdbebfRewards:"
+        - "&#bdbebf- 2 Diamonds"
+        - "&#bdbebf- 1 Golden Apple"
+    rewards:
+      - type: item
+        material: diamond
+        amount: 2
+      - type: item
+        material: golden_apple
         amount: 1
   day-30:
     category: large
     display-item:
       lore:
-        - "&6Rewards:"
-        - "&6&o-3 Diamond"
-        - "&6&o-1 Golden Apple"
+        - "&#85eb73Rewards:"
+        - "&#85eb73- 1 Conduit"
+        - "&#85eb73- 6 Diamonds"
+        - "&#85eb73- 1 Iron Block"
     rewards:
       - type: item
-        material: diamond
-        amount: 3
-      - type: item
-        material: golden_apple
+        material: conduit
         amount: 1
-      - type: command
-        command: "give %user% minecraft:diamond_block"
-      - type: command
-        command: "give %user% minecraft:iron_block"
+      - type: item
+        material: diamond
+        amount: 6
+      - type: item
+        material: iron_block
+        amount: 1
 
 gui:
-  title: "&8&lDaily Rewards"
+  title: "          <color:#529bf2><bold>Daily Rewards</bold>"
   # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
-  template: "DEFAULT"
+  template: "CUSTOM"
+  format:
+    - "RRRRRRRRR"
+    - "RRRRRRRRR"
+    - "RRRRRRRRR"
+    - "RRRR#####"
+    - "#########"
+    - "####P####"
