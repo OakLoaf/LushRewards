@@ -5,7 +5,7 @@ modules:
   playtime-global-goals: true
   playtime-bonuses: true
 
-# Whether players will receive all rewards on a day or just the one with the highest priorty
+# Whether players will receive all rewards on a day or just the one with the highest priority
 allow-reward-stacking: false
 
 # Whether rewards will automatically refresh when the day ticks over
