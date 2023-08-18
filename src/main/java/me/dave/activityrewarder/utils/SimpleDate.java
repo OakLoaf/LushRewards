@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.utils;
 
 import me.dave.activityrewarder.exceptions.SimpleDateParseException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +25,7 @@ public class SimpleDate {
                 .replaceAll("yyyy", String.valueOf(year));
     }
 
-    public static SimpleDate from(String string) {
+    public static SimpleDate from(@NotNull String string) {
         Matcher matcher= DATE_FORMAT.matcher(string);
 
         if (matcher.find()) {
