@@ -70,7 +70,7 @@ item-templates:
 
 messages:
   reload: "&#b7faa2ActivityRewarder has been reloaded &#66b04f🔃"
-  reminder: "<gradient:#CEB5FE:#81BAFE><bold>Rewards</bold></gradient> &8» &#ffe27aIt looks like you haven't collected today's reward from &#e0c01b/rewards"
+  reminder: "<gradient:#CEB5FE:#81BAFE><bold>Rewards</bold></gradient> &8» &#ffe27aIt looks like you haven't collected today's reward from &#ffc940/rewards"
   daily-reward-given: "&#b7faa2You have collected today's reward"
   playtime-reward-given: "&#b7faa2You have received a bonus for playing &#66b04f%hours% &#b7faa2hours"
   reset-streak: "&#ffe27aAre you sure you want to reset &#e0c01b%target%'s &#ffe27astreak? Type &#e0c01b'/rewards reset-streak %target% confirm' &#ffe27ato confirm"
