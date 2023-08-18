@@ -1,7 +1,7 @@
 # Hourly goals that reset daily
 daily-goals:
   - category: small
-    hours: 1
+    play-hours: 1
     display-item:
       material: gold_nugget
       amount: 1
@@ -10,7 +10,7 @@ daily-goals:
         material: iron_ingot
         amount: 1
   - category: small
-    hours: 4
+    play-hours: 4
     display-item:
       material: gold_nugget
       amount: 4
