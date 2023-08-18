@@ -30,8 +30,6 @@ public class ConfigManager {
     public ConfigManager() {
         ActivityRewarder.getInstance().saveDefaultConfig();
         initRewardsYmls();
-
-        reloadConfig();
     }
 
     public void reloadConfig() {
@@ -45,6 +43,8 @@ public class ConfigManager {
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         streakMode = config.getBoolean("streak-mode", false);
         upcomingCategory = config.getString("upcoming-category");
+
+        ActivityRewarder.unregisterAll();
 
         if (config.getBoolean("modules.daily-rewards", false)) {
             ActivityRewarder.registerModule(new DailyRewardsModule("daily-rewards"));
@@ -60,10 +60,6 @@ public class ConfigManager {
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadMessages(config.getConfigurationSection("messages"));
         notificationHandler.reloadNotifications(reminderPeriod);
-
-        if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
-            dailyRewardsModule.reload();
-        }
     }
 
     public YamlConfiguration getDailyRewardsConfig() {
