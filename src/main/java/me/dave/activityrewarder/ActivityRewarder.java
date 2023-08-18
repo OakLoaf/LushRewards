@@ -73,6 +73,11 @@ public final class ActivityRewarder extends JavaPlugin {
         module.enable();
     }
 
+    public static void unregisterAll() {
+        modules.values().forEach(Module::disable);
+        modules.clear();
+    }
+
     public static ActivityRewarder getInstance() {
         return plugin;
     }
