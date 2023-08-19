@@ -58,7 +58,7 @@ daily-goals:
 # Global goals that do not resets
 global-goals:
   - category: small
-    hours: 10
+    play-hours: 10
     display-item:
       material: clock
       amount: 1
@@ -67,7 +67,7 @@ global-goals:
         material: iron_ingot
         amount: 1
   - category: small
-    hours: 24
+    play-hours: 24
     display-item:
       material: clock
       amount: 1
