@@ -2,10 +2,10 @@ package me.dave.activityrewarder.rewards;
 
 import me.dave.activityrewarder.rewards.custom.*;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RewardTypes {
-    private static final HashMap<String, Class<? extends Reward>> nameToRewardType = new HashMap<>();
+    private static final ConcurrentHashMap<String, Class<? extends Reward>> nameToRewardType = new ConcurrentHashMap<>();
 
     static {
         register("broadcast", BroadcastReward.class);

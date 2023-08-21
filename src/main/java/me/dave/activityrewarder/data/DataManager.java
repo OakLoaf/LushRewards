@@ -7,14 +7,14 @@ import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class DataManager {
     private final IOHandler<RewardUser> ioHandler = new IOHandler<>(new YmlStorage());
-    private final HashMap<UUID, RewardUser> uuidToRewardUser = new HashMap<>();
+    private final ConcurrentHashMap<UUID, RewardUser> uuidToRewardUser = new ConcurrentHashMap<>();
 
     public DataManager() {
         for (Player player : Bukkit.getOnlinePlayers()) {

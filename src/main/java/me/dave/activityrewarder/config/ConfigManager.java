@@ -13,11 +13,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigManager {
     private final NotificationHandler notificationHandler = new NotificationHandler();
-    private final HashMap<String, SimpleItemStack> categoryItems = new HashMap<>();
-    private final HashMap<String, SimpleItemStack> itemTemplates = new HashMap<>();
+    private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
     private final HashMap<String, String> messages = new HashMap<>();
     private File rewardsFile;
     private File playtimeRewardsFile;

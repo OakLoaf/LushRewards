@@ -12,12 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeGlobalGoalsModule extends Module {
-    private HashMap<String, PlaytimeRewardCollection> permissionToPlaytimeReward;
+    private ConcurrentHashMap<String, PlaytimeRewardCollection> permissionToPlaytimeReward;
 
     public PlaytimeGlobalGoalsModule(String id) {
         super(id);
@@ -25,7 +25,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
 
     @Override
     public void onEnable() {
-        this.permissionToPlaytimeReward = new HashMap<>();
+        this.permissionToPlaytimeReward = new ConcurrentHashMap<>();
 
         ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getPlaytimeRewardsConfig().getConfigurationSection("playtime-rewards.global-goals");
         if (configurationSection == null) {

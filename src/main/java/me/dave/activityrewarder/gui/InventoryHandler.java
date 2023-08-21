@@ -2,11 +2,11 @@ package me.dave.activityrewarder.gui;
 
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InventoryHandler {
-    private static final HashMap<UUID, AbstractGui> playerInventoryMap = new HashMap<>();
+    private static final ConcurrentHashMap<UUID, AbstractGui> playerInventoryMap = new ConcurrentHashMap<>();
 
     public static AbstractGui getGui(UUID uuid) {
         return playerInventoryMap.get(uuid);

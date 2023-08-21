@@ -12,10 +12,10 @@ import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
 import space.arim.morepaperlib.MorePaperLib;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ActivityRewarder extends JavaPlugin {
-    private static final HashMap<String, Module> modules = new HashMap<>();
+    private static final ConcurrentHashMap<String, Module> modules = new ConcurrentHashMap<>();
     private static ActivityRewarder plugin;
     private static MorePaperLib morePaperLib;
     private static boolean floodgateEnabled = false;
