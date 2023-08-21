@@ -1,0 +1,31 @@
+# Global goals that do not resets
+global-goals:
+  - category: small
+    play-hours: 10
+    display-item:
+      material: clock
+      amount: 1
+    rewards:
+      - type: item
+        material: iron_ingot
+        amount: 1
+  - category: small
+    play-hours: 24
+    display-item:
+      material: clock
+      amount: 1
+    rewards:
+      - type: item
+        material: diamond
+        amount: 3
+
+gui:
+  title: "&8&lDaily Rewards"
+  # Available templates: DEFAULT, COMPACT
+  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
+  # creating and using templates
+  template: "CUSTOM"
+  format:
+    - "#########"
+    - "#RRRRRRR#"
+    - "#########"
