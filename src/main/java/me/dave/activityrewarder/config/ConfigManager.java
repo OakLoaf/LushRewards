@@ -80,7 +80,7 @@ public class ConfigManager {
         String output = messages.getOrDefault(messageName, "");
 
         if (messages.containsKey("prefix")) {
-            return output.replaceAll("%prefix%", messages.getOrDefault("prefix", ""));
+            return output.replaceAll("%prefix%", messages.get("prefix"));
         } else {
             return output;
         }
