@@ -4,6 +4,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
@@ -48,14 +49,20 @@ public class ConfigManager {
 
         ActivityRewarder.unregisterAll();
 
+        boolean requiresPlaytimeTracker = false;
         if (config.getBoolean("modules.daily-rewards", false)) {
             ActivityRewarder.registerModule(new DailyRewardsModule("daily-rewards"));
         }
         if (config.getBoolean("modules.playtime-daily-goals", false)) {
             ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule("playtime-daily-goals"));
+            requiresPlaytimeTracker = true;
         }
         if (config.getBoolean("modules.playtime-global-goals", false)) {
             ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule("playtime-global-goals"));
+            requiresPlaytimeTracker = true;
+        }
+        if (requiresPlaytimeTracker) {
+            ActivityRewarder.registerModule(new PlaytimeTrackerModule("playtime-tracker"));
         }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));

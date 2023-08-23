@@ -61,6 +61,11 @@ public class RewardUser {
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
+    public void increasePlayMinutes(int playMinutes) {
+        this.playMinutes += playMinutes;
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
     public UUID getUUID() {
         return this.uuid;
     }

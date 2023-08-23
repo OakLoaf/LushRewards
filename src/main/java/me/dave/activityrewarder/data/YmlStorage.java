@@ -2,7 +2,6 @@ package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class YmlStorage implements Storage<RewardUser> {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
@@ -26,7 +24,7 @@ public class YmlStorage implements Storage<RewardUser> {
         String lastCollectedDate = configurationSection.getString("lastCollectedDate");
         int dayNum = configurationSection.getInt("dayNum", 1);
         int highestStreak = configurationSection.getInt("highestStreak", 1);
-        int playTime = configurationSection.getInt("hoursPlayed", 0);
+        int playTime = configurationSection.getInt("minutesPlayed", 0);
         return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, highestStreak, playTime);
     }
 
@@ -37,7 +35,7 @@ public class YmlStorage implements Storage<RewardUser> {
         yamlConfiguration.set("startDate", rewardUser.getStartDate().toString());
         yamlConfiguration.set("lastCollectedDate", rewardUser.getLastDate().toString());
         yamlConfiguration.set("dayNum", rewardUser.getDayNum());
-        yamlConfiguration.set("hoursPlayed", rewardUser.getPlayHours());
+        yamlConfiguration.set("minutesPlayed", rewardUser.getPlayMinutes());
         File file = new File(dataFolder, rewardUser.getUUID().toString());
         try {
             yamlConfiguration.save(file);
@@ -56,7 +54,7 @@ public class YmlStorage implements Storage<RewardUser> {
             yamlConfiguration.set("startDate", LocalDate.now().toString());
             yamlConfiguration.set("lastCollectedDate", LocalDate.now().minusDays(1).toString());
             yamlConfiguration.set("dayNum", 1);
-            yamlConfiguration.set("hoursPlayed", (int) getTicksToHours(player.getStatistic(Statistic.PLAY_ONE_MINUTE)));
+            yamlConfiguration.set("minutesPlayed", 0);
             try {
                 yamlConfiguration.save(file);
             } catch(IOException err) {
@@ -65,9 +63,4 @@ public class YmlStorage implements Storage<RewardUser> {
         }
         return yamlConfiguration;
     }
-
-    private long getTicksToHours(long ticksPlayed) {
-        return TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
-    }
-
 }
