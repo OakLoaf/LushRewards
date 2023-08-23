@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.module.dailyrewards.gui;
+package me.dave.activityrewarder.module.dailyrewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiFormat;
