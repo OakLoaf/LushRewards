@@ -1,16 +1,13 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
+import me.dave.activityrewarder.utils.RandomCollection;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class RandomReward implements Reward {
-    private static final Random random = new Random();
-    private final List<Reward> rewards;
+    private final RandomCollection<Reward> rewards;
 
     @SuppressWarnings("unchecked")
     public RandomReward(Map<?, ?> map) {
@@ -21,14 +18,21 @@ public class RandomReward implements Reward {
             throw new InvalidRewardException("Invalid config format at '" + map + "'");
         }
 
-        // TODO: replace #loadRewards() with local alternative that takes into account weights
-        this.rewards = Reward.loadRewards(rewardMaps, map.toString());
+        this.rewards = new RandomCollection<>();
+
+        rewardMaps.forEach((rewardMap) -> {
+            Reward reward = Reward.loadReward(rewardMap, rewardMap.toString());
+            double weight = rewardMap.containsKey("weight") ? (double) rewardMap.get("weight") : 1;
+            if (reward != null) {
+                rewards.add(weight, reward);
+            }
+        });
     }
 
     @Override
     public void giveTo(Player player) {
         if (rewards != null && !rewards.isEmpty()) {
-            rewards.get(random.nextInt(0, rewards.size())).giveTo(player);
+            rewards.next().giveTo(player);
         }
     }
 }
