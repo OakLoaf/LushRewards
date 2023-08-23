@@ -25,7 +25,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
 
     @Override
     public void onEnable() {
-        YamlConfiguration config = ActivityRewarder.getConfigManager().getPlaytimeRewardsConfig();
+        YamlConfiguration config = ActivityRewarder.getConfigManager().getGlobalGoalsConfig();
         ConfigurationSection configurationSection = config.getConfigurationSection("global-goals");
         if (configurationSection == null) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'global-goals' section in 'playtime-rewards.yml'");

@@ -21,7 +21,8 @@ public class ConfigManager {
     private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
     private final HashMap<String, String> messages = new HashMap<>();
     private File rewardsFile;
-    private File playtimeRewardsFile;
+    private File dailyGoalsFile;
+    private File globalGoalsFile;
     private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
@@ -67,8 +68,12 @@ public class ConfigManager {
         return YamlConfiguration.loadConfiguration(rewardsFile);
     }
 
-    public YamlConfiguration getPlaytimeRewardsConfig() {
-        return YamlConfiguration.loadConfiguration(playtimeRewardsFile);
+    public YamlConfiguration getDailyGoalsConfig() {
+        return YamlConfiguration.loadConfiguration(dailyGoalsFile);
+    }
+
+    public YamlConfiguration getGlobalGoalsConfig() {
+        return YamlConfiguration.loadConfiguration(globalGoalsFile);
     }
 
     public String getMessage(String messageName) {
@@ -176,13 +181,20 @@ public class ConfigManager {
             plugin.getLogger().info("File Created: daily-rewards.yml");
         }
 
-        File playtimeRewardsFile = new File(plugin.getDataFolder(), "playtime-rewards.yml");
-        if (!playtimeRewardsFile.exists()) {
-            plugin.saveResource("playtime-rewards.yml", false);
-            plugin.getLogger().info("File Created: playtime-rewards.yml");
+        File dailyGoalsFile = new File(plugin.getDataFolder(), "modules/daily-playtime-goals.yml");
+        if (!dailyGoalsFile.exists()) {
+            plugin.saveResource("modules/daily-playtime-goals.yml", false);
+            plugin.getLogger().info("File Created: daily-playtime-goals.yml");
+        }
+
+        File globalGoalsFile = new File(plugin.getDataFolder(), "modules/global-playtime-goals.yml");
+        if (!globalGoalsFile.exists()) {
+            plugin.saveResource("modules/global-playtime-goals.yml", false);
+            plugin.getLogger().info("File Created: global-playtime-goals.yml");
         }
 
         this.rewardsFile = dailyRewardsFile;
-        this.playtimeRewardsFile = playtimeRewardsFile;
+        this.dailyGoalsFile = dailyGoalsFile;
+        this.globalGoalsFile = globalGoalsFile;
     }
 }
