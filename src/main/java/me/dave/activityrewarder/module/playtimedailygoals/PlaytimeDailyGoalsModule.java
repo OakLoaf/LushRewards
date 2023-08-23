@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlaytimeDailyGoalsModule extends Module {
+    // TODO: implement refresh time
     private GuiFormat guiFormat;
     private HashMap<Integer, RewardCollection> minutesToReward;
 

@@ -1,23 +1,23 @@
 package me.dave.activityrewarder.module.playtimeglobalgoals;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.exceptions.InvalidRewardException;
+import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
-import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
-import me.dave.activityrewarder.rewards.custom.Reward;
-import me.dave.activityrewarder.utils.Debugger;
+import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
+import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeGlobalGoalsModule extends Module {
-    private ConcurrentHashMap<String, PlaytimeRewardCollection> permissionToPlaytimeReward;
+    // TODO: implement refresh time
+    private boolean receiveWithDailyRewards;
+    private GuiFormat guiFormat;
+    private HashMap<Integer, RewardCollection> minutesToReward;
 
     public PlaytimeGlobalGoalsModule(String id) {
         super(id);
@@ -25,86 +25,59 @@ public class PlaytimeGlobalGoalsModule extends Module {
 
     @Override
     public void onEnable() {
-        this.permissionToPlaytimeReward = new ConcurrentHashMap<>();
-
-        ConfigurationSection configurationSection = ActivityRewarder.getConfigManager().getPlaytimeRewardsConfig().getConfigurationSection("playtime-rewards.global-goals");
+        YamlConfiguration config = ActivityRewarder.getConfigManager().getPlaytimeRewardsConfig();
+        ConfigurationSection configurationSection = config.getConfigurationSection("global-goals");
         if (configurationSection == null) {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'playtime-rewards.global-goals' section");
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'global-goals' section in 'playtime-rewards.yml'");
+            this.disable();
             return;
         }
 
-        configurationSection.getValues(false).forEach((key, value) -> {
-            if (value instanceof ConfigurationSection permissionSection) {
-                List<Map<?, ?>> rewardMaps = permissionSection.getMapList("rewards");
-                List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, permissionSection.getCurrentPath() + "rewards") : new ArrayList<>();
+        receiveWithDailyRewards = config.getBoolean("receive-with-daily-rewards");
 
-                if (rewardList != null) {
-                    permissionToPlaytimeReward.put(key, new PlaytimeRewardCollection(permissionSection.getDouble("multiplier", 1), rewardList));
+        String guiTitle = config.getString("gui.title", "&8&lPlaytime Rewards");
+        String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
+        GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
+        this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
+
+        this.minutesToReward = new HashMap<>();
+        for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection rewardSection) {
+                RewardCollection rewardCollection;
+                try {
+                    rewardCollection = DailyRewardCollection.from(rewardSection);
+                } catch(InvalidRewardException e) {
+                    e.printStackTrace();
+                    continue;
                 }
+
+                int minutes = (int) Math.floor(rewardSection.getDouble("play-hours", 1.0) * 60);
+                minutesToReward.put(minutes, rewardCollection);
             }
-        });
+        }
+
+        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
     }
 
     @Override
     public void onDisable() {
-        if (permissionToPlaytimeReward != null) {
-            permissionToPlaytimeReward.clear();
-            permissionToPlaytimeReward = null;
+        if (minutesToReward != null) {
+            minutesToReward.clear();
+            minutesToReward = null;
         }
+    }
+
+    public boolean shouldReceiveWithDailyRewards() {
+        return receiveWithDailyRewards;
     }
 
     @Nullable
-    public PlaytimeRewardCollection getRewards(Player player) {
-        Debugger.sendDebugMessage("Getting playtime rewards section from config", Debugger.DebugMode.PLAYTIME);
-        if (permissionToPlaytimeReward.isEmpty()) {
-            Debugger.sendDebugMessage("No playtime rewards found", Debugger.DebugMode.PLAYTIME);
-            return null;
-        }
-
-        Debugger.sendDebugMessage("Checking player's highest multiplier", Debugger.DebugMode.PLAYTIME);
-        PlaytimeRewardCollection playtimeRewardCollection = getHighestMultiplierReward(player);
-        if (playtimeRewardCollection != null) {
-            Debugger.sendDebugMessage("Found highest multiplier (" + playtimeRewardCollection.getMultiplier() + ")", Debugger.DebugMode.PLAYTIME);
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            rewardUser.setHourlyMultiplier(playtimeRewardCollection.getMultiplier());
-        } else {
-            Debugger.sendDebugMessage("Could not find a valid multiplier for this player", Debugger.DebugMode.PLAYTIME);
-        }
-
-        return playtimeRewardCollection;
+    public RewardCollection getRewardCollection(int minutes) {
+        // TODO: Work out how to implement this in a way that allows checking claimed rewards
+        return minutesToReward.get(minutes);
     }
 
-    @Nullable
-    public PlaytimeRewardCollection getHighestMultiplierReward(Player player) {
-        return getHighestMultiplierResult(player).rewardCollection();
+    public GuiFormat getGuiFormat() {
+        return guiFormat;
     }
-
-    public double getHighestMultiplier(Player player) {
-        return getHighestMultiplierResult(player).multiplier();
-    }
-
-    @NotNull
-    private HighestMultiplierResult getHighestMultiplierResult(Player player) {
-        PlaytimeRewardCollection highestMultiplierReward = null;
-        double highestMultiplier = 0;
-
-        for (Map.Entry<String, PlaytimeRewardCollection> entry : permissionToPlaytimeReward.entrySet()) {
-            String permission = entry.getKey();
-
-            if (!player.hasPermission("activityrewarder.bonus." + permission)) {
-                continue;
-            }
-            Debugger.sendDebugMessage("Player has activityrewarder.bonus." + permission, Debugger.DebugMode.PLAYTIME);
-
-            double multiplier = entry.getValue().getMultiplier();
-            if (multiplier > highestMultiplier) {
-                Debugger.sendDebugMessage("Found higher multiplier, updated highest multiplier", Debugger.DebugMode.PLAYTIME);
-                highestMultiplier = multiplier;
-                highestMultiplierReward = entry.getValue();
-            }
-        }
-        return new HighestMultiplierResult(highestMultiplierReward, highestMultiplier);
-    }
-
-    private record HighestMultiplierResult(PlaytimeRewardCollection rewardCollection, double multiplier) {}
 }

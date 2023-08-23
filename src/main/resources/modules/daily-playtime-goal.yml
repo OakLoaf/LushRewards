@@ -1,4 +1,8 @@
-# Hourly goals that reset daily
+# Hourly playtime goals that reset daily
+
+# Time in seconds between checking whether any online players need to receive rewards (-1 to disable)
+refresh-time: -1
+
 daily-goals:
   - category: small
     play-hours: 1

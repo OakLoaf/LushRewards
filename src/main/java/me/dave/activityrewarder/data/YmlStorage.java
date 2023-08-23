@@ -37,7 +37,7 @@ public class YmlStorage implements Storage<RewardUser> {
         yamlConfiguration.set("startDate", rewardUser.getStartDate().toString());
         yamlConfiguration.set("lastCollectedDate", rewardUser.getLastDate().toString());
         yamlConfiguration.set("dayNum", rewardUser.getDayNum());
-        yamlConfiguration.set("hoursPlayed", rewardUser.getPlayTime());
+        yamlConfiguration.set("hoursPlayed", rewardUser.getPlayHours());
         File file = new File(dataFolder, rewardUser.getUUID().toString());
         try {
             yamlConfiguration.save(file);

@@ -1,13 +1,11 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 
 import java.time.LocalDate;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class RewardUser {
     private final UUID uuid;
@@ -16,22 +14,16 @@ public class RewardUser {
     private LocalDate lastDate;
     private int dayNum;
     private int highestStreak;
-    private int playTime;
-    private double hourlyMultiplier;
+    private int playMinutes;
 
-    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int highestStreak, int playTime) {
+    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int highestStreak, int playMinutes) {
         this.uuid = uuid;
         this.username = username;
         this.startDate = LocalDate.parse(startDate);
         this.lastDate = LocalDate.parse(lastCollectedDate);
         this.dayNum = dayNum;
         this.highestStreak = highestStreak;
-        this.playTime = playTime;
-
-        if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule globalGoalsModule) {
-            this.hourlyMultiplier = globalGoalsModule.getHighestMultiplier(Bukkit.getPlayer(uuid));
-        }
-
+        this.playMinutes = playMinutes;
     }
 
     public void setUsername(String username) {
@@ -64,13 +56,8 @@ public class RewardUser {
         setDay(1);
     }
 
-    public void setPlayTime(int playTime) {
-        this.playTime = playTime;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public void setHourlyMultiplier(double multiplier) {
-        this.hourlyMultiplier = multiplier;
+    public void setPlayMinutes(int playMinutes) {
+        this.playMinutes = playMinutes;
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
@@ -106,8 +93,12 @@ public class RewardUser {
         return getActualDayNum() - dayNum;
     }
 
-    public int getPlayTime() {
-        return this.playTime;
+    public int getPlayMinutes() {
+        return this.playMinutes;
+    }
+
+    public int getPlayHours() {
+        return this.playMinutes * 60;
     }
 
     public int getTotalPlayTime() {
@@ -118,18 +109,22 @@ public class RewardUser {
         // Gets the player's current play time
         int currPlayTime = getTotalPlayTime();
         // Finds the difference between their current play time and play time when the player last collected their reward
-        return currPlayTime - playTime;
-    }
-
-    public double getHourlyMultiplier() {
-        return hourlyMultiplier;
+        return currPlayTime - playMinutes;
     }
 
     public boolean hasCollectedToday() {
         return LocalDate.now().equals(lastDate);
     }
 
-    private int getTicksToHours(long ticksPlayed) {
-        return (int) TimeUnit.HOURS.convert(ticksPlayed * 50, TimeUnit.MILLISECONDS);
+    private int getTicksToSeconds(long ticks) {
+        return (int) Math.floor(ticks * 20);
+    }
+
+    private int getTicksToMinutes(long ticks) {
+        return getTicksToSeconds(ticks) * 60;
+    }
+
+    private int getTicksToHours(long ticks) {
+        return getTicksToMinutes(ticks) * 60;
     }
 }

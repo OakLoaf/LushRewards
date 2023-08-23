@@ -170,9 +170,9 @@ public class ConfigManager {
     private void initRewardsYmls() {
         ActivityRewarder plugin = ActivityRewarder.getInstance();
 
-        File dailyRewardsFile = new File(plugin.getDataFolder(), "daily-rewards.yml");
+        File dailyRewardsFile = new File(plugin.getDataFolder(), "modules/daily-rewards.yml");
         if (!dailyRewardsFile.exists()) {
-            plugin.saveResource("daily-rewards.yml", false);
+            plugin.saveResource("modules/daily-rewards.yml", false);
             plugin.getLogger().info("File Created: daily-rewards.yml");
         }
 
