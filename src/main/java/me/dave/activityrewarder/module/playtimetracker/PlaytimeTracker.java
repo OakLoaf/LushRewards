@@ -18,7 +18,7 @@ public class PlaytimeTracker {
         this.afk = false;
         this.sessionTime = 0;
         this.idleTime = 0;
-        this.globalTime = ActivityRewarder.getDataManager().getRewardUser(player).getTotalPlayTime();
+        this.globalTime = ActivityRewarder.getDataManager().getRewardUser(player).getPlayMinutes();
         updateLocation();
     }
 
@@ -37,7 +37,9 @@ public class PlaytimeTracker {
 
     public void whileActive() {
         sessionTime++;
-        globalTime++;
+        if (sessionTime % globalTime == 0) {
+            globalTime++;
+        }
 
         if (afk) {
             idleTime = 0;
