@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.module.playtimetracker;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.utils.SimpleLocation;
 import org.bukkit.entity.Player;
 
@@ -10,12 +11,14 @@ public class PlaytimeTracker {
     private boolean afk;
     private int sessionTime;
     private int idleTime;
+    private int globalTime;
 
     public PlaytimeTracker(Player player) {
         this.player = player;
         this.afk = false;
         this.sessionTime = 0;
         this.idleTime = 0;
+        this.globalTime = ActivityRewarder.getDataManager().getRewardUser(player).getTotalPlayTime();
         updateLocation();
     }
 
@@ -34,6 +37,7 @@ public class PlaytimeTracker {
 
     public void whileActive() {
         sessionTime++;
+        globalTime++;
 
         if (afk) {
             idleTime = 0;
@@ -48,6 +52,7 @@ public class PlaytimeTracker {
             afk = true;
         } else {
             sessionTime++;
+            globalTime++;
         }
     }
 
@@ -61,5 +66,9 @@ public class PlaytimeTracker {
 
     public int getSessionTime() {
         return sessionTime;
+    }
+
+    public int getGlobalTime() {
+        return globalTime;
     }
 }
