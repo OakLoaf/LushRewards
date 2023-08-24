@@ -1,8 +1,6 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,8 +13,9 @@ public class RewardUser {
     private int dayNum;
     private int highestStreak;
     private int playMinutes;
+    private int lastCollectedPlaytime;
 
-    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int highestStreak, int playMinutes) {
+    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int highestStreak, int playMinutes, int lastCollectedPlaytime) {
         this.uuid = uuid;
         this.username = username;
         this.startDate = LocalDate.parse(startDate);
@@ -24,6 +23,7 @@ public class RewardUser {
         this.dayNum = dayNum;
         this.highestStreak = highestStreak;
         this.playMinutes = playMinutes;
+        this.lastCollectedPlaytime = lastCollectedPlaytime;
     }
 
     public void setUsername(String username) {
@@ -63,6 +63,11 @@ public class RewardUser {
 
     public void increasePlayMinutes(int playMinutes) {
         this.playMinutes += playMinutes;
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public void setLastCollectedTime(int lastCollectedPlaytime) {
+        this.lastCollectedPlaytime = lastCollectedPlaytime;
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
@@ -106,15 +111,9 @@ public class RewardUser {
         return this.playMinutes * 60;
     }
 
-    public int getTotalPlayTime() {
-        return getTicksToHours(Bukkit.getPlayer(uuid).getStatistic(Statistic.PLAY_ONE_MINUTE));
-    }
-
     public int getPlayTimeSinceLastCollected() {
-        // Gets the player's current play time
-        int currPlayTime = getTotalPlayTime();
         // Finds the difference between their current play time and play time when the player last collected their reward
-        return currPlayTime - playMinutes;
+        return playMinutes - lastCollectedPlaytime;
     }
 
     public boolean hasCollectedToday() {
