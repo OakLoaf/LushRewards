@@ -21,6 +21,7 @@ public class DailyRewardsModule extends Module {
     private Multimap<Integer, Integer> dayToRewards;
     private Multimap<SimpleDate, Integer> dateToRewards;
     private boolean dateAsAmount;
+    private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
 
     public DailyRewardsModule(String id) {
@@ -38,11 +39,11 @@ public class DailyRewardsModule extends Module {
         }
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
-        dateAsAmount = config.getBoolean("gui.date-as-amount", false);
+        this.dateAsAmount = config.getBoolean("gui.date-as-amount", false);
+        this.scrollType = DailyRewardsGui.ScrollType.valueOf(config.getString("gui.scroll-type", "MONTH").toUpperCase());
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
-
 
         this.rewardsIndex = 0;
         this.rewards = new HashMap<>();
@@ -162,6 +163,10 @@ public class DailyRewardsModule extends Module {
 
     public boolean showDateAsAmount() {
         return dateAsAmount;
+    }
+
+    public DailyRewardsGui.ScrollType getScrollType() {
+        return scrollType;
     }
 
     public GuiFormat getGuiFormat() {
