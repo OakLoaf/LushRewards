@@ -84,6 +84,20 @@ public class GuiFormat {
             return rows.get(currRow).charAt(slotInRow);
         }
 
+        public int countChar(char character) {
+            int count = 0;
+
+            for (String row : rows) {
+                for (int i = 0; i < row.length(); i++) {
+                    if (row.charAt(i) == character) {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
         public static class DefaultTemplate {
 
             private static final String[] DEFAULT = new String[]{
