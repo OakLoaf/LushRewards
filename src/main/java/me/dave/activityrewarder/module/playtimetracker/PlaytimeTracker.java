@@ -24,6 +24,8 @@ public class PlaytimeTracker {
 
     public void tick() {
         if (!player.isOnline()) {
+            PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule("playtime-tracker");
+            playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             return;
         }
 
@@ -37,7 +39,7 @@ public class PlaytimeTracker {
 
     public void whileActive() {
         sessionTime++;
-        if (sessionTime % globalTime == 0) {
+        if (sessionTime % 60 == 0) {
             globalTime++;
         }
 
@@ -50,11 +52,15 @@ public class PlaytimeTracker {
     public void whileInactive() {
         idleTime++;
 
-        if (!afk && idleTime > IDLE_TIME_TO_AFK) {
-            afk = true;
-        } else {
-            sessionTime++;
-            globalTime++;
+        if (!afk) {
+            if (idleTime > IDLE_TIME_TO_AFK) {
+                afk = true;
+            } else {
+                sessionTime++;
+                if (sessionTime % 60 == 0) {
+                    globalTime++;
+                }
+            }
         }
     }
 

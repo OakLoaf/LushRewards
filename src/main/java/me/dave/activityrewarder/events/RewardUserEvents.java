@@ -27,8 +27,7 @@ public class RewardUserEvents implements Listener {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
 
         if (ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) {
-            // TODO: add global playtime into PlaytimeTracker
-            rewardUser.increasePlayMinutes(playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId()).getSessionTime());
+            rewardUser.setPlayMinutes(playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId()).getGlobalTime());
         }
 
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
