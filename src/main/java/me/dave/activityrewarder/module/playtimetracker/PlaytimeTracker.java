@@ -25,7 +25,10 @@ public class PlaytimeTracker {
     public void tick() {
         if (!player.isOnline()) {
             PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule("playtime-tracker");
-            playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
+            if (playtimeTrackerModule != null) {
+                playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
+            }
+
             return;
         }
 

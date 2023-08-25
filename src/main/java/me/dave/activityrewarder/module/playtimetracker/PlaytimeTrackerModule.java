@@ -24,7 +24,7 @@ public class PlaytimeTrackerModule extends Module {
 
         ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
                 (task) -> {
-                    if (poison) {
+                    if (poison || ActivityRewarder.getModule("playtime-tracker") == null) {
                         task.cancel();
                         return;
                     }
