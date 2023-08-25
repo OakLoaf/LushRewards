@@ -16,7 +16,7 @@ public class SimpleDate implements Cloneable {
     private int year;
 
     public SimpleDate(int day, int month, int year) {
-        if ((day < 0 || (month < 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
+        if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
             throw new SimpleDateParseException("Invalid date");
         } else if (day == 29 && month == 2 && year % 4 != 0) {
             throw new SimpleDateParseException("Invalid date");
@@ -77,7 +77,7 @@ public class SimpleDate implements Cloneable {
     }
 
     public boolean validateDate(int day, int month, int year) {
-        if ((day < 0 || (month < 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
+        if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
             return false;
         } else if (day != 29 || month != 2 || year % 4 == 0) {
             return true;
