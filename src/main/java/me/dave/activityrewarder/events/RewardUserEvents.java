@@ -2,6 +2,7 @@ package me.dave.activityrewarder.events;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.module.playtimetracker.PlaytimeTracker;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +28,10 @@ public class RewardUserEvents implements Listener {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
 
         if (ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) {
-            rewardUser.setPlayMinutes(playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId()).getGlobalTime());
+            PlaytimeTracker playtimeTracker = playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
+            if (playtimeTracker != null) {
+                rewardUser.setPlayMinutes(playtimeTracker.getGlobalTime());
+            }
         }
 
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
