@@ -37,9 +37,8 @@ public class DailyRewardsModule extends Module {
             return;
         }
 
-        dateAsAmount = config.getBoolean("date-as-amount", false);
-
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
+        dateAsAmount = config.getBoolean("gui.date-as-amount", false);
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
