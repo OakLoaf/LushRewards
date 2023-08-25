@@ -8,9 +8,11 @@ import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlaytimeDailyGoalsModule extends Module {
@@ -66,8 +68,23 @@ public class PlaytimeDailyGoalsModule extends Module {
 
     @Nullable
     public RewardCollection getRewardCollection(int minutes) {
-        // TODO: Work out how to implement this in a way that allows checking claimed rewards
         return minutesToReward.get(minutes);
+    }
+
+    @NotNull
+    public List<RewardCollection> getRewardCollectionsInRange(int lower, int upper) {
+        return getKeysInRange(lower, upper).stream().map(key -> minutesToReward.get(key)).toList();
+    }
+
+    /**
+     *
+     * @param lower Lower bound (inclusive)
+     * @param upper Upper bound (exclusive)
+     * @return List of keys that fit within the range
+     */
+    @NotNull
+    public List<Integer> getKeysInRange(int lower, int upper) {
+        return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
     }
 
     public GuiFormat getGuiFormat() {
