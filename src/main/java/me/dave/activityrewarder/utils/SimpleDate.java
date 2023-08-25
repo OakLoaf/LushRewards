@@ -24,6 +24,18 @@ public class SimpleDate implements Cloneable {
         }
     }
 
+    public int getDay() {
+        return day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
     // TODO: Needs to respect ends of months (and leap years)
     public void addDays(int days) {
         boolean negative = days < 0;
