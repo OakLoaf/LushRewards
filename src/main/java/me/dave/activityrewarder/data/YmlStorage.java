@@ -25,7 +25,8 @@ public class YmlStorage implements Storage<RewardUser> {
         int dayNum = configurationSection.getInt("dayNum", 1);
         int highestStreak = configurationSection.getInt("highestStreak", 1);
         int playTime = configurationSection.getInt("minutesPlayed", 0);
-        return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, highestStreak, playTime);
+        int lastCollectedPlayTime = configurationSection.getInt("lastCollectedPlaytime", 0);
+        return new RewardUser(uuid, name, startDate, lastCollectedDate, dayNum, highestStreak, playTime, lastCollectedPlayTime);
     }
 
     @Override
@@ -36,6 +37,7 @@ public class YmlStorage implements Storage<RewardUser> {
         yamlConfiguration.set("lastCollectedDate", rewardUser.getLastDate().toString());
         yamlConfiguration.set("dayNum", rewardUser.getDayNum());
         yamlConfiguration.set("minutesPlayed", rewardUser.getPlayMinutes());
+        yamlConfiguration.set("lastCollectedPlaytime", rewardUser.getLastCollectedPlaytime());
         File file = new File(dataFolder, rewardUser.getUUID().toString());
         try {
             yamlConfiguration.save(file);

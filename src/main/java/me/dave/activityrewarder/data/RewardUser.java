@@ -110,6 +110,10 @@ public class RewardUser {
     public int getPlayHours() {
         return this.playMinutes * 60;
     }
+    
+    public int getLastCollectedPlaytime() {
+        return this.lastCollectedPlaytime;
+    }
 
     public int getPlayTimeSinceLastCollected() {
         // Finds the difference between their current play time and play time when the player last collected their reward
