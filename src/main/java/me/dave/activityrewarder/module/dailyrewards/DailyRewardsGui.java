@@ -91,7 +91,10 @@ public class DailyRewardsGui extends AbstractGui {
                     displayItem = SimpleItemStack.overwrite(displayItem, ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate));
 
                     if (displayItem.hasDisplayName()) {
-                        displayItem.setDisplayName(ChatColorHandler.translateAlternateColorCodes(displayItem.getDisplayName().replaceAll("%day%", String.valueOf(dayIndex)), player));
+                        displayItem.setDisplayName(ChatColorHandler.translateAlternateColorCodes(displayItem.getDisplayName()
+                            .replaceAll("%day%", String.valueOf(dayIndex))
+                            .replaceAll("%month_day%", String.valueOf(dateIndex.getDay())),
+                            player));
                     }
                     displayItem.setLore(ChatColorHandler.translateAlternateColorCodes(displayItem.getLore(), player));
 
@@ -111,6 +114,10 @@ public class DailyRewardsGui extends AbstractGui {
                         } else {
                             itemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex + rewardUser.getDayNumOffset()) + "|collectable"));
                         }
+                    }
+
+                    if (dailyRewardsModule.showDateAsAmount()) {
+                        itemStack.setAmount(dateIndex.getDay());
                     }
 
                     inventory.setItem(slot, itemStack);
@@ -151,7 +158,9 @@ public class DailyRewardsGui extends AbstractGui {
                 simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
 
                 if (simpleItemStack.hasDisplayName()) {
-                    simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getDisplayName().replaceAll("%day%", String.valueOf(upcomingRewardDay - rewardUser.getDayNumOffset())), player));
+                    simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getDisplayName()
+                        .replaceAll("%day%", String.valueOf(upcomingRewardDay - rewardUser.getDayNumOffset())),
+                        player));
                 }
                 simpleItemStack.setLore(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getLore(), player));
 

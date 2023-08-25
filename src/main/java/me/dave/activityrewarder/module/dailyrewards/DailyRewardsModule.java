@@ -20,6 +20,7 @@ public class DailyRewardsModule extends Module {
     private HashMap<Integer, DailyRewardCollection> rewards;
     private Multimap<Integer, Integer> dayToRewards;
     private Multimap<SimpleDate, Integer> dateToRewards;
+    private boolean dateAsAmount;
     private GuiFormat guiFormat;
 
     public DailyRewardsModule(String id) {
@@ -35,6 +36,8 @@ public class DailyRewardsModule extends Module {
             this.disable();
             return;
         }
+
+        dateAsAmount = config.getBoolean("date-as-amount", false);
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
@@ -156,6 +159,10 @@ public class DailyRewardsModule extends Module {
 
         // Returns -1 if no future rewards match the request
         return nextRewardDay;
+    }
+
+    public boolean showDateAsAmount() {
+        return dateAsAmount;
     }
 
     public GuiFormat getGuiFormat() {
