@@ -42,7 +42,9 @@ daily-rewards:
           - type: item
             material: pitcher_plant
             amount: 1
+
   day-1:
+    on-streak-day: 1
     category: small
     display-item:
       lore:
@@ -60,7 +62,9 @@ daily-rewards:
       - type: item
         material: apple
         amount: 8
+
   day-2:
+    on-streak-day: 2
     category: small
     display-item:
       lore:
@@ -74,7 +78,9 @@ daily-rewards:
       - type: item
         material: pink_petals
         amount: 12
+
   day-3:
+    on-streak-day: 3
     category: small
     display-item:
       lore:
@@ -92,7 +98,9 @@ daily-rewards:
       - type: item
         material: oak_sapling
         amount: 8
+
   day-4:
+    on-streak-day: 4
     category: small
     display-item:
       lore:
@@ -110,7 +118,9 @@ daily-rewards:
       - type: item
         material: allium
         amount: 4
+
   day-5:
+    on-streak-day: 5
     category: small
     display-item:
       lore:
@@ -124,7 +134,9 @@ daily-rewards:
       - type: item
         material: lantern
         amount: 6
+
   day-6:
+    on-streak-day: 6
     category: small
     display-item:
       lore:
@@ -138,7 +150,9 @@ daily-rewards:
       - type: item
         material: sweet_berries
         amount: 6
+
   day-7:
+    on-streak-day: 7
     category: small
     display-item:
       lore:
@@ -148,7 +162,9 @@ daily-rewards:
       - type: item
         material: iron_ingot
         amount: 12
+
   day-12:
+    on-streak-day: 12
     category: medium
     display-item:
       lore:
@@ -162,7 +178,9 @@ daily-rewards:
       - type: item
         material: golden_apple
         amount: 1
+
   day-24:
+    on-streak-day: 24
     category: medium
     display-item:
       lore:
@@ -176,7 +194,11 @@ daily-rewards:
       - type: item
         material: golden_apple
         amount: 1
+
   day-30:
+    on-date: 20/08/2023
+    on-streak-day: 30
+    priority: 1
     category: large
     display-item:
       lore:
@@ -198,7 +220,7 @@ daily-rewards:
 gui:
   title: "          <color:#529bf2><bold>Daily Rewards</bold>"
   # Displays the date of the month as the amount of the item stack
-  date-as-amount: true
+  date-as-amount: false
   # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
