@@ -5,7 +5,6 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
@@ -73,8 +72,34 @@ public class DailyRewardsGui extends AbstractGui {
             currDayNum -= 1;
         }
 
-        int dayIndex = currDayNum;
-        SimpleDate dateIndex = SimpleDate.now();
+        int dayIndex;
+        SimpleDate dateIndex;
+        switch(dailyRewardsModule.getScrollType()) {
+            case GRID -> {
+                int rewardDisplaySize = guiTemplate.countChar('R');
+
+                int endDay = rewardDisplaySize;
+                while (currDayNum > endDay) {
+                    endDay += rewardDisplaySize;
+                }
+
+                dayIndex = endDay - (rewardDisplaySize - 1);
+
+                int diff = dayIndex - currDayNum;
+                dateIndex = SimpleDate.now();
+                dateIndex.addDays(diff);
+            }
+            case MONTH -> {
+                SimpleDate today = SimpleDate.now();
+                dateIndex = new SimpleDate(1, today.getMonth(), today.getYear());
+                dayIndex = currDayNum - (today.getDay() - 1);
+            }
+            default -> {
+                dayIndex = currDayNum;
+                dateIndex = SimpleDate.now();
+            }
+        }
+
         List<Integer> upcomingRewardSlots = new ArrayList<>();
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             char slotChar = guiTemplate.getCharAt(slot);
@@ -262,5 +287,11 @@ public class DailyRewardsGui extends AbstractGui {
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public enum ScrollType {
+        DAY,
+        MONTH,
+        GRID
     }
 }
