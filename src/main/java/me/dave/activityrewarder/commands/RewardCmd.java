@@ -196,8 +196,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch(IllegalArgumentException e) {
-                // TODO: Add configurable message
-                ChatColorHandler.sendMessage(sender, "&cCould not find this player");
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
                 return false;
             }
         }
