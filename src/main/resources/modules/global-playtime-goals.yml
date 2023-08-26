@@ -26,7 +26,7 @@ global-goals:
         amount: 3
 
 gui:
-  title: "&8&lDaily Rewards"
+  title: "&8&lGlobal Playtime Goals"
   # Available templates: DEFAULT, COMPACT
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
