@@ -83,7 +83,7 @@ public class PlaytimeDailyGoalsModule extends Module {
      * @return List of keys that fit within the range
      */
     @NotNull
-    public List<Integer> getKeysInRange(int lower, int upper) {
+    private List<Integer> getKeysInRange(int lower, int upper) {
         return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
     }
 
