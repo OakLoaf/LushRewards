@@ -40,8 +40,16 @@ public abstract class AbstractGui {
         inventory.setItem(slot, item);
     }
 
-    protected void addButton(int slot, Consumer<ItemStack> task) {
+    public void addButton(int slot, Consumer<ItemStack> task) {
         buttons.put(slot, task);
+    }
+
+    public void removeButton(int slot) {
+        buttons.remove(slot);
+    }
+
+    public void clearButtons() {
+        buttons.clear();
     }
 
     public void lockSlot(int slot) {
