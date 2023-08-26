@@ -121,8 +121,7 @@ public class LocalPlaceholders {
             String[] paramArr = params.split("_", 3);
             int dayNum = Integer.parseInt(paramArr[1]);
 
-            SimpleDate date = SimpleDate.now();
-            date.addDays(dayNum - rewardUser.getActualDayNum());
+            SimpleDate date = rewardUser.getDateOnDayNum(dayNum);
 
             RewardDay rewardDay = dailyRewardsModule.getRewardDay(date, dayNum);
 

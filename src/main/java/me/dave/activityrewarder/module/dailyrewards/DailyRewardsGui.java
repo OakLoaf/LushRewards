@@ -169,9 +169,7 @@ public class DailyRewardsGui extends AbstractGui {
         if (upcomingRewardSlots.size() > 0) {
             String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
             int upcomingRewardDay = dailyRewardsModule.findNextRewardFromCategory(dayIndex, upcomingCategory);
-            SimpleDate upcomingRewardDate = SimpleDate.now();
-            // TODO: Add util method to calculate what date a streak day will be
-            upcomingRewardDate.addDays(upcomingRewardDay - rewardUser.getActualDayNum());
+            SimpleDate upcomingRewardDate = rewardUser.getDateOnDayNum(upcomingRewardDay);
 
             // Adds the upcoming reward to the GUI if it exists
             if (upcomingRewardDay != -1) {

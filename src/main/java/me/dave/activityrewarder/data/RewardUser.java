@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.utils.SimpleDate;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -34,6 +35,12 @@ public class RewardUser {
     public void setLastDate(String lastCollectedDate) {
         this.lastDate = LocalDate.parse(lastCollectedDate);
         ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public SimpleDate getDateOnDayNum(int dayNum) {
+        SimpleDate date = SimpleDate.now();
+        date.addDays(dayNum - getActualDayNum());
+        return date;
     }
 
     public void incrementDayNum() {
