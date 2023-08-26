@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public abstract class AbstractGui {
     protected final Inventory inventory;
     protected final Player player;
-    protected final HashMap<Integer, Consumer<ItemStack>> buttons = new HashMap<>();
+    protected final HashMap<Integer, Consumer<InventoryClickEvent> > buttons = new HashMap<>();
     private final HashMap<Integer, Boolean> slotLockMap = new HashMap<>();
 
     public AbstractGui(int size, String title, Player player) {
@@ -40,7 +40,7 @@ public abstract class AbstractGui {
         inventory.setItem(slot, item);
     }
 
-    public void addButton(int slot, Consumer<ItemStack> task) {
+    public void addButton(int slot, Consumer<InventoryClickEvent> task) {
         buttons.put(slot, task);
     }
 
@@ -101,6 +101,12 @@ public abstract class AbstractGui {
         if (clickedInventory == null) return;
 
         int slot = event.getRawSlot();
+
+        Consumer<InventoryClickEvent> button = buttons.get(slot);
+        if (button != null) {
+            button.accept(event);
+        }
+
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR -> {
                 event.setCancelled(true);

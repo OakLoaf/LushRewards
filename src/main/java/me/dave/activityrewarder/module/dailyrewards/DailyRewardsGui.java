@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
@@ -17,16 +16,12 @@ import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 
 public class DailyRewardsGui extends AbstractGui {
     private static final NamespacedKey activityRewarderKey = new NamespacedKey(ActivityRewarder.getInstance(), "ActivityRewarder");
@@ -42,6 +37,7 @@ public class DailyRewardsGui extends AbstractGui {
     @Override
     public void recalculateContents() {
         inventory.clear();
+        clearButtons();
 
         // Gets RewardUser
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
@@ -110,7 +106,7 @@ public class DailyRewardsGui extends AbstractGui {
                     SimpleItemStack displayItem = SimpleItemStack.overwrite(reward.getDisplayItem(), ActivityRewarder.getConfigManager().getCategoryTemplate(reward.getCategory()));
                     displayItem = SimpleItemStack.overwrite(displayItem, ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate));
 
-                    if (displayItem.hasDisplayName()) {
+                    if (displayItem.getDisplayName() != null) {
                         displayItem.setDisplayName(displayItem.getDisplayName()
                                 .replaceAll("%day%", String.valueOf(dayIndex.get()))
                                 .replaceAll("%month_day%", String.valueOf(dateIndex.getDay())));
@@ -131,6 +127,47 @@ public class DailyRewardsGui extends AbstractGui {
                         if (dayIndex.get() == currDayNum && collectedToday) {
                             itemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex.get() + rewardUser.getDayNumOffset()) + "|unavailable"));
                         } else {
+                            addButton(slot, (event) -> {
+                                // Gets clicked item and checks if it exists
+                                ItemStack currItem = event.getCurrentItem();
+                                if (currItem == null) {
+                                    return;
+                                }
+
+                                removeButton(slot);
+
+                                ItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward")).getItemStack(player);
+                                inventory.setItem(slot, collectedItem);
+
+                                Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
+
+                                Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+                                RewardDay rewardDay = RewardDay.from(dailyRewardsModule.getStreakRewards(dayIndex.get()));
+                                DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
+                                if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+                                    rewardDay.giveAllRewards(player);
+                                } else {
+                                    priorityReward.giveAll(player);
+                                }
+
+                                Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+                                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
+
+                                Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
+
+                                if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
+                                    RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getPlayHours());
+                                    if (hourlyRewards != null && !hourlyRewards.isEmpty()) {
+                                        Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
+                                        hourlyRewards.giveAll(player);
+                                        Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
+                                    }
+                                }
+
+                                player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
+                                rewardUser.incrementDayNum();
+                                rewardUser.setLastDate(LocalDate.now().toString());
+                            });
                             itemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (dayIndex + "|" + (dayIndex.get() + rewardUser.getDayNumOffset()) + "|collectable"));
                         }
                     }
@@ -159,7 +196,7 @@ public class DailyRewardsGui extends AbstractGui {
                         SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"));
                         simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
 
-                        if (simpleItemStack.hasDisplayName()) {
+                        if (simpleItemStack.getDisplayName() != null) {
                             simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack
                                             .getDisplayName()
                                             .replaceAll("%day%", String.valueOf(upcomingRewardDay - rewardUser.getDayNumOffset())),
@@ -190,89 +227,6 @@ public class DailyRewardsGui extends AbstractGui {
                 });
             }
         }
-    }
-
-    @Override
-    public void openInventory() {
-        recalculateContents();
-        player.openInventory(inventory);
-        InventoryHandler.putInventory(player.getUniqueId(), this);
-    }
-
-    @Override
-    public void onClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        event.setCancelled(true);
-        Inventory clickedInv = event.getClickedInventory();
-        if (clickedInv == null || clickedInv.getType() != InventoryType.CHEST) {
-            return;
-        }
-
-        // Gets clicked item and checks if it exists
-        ItemStack currItem = event.getCurrentItem();
-        if (currItem == null) {
-            return;
-        }
-        // Gets clicked item's meta and checks if it exists
-        ItemMeta currItemMeta = currItem.getItemMeta();
-        if (currItemMeta == null) {
-            return;
-        }
-        // Gets persistent data of clicked item and checks if it exists
-        String persistentData = currItemMeta.getPersistentDataContainer().get(activityRewarderKey, PersistentDataType.STRING);
-        if (persistentData == null) {
-            return;
-        }
-        // Formats data into an array
-        String[] persistentDataArr = persistentData.split(Pattern.quote("|"));
-
-        // Gets current day from data array
-        int currDay = Integer.parseInt(persistentDataArr[0]);
-        // Checks if reward can be collected
-        if (!persistentDataArr[2].equals("collectable")) {
-            return;
-        }
-
-        ItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward")).getItemStack(player);
-        ItemMeta collectedItemMeta = collectedItem.getItemMeta();
-        if (collectedItemMeta != null) {
-            collectedItemMeta.getPersistentDataContainer().set(activityRewarderKey, PersistentDataType.STRING, (persistentDataArr[0] + "|" + persistentDataArr[1] + "|collected"));
-            collectedItem.setItemMeta(collectedItemMeta);
-        }
-
-        event.getClickedInventory().setItem(event.getSlot(), collectedItem);
-        Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
-
-        Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-        Debugger.sendDebugMessage("Loaded player's daily rewards ", Debugger.DebugMode.DAILY);
-        Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.DAILY);
-
-        RewardDay rewardDay = RewardDay.from(dailyRewardsModule.getStreakRewards(currDay));
-        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
-        if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
-            rewardDay.giveAllRewards(player);
-        } else {
-            priorityReward.giveAll(player);
-        }
-
-        Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.DAILY);
-        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
-
-        Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
-
-        if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-            RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getPlayHours());
-            if (hourlyRewards != null && !hourlyRewards.isEmpty()) {
-                Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                hourlyRewards.giveAll(player);
-                Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
-            }
-        }
-
-        player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-        rewardUser.incrementDayNum();
-        rewardUser.setLastDate(LocalDate.now().toString());
     }
 
     public enum ScrollType {
