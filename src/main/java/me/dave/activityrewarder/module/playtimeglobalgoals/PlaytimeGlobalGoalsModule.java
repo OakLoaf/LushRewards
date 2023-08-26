@@ -94,7 +94,6 @@ public class PlaytimeGlobalGoalsModule extends Module {
         return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
     }
 
-
     public GuiFormat getGuiFormat() {
         return guiFormat;
     }
