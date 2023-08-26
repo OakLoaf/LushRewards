@@ -39,89 +39,85 @@ public class SimpleDate implements Cloneable {
         return year;
     }
 
-    public void addDays(int days) {
-        if (days < 0) {
-            minusDays(-days);
+    public void addDays(int daysToAdd) {
+        if (daysToAdd < 0) {
+            minusDays(-daysToAdd);
             return;
         }
 
-        days += this.day;
+        daysToAdd += this.day;
         int months = 0;
 
-        for (int monthIndex = this.month - 1; days > DAYS_PER_MONTH[monthIndex] || (days > 28 && monthIndex == 1 && year % 4 == 0); monthIndex++) {
+        for (int monthIndex = this.month - 1; daysToAdd > DAYS_PER_MONTH[monthIndex] || (daysToAdd > 28 && monthIndex == 1 && year % 4 == 0); monthIndex++) {
             months++;
-            days -= DAYS_PER_MONTH[monthIndex];
+            daysToAdd -= DAYS_PER_MONTH[monthIndex];
         }
         addMonths(months);
 
-        if (!validateDate(days, month, year)) throw new SimpleDateParseException(days + "/" + month + "/" + year + " is not a valid date");
+        if (!validateDate(daysToAdd, month, year)) throw new SimpleDateParseException(daysToAdd + "/" + month + "/" + year + " is not a valid date");
 
-        this.day = days;
+        this.day = daysToAdd;
     }
 
-    public void minusDays(int daysToRemove) {
-        daysToRemove = daysToRemove < 0 ? -daysToRemove : daysToRemove;
+    public void minusDays(int daysToSubtract) {
+        daysToSubtract = daysToSubtract < 0 ? -daysToSubtract : daysToSubtract;
         int months = 0;
 
-        if (daysToRemove > this.day) {
+        if (daysToSubtract > this.day) {
             minusMonths(1);
-            daysToRemove -= this.day;
+            daysToSubtract -= this.day;
         }
 
-        for (int monthIndex = this.month - 1; daysToRemove > DAYS_PER_MONTH[monthIndex] || (daysToRemove > 28 && monthIndex == 1 && year % 4 == 0); monthIndex--) {
+        for (int monthIndex = this.month - 1; daysToSubtract > DAYS_PER_MONTH[monthIndex] || (daysToSubtract > 28 && monthIndex == 1 && year % 4 == 0); monthIndex--) {
             months++;
-            daysToRemove -= DAYS_PER_MONTH[monthIndex];
+            daysToSubtract -= DAYS_PER_MONTH[monthIndex];
         }
 
         minusMonths(months);
-        int days = DAYS_PER_MONTH[month] - daysToRemove;
+        int days = DAYS_PER_MONTH[month] - daysToSubtract;
 
-        if (!validateDate(days, month, year)) throw new SimpleDateParseException(daysToRemove + "/" + month + "/" + year + " is not a valid date");
+        if (!validateDate(days, month, year)) throw new SimpleDateParseException(daysToSubtract + "/" + month + "/" + year + " is not a valid date");
 
         this.day = days;
     }
 
-    public void addMonths(int months) {
-        if (months < 0) {
-            minusMonths(-months);
+    public void addMonths(int monthsToAdd) {
+        if (monthsToAdd < 0) {
+            minusMonths(-monthsToAdd);
             return;
         }
 
-        int years = this.year + (int) Math.floor(months / (float) 12);
-        months = (months + this.month) % 12;
-        int days = Math.min(this.day, DAYS_PER_MONTH[months - 1]);
+        int years = this.year + (int) Math.floor(monthsToAdd / (float) 12);
+        monthsToAdd = (monthsToAdd + this.month) % 12;
+        int days = Math.min(this.day, DAYS_PER_MONTH[monthsToAdd - 1]);
 
-        if (!validateDate(days, months, years)) throw new SimpleDateParseException(days + "/" + months + "/" + years + " is not a valid date");
+        if (!validateDate(days, monthsToAdd, years)) throw new SimpleDateParseException(days + "/" + monthsToAdd + "/" + years + " is not a valid date");
 
-        this.month = months;
+        this.month = monthsToAdd;
         this.year = years;
         this.day = days;
     }
 
-    public void minusMonths(int months) {
-        int years = this.year - (int) Math.floor(months / (float) 12);
-        months = (this.month - (months < 0 ? -months : months)) % 12;
-        int days = Math.min(this.day, DAYS_PER_MONTH[months - 1]);
+    public void minusMonths(int monthsToSubtract) {
+        int years = this.year - (int) Math.floor(monthsToSubtract / (float) 12);
+        monthsToSubtract = (this.month - (monthsToSubtract < 0 ? -monthsToSubtract : monthsToSubtract)) % 12;
+        int days = Math.min(this.day, DAYS_PER_MONTH[monthsToSubtract - 1]);
 
-        if (!validateDate(days, months, years)) throw new SimpleDateParseException(days + "/" + months + "/" + years + " is not a valid date");
+        if (!validateDate(days, monthsToSubtract, years)) throw new SimpleDateParseException(days + "/" + monthsToSubtract + "/" + years + " is not a valid date");
 
-        this.month = months;
+        this.month = monthsToSubtract;
         this.year = years;
         this.day = days;
     }
 
-    public void addYears(int years) {
-        if (!validateDate(day, month, year + years)) throw new SimpleDateParseException(day + "/" + month + "/" + (year + years) + " is not a valid date");
+    public void addYears(int yearsToAdd) {
+        if (!validateDate(day, month, year + yearsToAdd)) throw new SimpleDateParseException(day + "/" + month + "/" + (year + yearsToAdd) + " is not a valid date");
 
-        this.year += years;
+        this.year += yearsToAdd;
     }
 
-    public void minusYears(int years) {
-        addYears(-years);
-    }
-
-    public boolean validateDate() {
-        return validateDate(day, month, year);
+    public void minusYears(int yearsToSubtract) {
+        addYears(-yearsToSubtract);
     }
 
     public boolean validateDate(int day, int month, int year) {
