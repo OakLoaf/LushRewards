@@ -80,7 +80,7 @@ public class PlaytimeTracker {
     }
 
     public int getSessionPlaytime() {
-        return sessionTime;
+        return (int) Math.floor(sessionTime / 60f);
     }
 
     public int getTotalSessionPlaytime() {
