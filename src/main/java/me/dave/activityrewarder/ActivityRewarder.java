@@ -17,16 +17,18 @@ import space.arim.morepaperlib.MorePaperLib;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ActivityRewarder extends JavaPlugin {
-    private static final ConcurrentHashMap<String, Module> modules = new ConcurrentHashMap<>();
     private static ActivityRewarder plugin;
+    private static ConcurrentHashMap<String, Module> modules;
     private static MorePaperLib morePaperLib;
-    private static boolean floodgateEnabled = false;
     private static ConfigManager configManager;
     private static DataManager dataManager;
+    private static boolean floodgateEnabled = false;
 
     @Override
     public void onEnable() {
         plugin = this;
+        modules = new ConcurrentHashMap<>();
+
         morePaperLib = new MorePaperLib(plugin);
         configManager = new ConfigManager();
         configManager.reloadConfig();
@@ -55,9 +57,23 @@ public final class ActivityRewarder extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        dataManager.saveAll();
-        modules.clear();
-        dataManager.getIoHandler().disableIOHandler();
+        if (morePaperLib != null) {
+            morePaperLib.scheduling().cancelGlobalTasks();
+            morePaperLib = null;
+        }
+
+        if (dataManager != null) {
+            dataManager.saveAll();
+            dataManager.getIoHandler().disableIOHandler();
+            dataManager = null;
+        }
+
+        configManager = null;
+
+        if (modules != null) {
+            modules.clear();
+            modules = null;
+        }
     }
 
     public boolean callEvent(Event event) {
