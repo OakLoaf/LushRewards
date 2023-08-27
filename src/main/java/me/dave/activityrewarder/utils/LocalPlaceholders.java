@@ -3,6 +3,7 @@ package me.dave.activityrewarder.utils;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import org.bukkit.entity.Player;
@@ -24,6 +25,27 @@ public class LocalPlaceholders {
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
     static {
+        // String placeholders
+        registerPlaceholder("category", (params, player) -> {
+            if (!(ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
+                return null;
+            }
+
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getDayNum());
+
+            return String.valueOf(rewardDay.getHighestPriorityRewardCollection().getCategory());
+        });
+
+        registerPlaceholder("collected", (params, player) -> {
+            if (player == null) {
+                return null;
+            }
+
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            return String.valueOf(rewardUser.hasCollectedToday());
+        });
+
         registerPlaceholder("countdown", (params, player) -> {
             LocalDateTime now = LocalDateTime.now();
             long secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
@@ -53,6 +75,14 @@ public class LocalPlaceholders {
             }
         });
 
+        registerPlaceholder("global_playtime", (params, player) -> {
+            if (!(ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
+                return null;
+            }
+
+            return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getGlobalPlaytime());
+        });
+
         registerPlaceholder("highest_streak", (params, player) -> {
             if (player == null) {
                 return null;
@@ -60,24 +90,6 @@ public class LocalPlaceholders {
 
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             return String.valueOf(rewardUser.getHighestStreak());
-        });
-
-        registerPlaceholder("collected", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            return String.valueOf(rewardUser.hasCollectedToday());
-        });
-
-        registerPlaceholder("playtime", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
         });
 
         registerPlaceholder("multiplier", (params, player) -> {
@@ -89,16 +101,23 @@ public class LocalPlaceholders {
             return String.valueOf(rewardUser.getHighestStreak());
         });
 
-        registerPlaceholder("category", (params, player) -> {
-            if (!(ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
+        registerPlaceholder("playtime", (params, player) -> {
+            if (player == null) {
                 return null;
             }
 
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getDayNum());
-
-            return String.valueOf(rewardDay.getHighestPriorityRewardCollection().getCategory());
+            return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
         });
+
+        registerPlaceholder("session_playtime", (params, player) -> {
+            if (!(ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
+                return null;
+            }
+
+            return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getSessionPlaytime());
+        });
+
 
         registerPlaceholder("total_rewards", (params, player) -> {
             if (!(ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
@@ -111,6 +130,7 @@ public class LocalPlaceholders {
             return String.valueOf(rewardDay.getRewardCount());
         });
 
+        // Regex Placeholders
         registerRegexPlaceholder("day_[0-9]+.+", (params, player) -> {
             if (!(ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule)) {
                 return null;
