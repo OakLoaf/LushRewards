@@ -84,7 +84,7 @@ public class PlaytimeTracker {
     }
 
     public int getTotalSessionPlaytime() {
-        return sessionTime + idleTime;
+        return (int) Math.floor((sessionTime + idleTime) / 60f);
     }
 
     public int getGlobalPlaytime() {
