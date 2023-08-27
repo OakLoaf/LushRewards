@@ -33,8 +33,9 @@ public class YmlStorage implements Storage<RewardUser> {
             int highestStreak = configurationSection.getInt("daily-rewards.highest-streak", 1);
             String startDate = configurationSection.getString("daily-rewards.start-date", SimpleDate.now().toString("dd-mm-yyyy"));
             String lastCollectedDate = configurationSection.getString("daily-rewards.last-collected-date", SimpleDate.now().toString("dd-mm-yyyy"));
+            List<String> collectedDates = configurationSection.getStringList("daily-rewards.last-collected-dates");
 
-            rewardUser.addModuleData(new DailyRewardsModuleData("daily-rewards", dayNum, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate)));
+            rewardUser.addModuleData(new DailyRewardsModuleData("daily-rewards", dayNum, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
         }
 
         if (ActivityRewarder.getModule("daily-playtime-goals") != null) {
@@ -66,16 +67,17 @@ public class YmlStorage implements Storage<RewardUser> {
             configurationSection.set("daily-rewards.highest-streak", dailyRewardsModuleData.getHighestStreak());
             configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().toString("dd-mm-yyyy"));
             configurationSection.set("daily-rewards.last-collected-date", dailyRewardsModuleData.getLastCollectedDate().toString("dd-mm-yyyy"));
+            configurationSection.set("daily-rewards.collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
 
         if (rewardUser.getModuleData("daily-playtime-goals") instanceof PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData) {
             configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleData.getLastCollectedPlaytime());
-            configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleData.getCollectedTimes());
+            configurationSection.set("daily-playtime-goals.collected-times", dailyPlaytimeGoalsModuleData.getCollectedTimes());
         }
 
         if (rewardUser.getModuleData("global-playtime-goals") instanceof PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData) {
             configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleData.getLastCollectedPlaytime());
-            configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleData.getCollectedTimes());
+            configurationSection.set("global-playtime-goals.last-collected-times", globalPlaytimeGoalsModuleData.getCollectedTimes());
         }
 
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());

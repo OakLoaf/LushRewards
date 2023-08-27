@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DailyRewardsGui extends AbstractGui {
@@ -87,14 +88,21 @@ public class DailyRewardsGui extends AbstractGui {
             slotMap.put(character, slot);
         }
 
+        List<String> collectedDates = rewardUser.getCollectedDates();
         for (Character character : slotMap.keySet()) {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {
                     // Get the day's reward for the current slot
                     DailyRewardCollection reward = dailyRewardsModule.getRewardDay(dateIndex, dayIndex.get()).getHighestPriorityRewardCollection();
-                    // TODO: Store list of collected days in RewardUser to check for collected vs missed days
 
-                    String itemTemplate = dayIndex.get() == currDayNum ? (collectedToday ? "collected-reward" : "redeemable-reward") : "default-reward";
+                    String itemTemplate;
+                    if (dayIndex.get() < currDayNum) {
+                        itemTemplate = (collectedDates.contains(dateIndex.toString("dd-mm-yyyy"))) ? "collected-reward" : "missed-reward";
+                    } else if (dayIndex.get() == currDayNum) {
+                        itemTemplate = collectedToday ? "collected-reward" : "redeemable-reward";
+                    } else {
+                        itemTemplate = "default-reward";
+                    }
 
                     SimpleItemStack displayItem = SimpleItemStack.overwrite(reward.getDisplayItem(), ActivityRewarder.getConfigManager().getCategoryTemplate(reward.getCategory()));
                     displayItem = SimpleItemStack.overwrite(displayItem, ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate));
@@ -128,8 +136,8 @@ public class DailyRewardsGui extends AbstractGui {
                             SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward"));
                             if (collectedItem.getDisplayName() != null) {
                                 collectedItem.setDisplayName(collectedItem.getDisplayName()
-                                    .replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                    .replaceAll("%month_day%", String.valueOf(dateIndex.getDay())));
+                                    .replaceAll("%day%", String.valueOf(currDayNum))
+                                    .replaceAll("%month_day%", String.valueOf(SimpleDate.now())));
                             }
                             collectedItem.parseColors(player);
 
@@ -163,6 +171,7 @@ public class DailyRewardsGui extends AbstractGui {
                             player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
                             rewardUser.incrementDayNum();
                             rewardUser.setLastDate(SimpleDate.now());
+                            rewardUser.addCollectedDate(SimpleDate.now());
                         });
                     }
 

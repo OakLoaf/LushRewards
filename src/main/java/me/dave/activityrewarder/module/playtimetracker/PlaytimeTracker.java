@@ -88,7 +88,7 @@ public class PlaytimeTracker {
         }
 
         if (globalTime % 15 == 0) {
-            ActivityRewarder.getDataManager().saveRewardUser(player);
+            ActivityRewarder.getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
         }
     }
 

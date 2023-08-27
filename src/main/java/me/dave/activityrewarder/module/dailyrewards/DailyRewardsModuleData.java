@@ -3,18 +3,22 @@ package me.dave.activityrewarder.module.dailyrewards;
 import me.dave.activityrewarder.module.ModuleData;
 import me.dave.activityrewarder.utils.SimpleDate;
 
+import java.util.List;
+
 public class DailyRewardsModuleData extends ModuleData {
     private int dayNum;
     private int highestStreak;
     private final SimpleDate startDate;
     private SimpleDate lastCollectedDate;
+    private List<String> collectedDates;
 
-    public DailyRewardsModuleData(String id, int dayNum, int highestStreak, SimpleDate startDate, SimpleDate lastCollectedDate) {
+    public DailyRewardsModuleData(String id, int dayNum, int highestStreak, SimpleDate startDate, SimpleDate lastCollectedDate, List<String> collectedDates) {
         super(id);
         this.dayNum = dayNum;
         this.highestStreak = highestStreak;
         this.startDate = startDate;
         this.lastCollectedDate = lastCollectedDate;
+        this.collectedDates = collectedDates;
     }
 
     public int getDayNum() {
@@ -57,5 +61,13 @@ public class DailyRewardsModuleData extends ModuleData {
 
     public void setLastCollectedDate(SimpleDate date) {
         this.lastCollectedDate = date;
+    }
+
+    public List<String> getCollectedDates() {
+        return collectedDates;
+    }
+
+    public void addCollectedDate(SimpleDate date) {
+        collectedDates.add(date.toString("dd-mm-yyyy"));
     }
 }

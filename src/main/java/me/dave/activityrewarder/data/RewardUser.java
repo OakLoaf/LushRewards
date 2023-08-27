@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class RewardUser {
@@ -105,5 +106,14 @@ public class RewardUser {
 
     public boolean hasCollectedToday() {
         return SimpleDate.now().equals(((DailyRewardsModuleData) getModuleData("daily-rewards")).getLastCollectedDate());
+    }
+
+    public List<String> getCollectedDates() {
+        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getCollectedDates();
+    }
+
+    public void addCollectedDate(SimpleDate date) {
+        ((DailyRewardsModuleData) getModuleData("daily-rewards")).addCollectedDate(date);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 }

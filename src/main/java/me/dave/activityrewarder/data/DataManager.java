@@ -78,7 +78,7 @@ public class DataManager {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
             if (ActivityRewarder.getModule("daily-rewards") != null) {
-                rewardUser.addModuleData(new DailyRewardsModuleData("daily-rewards", 1, 1, SimpleDate.now(), SimpleDate.now().minusDays(1)));
+                rewardUser.addModuleData(new DailyRewardsModuleData("daily-rewards", 1, 1, SimpleDate.now(), SimpleDate.now().minusDays(1), new ArrayList<>()));
             }
 
             if (ActivityRewarder.getModule("daily-playtime-goals") != null) {

@@ -21,4 +21,9 @@ public class PlaytimeGoalsModuleData extends ModuleData {
     public List<Integer> getCollectedTimes() {
         return collectedTimes;
     }
+
+    // TODO: implement
+    public void addCollectedTime(int minutes) {
+        collectedTimes.add(minutes);
+    }
 }
