@@ -1,6 +1,6 @@
 package me.dave.activityrewarder.data;
 
-`import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.api.event.RewardUserLoadEvent;
 import me.dave.activityrewarder.api.event.RewardUserUnloadEvent;
 import org.bukkit.Bukkit;
