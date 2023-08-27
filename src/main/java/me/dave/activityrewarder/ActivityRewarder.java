@@ -44,14 +44,12 @@ public final class ActivityRewarder extends JavaPlugin {
 
         if (pluginManager.getPlugin("floodgate") != null) {
             floodgateEnabled = true;
-        } else {
-            plugin.getLogger().info("Floodgate plugin not found. Continuing without floodgate.");
+            plugin.getLogger().info("Found plugin \"Floodgate\". Floodgate support enabled.");
         }
 
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPIHook().register();
-        } else {
-            plugin.getLogger().info("PlaceholderAPI plugin not found. Continuing without PlaceholderAPI.");
+            plugin.getLogger().info("Found plugin \"PlaceholderAPI\". PlaceholderAPI support enabled.");
         }
     }
 
