@@ -28,6 +28,7 @@ public class PlaytimeDailyGoalsModule extends Module {
     public void onEnable() {
         YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyGoalsConfig();
 
+        // TODO: Fix below
         ConfigurationSection configurationSection = config.getConfigurationSection("daily-goals");
         if (configurationSection == null) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-goals' section in 'daily-playtime-goals.yml'");
