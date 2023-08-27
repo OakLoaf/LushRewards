@@ -4,6 +4,8 @@ import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
 import me.dave.activityrewarder.module.Module;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,7 +61,16 @@ public final class ActivityRewarder extends JavaPlugin {
         dataManager.getIoHandler().disableIOHandler();
     }
 
-    private void registerEvents(Listener[] listeners) {
+    public boolean callEvent(Event event) {
+        getServer().getPluginManager().callEvent(event);
+        if (event instanceof Cancellable cancellable) {
+            return !cancellable.isCancelled();
+        } else {
+            return true;
+        }
+    }
+
+    public void registerEvents(Listener[] listeners) {
         for (Listener listener : listeners) {
             getServer().getPluginManager().registerEvents(listener, this);
         }
