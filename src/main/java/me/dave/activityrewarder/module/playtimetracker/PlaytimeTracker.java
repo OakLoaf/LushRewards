@@ -1,8 +1,8 @@
 package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimegoals.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimegoals.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.utils.SimpleLocation;
 import org.bukkit.entity.Player;
 

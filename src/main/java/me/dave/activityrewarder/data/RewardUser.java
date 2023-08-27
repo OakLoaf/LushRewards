@@ -1,12 +1,13 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.ModuleData;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleData;
 import me.dave.activityrewarder.utils.SimpleDate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class RewardUser {
@@ -14,18 +15,12 @@ public class RewardUser {
     private String username;
     private int minutesPlayed;
 
-    private final DailyRewardsModuleData dailyRewardsModuleData;
-    private final PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData;
-    private final PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData;
+    private final HashMap<String, ModuleData> moduleDataMap = new HashMap<>();
 
-    public RewardUser(@NotNull UUID uuid, String username, int minutesPlayed, @Nullable DailyRewardsModuleData dailyRewardsModuleData, @Nullable PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData, @Nullable PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData) {
+    public RewardUser(@NotNull UUID uuid, String username, int minutesPlayed) {
         this.uuid = uuid;
         this.username = username;
         this.minutesPlayed = minutesPlayed;
-
-        this.dailyRewardsModuleData = dailyRewardsModuleData;
-        this.dailyPlaytimeGoalsModuleData = dailyPlaytimeGoalsModuleData;
-        this.globalPlaytimeGoalsModuleData = globalPlaytimeGoalsModuleData;
     }
 
     public UUID getUniqueId() {
@@ -54,74 +49,66 @@ public class RewardUser {
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
-    public DailyRewardsModuleData getDailyRewardsModuleData() {
-        return dailyRewardsModuleData;
+    @Nullable
+    public ModuleData getModuleData(String module) {
+        return moduleDataMap.get(module);
     }
 
-    public PlaytimeGoalsModuleData getDailyPlaytimeGoalsModuleData() {
-        return dailyPlaytimeGoalsModuleData;
-    }
-
-    public PlaytimeGoalsModuleData getGlobalPlaytimeGoalsModuleData() {
-        return globalPlaytimeGoalsModuleData;
+    public void addModuleData(ModuleData moduleData) {
+        moduleDataMap.put(moduleData.getId(), moduleData);
     }
 
     // Outdated
 
     public int getDayNum() {
-        return dailyRewardsModuleData.getDayNum();
+        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDayNum();
     }
 
     public void setDay(int dayNum) {
-        dailyRewardsModuleData.setDayNum(dayNum);
+        ((DailyRewardsModuleData) getModuleData("daily-rewards")).setDayNum(dayNum);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void resetDays() {
-        dailyRewardsModuleData.setDayNum(1);
+        ((DailyRewardsModuleData) getModuleData("daily-rewards")).setDayNum(1);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void incrementDayNum() {
-        dailyRewardsModuleData.incrementDayNum();
+        ((DailyRewardsModuleData) getModuleData("daily-rewards")).incrementDayNum();
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public SimpleDate getStartDate() {
-        return dailyRewardsModuleData.getStartDate();
+        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getStartDate();
     }
 
     public SimpleDate getLastCollectedDate() {
-        return dailyRewardsModuleData.getLastCollectedDate();
+        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getLastCollectedDate();
     }
 
     public void setLastDate(SimpleDate date) {
-        dailyRewardsModuleData.setLastCollectedDate(date);
+        ((DailyRewardsModuleData) getModuleData("daily-rewards")).setLastCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
-
     public SimpleDate getDateOnDayNum(int dayNum) {
-        SimpleDate date = SimpleDate.now();
-        date.addDays(dayNum - getActualDayNum());
-        return date;
+        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDateOnDayNum(dayNum);
     }
 
     public int getHighestStreak() {
-        return dailyRewardsModuleData.getHighestStreak();
+        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getHighestStreak();
     }
 
     public int getActualDayNum() {
-        return (int) (SimpleDate.now().toEpochDay() - dailyRewardsModuleData.getStartDate().toEpochDay() + 1);
+        return (int) (SimpleDate.now().toEpochDay() - ((DailyRewardsModuleData) getModuleData("daily-rewards")).getStartDate().toEpochDay() + 1);
     }
 
     public int getDayNumOffset() {
-        return getActualDayNum() - dailyRewardsModuleData.getDayNum();
+        return getActualDayNum() - ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDayNum();
     }
 
     public boolean hasCollectedToday() {
-        return SimpleDate.now().equals(dailyRewardsModuleData.getLastCollectedDate());
+        return SimpleDate.now().equals(((DailyRewardsModuleData) getModuleData("daily-rewards")).getLastCollectedDate());
     }
-
-    public record PlaytimeGoalsModuleData(int lastCollectedPlaytime, List<Integer> collectedTimes) {}
 }

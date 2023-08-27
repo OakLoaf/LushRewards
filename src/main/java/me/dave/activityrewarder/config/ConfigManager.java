@@ -2,8 +2,8 @@ package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimegoals.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimegoals.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.Debugger;

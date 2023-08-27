@@ -5,7 +5,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimegoals.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;

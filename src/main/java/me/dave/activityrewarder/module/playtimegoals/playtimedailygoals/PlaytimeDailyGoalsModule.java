@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.module.playtimedailygoals;
+package me.dave.activityrewarder.module.playtimegoals.playtimedailygoals;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
