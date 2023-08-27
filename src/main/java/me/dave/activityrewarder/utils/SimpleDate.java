@@ -18,7 +18,7 @@ public class SimpleDate implements Cloneable {
      */
     private static final int[] DAYS_PER_MONTH = new int[]{ 31, 29 /* 28 on all years except leap years */, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     /**
-     * The number of days in a 400 year cycle.
+     * The number of days in a 400-year cycle.
      */
     private static final int DAYS_PER_CYCLE = 146097;
     /**
@@ -27,6 +27,7 @@ public class SimpleDate implements Cloneable {
      * There are 7 leap years from 1970 to 2000.
      */
     private static final long DAYS_0000_TO_1970 = (DAYS_PER_CYCLE * 5L) - (30L * 365L + 7L);
+
     private int day;
     private int month;
     private int year;
