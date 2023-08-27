@@ -79,10 +79,6 @@ public class RewardUser {
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
-    public SimpleDate getStartDate() {
-        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getStartDate();
-    }
-
     public SimpleDate getLastCollectedDate() {
         return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getLastCollectedDate();
     }
