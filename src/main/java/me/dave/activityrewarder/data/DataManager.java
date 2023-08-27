@@ -3,12 +3,13 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.api.event.RewardUserLoadEvent;
 import me.dave.activityrewarder.api.event.RewardUserUnloadEvent;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleData;
+import me.dave.activityrewarder.utils.SimpleDate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -72,7 +73,13 @@ public class DataManager {
 
         RewardUser rewardUser = uuidToRewardUser.get(uuid);
         if (rewardUser == null) {
-            rewardUser = new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 1, 0, 0);
+            DailyRewardsModuleData dailyRewardsModuleData = ActivityRewarder.getModule("daily-rewards") != null ? new DailyRewardsModuleData(1, 1, SimpleDate.now(), SimpleDate.now().minusDays(1)) : null;
+            RewardUser.PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData = ActivityRewarder.getModule("daily-playtime-goals") != null ? new RewardUser.PlaytimeGoalsModuleData(0) : null;
+            RewardUser.PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData = ActivityRewarder.getModule("global-playtime-goals") != null ? new RewardUser.PlaytimeGoalsModuleData(0) : null;
+
+            rewardUser = new RewardUser(uuid, player.getName(), 0, dailyRewardsModuleData, dailyPlaytimeGoalsModuleData, globalPlaytimeGoalsModuleData);
+
+//            rewardUser = new RewardUser(uuid, player.getName(), LocalDate.now().toString(), LocalDate.now().minusDays(1).toString(), 1, 1, 0, 0);
         }
 
         return rewardUser;

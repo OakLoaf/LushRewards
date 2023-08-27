@@ -16,9 +16,7 @@ import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DailyRewardsGui extends AbstractGui {
@@ -42,7 +40,7 @@ public class DailyRewardsGui extends AbstractGui {
         // Checks if the streak mode config option is enabled
         if (ActivityRewarder.getConfigManager().isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
-            if (rewardUser.getLastDate().isBefore(LocalDate.now().minusDays(1))) {
+            if (rewardUser.getLastDate().isBefore(SimpleDate.now().minusDays(1))) {
                 rewardUser.resetDays();
             }
         }
@@ -154,7 +152,7 @@ public class DailyRewardsGui extends AbstractGui {
                             Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
 
                             if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-                                RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getPlayHours());
+                                RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
                                 if (hourlyRewards != null && !hourlyRewards.isEmpty()) {
                                     Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
                                     hourlyRewards.giveAll(player);
@@ -164,7 +162,7 @@ public class DailyRewardsGui extends AbstractGui {
 
                             player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
                             rewardUser.incrementDayNum();
-                            rewardUser.setLastDate(LocalDate.now().toString());
+                            rewardUser.setLastDate(SimpleDate.now());
                         });
                     }
 

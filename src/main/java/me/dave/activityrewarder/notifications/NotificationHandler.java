@@ -1,13 +1,13 @@
 package me.dave.activityrewarder.notifications;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class NotificationHandler {
@@ -30,9 +30,9 @@ public class NotificationHandler {
                 return;
             }
 
-            LocalDate currDate = LocalDate.now();
+            SimpleDate today = SimpleDate.now();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                boolean collectedToday = currDate.equals(ActivityRewarder.getDataManager().getRewardUser(player).getLastDate());
+                boolean collectedToday = today.equals(ActivityRewarder.getDataManager().getRewardUser(player).getLastDate());
                 if (collectedToday) {
                     continue;
                 }

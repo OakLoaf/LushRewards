@@ -20,7 +20,7 @@ public class PlaytimeTracker {
         this.afk = false;
         this.sessionTime = 0;
         this.idleTime = 0;
-        this.globalTime = ActivityRewarder.getDataManager().getRewardUser(player).getPlayMinutes();
+        this.globalTime = ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed();
         updateLocation();
     }
 
@@ -76,13 +76,13 @@ public class PlaytimeTracker {
 
         if (ActivityRewarder.getModule("playtime-daily-goals") instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
             if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
-                playtimeDailyGoalsModule.getRewardCollectionsInRange(0 /* TODO: add to data */, globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
+                playtimeDailyGoalsModule.getRewardCollectionsInRange(ActivityRewarder.getDataManager().getRewardUser(player).getDailyPlaytimeGoalsModuleData().lastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
             }
         }
 
         if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
             if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
-                playtimeGlobalGoalsModule.getRewardCollectionsInRange(0 /* TODO: add to data */, globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
+                playtimeGlobalGoalsModule.getRewardCollectionsInRange(ActivityRewarder.getDataManager().getRewardUser(player).getGlobalPlaytimeGoalsModuleData().lastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
             }
         }
 

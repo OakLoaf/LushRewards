@@ -52,7 +52,7 @@ public class DailyRewardCollection extends RewardCollection {
         SimpleDate rewardDate = null;
         Integer rewardDay = null;
         if (rewardCollectionSection.contains("on-date")) {
-            rewardDate = SimpleDate.from(rewardCollectionSection.getString("on-date", ""));
+            rewardDate = SimpleDate.parse(rewardCollectionSection.getString("on-date", ""));
         }
         if (rewardCollectionSection.contains("on-streak-day")) {
             rewardDay = rewardCollectionSection.getInt("on-streak-day");

@@ -4,13 +4,31 @@ import me.dave.activityrewarder.exceptions.SimpleDateParseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SimpleDate implements Cloneable {
-    private static final Pattern DATE_FORMAT = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4,})");
+    /**
+     * Default date format "dd-mm-yyyy".
+     */
+    private static final Pattern DATE_FORMAT = Pattern.compile("([0-9]{1,2})-([0-9]{1,2})-([0-9]{4,})");
+    /**
+     * Maximum number of days in each month.
+     */
     private static final int[] DAYS_PER_MONTH = new int[]{ 31, 29 /* 28 on all years except leap years */, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    /**
+     * The number of days in a 400 year cycle.
+     */
+    private static final int DAYS_PER_CYCLE = 146097;
+    /**
+     * The number of days from year zero to year 1970.
+     * There are five 400 year cycles from year zero to 2000.
+     * There are 7 leap years from 1970 to 2000.
+     */
+    private static final long DAYS_0000_TO_1970 = (DAYS_PER_CYCLE * 5L) - (30L * 365L + 7L);
     private int day;
     private int month;
     private int year;
@@ -18,7 +36,7 @@ public class SimpleDate implements Cloneable {
     public SimpleDate(int day, int month, int year) {
         if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
             throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
-        } else if (day == 29 && month == 2 && year % 4 != 0) {
+        } else if (day == 29 && month == 2 && !isLeapYear()) {
             throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
         } else {
             this.day = day;
@@ -39,16 +57,37 @@ public class SimpleDate implements Cloneable {
         return year;
     }
 
-    public void addDays(int daysToAdd) {
+    public boolean isLeapYear() {
+        return year % 4 == 0;
+    }
+
+    public boolean isBefore(SimpleDate date) {
+        return !isAfter(date);
+    }
+
+    public boolean isAfter(SimpleDate date) {
+        if (date.year > this.year) {
+            return true;
+        } else if (date.year == this.year) {
+            if (date.month > this.month) {
+                return true;
+            } else if (date.month == this.month) {
+                return date.day > this.day;
+            }
+        }
+
+        return false;
+    }
+
+    public SimpleDate addDays(int daysToAdd) {
         if (daysToAdd < 0) {
-            minusDays(-daysToAdd);
-            return;
+            return minusDays(-daysToAdd);
         }
 
         daysToAdd += this.day;
         int months = 0;
 
-        for (int monthIndex = this.month - 1; daysToAdd > DAYS_PER_MONTH[monthIndex] || (daysToAdd > 28 && monthIndex == 1 && year % 4 == 0); monthIndex++) {
+        for (int monthIndex = this.month - 1; daysToAdd > DAYS_PER_MONTH[monthIndex] || (daysToAdd > 28 && monthIndex == 1 && isLeapYear()); monthIndex++) {
             months++;
             daysToAdd -= DAYS_PER_MONTH[monthIndex];
         }
@@ -57,9 +96,11 @@ public class SimpleDate implements Cloneable {
         if (!validateDate(daysToAdd, month, year)) throw new SimpleDateParseException(daysToAdd + "/" + month + "/" + year + " is not a valid date");
 
         this.day = daysToAdd;
+
+        return this;
     }
 
-    public void minusDays(int daysToSubtract) {
+    public SimpleDate minusDays(int daysToSubtract) {
         daysToSubtract = daysToSubtract < 0 ? -daysToSubtract : daysToSubtract;
         int months = 0;
 
@@ -68,7 +109,7 @@ public class SimpleDate implements Cloneable {
             daysToSubtract -= this.day;
         }
 
-        for (int monthIndex = this.month - 1; daysToSubtract > DAYS_PER_MONTH[monthIndex] || (daysToSubtract > 28 && monthIndex == 1 && year % 4 == 0); monthIndex--) {
+        for (int monthIndex = this.month - 1; daysToSubtract > DAYS_PER_MONTH[monthIndex] || (daysToSubtract > 28 && monthIndex == 1 && isLeapYear()); monthIndex--) {
             months++;
             daysToSubtract -= DAYS_PER_MONTH[monthIndex];
         }
@@ -79,12 +120,13 @@ public class SimpleDate implements Cloneable {
         if (!validateDate(days, month, year)) throw new SimpleDateParseException(daysToSubtract + "/" + month + "/" + year + " is not a valid date");
 
         this.day = days;
+
+        return this;
     }
 
-    public void addMonths(int monthsToAdd) {
+    public SimpleDate addMonths(int monthsToAdd) {
         if (monthsToAdd < 0) {
-            minusMonths(-monthsToAdd);
-            return;
+            return minusMonths(-monthsToAdd);
         }
 
         int years = this.year + (int) Math.floor(monthsToAdd / (float) 12);
@@ -96,9 +138,11 @@ public class SimpleDate implements Cloneable {
         this.month = monthsToAdd;
         this.year = years;
         this.day = days;
+
+        return this;
     }
 
-    public void minusMonths(int monthsToSubtract) {
+    public SimpleDate minusMonths(int monthsToSubtract) {
         int years = this.year - (int) Math.floor(monthsToSubtract / (float) 12);
         monthsToSubtract = (this.month - (monthsToSubtract < 0 ? -monthsToSubtract : monthsToSubtract)) % 12;
         int days = Math.min(this.day, DAYS_PER_MONTH[monthsToSubtract - 1]);
@@ -108,36 +152,61 @@ public class SimpleDate implements Cloneable {
         this.month = monthsToSubtract;
         this.year = years;
         this.day = days;
+
+        return this;
     }
 
-    public void addYears(int yearsToAdd) {
+    public SimpleDate addYears(int yearsToAdd) {
         if (!validateDate(day, month, year + yearsToAdd)) throw new SimpleDateParseException(day + "/" + month + "/" + (year + yearsToAdd) + " is not a valid date");
 
         this.year += yearsToAdd;
+
+        return this;
     }
 
-    public void minusYears(int yearsToSubtract) {
-        addYears(-yearsToSubtract);
+    public SimpleDate minusYears(int yearsToSubtract) {
+        return addYears(-yearsToSubtract);
     }
 
     public boolean validateDate(int day, int month, int year) {
         if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
             return false;
-        } else if (day != 29 || month != 2 || year % 4 == 0) {
+        } else if (day != 29 || month != 2 || isLeapYear()) {
             return true;
         } else {
             return false;
         }
     }
 
-    public String asString(String format) {
+    public long toEpochDay() {
+        long y = year;
+        long m = month;
+        long total = 0;
+        total += 365 * y;
+        if (y >= 0) {
+            total += (y + 3) / 4 - (y + 99) / 100 + (y + 399) / 400;
+        } else {
+            total -= y / -4 - y / -100 + y / -400;
+        }
+        total += ((367 * m - 362) / 12);
+        total += day - 1;
+        if (m > 2) {
+            total--;
+            if (!isLeapYear()) {
+                total--;
+            }
+        }
+        return total - DAYS_0000_TO_1970;
+    }
+
+    public String toString(String format) {
         return format
                 .replaceAll("dd", String.valueOf(day))
                 .replaceAll("mm", String.valueOf(month))
                 .replaceAll("yyyy", String.valueOf(year));
     }
 
-    public static SimpleDate from(@NotNull String string) {
+    public static SimpleDate parse(@NotNull String string) {
         Matcher matcher= DATE_FORMAT.matcher(string);
 
         if (matcher.find()) {

@@ -101,14 +101,15 @@ public class LocalPlaceholders {
             return String.valueOf(rewardUser.getHighestStreak());
         });
 
-        registerPlaceholder("playtime", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
-        });
+        // TODO: Replace with a placeholder for each goal module
+//        registerPlaceholder("playtime", (params, player) -> {
+//            if (player == null) {
+//                return null;
+//            }
+//
+//            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+//            return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
+//        });
 
         registerPlaceholder("session_playtime", (params, player) -> {
             if (!(ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {

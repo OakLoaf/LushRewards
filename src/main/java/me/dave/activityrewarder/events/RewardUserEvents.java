@@ -33,7 +33,7 @@ public class RewardUserEvents implements Listener {
         if (ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) {
             PlaytimeTracker playtimeTracker = playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             if (playtimeTracker != null) {
-                rewardUser.setPlayMinutes(playtimeTracker.getGlobalPlaytime());
+                rewardUser.setMinutesPlayed(playtimeTracker.getGlobalPlaytime());
             }
         }
 

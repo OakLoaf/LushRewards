@@ -1,81 +1,30 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleData;
 import me.dave.activityrewarder.utils.SimpleDate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 public class RewardUser {
     private final UUID uuid;
     private String username;
-    private LocalDate startDate;
-    private LocalDate lastDate;
-    private int dayNum;
-    private int highestStreak;
-    private int playMinutes;
-    private int lastCollectedPlaytime;
+    private int minutesPlayed;
 
-    public RewardUser(UUID uuid, String username, String startDate, String lastCollectedDate, int dayNum, int highestStreak, int playMinutes, int lastCollectedPlaytime) {
+    private final DailyRewardsModuleData dailyRewardsModuleData;
+    private final PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData;
+    private final PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData;
+
+    public RewardUser(@NotNull UUID uuid, String username, int minutesPlayed, @Nullable DailyRewardsModuleData dailyRewardsModuleData, @Nullable PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData, @Nullable PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData) {
         this.uuid = uuid;
         this.username = username;
-        this.startDate = LocalDate.parse(startDate);
-        this.lastDate = LocalDate.parse(lastCollectedDate);
-        this.dayNum = dayNum;
-        this.highestStreak = highestStreak;
-        this.playMinutes = playMinutes;
-        this.lastCollectedPlaytime = lastCollectedPlaytime;
-    }
+        this.minutesPlayed = minutesPlayed;
 
-    public void setUsername(String username) {
-        this.username = username;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public void setLastDate(String lastCollectedDate) {
-        this.lastDate = LocalDate.parse(lastCollectedDate);
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public SimpleDate getDateOnDayNum(int dayNum) {
-        SimpleDate date = SimpleDate.now();
-        date.addDays(dayNum - getActualDayNum());
-        return date;
-    }
-
-    public void incrementDayNum() {
-        this.dayNum += 1;
-        if (dayNum > highestStreak) {
-            highestStreak = dayNum;
-        }
-
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public void setDay(int dayNum) {
-        this.dayNum = dayNum;
-        this.startDate = LocalDate.now();
-        this.lastDate = LocalDate.now().minusDays(dayNum);
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public void resetDays() {
-        setDay(1);
-    }
-
-    public void setPlayMinutes(int playMinutes) {
-        this.playMinutes = playMinutes;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public void increasePlayMinutes(int playMinutes) {
-        this.playMinutes += playMinutes;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
-    }
-
-    public void setLastCollectedTime(int lastCollectedPlaytime) {
-        this.lastCollectedPlaytime = lastCollectedPlaytime;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
+        this.dailyRewardsModuleData = dailyRewardsModuleData;
+        this.dailyPlaytimeGoalsModuleData = dailyPlaytimeGoalsModuleData;
+        this.globalPlaytimeGoalsModuleData = globalPlaytimeGoalsModuleData;
     }
 
     public UUID getUUID() {
@@ -86,60 +35,92 @@ public class RewardUser {
         return this.username;
     }
 
-    public LocalDate getStartDate() {
-        return this.startDate;
+    public void setUsername(String username) {
+        this.username = username;
+        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
-    public LocalDate getLastDate() {
-        return this.lastDate;
+    public int getMinutesPlayed() {
+        return this.minutesPlayed;
     }
+
+    public int getHoursPlayed() {
+        return this.minutesPlayed * 60;
+    }
+
+    public void setMinutesPlayed(int minutesPlayed) {
+        this.minutesPlayed = minutesPlayed;
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public DailyRewardsModuleData getDailyRewardsModuleData() {
+        return dailyRewardsModuleData;
+    }
+
+    public PlaytimeGoalsModuleData getDailyPlaytimeGoalsModuleData() {
+        return dailyPlaytimeGoalsModuleData;
+    }
+
+    public PlaytimeGoalsModuleData getGlobalPlaytimeGoalsModuleData() {
+        return globalPlaytimeGoalsModuleData;
+    }
+
+    // Outdated
 
     public int getDayNum() {
-        return this.dayNum;
+        return dailyRewardsModuleData.getDayNum();
+    }
+
+    public void setDay(int dayNum) {
+        dailyRewardsModuleData.setDayNum(dayNum);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public void resetDays() {
+        dailyRewardsModuleData.setDayNum(1);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public void incrementDayNum() {
+        dailyRewardsModuleData.incrementDayNum();
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+    public SimpleDate getStartDate() {
+        return dailyRewardsModuleData.getStartDate();
+    }
+
+    public SimpleDate getLastDate() {
+        return dailyRewardsModuleData.getLastCollectedDate();
+    }
+
+    public void setLastDate(SimpleDate date) {
+        dailyRewardsModuleData.setLastCollectedDate(date);
+        ActivityRewarder.getDataManager().saveRewardUser(this);
+    }
+
+
+    public SimpleDate getDateOnDayNum(int dayNum) {
+        SimpleDate date = SimpleDate.now();
+        date.addDays(dayNum - getActualDayNum());
+        return date;
     }
 
     public int getHighestStreak() {
-        return this.highestStreak;
+        return dailyRewardsModuleData.getHighestStreak();
     }
 
     public int getActualDayNum() {
-        return (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay() + 1);
+        return (int) (SimpleDate.now().toEpochDay() - dailyRewardsModuleData.getStartDate().toEpochDay() + 1);
     }
 
     public int getDayNumOffset() {
-        return getActualDayNum() - dayNum;
-    }
-
-    public int getPlayMinutes() {
-        return this.playMinutes;
-    }
-
-    public int getPlayHours() {
-        return this.playMinutes * 60;
-    }
-    
-    public int getLastCollectedPlaytime() {
-        return this.lastCollectedPlaytime;
-    }
-
-    public int getPlayTimeSinceLastCollected() {
-        // Finds the difference between their current play time and play time when the player last collected their reward
-        return playMinutes - lastCollectedPlaytime;
+        return getActualDayNum() - dailyRewardsModuleData.getDayNum();
     }
 
     public boolean hasCollectedToday() {
-        return LocalDate.now().equals(lastDate);
+        return SimpleDate.now().equals(dailyRewardsModuleData.getLastCollectedDate());
     }
 
-    private int getTicksToSeconds(long ticks) {
-        return (int) Math.floor(ticks * 20);
-    }
-
-    private int getTicksToMinutes(long ticks) {
-        return getTicksToSeconds(ticks) * 60;
-    }
-
-    private int getTicksToHours(long ticks) {
-        return getTicksToMinutes(ticks) * 60;
-    }
+    public record PlaytimeGoalsModuleData(int lastCollectedPlaytime) {}
 }
