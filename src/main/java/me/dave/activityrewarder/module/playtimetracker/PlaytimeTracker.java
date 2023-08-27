@@ -75,11 +75,19 @@ public class PlaytimeTracker {
         return !SimpleLocation.from(player.getLocation()).equals(lastLocation);
     }
 
-    public int getSessionTime() {
+    public int getIdlePlaytime() {
+        return idleTime;
+    }
+
+    public int getSessionPlaytime() {
         return sessionTime;
     }
 
-    public int getGlobalTime() {
+    public int getTotalSessionPlaytime() {
+        return sessionTime + idleTime;
+    }
+
+    public int getGlobalPlaytime() {
         return globalTime;
     }
 }
