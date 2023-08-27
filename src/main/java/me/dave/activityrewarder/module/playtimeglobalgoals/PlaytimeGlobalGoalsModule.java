@@ -35,7 +35,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
             return;
         }
 
-        receiveWithDailyRewards = config.getBoolean("receive-with-daily-rewards");
+        receiveWithDailyRewards = config.getBoolean("give-with-daily-rewards");
 
         String guiTitle = config.getString("gui.title", "&8&lPlaytime Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
