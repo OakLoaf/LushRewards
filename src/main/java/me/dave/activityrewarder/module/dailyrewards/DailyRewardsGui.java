@@ -51,8 +51,6 @@ public class DailyRewardsGui extends AbstractGui {
         boolean collectedToday = rewardUser.hasCollectedToday();
         // The current day number being shown to the user
         int currDayNum = collectedToday ? rewardUser.getDayNum() - 1 : rewardUser.getDayNum();
-        // The day number that the user is technically on
-        int actualDayNum = rewardUser.getActualDayNum();
 
         // First reward day shown
         AtomicInteger dayIndex = new AtomicInteger();
@@ -98,7 +96,7 @@ public class DailyRewardsGui extends AbstractGui {
                     DailyRewardCollection reward = dailyRewardsModule.getRewardDay(dateIndex, dayIndex.get()).getHighestPriorityRewardCollection();
                     // TODO: Store list of collected days in RewardUser to check for collected vs missed days
 
-                    String itemTemplate = (dayIndex.get() == currDayNum && collectedToday) ? "collected-reward" : "default-reward";
+                    String itemTemplate = dayIndex.get() == currDayNum ? (collectedToday ? "collected-reward" : "redeemable-reward") : "default-reward";
 
                     SimpleItemStack displayItem = SimpleItemStack.overwrite(reward.getDisplayItem(), ActivityRewarder.getConfigManager().getCategoryTemplate(reward.getCategory()));
                     displayItem = SimpleItemStack.overwrite(displayItem, ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate));
@@ -129,8 +127,15 @@ public class DailyRewardsGui extends AbstractGui {
 
                             removeButton(slot);
 
-                            ItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward")).getItemStack(player);
-                            inventory.setItem(slot, collectedItem);
+                            SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward"));
+                            if (collectedItem.getDisplayName() != null) {
+                                collectedItem.setDisplayName(collectedItem.getDisplayName()
+                                    .replaceAll("%day%", String.valueOf(dayIndex.get()))
+                                    .replaceAll("%month_day%", String.valueOf(dateIndex.getDay())));
+                            }
+                            collectedItem.parseColors(player);
+
+                            inventory.setItem(slot, collectedItem.getItemStack());
 
                             Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
