@@ -54,6 +54,10 @@ public class DataManager {
         }
     }
 
+    public void saveRewardUser(Player player) {
+        ioHandler.savePlayer(getRewardUser(player));
+    }
+
     public void saveRewardUser(RewardUser rewardUser) {
         ioHandler.savePlayer(rewardUser);
     }
