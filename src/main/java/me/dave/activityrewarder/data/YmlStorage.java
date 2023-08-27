@@ -53,7 +53,7 @@ public class YmlStorage implements Storage<RewardUser> {
 
     @Override
     public void save(RewardUser rewardUser) {
-        YamlConfiguration configurationSection = loadOrCreateFile(rewardUser.getUUID());
+        YamlConfiguration configurationSection = loadOrCreateFile(rewardUser.getUniqueId());
 
         configurationSection.set("name", rewardUser.getUsername());
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
@@ -76,7 +76,7 @@ public class YmlStorage implements Storage<RewardUser> {
             configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleData.lastCollectedPlaytime());
         }
 
-        File file = new File(dataFolder, rewardUser.getUUID().toString());
+        File file = new File(dataFolder, rewardUser.getUniqueId().toString());
         try {
             configurationSection.save(file);
         } catch(IOException err) {

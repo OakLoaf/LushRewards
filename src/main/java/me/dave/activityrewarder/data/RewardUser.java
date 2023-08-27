@@ -27,7 +27,7 @@ public class RewardUser {
         this.globalPlaytimeGoalsModuleData = globalPlaytimeGoalsModuleData;
     }
 
-    public UUID getUUID() {
+    public UUID getUniqueId() {
         return this.uuid;
     }
 
