@@ -4,8 +4,6 @@ import me.dave.activityrewarder.exceptions.SimpleDateParseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -207,6 +205,7 @@ public class SimpleDate implements Cloneable {
     }
 
     public static SimpleDate parse(@NotNull String string) {
+        string = string.replace('/', '-');
         Matcher matcher= DATE_FORMAT.matcher(string);
 
         if (matcher.find()) {
