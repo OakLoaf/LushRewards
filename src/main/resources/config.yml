@@ -3,7 +3,6 @@ modules:
   daily-rewards: true
   playtime-daily-goals: true
   playtime-global-goals: true
-  playtime-bonuses: true
 
 # Whether players will receive all rewards on a day or just the one with the highest priority
 allow-reward-stacking: false
