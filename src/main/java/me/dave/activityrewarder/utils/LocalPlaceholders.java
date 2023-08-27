@@ -118,7 +118,6 @@ public class LocalPlaceholders {
             return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getSessionPlaytime());
         });
 
-
         registerPlaceholder("total_rewards", (params, player) -> {
             if (!(ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
                 return null;
@@ -128,6 +127,14 @@ public class LocalPlaceholders {
             RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getDayNum());
 
             return String.valueOf(rewardDay.getRewardCount());
+        });
+
+        registerPlaceholder("total_session_playtime", (params, player) -> {
+            if (!(ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
+                return null;
+            }
+
+            return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getTotalSessionPlaytime());
         });
 
         // Regex Placeholders
