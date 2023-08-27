@@ -32,7 +32,8 @@ public class PlaytimeTrackerModule extends Module {
                     playtimeTrackers.values().forEach(PlaytimeTracker::tick);
                 },
                 Duration.of(0, ChronoUnit.MILLIS),
-                Duration.of(1000, ChronoUnit.MILLIS));
+                Duration.of(1000, ChronoUnit.MILLIS)
+        );
     }
 
     @Override
