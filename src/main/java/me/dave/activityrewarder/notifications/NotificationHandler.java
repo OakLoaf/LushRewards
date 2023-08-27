@@ -32,7 +32,7 @@ public class NotificationHandler {
 
             SimpleDate today = SimpleDate.now();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                boolean collectedToday = today.equals(ActivityRewarder.getDataManager().getRewardUser(player).getLastDate());
+                boolean collectedToday = today.equals(ActivityRewarder.getDataManager().getRewardUser(player).getLastCollectedDate());
                 if (collectedToday) {
                     continue;
                 }

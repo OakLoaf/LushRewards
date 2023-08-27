@@ -6,6 +6,7 @@ import me.dave.activityrewarder.utils.SimpleDate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class RewardUser {
@@ -90,7 +91,7 @@ public class RewardUser {
         return dailyRewardsModuleData.getStartDate();
     }
 
-    public SimpleDate getLastDate() {
+    public SimpleDate getLastCollectedDate() {
         return dailyRewardsModuleData.getLastCollectedDate();
     }
 
@@ -122,5 +123,5 @@ public class RewardUser {
         return SimpleDate.now().equals(dailyRewardsModuleData.getLastCollectedDate());
     }
 
-    public record PlaytimeGoalsModuleData(int lastCollectedPlaytime) {}
+    public record PlaytimeGoalsModuleData(int lastCollectedPlaytime, List<Integer> collectedTimes) {}
 }

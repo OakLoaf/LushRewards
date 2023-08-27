@@ -40,7 +40,7 @@ public class DailyRewardsGui extends AbstractGui {
         // Checks if the streak mode config option is enabled
         if (ActivityRewarder.getConfigManager().isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
-            if (rewardUser.getLastDate().isBefore(SimpleDate.now().minusDays(1))) {
+            if (rewardUser.getLastCollectedDate().isBefore(SimpleDate.now().minusDays(1))) {
                 rewardUser.resetDays();
             }
         }
