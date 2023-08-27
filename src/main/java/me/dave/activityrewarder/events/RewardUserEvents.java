@@ -15,11 +15,14 @@ public class RewardUserEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        ActivityRewarder.getDataManager().loadRewardUser(player.getUniqueId()).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName()));
+        ActivityRewarder.getDataManager().getOrLoadRewardUser(player)
+            .thenAccept((rewardUser) -> {
+                rewardUser.setUsername(player.getName());
 
-        if (ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) {
-            playtimeTrackerModule.startPlaytimeTracker(player);
-        }
+                if (ActivityRewarder.getModule("playtime-tracker") instanceof PlaytimeTrackerModule playtimeTrackerModule) {
+                    playtimeTrackerModule.startPlaytimeTracker(event.getPlayer());
+                }
+            });
     }
 
     @EventHandler
