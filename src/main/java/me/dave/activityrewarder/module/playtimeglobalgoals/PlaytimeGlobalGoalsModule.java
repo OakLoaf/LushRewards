@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PlaytimeGlobalGoalsModule extends Module {
-    // TODO: implement refresh time
+    private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
     private HashMap<Integer, RewardCollection> minutesToReward;
@@ -35,6 +35,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
             return;
         }
 
+        refreshTime = config.getInt("refresh-time");
         receiveWithDailyRewards = config.getBoolean("give-with-daily-rewards");
 
         String guiTitle = config.getString("gui.title", "&8&lPlaytime Rewards");
@@ -67,6 +68,10 @@ public class PlaytimeGlobalGoalsModule extends Module {
             minutesToReward.clear();
             minutesToReward = null;
         }
+    }
+
+    public int getRefreshTime() {
+        return refreshTime;
     }
 
     public boolean shouldReceiveWithDailyRewards() {

@@ -1,6 +1,8 @@
 package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.utils.SimpleLocation;
 import org.bukkit.entity.Player;
 
@@ -41,10 +43,7 @@ public class PlaytimeTracker {
     }
 
     public void whileActive() {
-        sessionTime++;
-        if (sessionTime % 60 == 0) {
-            globalTime++;
-        }
+        incrementSessionTime();
 
         if (afk) {
             idleTime = 0;
@@ -59,11 +58,36 @@ public class PlaytimeTracker {
             if (idleTime > IDLE_TIME_TO_AFK) {
                 afk = true;
             } else {
-                sessionTime++;
-                if (sessionTime % 60 == 0) {
-                    globalTime++;
-                }
+                incrementSessionTime();
             }
+        }
+    }
+
+    private void incrementSessionTime() {
+        sessionTime++;
+
+        if (sessionTime % 60 == 0) {
+            incrementGlobalTime();
+        }
+    }
+
+    private void incrementGlobalTime() {
+        globalTime++;
+
+        if (ActivityRewarder.getModule("playtime-daily-goals") instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
+            if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
+                playtimeDailyGoalsModule.getRewardCollectionsInRange(0 /* TODO: add to data */, globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
+            }
+        }
+
+        if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
+            if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
+                playtimeGlobalGoalsModule.getRewardCollectionsInRange(0 /* TODO: add to data */, globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
+            }
+        }
+
+        if (globalTime % 15 == 0) {
+            ActivityRewarder.getDataManager().saveRewardUser(player);
         }
     }
 
