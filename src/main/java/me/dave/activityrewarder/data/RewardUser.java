@@ -58,8 +58,7 @@ public class RewardUser {
         moduleDataMap.put(moduleData.getId(), moduleData);
     }
 
-    // Outdated
-
+    // TODO: Needs moving into ModuleData
     public int getDayNum() {
         return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDayNum();
     }
