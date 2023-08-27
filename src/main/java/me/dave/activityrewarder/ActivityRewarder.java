@@ -57,6 +57,7 @@ public final class ActivityRewarder extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        dataManager.saveAll();
         modules.clear();
         dataManager.getIoHandler().disableIOHandler();
     }
