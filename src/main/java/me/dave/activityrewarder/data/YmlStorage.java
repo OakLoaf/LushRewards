@@ -61,22 +61,19 @@ public class YmlStorage implements Storage<RewardUser> {
         configurationSection.set("name", rewardUser.getUsername());
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
-        DailyRewardsModuleData dailyRewardsModuleData = rewardUser.getDailyRewardsModuleData();
-        if (dailyRewardsModuleData != null) {
+        if (rewardUser.getModuleData("daily-rewards") instanceof DailyRewardsModuleData dailyRewardsModuleData) {
             configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getDayNum());
             configurationSection.set("daily-rewards.highest-streak", dailyRewardsModuleData.getHighestStreak());
             configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().toString("dd-mm-yyyy"));
             configurationSection.set("daily-rewards.last-collected-date", dailyRewardsModuleData.getLastCollectedDate().toString("dd-mm-yyyy"));
         }
 
-        PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData = rewardUser.getDailyPlaytimeGoalsModuleData();
-        if (dailyPlaytimeGoalsModuleData != null) {
+        if (rewardUser.getModuleData("daily-playtime-goals") instanceof PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData) {
             configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleData.getLastCollectedPlaytime());
             configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleData.getCollectedTimes());
         }
 
-        PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData = rewardUser.getGlobalPlaytimeGoalsModuleData();
-        if (globalPlaytimeGoalsModuleData != null) {
+        if (rewardUser.getModuleData("global-playtime-goals") instanceof PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData) {
             configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleData.getLastCollectedPlaytime());
             configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleData.getCollectedTimes());
         }
