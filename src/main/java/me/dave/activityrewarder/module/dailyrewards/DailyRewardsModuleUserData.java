@@ -5,14 +5,14 @@ import me.dave.activityrewarder.utils.SimpleDate;
 
 import java.util.List;
 
-public class DailyRewardsModuleData extends ModuleData {
+public class DailyRewardsModuleUserData extends ModuleData {
     private int dayNum;
     private int highestStreak;
     private final SimpleDate startDate;
     private SimpleDate lastCollectedDate;
     private List<String> collectedDates;
 
-    public DailyRewardsModuleData(String id, int dayNum, int highestStreak, SimpleDate startDate, SimpleDate lastCollectedDate, List<String> collectedDates) {
+    public DailyRewardsModuleUserData(String id, int dayNum, int highestStreak, SimpleDate startDate, SimpleDate lastCollectedDate, List<String> collectedDates) {
         super(id);
         this.dayNum = dayNum;
         this.highestStreak = highestStreak;

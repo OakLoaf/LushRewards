@@ -4,11 +4,11 @@ import me.dave.activityrewarder.module.ModuleData;
 
 import java.util.List;
 
-public class PlaytimeGoalsModuleData extends ModuleData {
+public class PlaytimeGoalsModuleUserData extends ModuleData {
     private final int lastCollectedPlaytime;
     private final List<Integer> collectedTimes;
 
-    public PlaytimeGoalsModuleData(String id, int lastCollectedPlaytime, List<Integer> collectedTimes) {
+    public PlaytimeGoalsModuleUserData(String id, int lastCollectedPlaytime, List<Integer> collectedTimes) {
         super(id);
         this.lastCollectedPlaytime = lastCollectedPlaytime;
         this.collectedTimes = collectedTimes;

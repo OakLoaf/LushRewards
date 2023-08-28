@@ -2,7 +2,7 @@ package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.ModuleData;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleData;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.utils.SimpleDate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,59 +61,59 @@ public class RewardUser {
 
     // TODO: Needs moving into ModuleData
     public int getDayNum() {
-        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDayNum();
+        return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getDayNum();
     }
 
     public void setDay(int dayNum) {
-        ((DailyRewardsModuleData) getModuleData("daily-rewards")).setDayNum(dayNum);
+        ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).setDayNum(dayNum);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void resetDays() {
-        ((DailyRewardsModuleData) getModuleData("daily-rewards")).setDayNum(1);
+        ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).setDayNum(1);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void incrementDayNum() {
-        ((DailyRewardsModuleData) getModuleData("daily-rewards")).incrementDayNum();
+        ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).incrementDayNum();
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public SimpleDate getLastCollectedDate() {
-        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getLastCollectedDate();
+        return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getLastCollectedDate();
     }
 
     public void setLastDate(SimpleDate date) {
-        ((DailyRewardsModuleData) getModuleData("daily-rewards")).setLastCollectedDate(date);
+        ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).setLastCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public SimpleDate getDateOnDayNum(int dayNum) {
-        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDateOnDayNum(dayNum);
+        return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getDateOnDayNum(dayNum);
     }
 
     public int getHighestStreak() {
-        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getHighestStreak();
+        return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getHighestStreak();
     }
 
     public int getActualDayNum() {
-        return (int) (SimpleDate.now().toEpochDay() - ((DailyRewardsModuleData) getModuleData("daily-rewards")).getStartDate().toEpochDay() + 1);
+        return (int) (SimpleDate.now().toEpochDay() - ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getStartDate().toEpochDay() + 1);
     }
 
     public int getDayNumOffset() {
-        return getActualDayNum() - ((DailyRewardsModuleData) getModuleData("daily-rewards")).getDayNum();
+        return getActualDayNum() - ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getDayNum();
     }
 
     public boolean hasCollectedToday() {
-        return SimpleDate.now().equals(((DailyRewardsModuleData) getModuleData("daily-rewards")).getLastCollectedDate());
+        return SimpleDate.now().equals(((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getLastCollectedDate());
     }
 
     public List<String> getCollectedDates() {
-        return ((DailyRewardsModuleData) getModuleData("daily-rewards")).getCollectedDates();
+        return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getCollectedDates();
     }
 
     public void addCollectedDate(SimpleDate date) {
-        ((DailyRewardsModuleData) getModuleData("daily-rewards")).addCollectedDate(date);
+        ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).addCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 }

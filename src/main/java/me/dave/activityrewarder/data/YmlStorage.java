@@ -1,8 +1,8 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleData;
-import me.dave.activityrewarder.module.playtimegoals.PlaytimeGoalsModuleData;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
+import me.dave.activityrewarder.module.playtimegoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.utils.SimpleDate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,21 +35,21 @@ public class YmlStorage implements Storage<RewardUser> {
             String lastCollectedDate = configurationSection.getString("daily-rewards.last-collected-date", SimpleDate.now().toString("dd-mm-yyyy"));
             List<String> collectedDates = configurationSection.getStringList("daily-rewards.last-collected-dates");
 
-            rewardUser.addModuleData(new DailyRewardsModuleData("daily-rewards", dayNum, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
+            rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", dayNum, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
         }
 
         if (ActivityRewarder.getModule("daily-playtime-goals") != null) {
             int lastCollectedPlaytime = configurationSection.getInt("daily-playtime-goals.last-collected-playtime", 0);
             List<Integer> collectedTimes = configurationSection.getIntegerList("daily-playtime-goals.collected-times");
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleData("daily-playtime-goals", lastCollectedPlaytime, collectedTimes));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("daily-playtime-goals", lastCollectedPlaytime, collectedTimes));
         }
 
         if (ActivityRewarder.getModule("global-playtime-goals") != null) {
             int lastCollectedPlaytime = configurationSection.getInt("global-playtime-goals.last-collected-playtime", 0);
             List<Integer> collectedTimes = configurationSection.getIntegerList("global-playtime-goals.collected-times");
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleData("global-playtime-goals", lastCollectedPlaytime, collectedTimes));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("global-playtime-goals", lastCollectedPlaytime, collectedTimes));
         }
 
         return rewardUser;
@@ -62,7 +62,7 @@ public class YmlStorage implements Storage<RewardUser> {
         configurationSection.set("name", rewardUser.getUsername());
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
-        if (rewardUser.getModuleData("daily-rewards") instanceof DailyRewardsModuleData dailyRewardsModuleData) {
+        if (rewardUser.getModuleData("daily-rewards") instanceof DailyRewardsModuleUserData dailyRewardsModuleData) {
             configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getDayNum());
             configurationSection.set("daily-rewards.highest-streak", dailyRewardsModuleData.getHighestStreak());
             configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().toString("dd-mm-yyyy"));
@@ -70,14 +70,14 @@ public class YmlStorage implements Storage<RewardUser> {
             configurationSection.set("daily-rewards.collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
 
-        if (rewardUser.getModuleData("daily-playtime-goals") instanceof PlaytimeGoalsModuleData dailyPlaytimeGoalsModuleData) {
-            configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleData.getLastCollectedPlaytime());
-            configurationSection.set("daily-playtime-goals.collected-times", dailyPlaytimeGoalsModuleData.getCollectedTimes());
+        if (rewardUser.getModuleData("daily-playtime-goals") instanceof PlaytimeGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
+            configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
+            configurationSection.set("daily-playtime-goals.collected-times", dailyPlaytimeGoalsModuleUserData.getCollectedTimes());
         }
 
-        if (rewardUser.getModuleData("global-playtime-goals") instanceof PlaytimeGoalsModuleData globalPlaytimeGoalsModuleData) {
-            configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleData.getLastCollectedPlaytime());
-            configurationSection.set("global-playtime-goals.last-collected-times", globalPlaytimeGoalsModuleData.getCollectedTimes());
+        if (rewardUser.getModuleData("global-playtime-goals") instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
+            configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
+            configurationSection.set("global-playtime-goals.last-collected-times", globalPlaytimeGoalsModuleUserData.getCollectedTimes());
         }
 
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());
