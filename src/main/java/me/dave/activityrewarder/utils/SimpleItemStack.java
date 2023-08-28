@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class SimpleItemStack implements Cloneable {
     private Material material = null;
@@ -232,6 +233,34 @@ public class SimpleItemStack implements Cloneable {
         }
         if (configurationSection.contains("skull-texture")) {
             simpleItemStack.setSkullTexture(configurationSection.getString("skull-texture"));
+        }
+
+        return simpleItemStack;
+    }
+
+    public static SimpleItemStack from(@NotNull Map<?, ?> configurationMap) {
+        SimpleItemStack simpleItemStack = new SimpleItemStack();
+
+        if (configurationMap.containsKey("material")) {
+            simpleItemStack.setType(ConfigParser.getMaterial((String) configurationMap.get("material")));
+        }
+        if (configurationMap.containsKey("amount")) {
+            simpleItemStack.setAmount((int) configurationMap.get("amount"));
+        }
+        if (configurationMap.containsKey("display-name")) {
+            simpleItemStack.setDisplayName((String) configurationMap.get("display-name"));
+        }
+        if (configurationMap.containsKey("lore")) {
+            simpleItemStack.setLore((List<String>) configurationMap.get("lore"));
+        }
+        if (configurationMap.containsKey("enchanted")) {
+            simpleItemStack.setEnchanted((boolean) configurationMap.get("enchanted"));
+        }
+        if (configurationMap.containsKey("custom-model-data")) {
+            simpleItemStack.setCustomModelData((int) configurationMap.get("custom-model-data"));
+        }
+        if (configurationMap.containsKey("skull-texture")) {
+            simpleItemStack.setSkullTexture((String) configurationMap.get("skull-texture"));
         }
 
         return simpleItemStack;

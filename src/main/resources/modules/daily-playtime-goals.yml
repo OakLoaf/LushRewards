@@ -5,13 +5,13 @@ refresh-time: -1
 
 daily-goals:
   - category: small
-    play-hours: 1
+    play-minutes: 60 # 1 Hour
     rewards:
       - type: item
         material: iron_ingot
         amount: 1
   - category: small
-    play-hours: 2
+    play-minutes: 120 # 2 Hours
     display-item:
       amount: 2
     rewards:
@@ -19,7 +19,7 @@ daily-goals:
         material: diamond
         amount: 3
   - category: small
-    play-hours: 3
+    play-minutes: 180 # 3 Hours
     display-item:
       amount: 3
     rewards:
@@ -27,7 +27,7 @@ daily-goals:
         material: diamond
         amount: 3
   - category: small
-    play-hours: 4
+    play-minutes: 240 # 4 Hours
     display-item:
       amount: 4
     rewards:
@@ -35,7 +35,7 @@ daily-goals:
         material: diamond
         amount: 3
   - category: small
-    play-hours: 6
+    play-minutes: 360 # 6 Hours
     display-item:
       amount: 6
     rewards:
@@ -43,7 +43,7 @@ daily-goals:
         material: diamond
         amount: 3
   - category: medium
-    play-hours: 8
+    play-minutes: 480 # 8 Hours
     display-item:
       amount: 8
     rewards:
@@ -51,7 +51,7 @@ daily-goals:
         material: diamond
         amount: 3
   - category: large
-    play-hours: 10
+    play-minutes: 600 # 10 Hours
     display-item:
       amount: 10
     rewards:

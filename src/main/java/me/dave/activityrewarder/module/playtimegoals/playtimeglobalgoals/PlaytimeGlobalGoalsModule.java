@@ -4,7 +4,6 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
-import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,8 +29,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
         YamlConfiguration config = ActivityRewarder.getConfigManager().getGlobalGoalsConfig();
 
         // TODO: Fix below
-        ConfigurationSection configurationSection = config.getConfigurationSection("global-goals");
-        if (configurationSection == null) {
+        if (!config.contains("global-goals")) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'global-goals' section in 'global-playtime-goals.yml'");
             this.disable();
             return;
@@ -46,22 +44,20 @@ public class PlaytimeGlobalGoalsModule extends Module {
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         this.minutesToReward = new HashMap<>();
-        for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof ConfigurationSection rewardSection) {
-                RewardCollection rewardCollection;
-                try {
-                    rewardCollection = DailyRewardCollection.from(rewardSection);
-                } catch(InvalidRewardException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                int minutes = (int) Math.floor(rewardSection.getDouble("play-hours", 1.0) * 60);
-                minutesToReward.put(minutes, rewardCollection);
+        for (Map<?, ?> rewardMap : config.getMapList("global-goals")) {
+            RewardCollection rewardCollection;
+            try {
+                rewardCollection = RewardCollection.from(rewardMap);
+            } catch(InvalidRewardException e) {
+                e.printStackTrace();
+                continue;
             }
+
+            int minutes = rewardMap.containsKey("play-minutes") ? (int) rewardMap.get("play-minutes") * 60 : 60;
+            minutesToReward.put(minutes, rewardCollection);
         }
 
-        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
+        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'global-goals'");
     }
 
     @Override

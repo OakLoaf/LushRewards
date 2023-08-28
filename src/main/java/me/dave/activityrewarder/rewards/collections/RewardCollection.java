@@ -89,6 +89,32 @@ public class RewardCollection {
         return rewardList != null ? new RewardCollection(rewardList, 0, category, itemStack, redeemSound) : RewardCollection.empty();
     }
 
+    @NotNull
+    public static RewardCollection from(Map<?, ?> rewardCollectionMap) {
+        Debugger.DebugMode debugMode = Debugger.DebugMode.DAILY;
+        Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionMap + "'", debugMode);
+
+        int priority = rewardCollectionMap.containsKey("priority") ? (int) rewardCollectionMap.get("priority") : 0;
+        Debugger.sendDebugMessage("Reward collection priority set to " + priority, debugMode);
+
+        String category = rewardCollectionMap.containsKey("category") ? (String) rewardCollectionMap.get("category") : "small";
+        Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
+
+        Map<?, ?> itemMap = (Map<?, ?>) rewardCollectionMap.get("display-item");
+        SimpleItemStack itemStack = itemMap != null ? SimpleItemStack.from(itemMap) : new SimpleItemStack();
+        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
+
+        Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? ConfigParser.getSound((String) rewardCollectionMap.get("redeem-sound")) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+
+        Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
+        List<Map<?, ?>> rewardMaps = (List<Map<?, ?>>) rewardCollectionMap.get("rewards");
+
+        List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionMap.toString()) : null;
+        Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionMap + "'", debugMode);
+
+        return rewardList != null ? new RewardCollection(rewardList, 0, category, itemStack, redeemSound) : RewardCollection.empty();
+    }
+
     public static RewardCollection empty() {
         return new RewardCollection(null, 0, null, null, null);
     }

@@ -7,7 +7,7 @@ give-with-daily-rewards: false
 
 global-goals:
   - category: small
-    play-hours: 10
+    play-minutes: 600 # 10 Hours
     display-item:
       material: clock
       amount: 1
@@ -16,7 +16,7 @@ global-goals:
         material: iron_ingot
         amount: 1
   - category: small
-    play-hours: 24
+    play-minutes: 1440 # 24 Hours
     display-item:
       material: clock
       amount: 1
