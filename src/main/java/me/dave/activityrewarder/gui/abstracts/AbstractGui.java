@@ -111,7 +111,7 @@ public abstract class AbstractGui {
             case COLLECT_TO_CURSOR -> {
                 event.setCancelled(true);
             }
-            case DROP_ALL_SLOT, DROP_ONE_SLOT, PLACE_ALL, PLACE_SOME, PLACE_ONE, PICKUP_ALL, PICKUP_HALF, PICKUP_SOME, PICKUP_ONE, SWAP_WITH_CURSOR, CLONE_STACK  -> {
+            case DROP_ALL_SLOT, DROP_ONE_SLOT, PLACE_ALL, PLACE_SOME, PLACE_ONE, PICKUP_ALL, PICKUP_HALF, PICKUP_SOME, PICKUP_ONE, SWAP_WITH_CURSOR, CLONE_STACK, HOTBAR_SWAP, HOTBAR_MOVE_AND_READD  -> {
                 if (clickedInventory.equals(inventory) && isSlotLocked(slot)) {
                     event.setCancelled(true);
                 }
