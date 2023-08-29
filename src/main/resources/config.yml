@@ -42,17 +42,17 @@ item-templates:
     skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTk5MDI0OTlkMmE1M2I2YzhiMDcxMjliOTNmYmNjYWRkNGMyOWE0NDM4OGNiMjYxYTY4ZDdiNzE4OTlmNzhjYSJ9fX0=
     display-name: "&#f5e389Day %day% - Redeemable"
     enchanted: true
-    # Template for collected rewards
-    collected-reward:
-      material: player_head
-      skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTNiYTdhOWQ5N2M1MjQxOGU5ZDg0NjU0YWRiMDRhYmE2ZjMwYjY3NjA4ZmZlMDQxNjYxZGIzYzc1NGMwNzg0MyJ9fX0=
-      display-name: "&#f5e389Day %day% - Collected"
-      enchanted: false
-    # Template for missed rewards
-    missed-reward:
-      material: player_head
-      skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzVjZGJmMTA3MGNmY2I3NWU4YjNmMjdiODQ0ZjExZWU0YjkzNjVmZDM0YzA4NjE4NDhmYjNhZGYwZGYxZmY4NiJ9fX0=
-      display-name: "&7Day %day% &8(Missed)"
+  # Template for collected rewards
+  collected-reward:
+    material: player_head
+    skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTNiYTdhOWQ5N2M1MjQxOGU5ZDg0NjU0YWRiMDRhYmE2ZjMwYjY3NjA4ZmZlMDQxNjYxZGIzYzc1NGMwNzg0MyJ9fX0=
+    display-name: "&#f5e389Day %day% - Collected"
+    enchanted: false
+  # Template for missed rewards
+  missed-reward:
+    material: player_head
+    skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzVjZGJmMTA3MGNmY2I3NWU4YjNmMjdiODQ0ZjExZWU0YjkzNjVmZDM0YzA4NjE4NDhmYjNhZGYwZGYxZmY4NiJ9fX0=
+    display-name: "&7Day %day% &8(Missed)"
   # Template for upcoming reward
   upcoming-reward:
     lore:
