@@ -10,7 +10,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     private int highestStreak;
     private final SimpleDate startDate;
     private SimpleDate lastCollectedDate;
-    private List<String> collectedDates;
+    private final List<String> collectedDates;
 
     public DailyRewardsModuleUserData(String id, int dayNum, int highestStreak, SimpleDate startDate, SimpleDate lastCollectedDate, List<String> collectedDates) {
         super(id);
@@ -69,5 +69,9 @@ public class DailyRewardsModuleUserData extends ModuleData {
 
     public void addCollectedDate(SimpleDate date) {
         collectedDates.add(date.toString("dd-mm-yyyy"));
+    }
+
+    public void clearCollectedDates() {
+        collectedDates.clear();
     }
 }

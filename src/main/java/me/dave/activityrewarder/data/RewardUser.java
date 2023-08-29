@@ -70,7 +70,10 @@ public class RewardUser {
     }
 
     public void resetDays() {
-        ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).setDayNum(1);
+        DailyRewardsModuleUserData dailyRewardsModuleUserData = (DailyRewardsModuleUserData) getModuleData("daily-rewards");
+
+        dailyRewardsModuleUserData.setDayNum(1);
+        dailyRewardsModuleUserData.clearCollectedDates();
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
