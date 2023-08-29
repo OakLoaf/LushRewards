@@ -33,7 +33,7 @@ public class YmlStorage implements Storage<RewardUser> {
             int highestStreak = configurationSection.getInt("daily-rewards.highest-streak", 1);
             String startDate = configurationSection.getString("daily-rewards.start-date", SimpleDate.now().toString("dd-mm-yyyy"));
             String lastCollectedDate = configurationSection.getString("daily-rewards.last-collected-date", SimpleDate.now().toString("dd-mm-yyyy"));
-            List<String> collectedDates = configurationSection.getStringList("daily-rewards.last-collected-dates");
+            List<String> collectedDates = configurationSection.getStringList("daily-rewards.collected-dates");
 
             rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", dayNum, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
         }
