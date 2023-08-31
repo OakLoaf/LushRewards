@@ -1,8 +1,4 @@
-# Placeholders:
-#   %user% - The user being given the reward
-#   %hourly-amount% - Number of hours multiplied by count
-
-# List of rewards
+# List of rewards (%user% - The user being given the reward)
 daily-rewards:
   default:
     priority: -1
