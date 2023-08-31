@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.rewards.collections;
 
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
+import me.dave.activityrewarder.exceptions.SimpleDateParseException;
 import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
@@ -17,39 +18,55 @@ import java.util.Map;
 
 public class DailyRewardCollection extends RewardCollection {
     private static DailyRewardCollection defaultReward = null;
-    private final SimpleDate date;
-    private final Integer streakDay;
-    private final int repeatFrequency;
-    private final SimpleDate repeatsUntil;
+    private final Integer repeatFrequency;
+    private final SimpleDate rewardDate;
+    private final SimpleDate repeatsUntilDate;
+    private final Integer rewardDayNum;
+    private final Integer repeatsUntilDay;
 
-    public DailyRewardCollection(@Nullable SimpleDate date, @Nullable Integer streakDay, @Nullable Collection<Reward> rewards, int priority, int repeatFrequency, @Nullable SimpleDate repeatsUntil, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
+    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable SimpleDate rewardDate, @Nullable SimpleDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
         super(rewards, priority, category, itemStack, sound);
-        this.date = date;
-        this.streakDay = streakDay;
-        this.repeatFrequency = repeatFrequency;
-        this.repeatsUntil = repeatsUntil;
+        this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntilDay != null || repeatsUntilDate != null ? 1 : 0);
+        this.rewardDate = rewardDate;
+        this.repeatsUntilDate = repeatsUntilDate;
+        this.rewardDayNum = rewardDayNum;
+        this.repeatsUntilDay = repeatsUntilDay;
     }
 
     @Nullable
-    public SimpleDate getDate() {
-        return date;
+    public SimpleDate getRewardDate() {
+        return rewardDate;
+    }
+
+    public boolean isAvailableOn(SimpleDate date) {
+        if (repeatFrequency <= 0 || rewardDate == null || !date.isAfter(rewardDate)) {
+            return false;
+        }
+
+        if (repeatsUntilDate == null || date.isBefore(repeatsUntilDate)) {
+            // Checks if date is inline with repeating function
+            return (date.toEpochDay() - rewardDate.toEpochDay()) % repeatFrequency == 0;
+        } else {
+            return false;
+        }
     }
 
     @Nullable
-    public Integer getStreakDay() {
-        return streakDay;
+    public Integer getRewardDayNum() {
+        return rewardDayNum;
     }
 
-    public int getRepeatFrequency() {
-        return repeatFrequency;
-    }
+    public boolean isAvailableOn(int dayNum) {
+        if (repeatFrequency <= 0 || rewardDayNum == null || dayNum <= rewardDayNum) {
+            return false;
+        }
 
-    public SimpleDate getRepeatsUntil() {
-        return repeatsUntil;
-    }
-
-    public boolean shouldRepeat() {
-        return repeatFrequency > 0;
+        if (repeatsUntilDay == null || dayNum < repeatsUntilDay) {
+            // Checks if dayNum is inline with repeating function
+            return (dayNum - rewardDayNum) % repeatFrequency == 0;
+        } else {
+            return false;
+        }
     }
 
     public static DailyRewardCollection getDefaultReward() {
@@ -66,25 +83,34 @@ public class DailyRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
         SimpleDate rewardDate = null;
-        Integer rewardDay = null;
+        Integer rewardDayNum = null;
         if (rewardCollectionSection.contains("on-date")) {
             rewardDate = SimpleDate.parse(rewardCollectionSection.getString("on-date", ""));
         }
         if (rewardCollectionSection.contains("on-day-num")) {
-            rewardDay = rewardCollectionSection.getInt("on-day-num");
+            rewardDayNum = rewardCollectionSection.getInt("on-day-num");
         }
 
-        if (rewardDay == null && !rewardCollectionSection.getName().equalsIgnoreCase("default")) {
+        if (rewardDayNum == null && !rewardCollectionSection.getName().equalsIgnoreCase("default")) {
             throw new InvalidRewardException("Failed to find 'on-date' or 'on-day-num' at '" + rewardCollectionSection.getCurrentPath() + "'");
         }
 
         int priority = rewardCollectionSection.getInt("priority", 0);
         Debugger.sendDebugMessage("Reward collection priority set to " + priority, debugMode);
 
-        int repeatFrequency = rewardCollectionSection.getInt("repeat", -1);
+        int repeatFrequency = rewardCollectionSection.getInt("repeat", 0);
         Debugger.sendDebugMessage("Reward collection repeat frequency set to " + repeatFrequency, debugMode);
 
-        SimpleDate repeatUntil = rewardCollectionSection.contains("repeats-until") ? SimpleDate.parse(rewardCollectionSection.getString("repeats-until")) : null;
+        Integer repeatsUntilDay = null;
+        SimpleDate repeatsUntilDate = null;
+
+        if (rewardCollectionSection.contains("repeats-until")) {
+            try {
+                repeatsUntilDate = SimpleDate.parse(rewardCollectionSection.getString("repeats-until"));
+            } catch (SimpleDateParseException e) {
+                repeatsUntilDay = rewardCollectionSection.getInt("repeats-until", -1);
+            }
+        }
 
         String category = rewardCollectionSection.getString("category", "small");
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
@@ -101,10 +127,10 @@ public class DailyRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return rewardList != null ? new DailyRewardCollection(rewardDate, rewardDay, rewardList, priority, repeatFrequency, repeatUntil, category, itemStack, redeemSound) : DailyRewardCollection.empty();
+        return rewardList != null ? new DailyRewardCollection(repeatFrequency, rewardDate, repeatsUntilDate, rewardDayNum, repeatsUntilDay, rewardList, priority, category, itemStack, redeemSound) : DailyRewardCollection.empty();
     }
 
     public static DailyRewardCollection empty() {
-        return new DailyRewardCollection(null, null, null, 0, -1, null, null, null, null);
+        return new DailyRewardCollection(null, null, null, null, null, null, 0, null, null, null);
     }
 }
