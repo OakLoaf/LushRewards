@@ -90,6 +90,7 @@ public class RewardCollection {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public static RewardCollection from(Map<?, ?> rewardCollectionMap) {
         Debugger.DebugMode debugMode = Debugger.DebugMode.DAILY;
         Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionMap + "'", debugMode);
@@ -112,7 +113,7 @@ public class RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionMap.toString()) : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionMap + "'", debugMode);
 
-        return rewardList != null ? new RewardCollection(rewardList, 0, category, itemStack, redeemSound) : RewardCollection.empty();
+        return rewardList != null ? new RewardCollection(rewardList, priority, category, itemStack, redeemSound) : RewardCollection.empty();
     }
 
     public static RewardCollection empty() {

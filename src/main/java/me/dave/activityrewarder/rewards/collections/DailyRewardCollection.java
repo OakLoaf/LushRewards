@@ -19,11 +19,15 @@ public class DailyRewardCollection extends RewardCollection {
     private static DailyRewardCollection defaultReward = null;
     private final SimpleDate date;
     private final Integer streakDay;
+    private final int repeatFrequency;
+    private final SimpleDate repeatsUntil;
 
-    public DailyRewardCollection(@Nullable SimpleDate date, @Nullable Integer streakDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
+    public DailyRewardCollection(@Nullable SimpleDate date, @Nullable Integer streakDay, @Nullable Collection<Reward> rewards, int priority, int repeatFrequency, @Nullable SimpleDate repeatsUntil, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
         super(rewards, priority, category, itemStack, sound);
         this.date = date;
         this.streakDay = streakDay;
+        this.repeatFrequency = repeatFrequency;
+        this.repeatsUntil = repeatsUntil;
     }
 
     @Nullable
@@ -34,6 +38,18 @@ public class DailyRewardCollection extends RewardCollection {
     @Nullable
     public Integer getStreakDay() {
         return streakDay;
+    }
+
+    public int getRepeatFrequency() {
+        return repeatFrequency;
+    }
+
+    public boolean shouldRepeat() {
+        return repeatFrequency > 0;
+    }
+
+    public SimpleDate getRepeatsUntil() {
+        return repeatsUntil;
     }
 
     public static DailyRewardCollection getDefaultReward() {
@@ -65,6 +81,11 @@ public class DailyRewardCollection extends RewardCollection {
         int priority = rewardCollectionSection.getInt("priority", 0);
         Debugger.sendDebugMessage("Reward collection priority set to " + priority, debugMode);
 
+        int repeatFrequency = rewardCollectionSection.getInt("repeat", -1);
+        Debugger.sendDebugMessage("Reward collection repeat frequency set to " + repeatFrequency, debugMode);
+
+        SimpleDate repeatUntil = rewardCollectionSection.contains("repeats-until") ? SimpleDate.parse(rewardCollectionSection.getString("repeats-until")) : null;
+
         String category = rewardCollectionSection.getString("category", "small");
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
@@ -80,10 +101,10 @@ public class DailyRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return rewardList != null ? new DailyRewardCollection(rewardDate, rewardDay, rewardList, 0, category, itemStack, redeemSound) : DailyRewardCollection.empty();
+        return rewardList != null ? new DailyRewardCollection(rewardDate, rewardDay, rewardList, priority, repeatFrequency, repeatUntil, category, itemStack, redeemSound) : DailyRewardCollection.empty();
     }
 
     public static DailyRewardCollection empty() {
-        return new DailyRewardCollection(null, null, null, 0, null, null, null);
+        return new DailyRewardCollection(null, null, null, 0, -1, null, null, null, null);
     }
 }
