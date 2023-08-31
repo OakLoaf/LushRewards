@@ -229,7 +229,7 @@ public class DailyRewardsGui extends AbstractGui {
 
     @Override
     public void onClick(InventoryClickEvent event) {
-        event.setCancelled(true);
+        super.onClick(event, true);
     }
 
     public enum ScrollType {

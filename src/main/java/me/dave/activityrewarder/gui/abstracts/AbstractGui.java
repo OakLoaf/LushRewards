@@ -97,6 +97,10 @@ public abstract class AbstractGui {
     }
 
     public void onClick(InventoryClickEvent event) {
+        onClick(event, false);
+    }
+
+    public void onClick(InventoryClickEvent event, boolean cancelAll) {
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) return;
 
@@ -107,58 +111,62 @@ public abstract class AbstractGui {
             button.accept(event);
         }
 
-        switch (event.getAction()) {
-            case COLLECT_TO_CURSOR -> {
-                event.setCancelled(true);
-            }
-            case DROP_ALL_SLOT, DROP_ONE_SLOT, PLACE_ALL, PLACE_SOME, PLACE_ONE, PICKUP_ALL, PICKUP_HALF, PICKUP_SOME, PICKUP_ONE, SWAP_WITH_CURSOR, CLONE_STACK, HOTBAR_SWAP, HOTBAR_MOVE_AND_READD  -> {
-                if (clickedInventory.equals(inventory) && isSlotLocked(slot)) {
+        if (cancelAll) {
+            event.setCancelled(true);
+        } else {
+            switch (event.getAction()) {
+                case COLLECT_TO_CURSOR -> {
                     event.setCancelled(true);
                 }
-            }
-            case MOVE_TO_OTHER_INVENTORY -> {
-                event.setCancelled(true);
-                if (!clickedInventory.equals(inventory)) {
-                    List<Integer> unlockedSlots = slotLockMap.entrySet()
+                case DROP_ALL_SLOT, DROP_ONE_SLOT, PLACE_ALL, PLACE_SOME, PLACE_ONE, PICKUP_ALL, PICKUP_HALF, PICKUP_SOME, PICKUP_ONE, SWAP_WITH_CURSOR, CLONE_STACK, HOTBAR_SWAP, HOTBAR_MOVE_AND_READD  -> {
+                    if (clickedInventory.equals(inventory) && isSlotLocked(slot)) {
+                        event.setCancelled(true);
+                    }
+                }
+                case MOVE_TO_OTHER_INVENTORY -> {
+                    event.setCancelled(true);
+                    if (!clickedInventory.equals(inventory)) {
+                        List<Integer> unlockedSlots = slotLockMap.entrySet()
                             .stream()
                             .filter(entry -> !entry.getValue())
                             .map(Map.Entry::getKey)
                             .sorted()
                             .toList();
 
-                    ItemStack clickedItem = event.getCurrentItem();
-                    if (clickedItem != null) {
-                        int remainingToDistribute = clickedItem.getAmount();
-                        int backupDestinationSlot = -1;
-                        boolean complete = false;
-                        for (int unlockedSlot : unlockedSlots) {
-                            if (complete) break;
+                        ItemStack clickedItem = event.getCurrentItem();
+                        if (clickedItem != null) {
+                            int remainingToDistribute = clickedItem.getAmount();
+                            int backupDestinationSlot = -1;
+                            boolean complete = false;
+                            for (int unlockedSlot : unlockedSlots) {
+                                if (complete) break;
 
-                            ItemStack slotItem = inventory.getItem(unlockedSlot);
-                            if ((slotItem == null || slotItem.getType() == Material.AIR) && backupDestinationSlot == -1) {
-                                backupDestinationSlot = unlockedSlot;
-                                continue;
+                                ItemStack slotItem = inventory.getItem(unlockedSlot);
+                                if ((slotItem == null || slotItem.getType() == Material.AIR) && backupDestinationSlot == -1) {
+                                    backupDestinationSlot = unlockedSlot;
+                                    continue;
+                                }
+
+                                if (slotItem != null && slotItem.isSimilar(clickedItem)) {
+                                    int spaceInStack = slotItem.getMaxStackSize() - slotItem.getAmount();
+
+                                    if (spaceInStack <= remainingToDistribute) {
+                                        slotItem.setAmount(slotItem.getAmount() + remainingToDistribute);
+                                        clickedItem.setType(Material.AIR);
+                                        complete = true;
+                                    }
+                                    else if (spaceInStack > 0) {
+                                        remainingToDistribute -= spaceInStack;
+                                        slotItem.setAmount(slotItem.getMaxStackSize());
+                                        clickedItem.setAmount(clickedItem.getAmount() - spaceInStack);
+                                    }
+                                }
                             }
 
-                            if (slotItem != null && slotItem.isSimilar(clickedItem)) {
-                                int spaceInStack = slotItem.getMaxStackSize() - slotItem.getAmount();
-
-                                if (spaceInStack <= remainingToDistribute) {
-                                    slotItem.setAmount(slotItem.getAmount() + remainingToDistribute);
-                                    clickedItem.setType(Material.AIR);
-                                    complete = true;
-                                }
-                                else if (spaceInStack > 0) {
-                                    remainingToDistribute -= spaceInStack;
-                                    slotItem.setAmount(slotItem.getMaxStackSize());
-                                    clickedItem.setAmount(clickedItem.getAmount() - spaceInStack);
-                                }
+                            if (!complete && backupDestinationSlot != -1) {
+                                inventory.setItem(backupDestinationSlot, clickedItem);
+                                event.getInventory().setItem(event.getSlot(), null);
                             }
-                        }
-
-                        if (!complete && backupDestinationSlot != -1) {
-                            inventory.setItem(backupDestinationSlot, clickedItem);
-                            event.getInventory().setItem(event.getSlot(), null);
                         }
                     }
                 }
