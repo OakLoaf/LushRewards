@@ -19,7 +19,6 @@ public class DailyRewardsModule extends Module {
     private int rewardsIndex;
     private HashMap<Integer, DailyRewardCollection> rewards;
     private Multimap<Integer, Integer> dayToRewards;
-    private Multimap<SimpleDate, Integer> dateToRewards;
     private boolean dateAsAmount;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
@@ -48,7 +47,6 @@ public class DailyRewardsModule extends Module {
         this.rewardsIndex = 0;
         this.rewards = new HashMap<>();
         this.dayToRewards = HashMultimap.create();
-        this.dateToRewards = HashMultimap.create();
         DailyRewardCollection defaultReward = null;
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection rewardSection) {
@@ -65,11 +63,8 @@ public class DailyRewardsModule extends Module {
                 } else {
                     int rewardId = registerRewardCollection(dailyRewardCollection);
 
-                    if (dailyRewardCollection.getDate() != null) {
-                        dateToRewards.put(dailyRewardCollection.getDate(), rewardId);
-                    }
-                    if (dailyRewardCollection.getStreakDay() != null) {
-                        dayToRewards.put(dailyRewardCollection.getStreakDay(), rewardId);
+                    if (dailyRewardCollection.getRewardDayNum() != null) {
+                        dayToRewards.put(dailyRewardCollection.getRewardDayNum(), rewardId);
                     }
                 }
             }
@@ -91,11 +86,6 @@ public class DailyRewardsModule extends Module {
             dayToRewards = null;
         }
 
-        if (dateToRewards != null) {
-            dateToRewards.clear();
-            dateToRewards = null;
-        }
-
         guiFormat = null;
         rewardsIndex = 0;
     }
@@ -108,26 +98,12 @@ public class DailyRewardsModule extends Module {
 
     @NotNull
     public Collection<DailyRewardCollection> getDayNumRewards(int day) {
-        if (dayToRewards.containsKey(day)) {
-            return dayToRewards.get(day)
-                .stream()
-                .map(collectionId -> rewards.get(collectionId))
-                .toList();
-        } else {
-            return new ArrayList<>();
-        }
+        return rewards.values().stream().filter(rewardCollection -> rewardCollection.isAvailableOn(day)).toList();
     }
 
     @NotNull
     public Collection<DailyRewardCollection> getDateRewards(SimpleDate date) {
-        if (dateToRewards.containsKey(date)) {
-            return dateToRewards.get(date)
-                .stream()
-                .map(collectionId -> rewards.get(collectionId))
-                .toList();
-        } else {
-            return new ArrayList<>();
-        }
+        return rewards.values().stream().filter(rewardCollection -> rewardCollection.isAvailableOn(date)).toList();
     }
 
     public RewardDay getRewardDay(SimpleDate date, int streakDay) {
