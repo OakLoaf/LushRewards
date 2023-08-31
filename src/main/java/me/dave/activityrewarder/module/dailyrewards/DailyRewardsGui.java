@@ -230,6 +230,7 @@ public class DailyRewardsGui extends AbstractGui {
         super.onClick(event, true);
     }
 
+    @SuppressWarnings("unused")
     public enum ScrollType {
         DAY,
         MONTH,
