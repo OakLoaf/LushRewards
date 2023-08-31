@@ -1,10 +1,8 @@
 package me.dave.activityrewarder.notifications;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -30,9 +28,8 @@ public class NotificationHandler {
                 return;
             }
 
-            SimpleDate today = SimpleDate.now();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                boolean collectedToday = today.equals(ActivityRewarder.getDataManager().getRewardUser(player).getLastCollectedDate());
+                boolean collectedToday = ActivityRewarder.getDataManager().getRewardUser(player).hasCollectedToday();
                 if (collectedToday) {
                     continue;
                 }

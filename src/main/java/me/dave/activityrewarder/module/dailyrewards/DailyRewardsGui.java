@@ -43,14 +43,14 @@ public class DailyRewardsGui extends AbstractGui {
         if (ActivityRewarder.getConfigManager().isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
             if (rewardUser.getLastCollectedDate().isBefore(SimpleDate.now().minusDays(1))) {
-                rewardUser.resetDays();
+                rewardUser.restartStreak();
             }
         }
 
         // Checks if the reward has been collected today
         boolean collectedToday = rewardUser.hasCollectedToday();
         // The current day number being shown to the user
-        int currDayNum = collectedToday ? rewardUser.getDayNum() - 1 : rewardUser.getDayNum();
+        int currDayNum = rewardUser.getDayNum();
 
         // First reward day shown
         AtomicInteger dayIndex = new AtomicInteger();
@@ -138,7 +138,7 @@ public class DailyRewardsGui extends AbstractGui {
                             if (collectedItem.getDisplayName() != null) {
                                 collectedItem.setDisplayName(collectedItem.getDisplayName()
                                     .replaceAll("%day%", String.valueOf(currDayNum))
-                                    .replaceAll("%month_day%", String.valueOf(SimpleDate.now())));
+                                    .replaceAll("%month_day%", SimpleDate.now().toString("dd-mm-yyyy")));
                             }
                             collectedItem.parseColors(player);
 
@@ -147,13 +147,19 @@ public class DailyRewardsGui extends AbstractGui {
                             Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
                             Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-                            RewardDay rewardDay = RewardDay.from(dailyRewardsModule.getStreakRewards(dayIndex.get()));
+                            RewardDay rewardDay = RewardDay.from(dailyRewardsModule.getDayNumRewards(dayIndex.get()));
                             DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
-                            if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
-                                rewardDay.giveAllRewards(player);
+                            if (!rewardDay.isEmpty()) {
+                                if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+                                    rewardDay.giveAllRewards(player);
+                                } else {
+                                    priorityReward.giveAll(player);
+                                }
                             } else {
-                                priorityReward.giveAll(player);
+
                             }
+
+
 
                             Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
                             ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
@@ -170,8 +176,8 @@ public class DailyRewardsGui extends AbstractGui {
                             }
 
                             player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-                            rewardUser.incrementDayNum();
-                            rewardUser.setLastDate(SimpleDate.now());
+                            rewardUser.incrementStreakLength();
+                            rewardUser.setLastCollectedDate(SimpleDate.now());
                             rewardUser.addCollectedDate(SimpleDate.now());
                         });
                     }
@@ -189,7 +195,7 @@ public class DailyRewardsGui extends AbstractGui {
                 case 'U', 'N' -> {
                     String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
                     int upcomingRewardDay = dailyRewardsModule.findNextRewardFromCategory(dayIndex.get(), upcomingCategory);
-                    SimpleDate upcomingRewardDate = rewardUser.getDateOnDayNum(upcomingRewardDay);
+                    SimpleDate upcomingRewardDate = rewardUser.getDateAtStreakLength(upcomingRewardDay);
 
                     // Adds the upcoming reward to the GUI if it exists
                     if (upcomingRewardDay != -1) {

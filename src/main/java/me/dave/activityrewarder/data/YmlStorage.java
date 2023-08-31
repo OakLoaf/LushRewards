@@ -29,13 +29,13 @@ public class YmlStorage implements Storage<RewardUser> {
         RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
 
         if (ActivityRewarder.getModule("daily-rewards") != null) {
-            int dayNum = configurationSection.getInt("daily-rewards.day-num", 1);
+            int streakLength = configurationSection.getInt("daily-rewards.streak-length", 1);
             int highestStreak = configurationSection.getInt("daily-rewards.highest-streak", 1);
             String startDate = configurationSection.getString("daily-rewards.start-date", SimpleDate.now().toString("dd-mm-yyyy"));
             String lastCollectedDate = configurationSection.getString("daily-rewards.last-collected-date", SimpleDate.now().toString("dd-mm-yyyy"));
             List<String> collectedDates = configurationSection.getStringList("daily-rewards.collected-dates");
 
-            rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", dayNum, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
+            rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", streakLength, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
         }
 
         if (ActivityRewarder.getModule("daily-playtime-goals") != null) {
@@ -63,7 +63,8 @@ public class YmlStorage implements Storage<RewardUser> {
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
         if (rewardUser.getModuleData("daily-rewards") instanceof DailyRewardsModuleUserData dailyRewardsModuleData) {
-            configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getStreakLength());
+            configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getDayNum());
+            configurationSection.set("daily-rewards.streak-length", dailyRewardsModuleData.getStreakLength());
             configurationSection.set("daily-rewards.highest-streak", dailyRewardsModuleData.getHighestStreak());
             configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().toString("dd-mm-yyyy"));
             configurationSection.set("daily-rewards.last-collected-date", dailyRewardsModuleData.getLastCollectedDate().toString("dd-mm-yyyy"));

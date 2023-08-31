@@ -107,7 +107,7 @@ public class DailyRewardsModule extends Module {
     }
 
     @NotNull
-    public Collection<DailyRewardCollection> getStreakRewards(int day) {
+    public Collection<DailyRewardCollection> getDayNumRewards(int day) {
         if (dayToRewards.containsKey(day)) {
             return dayToRewards.get(day)
                 .stream()
@@ -133,7 +133,7 @@ public class DailyRewardsModule extends Module {
     public RewardDay getRewardDay(SimpleDate date, int streakDay) {
         RewardDay rewardDay = new RewardDay();
         rewardDay.addCollections(getDateRewards(date));
-        rewardDay.addCollections(getStreakRewards(streakDay));
+        rewardDay.addCollections(getDayNumRewards(streakDay));
 
         if (rewardDay.isEmpty()) rewardDay.addCollection(DailyRewardCollection.getDefaultReward());
 
@@ -151,7 +151,7 @@ public class DailyRewardsModule extends Module {
             }
 
             // Gets the category of the reward and compares to the request
-            RewardDay rewardDay = RewardDay.from(getStreakRewards(rewardDayNum));
+            RewardDay rewardDay = RewardDay.from(getDayNumRewards(rewardDayNum));
             if (rewardDay.containsRewardFromCategory(category)) {
                 nextRewardDay = rewardDayNum;
             }

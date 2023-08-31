@@ -32,7 +32,7 @@ public class LocalPlaceholders {
             }
 
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getDayNum());
+            RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getStreakLength());
 
             return String.valueOf(rewardDay.getHighestPriorityRewardCollection().getCategory());
         });
@@ -69,9 +69,9 @@ public class LocalPlaceholders {
 
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             if (rewardUser.hasCollectedToday()) {
-                return String.valueOf(rewardUser.getDayNum() - 1);
+                return String.valueOf(rewardUser.getStreakLength() - 1);
             } else {
-                return String.valueOf(rewardUser.getDayNum());
+                return String.valueOf(rewardUser.getStreakLength());
             }
         });
 
@@ -125,7 +125,7 @@ public class LocalPlaceholders {
             }
 
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getDayNum());
+            RewardDay rewardDay = dailyRewardsModule.getRewardDay(SimpleDate.now(), rewardUser.getStreakLength());
 
             return String.valueOf(rewardDay.getRewardCount());
         });
@@ -149,7 +149,7 @@ public class LocalPlaceholders {
             String[] paramArr = params.split("_", 3);
             int dayNum = Integer.parseInt(paramArr[1]);
 
-            SimpleDate date = rewardUser.getDateOnDayNum(dayNum);
+            SimpleDate date = rewardUser.getDateAtStreakLength(dayNum);
 
             RewardDay rewardDay = dailyRewardsModule.getRewardDay(date, dayNum);
 

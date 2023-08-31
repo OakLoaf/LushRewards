@@ -203,11 +203,13 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            rewardUser.setDay(streak);
+            rewardUser.setDayNum(streak);
+            rewardUser.setStreakLength(streak);
         }
         else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                rewardUser.setDay(streak);
+                rewardUser.setDayNum(streak);
+                rewardUser.setStreakLength(streak);
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
             }));
         }
