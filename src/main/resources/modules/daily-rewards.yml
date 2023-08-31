@@ -2,6 +2,7 @@
 daily-rewards:
   default:
     priority: -1
+    repeat: 1
     category: small
     display-item:
       lore:

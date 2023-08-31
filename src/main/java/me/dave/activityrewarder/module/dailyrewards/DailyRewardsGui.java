@@ -94,7 +94,8 @@ public class DailyRewardsGui extends AbstractGui {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {
                     // Get the day's reward for the current slot
-                    DailyRewardCollection reward = dailyRewardsModule.getRewardDay(dateIndex, dayIndex.get()).getHighestPriorityRewardCollection();
+                    RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex, dayIndex.get());
+                    DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
 
                     String itemTemplate;
                     if (dayIndex.get() < currDayNum) {
@@ -105,7 +106,7 @@ public class DailyRewardsGui extends AbstractGui {
                         itemTemplate = "default-reward";
                     }
 
-                    SimpleItemStack displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(reward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), reward.getDisplayItem());
+                    SimpleItemStack displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
 
                     if (displayItem.getDisplayName() != null) {
                         displayItem.setDisplayName(displayItem.getDisplayName()
@@ -146,19 +147,12 @@ public class DailyRewardsGui extends AbstractGui {
                             Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
                             Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-                            RewardDay rewardDay = RewardDay.from(dailyRewardsModule.getDayNumRewards(dayIndex.get()));
-                            DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
-                            if (!rewardDay.isEmpty()) {
-                                if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
-                                    rewardDay.giveAllRewards(player);
-                                } else {
-                                    priorityReward.giveAll(player);
-                                }
+
+                            if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+                                rewardDay.giveAllRewards(player);
                             } else {
-
+                                priorityReward.giveAll(player);
                             }
-
-
 
                             Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
                             ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
