@@ -105,15 +105,27 @@ public class DailyRewardsGui extends AbstractGui {
                     } else {
                         itemTemplate = "default-reward";
                     }
+                    SimpleItemStack displayItem;
+                    if (!rewardDay.isEmpty()) {
+                        displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
 
-                    SimpleItemStack displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
-
-                    if (displayItem.getDisplayName() != null) {
-                        displayItem.setDisplayName(displayItem.getDisplayName()
+                        if (displayItem.getDisplayName() != null) {
+                            displayItem.setDisplayName(displayItem.getDisplayName()
                                 .replaceAll("%day%", String.valueOf(dayIndex.get()))
                                 .replaceAll("%month_day%", String.valueOf(dateIndex.getDay())));
+                        }
+
+                        if (displayItem.getLore() != null) {
+                            displayItem.setLore(displayItem.getLore().stream().map(line ->
+                                line.replaceAll("%day%", String.valueOf(dayIndex.get()))
+                                    .replaceAll("%month_day%", String.valueOf(dateIndex.getDay()))
+                            ).toList());
+                        }
+
+                        displayItem.parseColors(player);
+                    } else {
+                        displayItem = new SimpleItemStack(Material.AIR);
                     }
-                    displayItem.parseColors(player);
 
                     ItemStack itemStack;
                     try {
