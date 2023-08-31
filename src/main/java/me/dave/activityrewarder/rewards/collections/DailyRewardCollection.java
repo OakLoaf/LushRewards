@@ -44,12 +44,12 @@ public class DailyRewardCollection extends RewardCollection {
         return repeatFrequency;
     }
 
-    public boolean shouldRepeat() {
-        return repeatFrequency > 0;
-    }
-
     public SimpleDate getRepeatsUntil() {
         return repeatsUntil;
+    }
+
+    public boolean shouldRepeat() {
+        return repeatFrequency > 0;
     }
 
     public static DailyRewardCollection getDefaultReward() {
