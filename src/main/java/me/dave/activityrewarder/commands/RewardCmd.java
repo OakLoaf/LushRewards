@@ -11,6 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public class RewardCmd implements CommandExecutor, TabCompleter {
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (args.length == 1) {
             switch(args[0].toLowerCase()) {
@@ -153,15 +154,12 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             DailyRewardsGui dailyRewardsGui = new DailyRewardsGui(dailyRewardsModule, player);
             dailyRewardsGui.openInventory();
         }
-        else {
-            // About command
-        }
 
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> tabComplete = new ArrayList<>();
         List<String> wordCompletion = new ArrayList<>();
         boolean wordCompletionSuccess = false;
@@ -170,6 +168,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 1) {
+            tabComplete.add("about");
             if (commandSender.hasPermission("activityrewarder.reload")) tabComplete.add("reload");
             if (commandSender.hasPermission("activityrewarder.resetstreak") || commandSender.hasPermission("activityrewarder.resetstreak.others")) tabComplete.add("reset-streak");
             if (commandSender.hasPermission("activityrewarder.setstreak")) tabComplete.add("set-streak");
