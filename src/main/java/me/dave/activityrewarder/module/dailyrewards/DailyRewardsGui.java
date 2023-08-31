@@ -105,8 +105,7 @@ public class DailyRewardsGui extends AbstractGui {
                         itemTemplate = "default-reward";
                     }
 
-                    SimpleItemStack displayItem = SimpleItemStack.overwrite(reward.getDisplayItem(), ActivityRewarder.getConfigManager().getCategoryTemplate(reward.getCategory()));
-                    displayItem = SimpleItemStack.overwrite(displayItem, ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate));
+                    SimpleItemStack displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(reward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), reward.getDisplayItem());
 
                     if (displayItem.getDisplayName() != null) {
                         displayItem.setDisplayName(displayItem.getDisplayName()
@@ -203,8 +202,7 @@ public class DailyRewardsGui extends AbstractGui {
 
                         // Get the day's reward for the current slot
                         DailyRewardCollection upcomingReward = dailyRewardsModule.getRewardDay(upcomingRewardDate, upcomingRewardDay).getHighestPriorityRewardCollection();
-                        SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"));
-                        simpleItemStack = SimpleItemStack.overwrite(simpleItemStack, upcomingReward.getDisplayItem());
+                        SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"), upcomingReward.getDisplayItem());
 
                         if (simpleItemStack.getDisplayName() != null) {
                             simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack

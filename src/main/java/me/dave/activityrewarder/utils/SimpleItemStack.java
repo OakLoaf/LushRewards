@@ -184,6 +184,16 @@ public class SimpleItemStack implements Cloneable {
         return result;
     }
 
+    public static SimpleItemStack overwrite(@NotNull SimpleItemStack original, @NotNull SimpleItemStack... overwrites) {
+        SimpleItemStack result = original;
+
+        for (SimpleItemStack overwrite : overwrites) {
+            result = overwrite(result, overwrite);
+        }
+
+        return result;
+    }
+
     public static SimpleItemStack from(@NotNull ItemStack itemStack) {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
         simpleItemStack.setType(itemStack.getType());
