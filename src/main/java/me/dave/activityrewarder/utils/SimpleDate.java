@@ -61,6 +61,10 @@ public class SimpleDate implements Cloneable {
     }
 
     public boolean isBefore(SimpleDate date) {
+        if (date.equals(this)) {
+            return false;
+        }
+
         return !isAfter(date);
     }
 
@@ -213,7 +217,7 @@ public class SimpleDate implements Cloneable {
         string = string.replace('/', '-');
         Matcher matcher= DATE_FORMAT.matcher(string);
 
-        if (matcher.find()) {
+        if (matcher.find() && matcher.groupCount() == 3) {
             return new SimpleDate(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
         } else {
             throw new SimpleDateParseException("Invalid date format found");
