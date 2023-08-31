@@ -39,7 +39,15 @@ public class DailyRewardCollection extends RewardCollection {
     }
 
     public boolean isAvailableOn(SimpleDate date) {
-        if (repeatFrequency <= 0 || rewardDate == null || !date.isAfter(rewardDate)) {
+        if (rewardDate == null) {
+            return false;
+        }
+
+        if (date.equals(rewardDate)) {
+            return true;
+        }
+
+        if (repeatFrequency <= 0 || !date.isAfter(rewardDate)) {
             return false;
         }
 
@@ -57,7 +65,15 @@ public class DailyRewardCollection extends RewardCollection {
     }
 
     public boolean isAvailableOn(int dayNum) {
-        if (repeatFrequency <= 0 || rewardDayNum == null || dayNum <= rewardDayNum) {
+        if (rewardDayNum == null) {
+            return false;
+        }
+
+        if (dayNum == rewardDayNum) {
+            return true;
+        }
+
+        if (repeatFrequency <= 0 || dayNum <= rewardDayNum) {
             return false;
         }
 
