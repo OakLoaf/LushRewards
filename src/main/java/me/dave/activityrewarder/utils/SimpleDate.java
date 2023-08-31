@@ -115,8 +115,12 @@ public class SimpleDate implements Cloneable {
 
         minusMonths(months);
         int days = DAYS_PER_MONTH[month] - daysToSubtract;
+        if (days == 0) {
+            minusMonths(1);
+            days = DAYS_PER_MONTH[month];
+        }
 
-        if (!validateDate(days, month, year)) throw new SimpleDateParseException(daysToSubtract + "/" + month + "/" + year + " is not a valid date");
+        if (!validateDate(days, month, year)) throw new SimpleDateParseException(days + "/" + month + "/" + year + " is not a valid date");
 
         this.day = days;
 
@@ -125,16 +129,16 @@ public class SimpleDate implements Cloneable {
 
     public SimpleDate addMonths(int monthsToAdd) {
         if (monthsToAdd < 0) {
-            return minusMonths(-monthsToAdd);
+            return minusMonths(monthsToAdd);
         }
 
         int years = this.year + (int) Math.floor(monthsToAdd / (float) 12);
-        monthsToAdd = (monthsToAdd + this.month) % 12;
-        int days = Math.min(this.day, DAYS_PER_MONTH[monthsToAdd - 1]);
+        int months = (monthsToAdd + this.month) % 12;
+        int days = Math.min(this.day, DAYS_PER_MONTH[months - 1]);
 
-        if (!validateDate(days, monthsToAdd, years)) throw new SimpleDateParseException(days + "/" + monthsToAdd + "/" + years + " is not a valid date");
+        if (!validateDate(days, months, years)) throw new SimpleDateParseException(days + "/" + months + "/" + years + " is not a valid date");
 
-        this.month = monthsToAdd;
+        this.month = months;
         this.year = years;
         this.day = days;
 
