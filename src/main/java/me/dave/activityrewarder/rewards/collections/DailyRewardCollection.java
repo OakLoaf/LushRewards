@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 public class DailyRewardCollection extends RewardCollection {
-    private static DailyRewardCollection defaultReward = null;
     private final Integer repeatFrequency;
     private final SimpleDate rewardDate;
     private final SimpleDate repeatsUntilDate;
@@ -47,11 +46,11 @@ public class DailyRewardCollection extends RewardCollection {
             return true;
         }
 
-        if (repeatFrequency <= 0 || !date.isAfter(rewardDate)) {
+        if (repeatFrequency <= 0 || date.isAfter(rewardDate)) {
             return false;
         }
 
-        if (repeatsUntilDate == null || date.isBefore(repeatsUntilDate)) {
+        if (repeatsUntilDate == null || !date.isBefore(repeatsUntilDate)) {
             // Checks if date is inline with repeating function
             return (date.toEpochDay() - rewardDate.toEpochDay()) % repeatFrequency == 0;
         } else {
@@ -73,24 +72,16 @@ public class DailyRewardCollection extends RewardCollection {
             return true;
         }
 
-        if (repeatFrequency <= 0 || dayNum <= rewardDayNum) {
+        if (repeatFrequency <= 0 || dayNum < rewardDayNum) {
             return false;
         }
 
-        if (repeatsUntilDay == null || dayNum < repeatsUntilDay) {
+        if (repeatsUntilDay == null || dayNum <= repeatsUntilDay) {
             // Checks if dayNum is inline with repeating function
             return (dayNum - rewardDayNum) % repeatFrequency == 0;
         } else {
             return false;
         }
-    }
-
-    public static DailyRewardCollection getDefaultReward() {
-        return defaultReward;
-    }
-
-    public static void setDefaultReward(DailyRewardCollection defaultReward) {
-        DailyRewardCollection.defaultReward = defaultReward;
     }
 
     @NotNull

@@ -47,7 +47,6 @@ public class DailyRewardsModule extends Module {
         this.rewardsIndex = 0;
         this.rewards = new HashMap<>();
         this.dayToRewards = HashMultimap.create();
-        DailyRewardCollection defaultReward = null;
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection rewardSection) {
                 DailyRewardCollection dailyRewardCollection;
@@ -58,20 +57,15 @@ public class DailyRewardsModule extends Module {
                     continue;
                 }
 
-                if (rewardSection.getName().equalsIgnoreCase("default")) {
-                    defaultReward = dailyRewardCollection;
-                } else {
-                    int rewardId = registerRewardCollection(dailyRewardCollection);
+                int rewardId = registerRewardCollection(dailyRewardCollection);
 
-                    if (dailyRewardCollection.getRewardDayNum() != null) {
-                        dayToRewards.put(dailyRewardCollection.getRewardDayNum(), rewardId);
-                    }
+                if (dailyRewardCollection.getRewardDayNum() != null) {
+                    dayToRewards.put(dailyRewardCollection.getRewardDayNum(), rewardId);
                 }
             }
         }
 
-        DailyRewardCollection.setDefaultReward(defaultReward);
-        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + (dayToRewards.size() + (defaultReward != null ? 1 : 0)) + " reward collections from '" + configurationSection.getCurrentPath() + "'");
+        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
     }
 
     @Override
@@ -110,13 +104,19 @@ public class DailyRewardsModule extends Module {
         RewardDay rewardDay = new RewardDay();
         rewardDay.addCollections(getDateRewards(date));
         rewardDay.addCollections(getDayNumRewards(streakDay));
-
-        if (rewardDay.isEmpty()) rewardDay.addCollection(DailyRewardCollection.getDefaultReward());
-
         return rewardDay;
     }
 
+    // TODO: Take into account date rewards too
     public int findNextRewardFromCategory(int day, String category) {
+//        List<DailyRewardCollection> filteredCollections = rewards.values().stream().filter(rewardCollection -> rewardCollection.getCategory().equalsIgnoreCase(category)).toList();
+//
+//        for (DailyRewardCollection collection : filteredCollections) {
+//            if (collection.getRewardDate() != null && collection.getRewardDate().isBefore()) {
+//                return
+//            }
+//        }
+
         int nextRewardDay = -1;
 
         // Iterates through dayToRewards
