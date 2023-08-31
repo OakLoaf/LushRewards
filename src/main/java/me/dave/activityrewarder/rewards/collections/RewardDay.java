@@ -12,7 +12,7 @@ public class RewardDay {
 
     @NotNull
     public DailyRewardCollection getHighestPriorityRewardCollection() {
-        return dailyRewardCollections.stream().min(Comparator.comparingInt(DailyRewardCollection::getPriority)).orElse(DailyRewardCollection.empty());
+        return dailyRewardCollections.stream().max(Comparator.comparingInt(DailyRewardCollection::getPriority)).orElse(DailyRewardCollection.empty());
     }
 
     public void giveAllRewards(Player player) {
