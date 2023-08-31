@@ -6,8 +6,10 @@ import me.dave.activityrewarder.module.playtimegoals.playtimedailygoals.Playtime
 import me.dave.activityrewarder.module.playtimegoals.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
+import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,6 +29,7 @@ public class ConfigManager {
     private boolean allowRewardsStacking;
     private boolean rewardsRefresh;
     private int reminderPeriod;
+    private Sound reminderSound;
     private boolean streakMode;
     private String upcomingCategory;
 
@@ -44,6 +47,7 @@ public class ConfigManager {
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
+        reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none"));
         streakMode = config.getBoolean("streak-mode", false);
         upcomingCategory = config.getString("upcoming-category");
 
@@ -131,6 +135,10 @@ public class ConfigManager {
 
     public int getReminderPeriod() {
         return reminderPeriod;
+    }
+
+    public Sound getReminderSound() {
+        return reminderSound;
     }
 
     public boolean isStreakModeEnabled() {

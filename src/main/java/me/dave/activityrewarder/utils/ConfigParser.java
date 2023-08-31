@@ -86,6 +86,8 @@ public class ConfigParser {
     }
 
     public static Sound getSound(String soundName, Sound def) {
+        if (soundName.equalsIgnoreCase("none")) return null;
+
         Sound sound;
         try {
             sound = Sound.valueOf(soundName);

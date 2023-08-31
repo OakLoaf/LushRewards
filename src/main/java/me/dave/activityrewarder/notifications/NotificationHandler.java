@@ -38,7 +38,7 @@ public class NotificationHandler {
                 }
                 
                 ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("reminder"));
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
+                player.playSound(player.getLocation(), ActivityRewarder.getConfigManager().getReminderSound(), 1f, 1.5f);
             }
 
         }, Duration.of(Math.round((double) reminderPeriodMs / 3), ChronoUnit.MILLIS), Duration.of(reminderPeriodMs, ChronoUnit.MILLIS));
