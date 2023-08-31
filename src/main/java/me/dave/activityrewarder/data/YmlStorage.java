@@ -63,7 +63,7 @@ public class YmlStorage implements Storage<RewardUser> {
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
         if (rewardUser.getModuleData("daily-rewards") instanceof DailyRewardsModuleUserData dailyRewardsModuleData) {
-            configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getDayNum());
+            configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getStreakLength());
             configurationSection.set("daily-rewards.highest-streak", dailyRewardsModuleData.getHighestStreak());
             configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().toString("dd-mm-yyyy"));
             configurationSection.set("daily-rewards.last-collected-date", dailyRewardsModuleData.getLastCollectedDate().toString("dd-mm-yyyy"));

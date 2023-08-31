@@ -40,7 +40,7 @@ daily-rewards:
             amount: 1
 
   day-1:
-    on-streak-day: 1
+    on-day-num: 1
     category: small
     display-item:
       lore:
@@ -60,7 +60,7 @@ daily-rewards:
         amount: 8
 
   day-2:
-    on-streak-day: 2
+    on-day-num: 2
     category: small
     display-item:
       lore:
@@ -76,7 +76,7 @@ daily-rewards:
         amount: 12
 
   day-3:
-    on-streak-day: 3
+    on-day-num: 3
     category: small
     display-item:
       lore:
@@ -96,7 +96,7 @@ daily-rewards:
         amount: 8
 
   day-4:
-    on-streak-day: 4
+    on-day-num: 4
     category: small
     display-item:
       lore:
@@ -116,7 +116,7 @@ daily-rewards:
         amount: 4
 
   day-5:
-    on-streak-day: 5
+    on-day-num: 5
     category: small
     display-item:
       lore:
@@ -132,7 +132,7 @@ daily-rewards:
         amount: 6
 
   day-6:
-    on-streak-day: 6
+    on-day-num: 6
     category: small
     display-item:
       lore:
@@ -148,7 +148,7 @@ daily-rewards:
         amount: 6
 
   day-7:
-    on-streak-day: 7
+    on-day-num: 7
     category: small
     display-item:
       lore:
@@ -160,7 +160,7 @@ daily-rewards:
         amount: 12
 
   day-12:
-    on-streak-day: 12
+    on-day-num: 12
     category: medium
     display-item:
       lore:
@@ -176,7 +176,7 @@ daily-rewards:
         amount: 1
 
   day-24:
-    on-streak-day: 24
+    on-day-num: 24
     category: medium
     display-item:
       lore:
@@ -193,7 +193,7 @@ daily-rewards:
 
   day-30:
     on-date: 20/08/2023
-    on-streak-day: 30
+    on-day-num: 30
     priority: 1
     category: large
     display-item:
