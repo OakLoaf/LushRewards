@@ -47,7 +47,7 @@ public class ConfigManager {
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
-        reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none"));
+        reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none").toUpperCase());
         streakMode = config.getBoolean("streak-mode", false);
         upcomingCategory = config.getString("upcoming-category");
 
