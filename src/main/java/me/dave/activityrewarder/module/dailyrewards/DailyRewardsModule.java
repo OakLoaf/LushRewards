@@ -19,6 +19,7 @@ public class DailyRewardsModule extends Module {
     private int rewardsIndex;
     private HashMap<Integer, DailyRewardCollection> rewards;
     private Multimap<Integer, Integer> dayToRewards;
+    private int resetDaysAt;
     private boolean dateAsAmount;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
@@ -36,6 +37,8 @@ public class DailyRewardsModule extends Module {
             this.disable();
             return;
         }
+
+        this.resetDaysAt = config.getInt("reset-days-at", -1);
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         this.dateAsAmount = config.getBoolean("gui.date-as-amount", false);
@@ -135,6 +138,10 @@ public class DailyRewardsModule extends Module {
 
         // Returns -1 if no future rewards match the request
         return nextRewardDay;
+    }
+
+    public int getResetDay() {
+        return resetDaysAt;
     }
 
     public boolean showDateAsAmount() {

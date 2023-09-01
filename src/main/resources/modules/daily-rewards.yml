@@ -1,3 +1,6 @@
+# Resets player back to day 1, this does not affect streaks (Set to -1 to disable)
+reset-days-at: -1
+
 # List of rewards (%user% - The user being given the reward)
 daily-rewards:
   default:
