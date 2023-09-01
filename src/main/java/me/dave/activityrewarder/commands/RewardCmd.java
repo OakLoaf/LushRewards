@@ -52,6 +52,24 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reload"));
                     return true;
                 }
+                case "reset-days" -> {
+                    if (!sender.hasPermission("activityrewarder.resetdays")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player>"));
+                    return true;
+                }
+                case "set-days" -> {
+                    if (!sender.hasPermission("activityrewarder.setdays")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
+                    return true;
+                }
                 case "reset-streak" -> {
                     if (!sender.hasPermission("activityrewarder.resetstreak")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
@@ -74,6 +92,24 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
         else if (args.length == 2) {
             switch(args[0].toLowerCase()) {
+                case "reset-days" -> {
+                    if (!sender.hasPermission("activityrewarder.resetdays")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reset-days").replaceAll("%target%", args[1]));
+                    return true;
+                }
+                case "set-days" -> {
+                    if (!sender.hasPermission("activityrewarder.setdays")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
+                    return true;
+                }
                 case "reset-streak" -> {
                     if (!sender.hasPermission("activityrewarder.resetstreak")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
@@ -97,6 +133,30 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
         else if (args.length == 3) {
             switch(args[0].toLowerCase()) {
+                case "reset-days" -> {
+                    if (!sender.hasPermission("activityrewarder.resetdays")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    if (!args[2].equalsIgnoreCase("confirm")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player> confirm"));
+                        return true;
+                    }
+
+                    if (!setStreak(sender, args[1], 1)) return true;
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", args[2]));
+                    return true;
+                }
+                case "set-days" -> {
+                    if (!sender.hasPermission("activityrewarder.setdays")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days").replaceAll("%target%", args[1]).replaceAll("%day%", args[2]));
+                    return true;
+                }
                 case "reset-streak" -> {
                     if (!sender.hasPermission("activityrewarder.resetstreak")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
@@ -124,7 +184,30 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             }
         }
         else if (args.length == 4) {
-            if (args[0].equalsIgnoreCase("set-streak")) {
+            if (args[0].equalsIgnoreCase("set-days")) {
+                if (!sender.hasPermission("activityrewarder.setdays")) {
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                    return true;
+                }
+
+                if (!args[3].equalsIgnoreCase("confirm")) {
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                    return true;
+                }
+
+                int dayNum;
+                try {
+                    dayNum = Integer.parseInt(args[2]);
+                } catch(NumberFormatException e) {
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                    return true;
+                }
+
+                if (!setDay(sender, args[1], dayNum)) return true;
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", String.valueOf(dayNum)));
+                return true;
+            }
+            else if (args[0].equalsIgnoreCase("set-streak")) {
                 if (!sender.hasPermission("activityrewarder.setstreak")) {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
                     return true;
@@ -179,8 +262,17 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             tabComplete.add("about");
             if (commandSender.hasPermission("activityrewarder.reload")) tabComplete.add("reload");
+            if (commandSender.hasPermission("activityrewarder.resetdays") || commandSender.hasPermission("activityrewarder.resetdays.others")) tabComplete.add("reset-days");
+            if (commandSender.hasPermission("activityrewarder.setdays")) tabComplete.add("set-days");
             if (commandSender.hasPermission("activityrewarder.resetstreak") || commandSender.hasPermission("activityrewarder.resetstreak.others")) tabComplete.add("reset-streak");
             if (commandSender.hasPermission("activityrewarder.setstreak")) tabComplete.add("set-streak");
+        }
+        else if (args.length == 2) {
+            switch(args[0].toLowerCase()) {
+                case "set-days", "reset-days", "set-streak", "reset-streak" -> {
+                    tabComplete.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                }
+            }
         }
 
         for (String currTab : tabComplete) {
@@ -192,6 +284,35 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
         if (wordCompletionSuccess) return wordCompletion;
         return tabComplete;
+    }
+
+    private boolean setDay(CommandSender sender, String nameOrUuid, int dayNum) {
+        Player player = Bukkit.getPlayer(nameOrUuid);
+        UUID uuid;
+        if (player != null) {
+            uuid = player.getUniqueId();
+        }
+        else {
+            try {
+                uuid = UUID.fromString(nameOrUuid);
+            } catch(IllegalArgumentException e) {
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                return false;
+            }
+        }
+
+        if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            rewardUser.setDayNum(dayNum);
+        }
+        else {
+            ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
+                rewardUser.setDayNum(dayNum);
+                ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
+            }));
+        }
+
+        return true;
     }
 
     private boolean setStreak(CommandSender sender, String nameOrUuid, int streak) {
@@ -211,12 +332,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            rewardUser.setDayNum(streak);
             rewardUser.setStreakLength(streak);
         }
         else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                rewardUser.setDayNum(streak);
                 rewardUser.setStreakLength(streak);
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
             }));
