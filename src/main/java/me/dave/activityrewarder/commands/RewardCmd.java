@@ -18,12 +18,21 @@ import java.util.List;
 import java.util.UUID;
 
 public class RewardCmd implements CommandExecutor, TabCompleter {
+    private static final String ABOUT_MESSAGE =
+        "<gradient:#CEB5FE:#81BAFE><b>ActivityRewarder</b> (v" + ActivityRewarder.getInstance().getDescription().getVersion() + ")</gradient>" +
+        "\n&7An extremely configurable, feature rich rewards plugin. Reward your players each day for logging in and also reward them for their time spent on the server with playtime rewards!" +
+        "\n\n&7Author: <color:#f7ba6f>Dav_e_</color:#f7ba6f>" +
+        "\n\n&7Links: <color:#fcff96><click:open_url:https://dave-12.gitbook.io/activity-rewarder>[ Wiki ]</click></color:#fcff96> <color:#5865F2><click:open_url:https://discord.gg/p3duRZsZ2f>[ Support ]</click></color:#5865F2>";
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (args.length == 1) {
             switch(args[0].toLowerCase()) {
+                case "about" -> {
+                    ChatColorHandler.sendMessage(sender, ABOUT_MESSAGE);
+                    return true;
+                }
                 case "messages" -> {
                     if (!sender.hasPermission("activityrewarder.viewmessages")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
