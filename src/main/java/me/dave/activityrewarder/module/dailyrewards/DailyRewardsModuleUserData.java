@@ -23,10 +23,12 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public int getDayNum() {
-        int dayNum = (int) (SimpleDate.now().toEpochDay() - startDate.toEpochDay() + 1);
+        int dayNum = (int) (SimpleDate.now().toEpochDay() - startDate.toEpochDay());
 
         if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
-            if (dayNum > dailyRewardsModule.getResetDay()) {
+            int resetDay = dailyRewardsModule.getResetDay();
+
+            if (resetDay > 0 && dayNum > resetDay) {
                 setDayNum(1);
                 dayNum = 1;
             }
