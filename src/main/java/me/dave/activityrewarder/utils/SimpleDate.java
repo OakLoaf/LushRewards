@@ -33,9 +33,10 @@ public class SimpleDate implements Cloneable {
     private int year;
 
     public SimpleDate(int day, int month, int year) {
-        if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
+        if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > getDaysInMonth(month, year)) {
             throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
         } else if (day == 29 && month == 2 && !isLeapYear()) {
+            // TODO: Remove this section of statement when tested
             throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
         } else {
             this.day = day;
@@ -88,13 +89,18 @@ public class SimpleDate implements Cloneable {
         }
 
         daysToAdd += this.day;
-        int months = 0;
+        int monthsToAdd = 0;
 
-        for (int monthIndex = this.month - 1; daysToAdd > DAYS_PER_MONTH[monthIndex] || (daysToAdd > 28 && monthIndex == 1 && isLeapYear()); monthIndex++) {
-            months++;
-            daysToAdd -= DAYS_PER_MONTH[monthIndex];
+        int yearIndex = this.year;
+        for (int monthIndex = this.month; daysToAdd > getDaysInMonth(monthIndex, yearIndex); monthIndex++) {
+            monthsToAdd++;
+            if (monthsToAdd % 12 == 0) {
+                yearIndex++;
+            }
+
+            daysToAdd -= getDaysInMonth(monthIndex, yearIndex);
         }
-        addMonths(months);
+        addMonths(monthsToAdd);
 
         if (!validateDate(daysToAdd, month, year)) throw new SimpleDateParseException(daysToAdd + "/" + month + "/" + year + " is not a valid date");
 
@@ -105,23 +111,32 @@ public class SimpleDate implements Cloneable {
 
     public SimpleDate minusDays(int daysToSubtract) {
         daysToSubtract = daysToSubtract < 0 ? -daysToSubtract : daysToSubtract;
-        int months = 0;
+        int monthsToSubtract = 0;
 
-        if (daysToSubtract > this.day) {
+        if (daysToSubtract >= this.day) {
             minusMonths(1);
             daysToSubtract -= this.day;
         }
 
-        for (int monthIndex = this.month - 1; daysToSubtract > DAYS_PER_MONTH[monthIndex] || (daysToSubtract > 28 && monthIndex == 1 && isLeapYear()); monthIndex--) {
-            months++;
-            daysToSubtract -= DAYS_PER_MONTH[monthIndex];
+        int yearIndex = this.year;
+        for (int monthIndex = this.month; daysToSubtract > getDaysInMonth(monthIndex, yearIndex);) {
+            monthsToSubtract++;
+
+            daysToSubtract -= getDaysInMonth(monthIndex, yearIndex);
+
+            monthIndex--;
+            if (monthIndex <= 0) {
+                monthIndex = 12;
+                yearIndex--;
+            }
         }
 
-        minusMonths(months);
-        int days = DAYS_PER_MONTH[month] - daysToSubtract;
+        minusMonths(monthsToSubtract);
+
+        int days = getDaysInMonth(month, year) - daysToSubtract;
         if (days == 0) {
             minusMonths(1);
-            days = DAYS_PER_MONTH[month];
+            days = getDaysInMonth(month, year);
         }
 
         if (!validateDate(days, month, year)) throw new SimpleDateParseException(days + "/" + month + "/" + year + " is not a valid date");
@@ -133,12 +148,12 @@ public class SimpleDate implements Cloneable {
 
     public SimpleDate addMonths(int monthsToAdd) {
         if (monthsToAdd < 0) {
-            return minusMonths(monthsToAdd);
+            return minusMonths(-monthsToAdd);
         }
 
         int years = this.year + (int) Math.floor(monthsToAdd / (float) 12);
         int months = (monthsToAdd + this.month) % 12;
-        int days = Math.min(this.day, DAYS_PER_MONTH[months - 1]);
+        int days = Math.min(this.day, getDaysInMonth(months, years));
 
         if (!validateDate(days, months, years)) throw new SimpleDateParseException(days + "/" + months + "/" + years + " is not a valid date");
 
@@ -150,13 +165,27 @@ public class SimpleDate implements Cloneable {
     }
 
     public SimpleDate minusMonths(int monthsToSubtract) {
-        int years = this.year - (int) Math.floor(monthsToSubtract / (float) 12);
-        monthsToSubtract = (this.month - (monthsToSubtract < 0 ? -monthsToSubtract : monthsToSubtract)) % 12;
-        int days = Math.min(this.day, DAYS_PER_MONTH[monthsToSubtract - 1]);
+        monthsToSubtract = monthsToSubtract < 0 ? -monthsToSubtract : monthsToSubtract;
 
-        if (!validateDate(days, monthsToSubtract, years)) throw new SimpleDateParseException(days + "/" + monthsToSubtract + "/" + years + " is not a valid date");
+        int yearsToSubtract = (int) Math.floor(monthsToSubtract / (float) 12);
+        int years = this.year - yearsToSubtract;
+        if (yearsToSubtract > 0) {
+            monthsToSubtract = monthsToSubtract % 12;
+        }
 
-        this.month = monthsToSubtract;
+        int months = this.month;
+        if (monthsToSubtract >= this.month) {
+            years -= 1;
+            months = 12;
+            monthsToSubtract -= this.month;
+        }
+        months -= monthsToSubtract;
+
+        int days = Math.min(this.day, getDaysInMonth(months, years));
+
+        if (!validateDate(days, months, years)) throw new SimpleDateParseException(days + "/" + months + "/" + years + " is not a valid date");
+
+        this.month = months;
         this.year = years;
         this.day = days;
 
@@ -176,9 +205,10 @@ public class SimpleDate implements Cloneable {
     }
 
     public boolean validateDate(int day, int month, int year) {
-        if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > DAYS_PER_MONTH[month - 1]) {
+        if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > getDaysInMonth(month, year)) {
             return false;
         } else if (day != 29 || month != 2 || isLeapYear()) {
+            // TODO: Remove this section when tested
             return true;
         } else {
             return false;
@@ -227,6 +257,10 @@ public class SimpleDate implements Cloneable {
     public static SimpleDate now() {
         LocalDate localDate = LocalDate.now();
         return new SimpleDate(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
+    }
+
+    public static int getDaysInMonth(int month, int year) {
+        return (month == 2 && year % 4 != 0) ? 28 : DAYS_PER_MONTH[month - 1];
     }
 
     @Override
