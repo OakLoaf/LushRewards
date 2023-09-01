@@ -35,10 +35,12 @@ public class SimpleDate implements Cloneable {
     public SimpleDate(int day, int month, int year) {
         if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > getDaysInMonth(month, year)) {
             throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
-        } else if (day == 29 && month == 2 && !isLeapYear()) {
-            // TODO: Remove this section of statement when tested
-            throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
-        } else {
+        }
+//        else if (day == 29 && month == 2 && !isLeapYear()) {
+//            // TODO: Remove this section of statement when tested
+//            throw new SimpleDateParseException(day + "/" + month + "/" + year + " is not a valid date");
+//        }
+        else {
             this.day = day;
             this.month = month;
             this.year = year;
@@ -207,10 +209,12 @@ public class SimpleDate implements Cloneable {
     public boolean validateDate(int day, int month, int year) {
         if ((day <= 0 || (month <= 0 || month > 12) || year < 0) || day > getDaysInMonth(month, year)) {
             return false;
-        } else if (day != 29 || month != 2 || isLeapYear()) {
-            // TODO: Remove this section when tested
-            return true;
-        } else {
+        }
+//        else if (day != 29 || month != 2 || isLeapYear()) {
+//            // TODO: Remove this section when tested
+//            return true;
+//        }
+        else {
             return false;
         }
     }
