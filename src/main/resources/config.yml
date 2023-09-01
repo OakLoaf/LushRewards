@@ -41,7 +41,7 @@ item-templates:
   # Template for collectable rewards
   redeemable-reward:
     material: player_head
-    skull-texture: e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzE1YTg1OTkxYmJmY2ViYjVhNjgwYTY0M2M2NjFjNTM1ODlkYWExMDE0NzM3MmQwNjE4NWYyMWUzYjc2Y2VmYSJ9fX0=
+    skull-texture: e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmI1N2Y0ODVlOWVjY2E1MzIzNDQ4NTBjNTFhYjQ0ZGQ2YWE1ZDQ1MTRiMzFjNmRmOWZjMjBlMzZiM2E4OWQ4YyJ9fX0=
     display-name: "&#f5e389Day %day% - Redeemable"
     enchanted: true
   # Template for collected rewards
