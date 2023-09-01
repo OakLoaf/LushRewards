@@ -68,11 +68,7 @@ public class LocalPlaceholders {
             }
 
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (rewardUser.hasCollectedToday()) {
-                return String.valueOf(rewardUser.getStreakLength() - 1);
-            } else {
-                return String.valueOf(rewardUser.getStreakLength());
-            }
+            return String.valueOf(rewardUser.getDayNum());
         });
 
         registerPlaceholder("global_playtime", (params, player) -> {
