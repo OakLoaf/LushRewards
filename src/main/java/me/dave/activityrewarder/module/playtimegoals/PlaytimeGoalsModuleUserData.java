@@ -5,7 +5,7 @@ import me.dave.activityrewarder.module.ModuleData;
 import java.util.List;
 
 public class PlaytimeGoalsModuleUserData extends ModuleData {
-    private final int lastCollectedPlaytime;
+    private int lastCollectedPlaytime;
     private final List<Integer> collectedTimes;
 
     public PlaytimeGoalsModuleUserData(String id, int lastCollectedPlaytime, List<Integer> collectedTimes) {
@@ -18,11 +18,14 @@ public class PlaytimeGoalsModuleUserData extends ModuleData {
         return lastCollectedPlaytime;
     }
 
+    public void setLastCollectedPlaytime(int lastCollectedPlaytime) {
+        this.lastCollectedPlaytime = lastCollectedPlaytime;
+    }
+
     public List<Integer> getCollectedTimes() {
         return collectedTimes;
     }
 
-    // TODO: implement
     public void addCollectedTime(int minutes) {
         collectedTimes.add(minutes);
     }

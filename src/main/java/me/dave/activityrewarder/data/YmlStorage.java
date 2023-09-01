@@ -38,18 +38,18 @@ public class YmlStorage implements Storage<RewardUser> {
             rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", streakLength, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
         }
 
-        if (ActivityRewarder.getModule("daily-playtime-goals") != null) {
+        if (ActivityRewarder.getModule("playtime-daily-goals") != null) {
             int lastCollectedPlaytime = configurationSection.getInt("daily-playtime-goals.last-collected-playtime", 0);
             List<Integer> collectedTimes = configurationSection.getIntegerList("daily-playtime-goals.collected-times");
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("daily-playtime-goals", lastCollectedPlaytime, collectedTimes));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-daily-goals", lastCollectedPlaytime, collectedTimes));
         }
 
-        if (ActivityRewarder.getModule("global-playtime-goals") != null) {
+        if (ActivityRewarder.getModule("playtime-global-goals") != null) {
             int lastCollectedPlaytime = configurationSection.getInt("global-playtime-goals.last-collected-playtime", 0);
             List<Integer> collectedTimes = configurationSection.getIntegerList("global-playtime-goals.collected-times");
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("global-playtime-goals", lastCollectedPlaytime, collectedTimes));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-global-goals", lastCollectedPlaytime, collectedTimes));
         }
 
         return rewardUser;
@@ -71,14 +71,14 @@ public class YmlStorage implements Storage<RewardUser> {
             configurationSection.set("daily-rewards.collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
 
-        if (rewardUser.getModuleData("daily-playtime-goals") instanceof PlaytimeGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
+        if (rewardUser.getModuleData("playtime-daily-goals") instanceof PlaytimeGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
             configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-            configurationSection.set("daily-playtime-goals.collected-times", dailyPlaytimeGoalsModuleUserData.getCollectedTimes());
+//            configurationSection.set("daily-playtime-goals.collected-times", dailyPlaytimeGoalsModuleUserData.getCollectedTimes());
         }
 
-        if (rewardUser.getModuleData("global-playtime-goals") instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
+        if (rewardUser.getModuleData("playtime-global-goals") instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
             configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-            configurationSection.set("global-playtime-goals.last-collected-times", globalPlaytimeGoalsModuleUserData.getCollectedTimes());
+//            configurationSection.set("global-playtime-goals.collected-times", globalPlaytimeGoalsModuleUserData.getCollectedTimes());
         }
 
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());

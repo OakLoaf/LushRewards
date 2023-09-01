@@ -5,7 +5,6 @@ import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,6 @@ public class PlaytimeGlobalGoalsModule extends Module {
     public void onEnable() {
         YamlConfiguration config = ActivityRewarder.getConfigManager().getGlobalGoalsConfig();
 
-        // TODO: Fix below
         if (!config.contains("global-goals")) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'global-goals' section in 'global-playtime-goals.yml'");
             this.disable();
@@ -53,7 +51,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
                 continue;
             }
 
-            int minutes = rewardMap.containsKey("play-minutes") ? (int) rewardMap.get("play-minutes") * 60 : 60;
+            int minutes = rewardMap.containsKey("play-minutes") ? (int) rewardMap.get("play-minutes") : 60;
             minutesToReward.put(minutes, rewardCollection);
         }
 

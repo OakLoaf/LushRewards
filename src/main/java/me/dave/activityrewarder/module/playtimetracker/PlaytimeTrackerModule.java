@@ -2,6 +2,7 @@ package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.Module;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -21,6 +22,8 @@ public class PlaytimeTrackerModule extends Module {
     public void onEnable() {
         playtimeTrackers = new ConcurrentHashMap<>();
         poison = false;
+
+        Bukkit.getOnlinePlayers().forEach(this::startPlaytimeTracker);
 
         ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
                 (task) -> {

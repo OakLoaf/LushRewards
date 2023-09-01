@@ -5,7 +5,6 @@ import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,9 +26,7 @@ public class PlaytimeDailyGoalsModule extends Module {
     public void onEnable() {
         YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyGoalsConfig();
 
-        // TODO: Fix below
-        ConfigurationSection configurationSection = config.getConfigurationSection("daily-goals");
-        if (configurationSection == null) {
+        if (!config.contains("daily-goals")) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-goals' section in 'daily-playtime-goals.yml'");
             this.disable();
             return;
@@ -43,7 +40,6 @@ public class PlaytimeDailyGoalsModule extends Module {
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         this.minutesToReward = new HashMap<>();
-
         for (Map<?, ?> rewardMap : config.getMapList("daily-goals")) {
             RewardCollection rewardCollection;
             try {
@@ -53,11 +49,11 @@ public class PlaytimeDailyGoalsModule extends Module {
                 continue;
             }
 
-            int minutes = rewardMap.containsKey("play-minutes") ? (int) rewardMap.get("play-minutes") * 60 : 60;
+            int minutes = rewardMap.containsKey("play-minutes") ? (int) rewardMap.get("play-minutes") : 60;
             minutesToReward.put(minutes, rewardCollection);
         }
 
-        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
+        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'daily-goals'");
     }
 
     @Override
