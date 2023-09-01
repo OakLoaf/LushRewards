@@ -51,7 +51,7 @@ public class ConfigManager {
         streakMode = config.getBoolean("streak-mode", false);
         upcomingCategory = config.getString("upcoming-category");
 
-        ActivityRewarder.unregisterAll();
+        ActivityRewarder.unregisterAllModules();
 
         boolean requiresPlaytimeTracker = false;
         if (config.getBoolean("modules.daily-rewards", false)) {

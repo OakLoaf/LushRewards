@@ -100,7 +100,7 @@ public final class ActivityRewarder extends JavaPlugin {
         module.enable();
     }
 
-    public static void unregisterAll() {
+    public static void unregisterAllModules() {
         modules.values().forEach(Module::disable);
         modules.clear();
     }
