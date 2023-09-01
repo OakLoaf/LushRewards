@@ -119,6 +119,15 @@ public class LocalPlaceholders {
             return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getSessionPlaytime());
         });
 
+        registerPlaceholder("streak", (params, player) -> {
+            if (player == null) {
+                return null;
+            }
+
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            return String.valueOf(rewardUser.getStreakLength());
+        });
+
         registerPlaceholder("total_rewards", (params, player) -> {
             if (!(ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
                 return null;
