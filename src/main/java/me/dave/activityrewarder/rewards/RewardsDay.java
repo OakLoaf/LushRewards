@@ -34,7 +34,12 @@ public class RewardsDay {
 
     public void giveRewards(Player player) {
         for (Reward reward : rewards) {
-            reward.giveReward(player);
+            try {
+                reward.giveReward(player);
+            } catch(Exception e) {
+                ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
+                e.printStackTrace();
+            }
         }
     }
 
