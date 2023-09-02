@@ -3,6 +3,7 @@ package me.dave.activityrewarder.module.playtimetracker;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
@@ -80,7 +81,7 @@ public class PlaytimeTracker {
         if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
             if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
                 RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-                PlaytimeGoalsModuleUserData playtimeGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
+                PlaytimeDailyGoalsModuleUserData playtimeGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
 
                 // TODO: Calculate daily play time
                 playtimeDailyGoalsModule.getRewardCollectionsInRange(playtimeGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
