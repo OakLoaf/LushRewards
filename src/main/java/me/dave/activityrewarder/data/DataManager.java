@@ -82,11 +82,11 @@ public class DataManager {
             }
 
             if (ActivityRewarder.getModule("daily-playtime-goals") != null) {
-                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-daily-goals", 0, new ArrayList<>()));
+                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-daily-goals", 0));
             }
 
             if (ActivityRewarder.getModule("global-playtime-goals") != null) {
-                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-global-goals", 0, new ArrayList<>()));
+                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-global-goals", 0));
             }
         }
 

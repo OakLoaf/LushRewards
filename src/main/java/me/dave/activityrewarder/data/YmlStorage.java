@@ -41,16 +41,14 @@ public class YmlStorage implements Storage<RewardUser> {
 
         if (ActivityRewarder.getModule("playtime-daily-goals") != null) {
             int lastCollectedPlaytime = configurationSection.getInt("daily-playtime-goals.last-collected-playtime", 0);
-            List<Integer> collectedTimes = configurationSection.getIntegerList("daily-playtime-goals.collected-times");
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-daily-goals", lastCollectedPlaytime, collectedTimes));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-daily-goals", lastCollectedPlaytime));
         }
 
         if (ActivityRewarder.getModule("playtime-global-goals") != null) {
             int lastCollectedPlaytime = configurationSection.getInt("global-playtime-goals.last-collected-playtime", 0);
-            List<Integer> collectedTimes = configurationSection.getIntegerList("global-playtime-goals.collected-times");
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-global-goals", lastCollectedPlaytime, collectedTimes));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-global-goals", lastCollectedPlaytime));
         }
 
         return rewardUser;
@@ -74,12 +72,10 @@ public class YmlStorage implements Storage<RewardUser> {
 
         if (rewardUser.getModuleData("playtime-daily-goals") instanceof PlaytimeGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
             configurationSection.set("daily-playtime-goals.last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-//            configurationSection.set("daily-playtime-goals.collected-times", dailyPlaytimeGoalsModuleUserData.getCollectedTimes());
         }
 
         if (rewardUser.getModuleData("playtime-global-goals") instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
             configurationSection.set("global-playtime-goals.last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-//            configurationSection.set("global-playtime-goals.collected-times", globalPlaytimeGoalsModuleUserData.getCollectedTimes());
         }
 
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());
