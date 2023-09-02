@@ -38,7 +38,7 @@ public class RandomReward implements Reward {
             try {
                 reward.giveTo(player);
             } catch (Exception e) {
-                ActivityRewarder.getInstance().getLogger().severe(reward.toString());
+                ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                 e.printStackTrace();
             }
         }
