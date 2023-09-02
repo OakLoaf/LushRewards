@@ -1,8 +1,6 @@
-package me.dave.activityrewarder.module.playtimegoals;
+package me.dave.activityrewarder.module.playtimeglobalgoals;
 
 import me.dave.activityrewarder.module.ModuleData;
-
-import java.util.List;
 
 public class PlaytimeGoalsModuleUserData extends ModuleData {
     private int lastCollectedPlaytime;

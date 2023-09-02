@@ -1,9 +1,10 @@
 package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.playtimegoals.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimegoals.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.ConfigParser;
@@ -55,18 +56,18 @@ public class ConfigManager {
 
         boolean requiresPlaytimeTracker = false;
         if (config.getBoolean("modules.daily-rewards", false)) {
-            ActivityRewarder.registerModule(new DailyRewardsModule("daily-rewards"));
+            ActivityRewarder.registerModule(new DailyRewardsModule(Module.ModuleType.DAILY_REWARDS.getName()));
         }
-        if (config.getBoolean("modules.playtime-daily-goals", false)) {
-            ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule("playtime-daily-goals"));
+        if (config.getBoolean("modules.daily-playtime-goals", false)) {
+            ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()));
             requiresPlaytimeTracker = true;
         }
-        if (config.getBoolean("modules.playtime-global-goals", false)) {
-            ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule("playtime-global-goals"));
+        if (config.getBoolean("modules.global-playtime-goals", false)) {
+            ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()));
             requiresPlaytimeTracker = true;
         }
         if (requiresPlaytimeTracker) {
-            ActivityRewarder.registerModule(new PlaytimeTrackerModule("playtime-tracker"));
+            ActivityRewarder.registerModule(new PlaytimeTrackerModule(Module.ModuleType.PLAYTIME_TRACKER.getName()));
         }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));

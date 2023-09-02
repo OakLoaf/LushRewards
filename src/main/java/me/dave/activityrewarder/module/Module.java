@@ -40,4 +40,21 @@ public abstract class Module {
     public boolean isEnabled() {
         return enabled;
     }
+
+    public enum ModuleType {
+        DAILY_REWARDS("daily-rewards"),
+        DAILY_PLAYTIME_GOALS("daily-playtime-goals"),
+        GLOBAL_PLAYTIME_GOALS("global-playtime-goals"),
+        PLAYTIME_TRACKER("playtime-tracker");
+
+        private final String name;
+
+        ModuleType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 }

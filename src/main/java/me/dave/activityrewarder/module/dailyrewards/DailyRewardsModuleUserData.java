@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.module.dailyrewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.ModuleData;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     public int getDayNum() {
         int dayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay());
 
-        if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+        if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) {
             int resetDay = dailyRewardsModule.getResetDay();
 
             if (resetDay > 0 && dayNum > resetDay) {

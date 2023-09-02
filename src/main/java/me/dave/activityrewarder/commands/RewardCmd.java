@@ -2,6 +2,7 @@ package me.dave.activityrewarder.commands;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -242,7 +243,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
+        if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) {
             DailyRewardsGui dailyRewardsGui = new DailyRewardsGui(dailyRewardsModule, player);
             dailyRewardsGui.openInventory();
         }

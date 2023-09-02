@@ -3,8 +3,10 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.api.event.RewardUserLoadEvent;
 import me.dave.activityrewarder.api.event.RewardUserUnloadEvent;
+import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
-import me.dave.activityrewarder.module.playtimegoals.PlaytimeGoalsModuleUserData;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
@@ -77,16 +79,16 @@ public class DataManager {
         if (rewardUser == null) {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
-            if (ActivityRewarder.getModule("daily-rewards") != null) {
-                rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", 1, 1, LocalDate.now(), LocalDate.now().minusDays(1), new ArrayList<>()));
+            if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) != null) {
+                rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), 1, 1, LocalDate.now(), LocalDate.now().minusDays(1), new ArrayList<>()));
             }
 
-            if (ActivityRewarder.getModule("daily-playtime-goals") != null) {
-                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-daily-goals", 0));
+            if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) != null) {
+                rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName(), 0, LocalDate.now()));
             }
 
-            if (ActivityRewarder.getModule("global-playtime-goals") != null) {
-                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData("playtime-global-goals", 0));
+            if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) != null) {
+                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName(), 0));
             }
         }
 

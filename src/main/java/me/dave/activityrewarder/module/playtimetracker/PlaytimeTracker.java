@@ -2,9 +2,10 @@ package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.module.playtimegoals.PlaytimeGoalsModuleUserData;
-import me.dave.activityrewarder.module.playtimegoals.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimegoals.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.utils.SimpleLocation;
 import org.bukkit.entity.Player;
 
@@ -28,7 +29,7 @@ public class PlaytimeTracker {
 
     public void tick() {
         if (!player.isOnline()) {
-            PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule("playtime-tracker");
+            PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule(Module.ModuleType.PLAYTIME_TRACKER.getName());
             if (playtimeTrackerModule != null) {
                 playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             }
@@ -76,10 +77,10 @@ public class PlaytimeTracker {
     private void incrementGlobalTime() {
         globalTime++;
 
-        if (ActivityRewarder.getModule("playtime-daily-goals") instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
+        if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
             if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
                 RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-                PlaytimeGoalsModuleUserData playtimeGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData("playtime-daily-goals");
+                PlaytimeGoalsModuleUserData playtimeGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
 
                 // TODO: Calculate daily play time
                 playtimeDailyGoalsModule.getRewardCollectionsInRange(playtimeGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
@@ -88,10 +89,10 @@ public class PlaytimeTracker {
             }
         }
 
-        if (ActivityRewarder.getModule("playtime-global-goals") instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
+        if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
             if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
                 RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-                PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData("playtime-global-goals");
+                PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName());
 
                 playtimeGlobalGoalsModule.getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
                 playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(globalTime);
