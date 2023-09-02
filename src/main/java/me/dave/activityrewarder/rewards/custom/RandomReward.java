@@ -32,7 +32,11 @@ public class RandomReward implements Reward {
     @Override
     public void giveTo(Player player) {
         if (rewards != null && !rewards.isEmpty()) {
-            rewards.next().giveTo(player);
+            try {
+                rewards.next().giveTo(player);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

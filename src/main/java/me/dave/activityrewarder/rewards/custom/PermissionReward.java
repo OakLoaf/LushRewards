@@ -27,7 +27,13 @@ public class PermissionReward  implements Reward {
     @Override
     public void giveTo(Player player) {
         if (player.hasPermission(permission)) {
-            rewards.forEach(reward -> reward.giveTo(player));
+            rewards.forEach(reward -> {
+                try {
+                    reward.giveTo(player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 }
