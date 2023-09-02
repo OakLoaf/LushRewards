@@ -8,11 +8,11 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
-import me.dave.activityrewarder.utils.SimpleDate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class DailyRewardsModule extends Module {
@@ -99,11 +99,11 @@ public class DailyRewardsModule extends Module {
     }
 
     @NotNull
-    public Collection<DailyRewardCollection> getDateRewards(SimpleDate date) {
+    public Collection<DailyRewardCollection> getDateRewards(LocalDate date) {
         return rewards.values().stream().filter(rewardCollection -> rewardCollection.isAvailableOn(date)).toList();
     }
 
-    public RewardDay getRewardDay(SimpleDate date, int streakDay) {
+    public RewardDay getRewardDay(LocalDate date, int streakDay) {
         RewardDay rewardDay = new RewardDay();
         rewardDay.addCollections(getDateRewards(date));
         rewardDay.addCollections(getDayNumRewards(streakDay));

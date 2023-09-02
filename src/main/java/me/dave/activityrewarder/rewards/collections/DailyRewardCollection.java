@@ -1,29 +1,31 @@
 package me.dave.activityrewarder.rewards.collections;
 
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
-import me.dave.activityrewarder.exceptions.SimpleDateParseException;
+
 import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public class DailyRewardCollection extends RewardCollection {
     private final Integer repeatFrequency;
-    private final SimpleDate rewardDate;
-    private final SimpleDate repeatsUntilDate;
+    private final LocalDate rewardDate;
+    private final LocalDate repeatsUntilDate;
     private final Integer rewardDayNum;
     private final Integer repeatsUntilDay;
 
-    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable SimpleDate rewardDate, @Nullable SimpleDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
+    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable LocalDate rewardDate, @Nullable LocalDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
         super(rewards, priority, category, itemStack, sound);
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntilDay != null || repeatsUntilDate != null ? 1 : 0);
         this.rewardDate = rewardDate;
@@ -33,11 +35,11 @@ public class DailyRewardCollection extends RewardCollection {
     }
 
     @Nullable
-    public SimpleDate getRewardDate() {
+    public LocalDate getRewardDate() {
         return rewardDate;
     }
 
-    public boolean isAvailableOn(SimpleDate date) {
+    public boolean isAvailableOn(LocalDate date) {
         if (rewardDate == null) {
             return false;
         }
@@ -89,10 +91,10 @@ public class DailyRewardCollection extends RewardCollection {
         Debugger.DebugMode debugMode = Debugger.DebugMode.DAILY;
         Debugger.sendDebugMessage("Attempting to load reward collection at '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        SimpleDate rewardDate = null;
+        LocalDate rewardDate = null;
         Integer rewardDayNum = null;
         if (rewardCollectionSection.contains("on-date")) {
-            rewardDate = SimpleDate.parse(rewardCollectionSection.getString("on-date", ""));
+            rewardDate = LocalDate.parse(rewardCollectionSection.getString("on-date", ""), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         }
         if (rewardCollectionSection.contains("on-day-num")) {
             rewardDayNum = rewardCollectionSection.getInt("on-day-num");
@@ -109,12 +111,12 @@ public class DailyRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection repeat frequency set to " + repeatFrequency, debugMode);
 
         Integer repeatsUntilDay = null;
-        SimpleDate repeatsUntilDate = null;
+        LocalDate repeatsUntilDate = null;
 
         if (rewardCollectionSection.contains("repeats-until")) {
             try {
-                repeatsUntilDate = SimpleDate.parse(rewardCollectionSection.getString("repeats-until"));
-            } catch (SimpleDateParseException e) {
+                repeatsUntilDate = LocalDate.parse(rewardCollectionSection.getString("repeats-until"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            } catch (DateTimeParseException e) {
                 repeatsUntilDay = rewardCollectionSection.getInt("repeats-until", -1);
             }
         }

@@ -5,12 +5,12 @@ import me.dave.activityrewarder.api.event.RewardUserLoadEvent;
 import me.dave.activityrewarder.api.event.RewardUserUnloadEvent;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimegoals.PlaytimeGoalsModuleUserData;
-import me.dave.activityrewarder.utils.SimpleDate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
@@ -78,7 +78,7 @@ public class DataManager {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
             if (ActivityRewarder.getModule("daily-rewards") != null) {
-                rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", 1, 1, SimpleDate.now(), SimpleDate.now().minusDays(1), new ArrayList<>()));
+                rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", 1, 1, LocalDate.now(), LocalDate.now().minusDays(1), new ArrayList<>()));
             }
 
             if (ActivityRewarder.getModule("daily-playtime-goals") != null) {

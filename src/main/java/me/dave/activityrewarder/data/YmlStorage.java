@@ -3,7 +3,6 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimegoals.PlaytimeGoalsModuleUserData;
-import me.dave.activityrewarder.utils.SimpleDate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,6 +11,8 @@ import org.enchantedskies.EnchantedStorage.Storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,11 +32,11 @@ public class YmlStorage implements Storage<RewardUser> {
         if (ActivityRewarder.getModule("daily-rewards") != null) {
             int streakLength = configurationSection.getInt("daily-rewards.streak-length", 1);
             int highestStreak = configurationSection.getInt("daily-rewards.highest-streak", 1);
-            String startDate = configurationSection.getString("daily-rewards.start-date", SimpleDate.now().toString("dd-mm-yyyy"));
-            String lastCollectedDate = configurationSection.getString("daily-rewards.last-collected-date", SimpleDate.now().toString("dd-mm-yyyy"));
+            String startDate = configurationSection.getString("daily-rewards.start-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            String lastCollectedDate = configurationSection.getString("daily-rewards.last-collected-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             List<String> collectedDates = configurationSection.getStringList("daily-rewards.collected-dates");
 
-            rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", streakLength, highestStreak, SimpleDate.parse(startDate), SimpleDate.parse(lastCollectedDate), collectedDates));
+            rewardUser.addModuleData(new DailyRewardsModuleUserData("daily-rewards", streakLength, highestStreak, LocalDate.parse(startDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), LocalDate.parse(lastCollectedDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), collectedDates));
         }
 
         if (ActivityRewarder.getModule("playtime-daily-goals") != null) {
@@ -66,8 +67,8 @@ public class YmlStorage implements Storage<RewardUser> {
             configurationSection.set("daily-rewards.day-num", dailyRewardsModuleData.getDayNum());
             configurationSection.set("daily-rewards.streak-length", dailyRewardsModuleData.getStreakLength());
             configurationSection.set("daily-rewards.highest-streak", dailyRewardsModuleData.getHighestStreak());
-            configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().toString("dd-mm-yyyy"));
-            configurationSection.set("daily-rewards.last-collected-date", dailyRewardsModuleData.getLastCollectedDate().toString("dd-mm-yyyy"));
+            configurationSection.set("daily-rewards.start-date", dailyRewardsModuleData.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            configurationSection.set("daily-rewards.last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             configurationSection.set("daily-rewards.collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
 

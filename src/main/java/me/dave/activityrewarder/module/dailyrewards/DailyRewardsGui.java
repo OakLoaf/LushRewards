@@ -10,7 +10,6 @@ import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.activityrewarder.utils.SimpleDate;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
@@ -18,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,7 +43,7 @@ public class DailyRewardsGui extends AbstractGui {
         // Checks if the streak mode config option is enabled
         if (ActivityRewarder.getConfigManager().isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
-            if (rewardUser.getLastCollectedDate().isBefore(SimpleDate.now().minusDays(1))) {
+            if (rewardUser.getLastCollectedDate().isBefore(LocalDate.now().minusDays(1))) {
                 rewardUser.restartStreak();
             }
         }
@@ -54,7 +55,7 @@ public class DailyRewardsGui extends AbstractGui {
 
         // First reward day shown
         AtomicInteger dayIndex = new AtomicInteger();
-        SimpleDate dateIndex;
+        final LocalDate[] dateIndex = new LocalDate[1];
         switch (dailyRewardsModule.getScrollType()) {
             case GRID -> {
                 int rewardDisplaySize = guiTemplate.countChar('R');
@@ -67,17 +68,16 @@ public class DailyRewardsGui extends AbstractGui {
                 dayIndex.set(endDay - (rewardDisplaySize - 1));
 
                 int diff = dayIndex.get() - currDayNum;
-                dateIndex = SimpleDate.now();
-                dateIndex.addDays(diff);
+                dateIndex[0] = LocalDate.now().plusDays(diff);
             }
             case MONTH -> {
-                SimpleDate today = SimpleDate.now();
-                dateIndex = new SimpleDate(1, today.getMonth(), today.getYear());
-                dayIndex.set(currDayNum - (today.getDay() - 1));
+                LocalDate today = LocalDate.now();
+                dateIndex[0] = LocalDate.of(today.getYear(), today.getMonth(), 1);
+                dayIndex.set(currDayNum - (today.getDayOfMonth() - 1));
             }
             default -> {
                 dayIndex.set(currDayNum);
-                dateIndex = SimpleDate.now();
+                dateIndex[0] = LocalDate.now();
             }
         }
 
@@ -94,12 +94,12 @@ public class DailyRewardsGui extends AbstractGui {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {
                     // Get the day's reward for the current slot
-                    RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex, dayIndex.get());
+                    RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex[0], dayIndex.get());
                     DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
 
                     String itemTemplate;
                     if (dayIndex.get() < currDayNum) {
-                        itemTemplate = (collectedDates.contains(dateIndex.toString("dd-mm-yyyy"))) ? "collected-reward" : "missed-reward";
+                        itemTemplate = (collectedDates.contains(dateIndex[0].format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) ? "collected-reward" : "missed-reward";
                     } else if (dayIndex.get() == currDayNum) {
                         itemTemplate = collectedToday ? "collected-reward" : "redeemable-reward";
                     } else {
@@ -112,13 +112,13 @@ public class DailyRewardsGui extends AbstractGui {
                         if (displayItem.getDisplayName() != null) {
                             displayItem.setDisplayName(displayItem.getDisplayName()
                                 .replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                .replaceAll("%month_day%", String.valueOf(dateIndex.getDay())));
+                                .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth())));
                         }
 
                         if (displayItem.getLore() != null) {
                             displayItem.setLore(displayItem.getLore().stream().map(line ->
                                 line.replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                    .replaceAll("%month_day%", String.valueOf(dateIndex.getDay()))
+                                    .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
                             ).toList());
                         }
 
@@ -150,7 +150,7 @@ public class DailyRewardsGui extends AbstractGui {
                             if (collectedItem.getDisplayName() != null) {
                                 collectedItem.setDisplayName(collectedItem.getDisplayName()
                                     .replaceAll("%day%", String.valueOf(currDayNum))
-                                    .replaceAll("%month_day%", SimpleDate.now().toString("dd-mm-yyyy")));
+                                    .replaceAll("%month_day%", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
                             }
                             collectedItem.parseColors(player);
 
@@ -182,25 +182,25 @@ public class DailyRewardsGui extends AbstractGui {
 
                             player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
                             rewardUser.incrementStreakLength();
-                            rewardUser.setLastCollectedDate(SimpleDate.now());
-                            rewardUser.addCollectedDate(SimpleDate.now());
+                            rewardUser.setLastCollectedDate(LocalDate.now());
+                            rewardUser.addCollectedDate(LocalDate.now());
                         });
                     }
 
                     // Sets the size of the stack to the same amount as the current date
                     if (dailyRewardsModule.showDateAsAmount()) {
-                        itemStack.setAmount(dateIndex.getDay());
+                        itemStack.setAmount(dateIndex[0].getDayOfMonth());
                     }
 
                     inventory.setItem(slot, itemStack);
 
                     dayIndex.getAndIncrement();
-                    dateIndex.addDays(1);
+                    dateIndex[0] = dateIndex[0].plusDays(1);
                 });
                 case 'U', 'N' -> {
                     String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
                     int upcomingRewardDay = dailyRewardsModule.findNextRewardFromCategory(dayIndex.get(), upcomingCategory);
-                    SimpleDate upcomingRewardDate = rewardUser.getDateAtStreakLength(upcomingRewardDay);
+                    LocalDate upcomingRewardDate = rewardUser.getDateAtStreakLength(upcomingRewardDay);
 
                     // Adds the upcoming reward to the GUI if it exists
                     if (upcomingRewardDay != -1) {

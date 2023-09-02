@@ -3,10 +3,10 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.ModuleData;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
-import me.dave.activityrewarder.utils.SimpleDate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -96,16 +96,16 @@ public class RewardUser {
         return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getHighestStreak();
     }
 
-    public SimpleDate getLastCollectedDate() {
+    public LocalDate getLastCollectedDate() {
         return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getLastCollectedDate();
     }
 
-    public void setLastCollectedDate(SimpleDate date) {
+    public void setLastCollectedDate(LocalDate date) {
         ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).setLastCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
-    public SimpleDate getDateAtStreakLength(int dayNum) {
+    public LocalDate getDateAtStreakLength(int dayNum) {
         return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getDateAtStreakLength(dayNum);
     }
 
@@ -121,7 +121,7 @@ public class RewardUser {
         return ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).getCollectedDates();
     }
 
-    public void addCollectedDate(SimpleDate date) {
+    public void addCollectedDate(LocalDate date) {
         ((DailyRewardsModuleUserData) getModuleData("daily-rewards")).addCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }

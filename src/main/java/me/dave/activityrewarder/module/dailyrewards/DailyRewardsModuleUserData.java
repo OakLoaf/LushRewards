@@ -2,18 +2,19 @@ package me.dave.activityrewarder.module.dailyrewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.ModuleData;
-import me.dave.activityrewarder.utils.SimpleDate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class DailyRewardsModuleUserData extends ModuleData {
     private int streakLength;
     private int highestStreak;
-    private SimpleDate startDate;
-    private SimpleDate lastCollectedDate;
+    private LocalDate startDate;
+    private LocalDate lastCollectedDate;
     private final List<String> collectedDates;
 
-    public DailyRewardsModuleUserData(String id, int streakLength, int highestStreak, SimpleDate startDate, SimpleDate lastCollectedDate, List<String> collectedDates) {
+    public DailyRewardsModuleUserData(String id, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, List<String> collectedDates) {
         super(id);
         this.streakLength = streakLength;
         this.highestStreak = highestStreak;
@@ -23,7 +24,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public int getDayNum() {
-        int dayNum = (int) (SimpleDate.now().toEpochDay() - startDate.toEpochDay());
+        int dayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay());
 
         if (ActivityRewarder.getModule("daily-rewards") instanceof DailyRewardsModule dailyRewardsModule) {
             int resetDay = dailyRewardsModule.getResetDay();
@@ -38,7 +39,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public void setDayNum(int dayNum) {
-        startDate = SimpleDate.now().minusDays(dayNum);
+        startDate = LocalDate.now().minusDays(dayNum);
     }
 
     public int getStreakLength() {
@@ -60,21 +61,19 @@ public class DailyRewardsModuleUserData extends ModuleData {
         return highestStreak;
     }
 
-    public SimpleDate getDateAtStreakLength(int streakLength) {
-        SimpleDate date = SimpleDate.now();
-        date.addDays(streakLength - getDayNum());
-        return date;
+    public LocalDate getDateAtStreakLength(int streakLength) {
+        return LocalDate.now().plusDays(streakLength - getDayNum());
     }
 
-    public SimpleDate getStartDate() {
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
-    public SimpleDate getLastCollectedDate() {
+    public LocalDate getLastCollectedDate() {
         return this.lastCollectedDate;
     }
 
-    public void setLastCollectedDate(SimpleDate date) {
+    public void setLastCollectedDate(LocalDate date) {
         this.lastCollectedDate = date;
     }
 
@@ -83,11 +82,11 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public boolean hasCollectedToday() {
-        return collectedDates.contains(SimpleDate.now().toString("dd-mm-yyyy"));
+        return collectedDates.contains(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
 
-    public void addCollectedDate(SimpleDate date) {
-        collectedDates.add(date.toString("dd-mm-yyyy"));
+    public void addCollectedDate(LocalDate date) {
+        collectedDates.add(date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
 
     public void clearCollectedDates() {
