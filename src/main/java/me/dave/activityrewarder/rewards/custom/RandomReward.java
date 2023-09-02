@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.rewards.custom;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.utils.RandomCollection;
 import org.bukkit.entity.Player;
@@ -32,9 +33,12 @@ public class RandomReward implements Reward {
     @Override
     public void giveTo(Player player) {
         if (rewards != null && !rewards.isEmpty()) {
+            Reward reward = rewards.next();
+
             try {
-                rewards.next().giveTo(player);
+                reward.giveTo(player);
             } catch (Exception e) {
+                ActivityRewarder.getInstance().getLogger().severe(reward.toString());
                 e.printStackTrace();
             }
         }

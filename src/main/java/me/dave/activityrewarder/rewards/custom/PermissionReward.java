@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.rewards.custom;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import org.bukkit.entity.Player;
 
@@ -31,6 +32,7 @@ public class PermissionReward  implements Reward {
                 try {
                     reward.giveTo(player);
                 } catch (Exception e) {
+                    ActivityRewarder.getInstance().getLogger().severe(reward.toString());
                     e.printStackTrace();
                 }
             });

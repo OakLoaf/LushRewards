@@ -60,17 +60,14 @@ public class RewardCollection {
     }
 
     public void giveAll(Player player) {
-        try {
-            rewards.forEach(reward -> {
-                try {
-                    reward.giveTo(player);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        rewards.forEach(reward -> {
+            try {
+                reward.giveTo(player);
+            } catch (Exception e) {
+                ActivityRewarder.getInstance().getLogger().severe(reward.toString());
+                e.printStackTrace();
+            }
+        });
     }
 
     @NotNull
