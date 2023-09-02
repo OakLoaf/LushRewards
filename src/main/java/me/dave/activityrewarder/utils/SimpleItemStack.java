@@ -248,6 +248,7 @@ public class SimpleItemStack implements Cloneable {
         return simpleItemStack;
     }
 
+    @SuppressWarnings("unchecked")
     public static SimpleItemStack from(@NotNull Map<?, ?> configurationMap) {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
 

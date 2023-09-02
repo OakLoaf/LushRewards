@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class RewardUserEvent extends Event {
-    protected RewardUser rewardUser;
+    protected final RewardUser rewardUser;
 
     public RewardUserEvent(@NotNull final RewardUser rewardUser) {
         this.rewardUser = rewardUser;

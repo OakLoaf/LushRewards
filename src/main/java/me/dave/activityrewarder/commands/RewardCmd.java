@@ -269,9 +269,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
         else if (args.length == 2) {
             switch(args[0].toLowerCase()) {
-                case "set-days", "reset-days", "set-streak", "reset-streak" -> {
-                    tabComplete.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
-                }
+                case "set-days", "reset-days", "set-streak", "reset-streak" -> tabComplete.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
             }
         }
 

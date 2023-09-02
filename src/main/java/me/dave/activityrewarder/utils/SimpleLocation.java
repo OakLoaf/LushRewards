@@ -5,9 +5,9 @@ import org.bukkit.Location;
 import java.util.Objects;
 
 public class SimpleLocation {
-    double x;
-    double y;
-    double z;
+    private final double x;
+    private final double y;
+    private final double z;
 
     public SimpleLocation(double x, double y, double z) {
         this.x = x;

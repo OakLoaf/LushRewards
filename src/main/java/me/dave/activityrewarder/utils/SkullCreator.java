@@ -58,8 +58,7 @@ public class SkullCreator {
     @Nullable
     public static String getB64(ItemStack itemStack) {
         try {
-            if (itemStack.getType() == Material.PLAYER_HEAD && itemStack.hasItemMeta()) {
-                SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+            if (itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof SkullMeta skullMeta) {
                 if (skullMetaProfileField == null) {
                     skullMetaProfileField = skullMeta.getClass().getDeclaredField("profile");
                     skullMetaProfileField.setAccessible(true);

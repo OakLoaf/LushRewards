@@ -96,8 +96,11 @@ public class YmlStorage implements Storage<RewardUser> {
 
         if (yamlConfiguration.getString("name") == null) {
             Player player = Bukkit.getPlayer(uuid);
-            String playerName = player.getName();
-            yamlConfiguration.set("name", playerName);
+            if (player != null) {
+                String playerName = player.getName();
+                yamlConfiguration.set("name", playerName);
+            }
+
             yamlConfiguration.set("minutes-played", 0);
 
             try {
