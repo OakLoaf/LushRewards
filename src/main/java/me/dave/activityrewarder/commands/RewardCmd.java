@@ -55,12 +55,12 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
                     if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
                         playtimeDailyGoalsModule.claimRewards(player);
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given").replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed())));
                     }
 
                     if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
                         playtimeGlobalGoalsModule.claimRewards(player);
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given").replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed())));
                     }
                 }
                 case "messages" -> {
