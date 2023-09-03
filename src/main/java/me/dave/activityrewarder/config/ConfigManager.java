@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
@@ -16,6 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +30,8 @@ public class ConfigManager {
     private File dailyGoalsFile;
     private File globalGoalsFile;
     private boolean allowRewardsStacking;
-    private boolean rewardsRefresh;
+    private boolean performanceMode;
+    private LocalDate date;
     private int reminderPeriod;
     private Sound reminderSound;
     private boolean streakMode;
@@ -40,13 +43,19 @@ public class ConfigManager {
     }
 
     public void reloadConfig() {
+        InventoryHandler.closeAll();
+
         ActivityRewarder.getInstance().reloadConfig();
         FileConfiguration config = ActivityRewarder.getInstance().getConfig();
 
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
 
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
-        rewardsRefresh = config.getBoolean("rewards-refresh-daily", false);
+        performanceMode = config.getBoolean("rewards-refresh-daily", false);
+        if (performanceMode) {
+            date = LocalDate.now();
+        }
+
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none").toUpperCase());
         streakMode = config.getBoolean("streak-mode", false);
@@ -130,8 +139,14 @@ public class ConfigManager {
         return allowRewardsStacking;
     }
 
-    public boolean doRewardsRefresh() {
-        return rewardsRefresh;
+    public boolean isPerformanceModeEnabled() {
+        return performanceMode;
+    }
+
+    public void checkRefresh() {
+        if (!date.isEqual(LocalDate.now())) {
+            reloadConfig();
+        }
     }
 
     public int getReminderPeriod() {

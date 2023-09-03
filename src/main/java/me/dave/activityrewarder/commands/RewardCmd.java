@@ -27,6 +27,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        ActivityRewarder.getConfigManager().checkRefresh();
 
         if (args.length == 1) {
             switch(args[0].toLowerCase()) {

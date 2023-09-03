@@ -47,6 +47,7 @@ public class DailyRewardsModule extends Module {
         this.rewardsIndex = 0;
         this.rewards = new HashMap<>();
 
+        LocalDate today = LocalDate.now();
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection rewardSection) {
                 DailyRewardCollection dailyRewardCollection;
@@ -57,7 +58,13 @@ public class DailyRewardsModule extends Module {
                     continue;
                 }
 
-                registerRewardCollection(dailyRewardCollection);
+                if (ActivityRewarder.getConfigManager().isPerformanceModeEnabled()) {
+                    if (dailyRewardCollection.getRewardDate() == null || dailyRewardCollection.getRewardDate().isEqual(today)) {
+                        registerRewardCollection(dailyRewardCollection);
+                    }
+                } else {
+                    registerRewardCollection(dailyRewardCollection);
+                }
             }
         }
 
