@@ -1,7 +1,5 @@
 package me.dave.activityrewarder.module.dailyrewards;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
@@ -18,7 +16,6 @@ import java.util.*;
 public class DailyRewardsModule extends Module {
     private int rewardsIndex;
     private HashMap<Integer, DailyRewardCollection> rewards;
-    private Multimap<Integer, Integer> dayToRewards;
     private int resetDaysAt;
     private boolean dateAsAmount;
     private DailyRewardsGui.ScrollType scrollType;
@@ -49,26 +46,22 @@ public class DailyRewardsModule extends Module {
 
         this.rewardsIndex = 0;
         this.rewards = new HashMap<>();
-        this.dayToRewards = HashMultimap.create();
+
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection rewardSection) {
                 DailyRewardCollection dailyRewardCollection;
                 try {
                     dailyRewardCollection = DailyRewardCollection.from(rewardSection);
-                } catch(InvalidRewardException e) {
+                } catch (InvalidRewardException e) {
                     e.printStackTrace();
                     continue;
                 }
 
-                int rewardId = registerRewardCollection(dailyRewardCollection);
-
-                if (dailyRewardCollection.getRewardDayNum() != null) {
-                    dayToRewards.put(dailyRewardCollection.getRewardDayNum(), rewardId);
-                }
+                registerRewardCollection(dailyRewardCollection);
             }
         }
 
-        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + dayToRewards.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
+        ActivityRewarder.getInstance().getLogger().info("Successfully loaded " + rewards.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
     }
 
     @Override
@@ -76,11 +69,6 @@ public class DailyRewardsModule extends Module {
         if (rewards != null) {
             rewards.clear();
             rewards = null;
-        }
-
-        if (dayToRewards != null) {
-            dayToRewards.clear();
-            dayToRewards = null;
         }
 
         guiFormat = null;
@@ -110,34 +98,46 @@ public class DailyRewardsModule extends Module {
         return rewardDay;
     }
 
-    // TODO: Take into account date rewards too
-    public int findNextRewardFromCategory(int day, String category) {
-//        List<DailyRewardCollection> filteredCollections = rewards.values().stream().filter(rewardCollection -> rewardCollection.getCategory().equalsIgnoreCase(category)).toList();
-//
-//        for (DailyRewardCollection collection : filteredCollections) {
-//            if (collection.getRewardDate() != null && collection.getRewardDate().isBefore()) {
-//                return
-//            }
-//        }
 
-        int nextRewardDay = -1;
+    /**
+     * @param day      Starting day of search (inclusive)
+     * @param date     Starting date of search (inclusive)
+     * @param category The category to search for
+     * @return The reward found
+     */
+    public Optional<DailyRewardCollection> findNextRewardFromCategory(int day, LocalDate date, String category) {
 
-        // Iterates through dayToRewards
-        for (int rewardDayNum : dayToRewards.keySet()) {
-            // Checks if the current key is a day in the future
-            if (rewardDayNum <= day || (nextRewardDay != -1 && rewardDayNum > nextRewardDay)) {
-                continue;
-            }
+        return rewards.values().stream()
+                .filter(reward ->
+                        !(reward.getCategory().equalsIgnoreCase(category)
+                                || (reward.getRewardDayNum() != null && reward.getRewardDayNum() < day)
+                                || (reward.getRewardDate() != null && reward.getRewardDate().isBefore(date))))
+                .min((reward1, reward2) -> {
+                    LocalDate date1 = reward1.getRewardDate();
+                    LocalDate date2 = reward2.getRewardDate();
 
-            // Gets the category of the reward and compares to the request
-            RewardDay rewardDay = RewardDay.from(getDayNumRewards(rewardDayNum));
-            if (rewardDay.containsRewardFromCategory(category)) {
-                nextRewardDay = rewardDayNum;
-            }
-        }
+                    if (date1 == null) {
+                        Integer dayNum1 = reward1.getRewardDayNum();
 
-        // Returns -1 if no future rewards match the request
-        return nextRewardDay;
+                        if (dayNum1 != null) {
+                            date1 = date.plusDays(dayNum1 - day);
+                        }
+                    }
+
+                    if (date2 == null) {
+                        Integer dayNum2 = reward2.getRewardDayNum();
+
+                        if (dayNum2 != null) {
+                            date2 = date.plusDays(dayNum2 - day);
+                        }
+                    }
+
+                    if (date1 == null || date2 == null) {
+                        return date1 == null && date2 == null ? 0 : (date1 == null ? -1 : 1);
+                    }
+
+                    return date1.compareTo(date2);
+                });
     }
 
     public int getResetDay() {

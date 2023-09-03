@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DailyRewardsGui extends AbstractGui {
@@ -200,21 +201,20 @@ public class DailyRewardsGui extends AbstractGui {
                 });
                 case 'U', 'N' -> {
                     String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
-                    int upcomingRewardDay = dailyRewardsModule.findNextRewardFromCategory(dayIndex.get(), upcomingCategory);
-                    LocalDate upcomingRewardDate = rewardUser.getDateAtStreakLength(upcomingRewardDay);
+                    Optional<DailyRewardCollection> upcomingReward = dailyRewardsModule.findNextRewardFromCategory(dayIndex.get(), dateIndex[0], upcomingCategory);
 
                     // Adds the upcoming reward to the GUI if it exists
-                    if (upcomingRewardDay != -1) {
+                    if (upcomingReward.isPresent()) {
+                        DailyRewardCollection upcomingRewardCollection = upcomingReward.get();
                         SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate(upcomingCategory);
 
                         // Get the day's reward for the current slot
-                        DailyRewardCollection upcomingReward = dailyRewardsModule.getRewardDay(upcomingRewardDate, upcomingRewardDay).getHighestPriorityRewardCollection();
-                        SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"), upcomingReward.getDisplayItem());
+                        SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"), upcomingRewardCollection.getDisplayItem());
 
                         if (simpleItemStack.getDisplayName() != null) {
                             simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack
                                             .getDisplayName()
-                                            .replaceAll("%day%", String.valueOf(upcomingRewardDay - rewardUser.getDayNumOffset())),
+                                            .replaceAll("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum())),
                                     player));
                         }
                         simpleItemStack.setLore(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getLore(), player));
