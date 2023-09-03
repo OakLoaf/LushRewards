@@ -75,7 +75,7 @@ public class SkullCreator {
         }
     }
 
-    // TODO: Test on older versions
+    // TODO: Fix for older versions
     public static String getTexture(Player player) {
         GameProfile profile = ((CraftPlayer) player).getProfile();
         Property property = profile.getProperties().get("textures").iterator().next();
