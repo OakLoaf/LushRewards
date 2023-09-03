@@ -10,6 +10,8 @@ import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsMo
 import me.dave.activityrewarder.utils.SimpleLocation;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDate;
+
 public class PlaytimeTracker {
     private static final int IDLE_TIME_TO_AFK = 300;
     private final Player player;
@@ -83,7 +85,11 @@ public class PlaytimeTracker {
                 RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
                 PlaytimeDailyGoalsModuleUserData playtimeDailyGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
 
-                // TODO: Calculate daily play time
+                if (!playtimeDailyGoalsModuleUserData.getDate().isEqual(LocalDate.now())) {
+                    playtimeDailyGoalsModuleUserData.setDate(LocalDate.now());
+                    playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(0);
+                }
+
                 playtimeDailyGoalsModule.getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
                 playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(globalTime);
                 ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
