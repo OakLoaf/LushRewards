@@ -1,14 +1,21 @@
 package me.dave.activityrewarder.module.playtimeglobalgoals;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
+import me.dave.activityrewarder.rewards.collections.RewardDay;
+import me.dave.activityrewarder.utils.Debugger;
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,5 +104,15 @@ public class PlaytimeGlobalGoalsModule extends Module {
 
     public GuiFormat getGuiFormat() {
         return guiFormat;
+    }
+
+    public void claimRewards(Player player) {
+        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+        PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName());
+        int minutesPlayed = rewardUser.getMinutesPlayed();
+
+        getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed).forEach(rewardCollection -> rewardCollection.giveAll(player));
+        playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
+        ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
     }
 }

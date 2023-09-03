@@ -1,13 +1,17 @@
 package me.dave.activityrewarder.module.dailyrewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
+import me.dave.activityrewarder.utils.Debugger;
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -161,5 +165,31 @@ public class DailyRewardsModule extends Module {
 
     public GuiFormat getGuiFormat() {
         return guiFormat;
+    }
+
+    public void claimRewards(Player player) {
+        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+        if (rewardUser.hasCollectedToday()) {
+            return;
+        }
+
+        RewardDay rewardDay = getRewardDay(LocalDate.now(), rewardUser.getDayNum());
+        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
+
+        Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+
+        if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+            rewardDay.giveAllRewards(player);
+        } else {
+            priorityReward.giveAll(player);
+        }
+
+        Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
+
+        player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
+        rewardUser.incrementStreakLength();
+        rewardUser.setLastCollectedDate(LocalDate.now());
+        rewardUser.addCollectedDate(LocalDate.now());
     }
 }

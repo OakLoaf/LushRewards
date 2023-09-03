@@ -5,6 +5,8 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -34,6 +36,32 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 case "about" -> {
                     ChatColorHandler.sendMessage(sender, ABOUT_MESSAGE);
                     return true;
+                }
+                case "claim" -> {
+                    if (!(sender instanceof Player player)) {
+                        ChatColorHandler.sendMessage(sender, "Console cannot run this command!");
+                        return true;
+                    }
+
+                    if (!sender.hasPermission("activityrewarder.use")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) {
+                        dailyRewardsModule.claimRewards(player);
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
+                    }
+
+                    if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
+                        playtimeDailyGoalsModule.claimRewards(player);
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given"));
+                    }
+
+                    if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
+                        playtimeGlobalGoalsModule.claimRewards(player);
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given"));
+                    }
                 }
                 case "messages" -> {
                     if (!sender.hasPermission("activityrewarder.viewmessages")) {
@@ -263,6 +291,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             tabComplete.add("about");
+            if (commandSender.hasPermission("activityrewarder.use")) tabComplete.add("claim");
             if (commandSender.hasPermission("activityrewarder.reload")) tabComplete.add("reload");
             if (commandSender.hasPermission("activityrewarder.resetdays") || commandSender.hasPermission("activityrewarder.resetdays.others")) tabComplete.add("reset-days");
             if (commandSender.hasPermission("activityrewarder.setdays")) tabComplete.add("set-days");
