@@ -3,7 +3,6 @@ package me.dave.activityrewarder.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.dave.activityrewarder.ActivityRewarder;
-import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -76,10 +75,9 @@ public class SkullCreator {
         }
     }
 
-    // TODO: convert nms methods to separate modules
+    // TODO: Test on older versions
     public static String getTexture(Player player) {
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-        GameProfile profile = entityPlayer.fM();
+        GameProfile profile = ((CraftPlayer) player).getProfile();
         Property property = profile.getProperties().get("textures").iterator().next();
         return property.getValue();
     }
