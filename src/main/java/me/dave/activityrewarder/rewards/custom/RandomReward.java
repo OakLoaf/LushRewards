@@ -47,4 +47,21 @@ public class RandomReward implements Reward {
             }
         }
     }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> rewardMap = new HashMap<>();
+        List<Map<String, Object>> rewardsMap = new ArrayList<>();
+        rewards.getMap().forEach((weight, reward) -> {
+            Map<String, Object> weightRewardMap = reward.asMap();
+            weightRewardMap.put("weight", weight);
+
+            rewardsMap.add(weightRewardMap);
+        });
+
+        rewardMap.put("type", "random");
+        rewardMap.put("rewards", rewardsMap);
+
+        return rewardMap;
+    }
 }

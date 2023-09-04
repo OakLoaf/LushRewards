@@ -6,6 +6,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CommandReward implements Reward {
@@ -41,5 +42,15 @@ public class CommandReward implements Reward {
             }
             Bukkit.dispatchCommand(console, thisCommand);
         }
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> rewardMap = new HashMap<>();
+
+        rewardMap.put("type", "command");
+        rewardMap.put("command", command);
+
+        return rewardMap;
     }
 }

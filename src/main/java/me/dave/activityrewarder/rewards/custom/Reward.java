@@ -14,6 +14,8 @@ import java.util.Map;
 public interface Reward {
     void giveTo(Player player);
 
+    Map<String, Object> asMap();
+
     @Nullable
     static Reward loadReward(Map<?, ?> rewardMap, String path) {
         String rewardType = (String) rewardMap.get("type");

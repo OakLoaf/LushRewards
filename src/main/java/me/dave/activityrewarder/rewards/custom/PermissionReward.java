@@ -5,6 +5,7 @@ import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,5 +43,18 @@ public class PermissionReward  implements Reward {
                 }
             });
         }
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> rewardMap = new HashMap<>();
+
+        rewardMap.put("type", "permission");
+        rewardMap.put("permission", permission);
+
+        List<Map<String, Object>> rewardsMap = rewards.stream().map(Reward::asMap).toList();
+        rewardMap.put("rewards", rewardsMap);
+
+        return rewardMap;
     }
 }

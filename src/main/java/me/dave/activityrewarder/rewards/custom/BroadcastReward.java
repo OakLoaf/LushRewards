@@ -3,6 +3,7 @@ package me.dave.activityrewarder.rewards.custom;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class BroadcastReward implements Reward {
@@ -19,5 +20,15 @@ public class BroadcastReward implements Reward {
     @Override
     public void giveTo(Player player) {
         ChatColorHandler.broadcastMessage(message);
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> rewardMap = new HashMap<>();
+
+        rewardMap.put("type", "broadcast");
+        rewardMap.put("message", message);
+
+        return rewardMap;
     }
 }

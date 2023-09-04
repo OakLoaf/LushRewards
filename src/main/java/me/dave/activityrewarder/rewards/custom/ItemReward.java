@@ -19,27 +19,10 @@ public class ItemReward implements Reward {
     }
 
     public ItemReward(@NotNull Map<?, ?> map) {
-        Material material = ConfigParser.getMaterial((String) map.get("material"));
+        SimpleItemStack itemStack = SimpleItemStack.from(map);
 
-        if (material != null) {
-            this.itemStack = new SimpleItemStack(material);
-
-            try {
-                if (map.containsKey("amount")) {
-                    itemStack.setAmount((int) map.get("amount"));
-                }
-                if (map.containsKey("display-name")) {
-                    itemStack.setDisplayName((String) map.get("display-name"));
-                }
-                if (map.containsKey("custom-model-data")) {
-                    itemStack.setCustomModelData((int) map.get("custom-model-data"));
-                }
-                if (map.containsKey("enchanted")) {
-                    itemStack.setEnchanted((boolean) map.get("enchanted"));
-                }
-            } catch(ClassCastException exc) {
-                throw new InvalidRewardException("Invalid config format at '" + map + "', could not parse data");
-            }
+        if (itemStack.getType() != null) {
+            this.itemStack = itemStack;
         }
         else {
             throw new InvalidRewardException("Invalid config format at '" + map + "'");
@@ -50,5 +33,14 @@ public class ItemReward implements Reward {
     public void giveTo(Player player) {
         HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack.getItemStack(player));
         droppedItems.values().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> rewardMap = itemStack.asMap();
+
+        rewardMap.put("type", "item");
+
+        return rewardMap;
     }
 }
