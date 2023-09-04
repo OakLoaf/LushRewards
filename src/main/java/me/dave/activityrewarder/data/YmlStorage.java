@@ -35,11 +35,11 @@ public class YmlStorage implements Storage<RewardUser> {
             ConfigurationSection moduleSection = configurationSection.getConfigurationSection(Module.ModuleType.DAILY_REWARDS.getName());
 
             if (moduleSection != null) {
-                int streakLength = configurationSection.getInt("streak-length", 1);
-                int highestStreak = configurationSection.getInt("highest-streak", 1);
-                String startDate = configurationSection.getString("start-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-                String lastCollectedDate = configurationSection.getString("last-collected-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-                List<String> collectedDates = configurationSection.getStringList("collected-dates");
+                int streakLength = moduleSection.getInt("streak-length", 1);
+                int highestStreak = moduleSection.getInt("highest-streak", 1);
+                String startDate = moduleSection.getString("start-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                String lastCollectedDate = moduleSection.getString("last-collected-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                List<String> collectedDates = moduleSection.getStringList("collected-dates");
 
                 rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), streakLength, highestStreak, LocalDate.parse(startDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), LocalDate.parse(lastCollectedDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), collectedDates));
             }

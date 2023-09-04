@@ -83,7 +83,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public boolean hasCollectedToday() {
-        return collectedDates.contains(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        return lastCollectedDate.isEqual(LocalDate.now());
     }
 
     public void addCollectedDate(LocalDate date) {
