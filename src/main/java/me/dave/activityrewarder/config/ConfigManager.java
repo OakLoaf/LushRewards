@@ -144,7 +144,7 @@ public class ConfigManager {
     }
 
     public void checkRefresh() {
-        if (!date.isEqual(LocalDate.now())) {
+        if (performanceMode && !date.isEqual(LocalDate.now())) {
             reloadConfig();
         }
     }
