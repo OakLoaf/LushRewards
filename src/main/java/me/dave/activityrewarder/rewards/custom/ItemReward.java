@@ -12,26 +12,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ItemReward implements Reward {
-    private final SimpleItemStack simpleItemStack;
+    private final SimpleItemStack itemStack;
+
+    public ItemReward(SimpleItemStack itemStack) {
+        this.itemStack = itemStack;
+    }
 
     public ItemReward(@NotNull Map<?, ?> map) {
         Material material = ConfigParser.getMaterial((String) map.get("material"));
 
         if (material != null) {
-            this.simpleItemStack = new SimpleItemStack(material);
+            this.itemStack = new SimpleItemStack(material);
 
             try {
                 if (map.containsKey("amount")) {
-                    simpleItemStack.setAmount((int) map.get("amount"));
+                    itemStack.setAmount((int) map.get("amount"));
                 }
                 if (map.containsKey("display-name")) {
-                    simpleItemStack.setDisplayName((String) map.get("display-name"));
+                    itemStack.setDisplayName((String) map.get("display-name"));
                 }
                 if (map.containsKey("custom-model-data")) {
-                    simpleItemStack.setCustomModelData((int) map.get("custom-model-data"));
+                    itemStack.setCustomModelData((int) map.get("custom-model-data"));
                 }
                 if (map.containsKey("enchanted")) {
-                    simpleItemStack.setEnchanted((boolean) map.get("enchanted"));
+                    itemStack.setEnchanted((boolean) map.get("enchanted"));
                 }
             } catch(ClassCastException exc) {
                 throw new InvalidRewardException("Invalid config format at '" + map + "', could not parse data");
@@ -44,7 +48,7 @@ public class ItemReward implements Reward {
 
     @Override
     public void giveTo(Player player) {
-        HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(simpleItemStack.getItemStack(player));
+        HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack.getItemStack(player));
         droppedItems.values().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
     }
 }

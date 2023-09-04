@@ -12,6 +12,10 @@ public class CommandReward implements Reward {
     private static final ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     private final String command;
 
+    public CommandReward(String command) {
+        this.command = command;
+    }
+
     public CommandReward(Map<?, ?> map) {
         this.command = (String) map.get("command");
     }

@@ -12,6 +12,11 @@ public class PermissionReward  implements Reward {
     private final String permission;
     private final List<Reward> rewards;
 
+    public PermissionReward(String permission, List<Reward> rewards) {
+        this.permission = permission;
+        this.rewards = rewards;
+    }
+
     @SuppressWarnings("unchecked")
     public PermissionReward(Map<?, ?> map) {
         List<Map<?, ?>> rewardMaps;

@@ -10,6 +10,10 @@ import java.util.*;
 public class RandomReward implements Reward {
     private final RandomCollection<Reward> rewards;
 
+    public RandomReward(RandomCollection<Reward> rewards) {
+        this.rewards = rewards;
+    }
+
     @SuppressWarnings("unchecked")
     public RandomReward(Map<?, ?> map) {
         List<Map<?, ?>> rewardMaps;
