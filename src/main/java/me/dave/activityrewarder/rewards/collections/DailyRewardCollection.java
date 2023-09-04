@@ -25,8 +25,8 @@ public class DailyRewardCollection extends RewardCollection {
     private final Integer rewardDayNum;
     private final Integer repeatsUntilDay;
 
-    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable LocalDate rewardDate, @Nullable LocalDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
-        super(rewards, priority, category, itemStack, sound);
+    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable LocalDate rewardDate, @Nullable LocalDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound) {
+        super(rewards, priority, category, displayItem, sound);
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntilDay != null || repeatsUntilDate != null ? 1 : 0);
         this.rewardDate = rewardDate;
         this.repeatsUntilDate = repeatsUntilDate;
@@ -83,6 +83,40 @@ public class DailyRewardCollection extends RewardCollection {
             return (dayNum - rewardDayNum) % repeatFrequency == 0;
         } else {
             return false;
+        }
+    }
+
+    public void save(ConfigurationSection configurationSection) {
+        if (rewardDate != null) {
+            configurationSection.set("on-date", rewardDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        }
+        if (rewardDayNum != null) {
+            configurationSection.set("on-day-num", rewardDayNum);
+        }
+        if (priority != 0) {
+            configurationSection.set("priority", priority);
+        }
+        if (repeatFrequency != null && repeatFrequency != 0) {
+            configurationSection.set("repeat", repeatFrequency);
+        }
+        if (repeatsUntilDay != null) {
+            configurationSection.set("repeats-until", repeatsUntilDay);
+        }
+        if (repeatsUntilDate != null) {
+            configurationSection.set("repeats-until", repeatsUntilDate);
+        }
+        if (category != null) {
+            configurationSection.set("category", category);
+        }
+        if (displayItem != null && !displayItem.isBlank()) {
+            displayItem.save(configurationSection.createSection("display-item"));
+        }
+        if (sound != null) {
+            configurationSection.set("redeem-sound", sound.name());
+        }
+        if (!rewards.isEmpty()) {
+            List<Map<String, Object>> rewardMaps = rewards.stream().map(Reward::asMap).toList();
+            configurationSection.set("rewards", rewardMaps);
         }
     }
 
