@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.utils;
 
+import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +22,7 @@ public class SimpleItemStack implements Cloneable {
     private int amount = 1;
     private String displayName = null;
     private List<String> lore = null;
-    private Boolean enchanted = false;
+    private Boolean enchanted = null;
     private int customModelData = 0;
     private String skullTexture = null;
 
@@ -163,6 +165,58 @@ public class SimpleItemStack implements Cloneable {
         return itemStack;
     }
 
+    public void save(ConfigurationSection configurationSection) {
+        if (material != null) {
+            configurationSection.set("material", material.name());
+        }
+        if (amount != 1) {
+            configurationSection.set("amount", amount);
+        }
+        if (displayName != null) {
+            configurationSection.set("display-name", displayName);
+        }
+        if (lore != null) {
+            configurationSection.set("lore", lore);
+        }
+        if (enchanted != null) {
+            configurationSection.set("enchanted", enchanted);
+        }
+        if (customModelData != 0) {
+            configurationSection.set("custom-model-data", customModelData);
+        }
+        if (skullTexture != null) {
+            configurationSection.set("skull-texture", skullTexture);
+        }
+    }
+
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
+
+        if (material != null) {
+            map.put("material", material.name());
+        }
+        if (amount != 1) {
+            map.put("amount", amount);
+        }
+        if (displayName != null) {
+            map.put("display-name", displayName);
+        }
+        if (lore != null) {
+            map.put("lore", lore);
+        }
+        if (enchanted != null) {
+            map.put("enchanted", enchanted);
+        }
+        if (customModelData != 0) {
+            map.put("custom-model-data", customModelData);
+        }
+        if (skullTexture != null) {
+            map.put("skull-texture", skullTexture);
+        }
+
+        return map;
+    }
+
     public static SimpleItemStack overwrite(@NotNull SimpleItemStack original, @NotNull SimpleItemStack overwrite) {
         SimpleItemStack result = new SimpleItemStack();
 
@@ -252,26 +306,30 @@ public class SimpleItemStack implements Cloneable {
     public static SimpleItemStack from(@NotNull Map<?, ?> configurationMap) {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
 
-        if (configurationMap.containsKey("material")) {
-            simpleItemStack.setType(ConfigParser.getMaterial((String) configurationMap.get("material")));
-        }
-        if (configurationMap.containsKey("amount")) {
-            simpleItemStack.setAmount((int) configurationMap.get("amount"));
-        }
-        if (configurationMap.containsKey("display-name")) {
-            simpleItemStack.setDisplayName((String) configurationMap.get("display-name"));
-        }
-        if (configurationMap.containsKey("lore")) {
-            simpleItemStack.setLore((List<String>) configurationMap.get("lore"));
-        }
-        if (configurationMap.containsKey("enchanted")) {
-            simpleItemStack.setEnchanted((boolean) configurationMap.get("enchanted"));
-        }
-        if (configurationMap.containsKey("custom-model-data")) {
-            simpleItemStack.setCustomModelData((int) configurationMap.get("custom-model-data"));
-        }
-        if (configurationMap.containsKey("skull-texture")) {
-            simpleItemStack.setSkullTexture((String) configurationMap.get("skull-texture"));
+        try {
+            if (configurationMap.containsKey("material")) {
+                simpleItemStack.setType(ConfigParser.getMaterial((String) configurationMap.get("material")));
+            }
+            if (configurationMap.containsKey("amount")) {
+                simpleItemStack.setAmount((int) configurationMap.get("amount"));
+            }
+            if (configurationMap.containsKey("display-name")) {
+                simpleItemStack.setDisplayName((String) configurationMap.get("display-name"));
+            }
+            if (configurationMap.containsKey("lore")) {
+                simpleItemStack.setLore((List<String>) configurationMap.get("lore"));
+            }
+            if (configurationMap.containsKey("enchanted")) {
+                simpleItemStack.setEnchanted((boolean) configurationMap.get("enchanted"));
+            }
+            if (configurationMap.containsKey("custom-model-data")) {
+                simpleItemStack.setCustomModelData((int) configurationMap.get("custom-model-data"));
+            }
+            if (configurationMap.containsKey("skull-texture")) {
+                simpleItemStack.setSkullTexture((String) configurationMap.get("skull-texture"));
+            }
+        } catch(ClassCastException exc) {
+            throw new InvalidRewardException("Invalid format at '" + configurationMap + "', could not parse data");
         }
 
         return simpleItemStack;
