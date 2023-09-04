@@ -24,4 +24,8 @@ public class RandomCollection<E> {
     public boolean isEmpty() {
         return map.isEmpty();
     }
+
+    public NavigableMap<Double, E> getMap() {
+        return map;
+    }
 }
