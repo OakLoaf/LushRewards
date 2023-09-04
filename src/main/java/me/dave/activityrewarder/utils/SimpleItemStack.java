@@ -144,7 +144,7 @@ public class SimpleItemStack implements Cloneable {
             if (lore != null) {
                 itemMeta.setLore(lore);
             }
-            if (enchanted) {
+            if (enchanted != null && enchanted) {
                 itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
