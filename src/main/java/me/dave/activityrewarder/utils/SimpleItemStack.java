@@ -84,7 +84,8 @@ public class SimpleItemStack implements Cloneable {
         this.lore = lore;
     }
 
-    public boolean getEnchanted() {
+    @Nullable
+    public Boolean getEnchanted() {
         return enchanted;
     }
 
