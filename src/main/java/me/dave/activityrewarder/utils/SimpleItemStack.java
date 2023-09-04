@@ -120,6 +120,17 @@ public class SimpleItemStack implements Cloneable {
         this.skullTexture = texture;
     }
 
+    public boolean isBlank() {
+        return
+            material == null
+                && amount == 1
+                && displayName == null
+                && lore == null
+                && enchanted == null
+                && customModelData == 0
+                && skullTexture == null;
+    }
+
     public void parseColors(Player player) {
         if (hasDisplayName()) {
             displayName = ChatColorHandler.translateAlternateColorCodes(displayName, player);
