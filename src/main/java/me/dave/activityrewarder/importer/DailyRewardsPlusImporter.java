@@ -13,8 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -36,29 +34,22 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
         ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
-            YamlConfiguration mainConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Config.yml"));
+            YamlConfiguration drpConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Config.yml"));
+            YamlConfiguration drpRewardsConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Rewards.yml"));
 
-            // Transfer daily rewards
-            YamlConfiguration rewardsConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Rewards.yml"));
-
-            File rewardsFile = new File(ActivityRewarder.getInstance().getDataFolder(), "modules/daily-rewards.yml");
-            if (!rewardsFile.renameTo(new File(ActivityRewarder.getInstance().getDataFolder(), "modules/daily-rewards-old-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy--HH-mm-ss")) + ".yml"))) {
-                ActivityRewarder.getInstance().getLogger().severe("Failed to rename rewards file");
+            File newConfigFile = prepareForImport(new File(ActivityRewarder.getInstance().getDataFolder(), "config.yml"));
+            File newRewardsFile = prepareForImport(new File(ActivityRewarder.getInstance().getDataFolder(), "modules/daily-rewards.yml"));
+            if (newConfigFile == null || newRewardsFile == null) {
                 completableFuture.complete(false);
                 return;
             }
-            File newRewardsFile = new File(ActivityRewarder.getInstance().getDataFolder(), "modules/daily-rewards.yml");
-            try {
-                newRewardsFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                completableFuture.complete(false);
-                return;
-            }
-            YamlConfiguration dailyRewardsConfig = YamlConfiguration.loadConfiguration(newRewardsFile);
+            YamlConfiguration arConfig = YamlConfiguration.loadConfiguration(newConfigFile);
+            YamlConfiguration arRewardsConfig = YamlConfiguration.loadConfiguration(newRewardsFile);
+
+
 
             AtomicInteger highestDayNum = new AtomicInteger(0);
-            rewardsConfig.getValues(false).forEach((key, value) -> {
+            drpRewardsConfig.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
                     int dayNum;
                     try {
@@ -88,19 +79,19 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     displayItem.setAmount(Math.min(dayNum, 64));
 
                     DailyRewardCollection rewardCollection = new DailyRewardCollection(null, null, null, dayNum, null, rewards, 0, "small", displayItem, null);
-                    rewardCollection.save(dailyRewardsConfig.createSection("daily-rewards.day-" + dayNum));
+                    rewardCollection.save(arRewardsConfig.createSection("daily-rewards.day-" + dayNum));
                 }
 
                 if (highestDayNum.get() > 0) {
-                    dailyRewardsConfig.set("reset-days-at", highestDayNum.get());
+                    arRewardsConfig.set("reset-days-at", highestDayNum.get());
                 }
 
-                dailyRewardsConfig.set("gui.title", "lala");
-                dailyRewardsConfig.set("gui.scroll-type", "GRID");
-                dailyRewardsConfig.set("gui.template", "DAILY_REWARDS_PLUS");
+                arRewardsConfig.set("gui.title", drpConfig.getString("PluginGuiTitle", "          <color:#529bf2><bold>Daily Rewards</bold>"));
+                arRewardsConfig.set("gui.scroll-type", "GRID");
+                arRewardsConfig.set("gui.template", "DAILY_REWARDS_PLUS");
 
                 try {
-                    dailyRewardsConfig.save(newRewardsFile);
+                    arRewardsConfig.save(newRewardsFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                     completableFuture.complete(false);
