@@ -1,8 +1,8 @@
 # Enable or disable specific Activity Rewarder modules
 modules:
   daily-rewards: true
-  playtime-daily-goals: true
-  playtime-global-goals: true
+  daily-playtime-goals: true
+  global-playtime-goals: true
 
 # Whether players will receive all rewards on a day or just the one with the highest priority
 allow-reward-stacking: false
