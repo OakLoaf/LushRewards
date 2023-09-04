@@ -37,18 +37,22 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
             YamlConfiguration drpConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Config.yml"));
             YamlConfiguration drpRewardsConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Rewards.yml"));
 
-            File newConfigFile = prepareForImport(new File(ActivityRewarder.getInstance().getDataFolder(), "config.yml"));
-            File newRewardsFile = prepareForImport(new File(ActivityRewarder.getInstance().getDataFolder(), "modules/daily-rewards.yml"));
+            File newConfigFile = prepareForImport(new File(ActivityRewarder.getInstance().getDataFolder(), "config.yml"), false);
+            File newRewardsFile = prepareForImport(new File(ActivityRewarder.getInstance().getDataFolder(), "modules/daily-rewards.yml"), false);
             if (newConfigFile == null || newRewardsFile == null) {
                 completableFuture.complete(false);
                 return;
             }
+            ActivityRewarder.getInstance().saveResource("config.yml", true);
+            ActivityRewarder.getInstance().saveResource("modules/daily-rewards.yml", true);
             YamlConfiguration arConfig = YamlConfiguration.loadConfiguration(newConfigFile);
             YamlConfiguration arRewardsConfig = YamlConfiguration.loadConfiguration(newRewardsFile);
 
 
 
+            arRewardsConfig.createSection("daily-rewards");
             AtomicInteger highestDayNum = new AtomicInteger(0);
+
             drpRewardsConfig.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
                     int dayNum;
@@ -86,6 +90,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     arRewardsConfig.set("reset-days-at", highestDayNum.get());
                 }
 
+                arRewardsConfig.createSection("gui");
                 arRewardsConfig.set("gui.title", drpConfig.getString("PluginGuiTitle", "          <color:#529bf2><bold>Daily Rewards</bold>"));
                 arRewardsConfig.set("gui.scroll-type", "GRID");
                 arRewardsConfig.set("gui.template", "DAILY_REWARDS_PLUS");
