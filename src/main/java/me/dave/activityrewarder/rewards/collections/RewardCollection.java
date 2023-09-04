@@ -20,14 +20,14 @@ public class RewardCollection {
     private final Collection<Reward> rewards;
     private final int priority;
     private final String category;
-    private final SimpleItemStack itemStack;
+    private final SimpleItemStack displayItem;
     private final Sound sound;
 
-    public RewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack itemStack, @Nullable Sound sound) {
+    public RewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound) {
         this.rewards = rewards != null ? rewards : Collections.emptyList();
         this.priority = priority;
         this.category = category;
-        this.itemStack = itemStack;
+        this.displayItem = displayItem;
         this.sound = sound;
     }
 
@@ -44,7 +44,7 @@ public class RewardCollection {
     }
 
     public SimpleItemStack getDisplayItem() {
-        return itemStack != null ? itemStack : ActivityRewarder.getConfigManager().getCategoryTemplate(category);
+        return displayItem != null ? displayItem : ActivityRewarder.getConfigManager().getCategoryTemplate(category);
     }
 
     public Sound getSound() {
