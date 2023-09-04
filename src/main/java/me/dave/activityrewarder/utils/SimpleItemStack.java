@@ -42,8 +42,20 @@ public class SimpleItemStack implements Cloneable {
         return material;
     }
 
+    public boolean hasType() {
+        return material != null;
+    }
+
+    public void setType(@Nullable Material material) {
+        this.material = material;
+    }
+
     public int getAmount() {
         return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     @Nullable
@@ -51,69 +63,57 @@ public class SimpleItemStack implements Cloneable {
         return displayName;
     }
 
-    @Nullable
-    public List<String> getLore() {
-        return lore;
-    }
-
-    public boolean getEnchanted() {
-        return enchanted;
-    }
-
-    public int getCustomModelData() {
-        return customModelData;
-    }
-
-    public String getSkullTexture() {
-        return skullTexture;
-    }
-
-    public boolean hasType() {
-        return material != null;
-    }
-
     public boolean hasDisplayName() {
         return displayName != null;
-    }
-
-    public boolean hasLore() {
-        return lore != null;
-    }
-
-    public boolean hasEnchantDefined() {
-        return enchanted != null;
-    }
-
-    public boolean hasCustomModelData() {
-        return customModelData != 0;
-    }
-
-    public boolean hasSkullTexture() {
-        return skullTexture != null;
-    }
-
-    public void setType(@Nullable Material material) {
-        this.material = material;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public void setDisplayName(@Nullable String displayName) {
         this.displayName = displayName;
     }
 
+    @Nullable
+    public List<String> getLore() {
+        return lore;
+    }
+
+    public boolean hasLore() {
+        return lore != null;
+    }
+
     public void setLore(@Nullable List<String> lore) {
         this.lore = lore;
+    }
+
+    public boolean getEnchanted() {
+        return enchanted;
+    }
+
+    public boolean hasEnchant() {
+        return enchanted != null;
     }
 
     public void setEnchanted(@Nullable Boolean enchanted) {
         this.enchanted = enchanted;
     }
 
+    public int getCustomModelData() {
+        return customModelData;
+    }
+
+    public boolean hasCustomModelData() {
+        return customModelData != 0;
+    }
+
     public void setCustomModelData(int customModelData) {
         this.customModelData = customModelData;
+    }
+
+    public String getSkullTexture() {
+        return skullTexture;
+    }
+
+    public boolean hasSkullTexture() {
+        return skullTexture != null;
     }
 
     public void setSkullTexture(@Nullable String texture) {
@@ -232,7 +232,7 @@ public class SimpleItemStack implements Cloneable {
         result.setAmount(overwrite.getAmount() != 1 ? overwrite.getAmount() : original.getAmount());
         result.setDisplayName(overwrite.hasDisplayName() ? overwrite.getDisplayName() : original.getDisplayName());
         result.setLore(overwrite.hasLore() ? overwrite.getLore() : original.getLore());
-        result.setEnchanted(overwrite.hasEnchantDefined() ? overwrite.getEnchanted() : original.getEnchanted());
+        result.setEnchanted(overwrite.hasEnchant() ? overwrite.getEnchanted() : original.getEnchanted());
         result.setSkullTexture(overwrite.hasSkullTexture() ? overwrite.getSkullTexture() : original.getSkullTexture());
 
         return result;
