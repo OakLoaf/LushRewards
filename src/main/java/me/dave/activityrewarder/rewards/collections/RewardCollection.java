@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 public class RewardCollection {
-    private final Collection<Reward> rewards;
-    private final int priority;
-    private final String category;
-    private final SimpleItemStack displayItem;
-    private final Sound sound;
+    protected final Collection<Reward> rewards;
+    protected final int priority;
+    protected final String category;
+    protected final SimpleItemStack displayItem;
+    protected final Sound sound;
 
     public RewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound) {
         this.rewards = rewards != null ? rewards : Collections.emptyList();
