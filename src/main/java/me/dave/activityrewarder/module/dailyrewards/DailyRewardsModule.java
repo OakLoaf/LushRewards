@@ -167,10 +167,10 @@ public class DailyRewardsModule extends Module {
         return guiFormat;
     }
 
-    public void claimRewards(Player player) {
+    public boolean claimRewards(Player player) {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
         if (rewardUser.hasCollectedToday()) {
-            return;
+            return false;
         }
 
         RewardDay rewardDay = getRewardDay(LocalDate.now(), rewardUser.getDayNum());
@@ -191,5 +191,7 @@ public class DailyRewardsModule extends Module {
         rewardUser.incrementStreakLength();
         rewardUser.setLastCollectedDate(LocalDate.now());
         rewardUser.addCollectedDate(LocalDate.now());
+
+        return true;
     }
 }

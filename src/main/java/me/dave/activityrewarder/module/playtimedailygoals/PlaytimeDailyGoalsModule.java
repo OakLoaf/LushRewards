@@ -97,7 +97,7 @@ public class PlaytimeDailyGoalsModule extends Module {
         return guiFormat;
     }
 
-    public void claimRewards(Player player) {
+    public boolean claimRewards(Player player) {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
         PlaytimeDailyGoalsModuleUserData playtimeDailyGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
         int minutesPlayed = rewardUser.getMinutesPlayed();
@@ -107,8 +107,15 @@ public class PlaytimeDailyGoalsModule extends Module {
             playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(0);
         }
 
-        getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed).forEach(rewardCollection -> rewardCollection.giveAll(player));
+        List<RewardCollection> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
+        if (rewards.isEmpty()) {
+            return false;
+        }
+
+        rewards.forEach(rewardCollection -> rewardCollection.giveAll(player));
         playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
+
+        return true;
     }
 }
