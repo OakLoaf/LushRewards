@@ -2,6 +2,9 @@ package me.dave.activityrewarder.commands;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.importer.ConfigImporter;
+import me.dave.activityrewarder.importer.DailyRewardsPlusImporter;
+import me.dave.activityrewarder.importer.NDailyRewardsImporter;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
@@ -16,23 +19,26 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileNotFoundException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class RewardCmd implements CommandExecutor, TabCompleter {
     private static final String ABOUT_MESSAGE =
         "<gradient:#CEB5FE:#81BAFE><b>ActivityRewarder</b> (v" + ActivityRewarder.getInstance().getDescription().getVersion() + ")</gradient>" +
-        "\n&7An extremely configurable, feature rich rewards plugin. Reward your players each day for logging in and also reward them for their time spent on the server with playtime rewards!" +
-        "\n\n&7Author: <color:#f7ba6f>Dav_e_</color:#f7ba6f>" +
-        "\n\n&7Links:  <color:#fcff96><click:open_url:https://dave-12.gitbook.io/activity-rewarder>[ Wiki ]</click></color:#fcff96>  <color:#5865F2><click:open_url:https://discord.gg/p3duRZsZ2f>[ Support ]</click></color:#5865F2>";
+            "\n&7An extremely configurable, feature rich rewards plugin. Reward your players each day for logging in and also reward them for their time spent on the server with playtime rewards!" +
+            "\n\n&7Author: <color:#f7ba6f>Dav_e_</color:#f7ba6f>" +
+            "\n\n&7Links:  <color:#fcff96><click:open_url:https://dave-12.gitbook.io/activity-rewarder>[ Wiki ]</click></color:#fcff96>  <color:#5865F2><click:open_url:https://discord.gg/p3duRZsZ2f>[ Support ]</click></color:#5865F2>";
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         ActivityRewarder.getConfigManager().checkRefresh();
 
         if (args.length == 1) {
-            switch(args[0].toLowerCase()) {
+            switch (args[0].toLowerCase()) {
                 case "about" -> {
                     ChatColorHandler.sendMessage(sender, ABOUT_MESSAGE);
                     return true;
@@ -66,6 +72,15 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         }
                     }
 
+                    return true;
+                }
+                case "import" -> {
+                    if (!sender.hasPermission("activityrewarder.import")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards import <plugin>"));
                     return true;
                 }
                 case "messages" -> {
@@ -124,9 +139,44 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             }
-        }
-        else if (args.length == 2) {
-            switch(args[0].toLowerCase()) {
+        } else if (args.length == 2) {
+            switch (args[0].toLowerCase()) {
+                case "import" -> {
+                    if (!sender.hasPermission("activityrewarder.import")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    ConfigImporter configImporter = null;
+                    try {
+                        switch (args[1].toLowerCase()) {
+                            case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
+                            case "ndailyrewards" -> configImporter = new NDailyRewardsImporter();
+                        }
+                    } catch (FileNotFoundException e) {
+                        ChatColorHandler.sendMessage(sender, "&#ff6969Could not find files when attempting to import from &#d13636'" + args[1] + "'");
+                        return true;
+                    }
+
+                    if (configImporter != null) {
+                        long startMs = Instant.now().toEpochMilli();
+                        configImporter.startImport()
+                            .completeOnTimeout(false, 10, TimeUnit.SECONDS)
+                            .thenAccept(success -> {
+                                if (success) {
+                                    ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully imported configuration from &#66b04f'" + args[1] + "' &#b7faa2in &#66b04f" + (Instant.now().toEpochMilli() - startMs) + "ms");
+                                    ActivityRewarder.getConfigManager().reloadConfig();
+                                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reload"));
+                                } else {
+                                    ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) +"ms");
+                                }
+                            });
+                    } else {
+                        ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "'");
+                    }
+
+                    return true;
+                }
                 case "reset-days" -> {
                     if (!sender.hasPermission("activityrewarder.resetdays")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
@@ -165,9 +215,8 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 }
             }
 
-        }
-        else if (args.length == 3) {
-            switch(args[0].toLowerCase()) {
+        } else if (args.length == 3) {
+            switch (args[0].toLowerCase()) {
                 case "reset-days" -> {
                     if (!sender.hasPermission("activityrewarder.resetdays")) {
                         ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
@@ -217,8 +266,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             }
-        }
-        else if (args.length == 4) {
+        } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("set-days")) {
                 if (!sender.hasPermission("activityrewarder.setdays")) {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
@@ -233,7 +281,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 int dayNum;
                 try {
                     dayNum = Integer.parseInt(args[2]);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
                     return true;
                 }
@@ -241,8 +289,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 if (!setDay(sender, args[1], dayNum)) return true;
                 ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", String.valueOf(dayNum)));
                 return true;
-            }
-            else if (args[0].equalsIgnoreCase("set-streak")) {
+            } else if (args[0].equalsIgnoreCase("set-streak")) {
                 if (!sender.hasPermission("activityrewarder.setstreak")) {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
                     return true;
@@ -256,7 +303,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 int streak;
                 try {
                     streak = Integer.parseInt(args[2]);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
                     return true;
                 }
@@ -297,15 +344,19 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             tabComplete.add("about");
             if (commandSender.hasPermission("activityrewarder.use")) tabComplete.add("claim");
+            if (commandSender.hasPermission("activityrewarder.import")) tabComplete.add("import");
             if (commandSender.hasPermission("activityrewarder.reload")) tabComplete.add("reload");
-            if (commandSender.hasPermission("activityrewarder.resetdays") || commandSender.hasPermission("activityrewarder.resetdays.others")) tabComplete.add("reset-days");
+            if (commandSender.hasPermission("activityrewarder.resetdays") || commandSender.hasPermission("activityrewarder.resetdays.others"))
+                tabComplete.add("reset-days");
             if (commandSender.hasPermission("activityrewarder.setdays")) tabComplete.add("set-days");
-            if (commandSender.hasPermission("activityrewarder.resetstreak") || commandSender.hasPermission("activityrewarder.resetstreak.others")) tabComplete.add("reset-streak");
+            if (commandSender.hasPermission("activityrewarder.resetstreak") || commandSender.hasPermission("activityrewarder.resetstreak.others"))
+                tabComplete.add("reset-streak");
             if (commandSender.hasPermission("activityrewarder.setstreak")) tabComplete.add("set-streak");
-        }
-        else if (args.length == 2) {
-            switch(args[0].toLowerCase()) {
-                case "set-days", "reset-days", "set-streak", "reset-streak" -> tabComplete.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+        } else if (args.length == 2) {
+            switch (args[0].toLowerCase()) {
+                case "import" -> tabComplete.add("DailyRewardsPlus");
+                case "set-days", "reset-days", "set-streak", "reset-streak" ->
+                    tabComplete.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
             }
         }
 
@@ -325,11 +376,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         UUID uuid;
         if (player != null) {
             uuid = player.getUniqueId();
-        }
-        else {
+        } else {
             try {
                 uuid = UUID.fromString(nameOrUuid);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
                 return false;
             }
@@ -338,8 +388,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             rewardUser.setDayNum(dayNum);
-        }
-        else {
+        } else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
                 rewardUser.setDayNum(dayNum);
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
@@ -354,11 +403,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         UUID uuid;
         if (player != null) {
             uuid = player.getUniqueId();
-        }
-        else {
+        } else {
             try {
                 uuid = UUID.fromString(nameOrUuid);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
                 return false;
             }
@@ -367,8 +415,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             rewardUser.setStreakLength(streak);
-        }
-        else {
+        } else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
                 rewardUser.setStreakLength(streak);
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
