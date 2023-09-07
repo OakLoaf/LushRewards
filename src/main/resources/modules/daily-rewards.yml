@@ -4,6 +4,7 @@ reset-days-at: -1
 # List of rewards (%user% - The user being given the reward)
 daily-rewards:
   default:
+    on-date: 01-10-1982
     priority: -1
     repeat: 1
     category: small
@@ -196,7 +197,6 @@ daily-rewards:
         amount: 1
 
   day-30:
-    on-date: 20/08/2023
     on-day-num: 30
     priority: 1
     category: large
@@ -222,7 +222,7 @@ gui:
   # Displays the date of the month as the amount of the item stack
   date-as-amount: false
   # Sets first day of gui (DAY: Starts at current day, MONTH: Starts at beginning of current month)
-  scroll-type: MONTH
+  scroll-type: GRID
   # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
