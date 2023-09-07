@@ -97,6 +97,7 @@ public class RewardUser {
         return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getHighestStreak();
     }
 
+    @Nullable
     public LocalDate getLastCollectedDate() {
         return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getLastCollectedDate();
     }

@@ -80,7 +80,7 @@ public class DataManager {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
             if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) != null) {
-                rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), 1, 1, LocalDate.now(), LocalDate.now().minusDays(1), new ArrayList<>()));
+                rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), 0, 0, LocalDate.now(), null, new ArrayList<>()));
             }
 
             if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) != null) {

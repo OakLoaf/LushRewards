@@ -3,6 +3,7 @@ package me.dave.activityrewarder.module.dailyrewards;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.ModuleData;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -70,6 +71,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
         return this.startDate;
     }
 
+    @Nullable
     public LocalDate getLastCollectedDate() {
         return this.lastCollectedDate;
     }
@@ -83,7 +85,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public boolean hasCollectedToday() {
-        return lastCollectedDate.isEqual(LocalDate.now());
+        return lastCollectedDate != null && lastCollectedDate.isEqual(LocalDate.now());
     }
 
     public void addCollectedDate(LocalDate date) {
