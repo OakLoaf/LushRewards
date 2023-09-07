@@ -48,11 +48,11 @@ public class DailyRewardCollection extends RewardCollection {
             return true;
         }
 
-        if (repeatFrequency <= 0 || date.isAfter(rewardDate)) {
+        if (repeatFrequency <= 0 || date.isBefore(rewardDate)) {
             return false;
         }
 
-        if (repeatsUntilDate == null || !date.isBefore(repeatsUntilDate)) {
+        if (repeatsUntilDate == null || date.isBefore(repeatsUntilDate)) {
             // Checks if date is inline with repeating function
             return (date.toEpochDay() - rewardDate.toEpochDay()) % repeatFrequency == 0;
         } else {

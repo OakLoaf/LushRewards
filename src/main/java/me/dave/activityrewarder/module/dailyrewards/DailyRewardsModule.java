@@ -63,7 +63,7 @@ public class DailyRewardsModule extends Module {
                 }
 
                 if (ActivityRewarder.getConfigManager().isPerformanceModeEnabled()) {
-                    if (dailyRewardCollection.getRewardDate() == null || dailyRewardCollection.getRewardDate().isEqual(today)) {
+                    if (dailyRewardCollection.getRewardDate() == null || dailyRewardCollection.isAvailableOn(today)) {
                         registerRewardCollection(dailyRewardCollection);
                     }
                 } else {
