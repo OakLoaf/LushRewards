@@ -7,10 +7,6 @@ modules:
 # Whether players will receive all rewards on a day or just the one with the highest priority
 allow-reward-stacking: false
 
-# Whether rewards will automatically refresh when the day ticks over
-# - This allows the plugin to use much less ram by only storing rewards that could be needed on the specified day
-rewards-refresh-daily: true
-
 # The length in seconds between reminders being sent
 reminder-period: 1800
 # The sound that will be played when a player is sent a reminder
@@ -89,6 +85,10 @@ messages:
   unknown-player: "&#ff6969Could not find &#d13636%player%"
   no-permissions: "&#ff6969Insufficient permissions"
   incorrect-usage: "&#ff6969Incorrect usage try &#d13636%command-usage%"
+
+# Performance mode only stores rewards that are currently viewable to players.
+# The config will automatically reload at the start of each day when enabled
+enable-performance-mode: true
 
 # Debug Modes: none, daily, playtime, all
 debug-mode: none

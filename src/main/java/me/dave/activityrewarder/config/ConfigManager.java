@@ -48,10 +48,9 @@ public class ConfigManager {
         ActivityRewarder.getInstance().reloadConfig();
         FileConfiguration config = ActivityRewarder.getInstance().getConfig();
 
-        Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
-
         allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
-        performanceMode = config.getBoolean("rewards-refresh-daily", false);
+        Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
+        performanceMode = config.getBoolean("enable-performance-mode", false);
         if (performanceMode) {
             date = LocalDate.now();
         }
