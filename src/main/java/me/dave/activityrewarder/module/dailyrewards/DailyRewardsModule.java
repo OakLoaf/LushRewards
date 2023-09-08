@@ -7,8 +7,10 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
+import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -21,6 +23,7 @@ public class DailyRewardsModule extends Module {
     private int rewardsIndex;
     private HashMap<Integer, DailyRewardCollection> rewards;
     private int resetDaysAt;
+    private Sound defaultRedeemSound;
     private boolean dateAsAmount;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
@@ -40,6 +43,7 @@ public class DailyRewardsModule extends Module {
         }
 
         this.resetDaysAt = config.getInt("reset-days-at", -1);
+        this.defaultRedeemSound = ConfigParser.getSound(config.getString("default-redeem-sound", "none").toUpperCase());
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         this.dateAsAmount = config.getBoolean("gui.date-as-amount", false);
@@ -176,6 +180,10 @@ public class DailyRewardsModule extends Module {
 
     public int getResetDay() {
         return resetDaysAt;
+    }
+
+    public Sound getDefaultRedeemSound() {
+        return defaultRedeemSound;
     }
 
     public boolean showDateAsAmount() {
