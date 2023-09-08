@@ -62,9 +62,32 @@ public class DailyRewardsModule extends Module {
                     continue;
                 }
 
-                if (ActivityRewarder.getConfigManager().isPerformanceModeEnabled()) {
-                    if (dailyRewardCollection.getRewardDate() == null || dailyRewardCollection.isAvailableOn(today)) {
-                        registerRewardCollection(dailyRewardCollection);
+                if (ActivityRewarder.getConfigManager().isPerformanceModeEnabled() && dailyRewardCollection.getRewardDate() != null) {
+                    LocalDate lowestDate;
+                    LocalDate highestDate;
+                    switch (scrollType) {
+                        case DAY -> {
+                            lowestDate = LocalDate.now();
+                            highestDate = today.plusDays(guiTemplate.countChar('R') - 1);
+                        }
+                        case MONTH -> {
+                            lowestDate = LocalDate.of(today.getYear(), today.getMonthValue(), 1);
+                            highestDate = LocalDate.of(today.getYear(), today.getMonthValue(), today.getMonth().length(today.isLeapYear()));
+                        }
+                        // Uses GRID mode by default as this has the largest range of possible dates
+                        default -> {
+                            int rewardDisplayCount = guiTemplate.countChar('R');
+
+                            lowestDate = today.minusDays(rewardDisplayCount - 1);
+                            highestDate = today.plusDays(rewardDisplayCount - 1);
+                        }
+                    }
+
+                    for (LocalDate dateIndex = lowestDate; dateIndex.isAfter(highestDate); dateIndex = dateIndex.plusDays(1)) {
+                        if (dailyRewardCollection.isAvailableOn(dateIndex)) {
+                            registerRewardCollection(dailyRewardCollection);
+                            break;
+                        }
                     }
                 } else {
                     registerRewardCollection(dailyRewardCollection);
