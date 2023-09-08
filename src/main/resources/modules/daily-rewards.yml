@@ -224,7 +224,7 @@ gui:
   title: "          <color:#529bf2><bold>Daily Rewards</bold>"
   # Displays the date of the month as the amount of the item stack
   date-as-amount: false
-  # Sets first day of gui (DAY: Starts at current day, MONTH: Starts at beginning of current month)
+  # Sets first day of gui (DAY: Starts at current day, MONTH: Starts at beginning of current month, GRID: Starts on day 1 and loops when passing end of page)
   scroll-type: GRID
   # Available templates: DEFAULT, COMPACT, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
