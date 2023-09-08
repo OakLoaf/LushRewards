@@ -28,11 +28,11 @@ public class SimpleItemStack implements Cloneable {
 
     public SimpleItemStack() {}
 
-    public SimpleItemStack(@NotNull Material material) {
+    public SimpleItemStack(@Nullable Material material) {
         this.material = material;
     }
 
-    public SimpleItemStack(@NotNull Material material, int amount) {
+    public SimpleItemStack(@Nullable Material material, int amount) {
         this.material = material;
         this.amount = amount;
     }
