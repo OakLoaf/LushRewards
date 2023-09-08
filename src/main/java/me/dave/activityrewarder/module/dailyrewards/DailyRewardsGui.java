@@ -43,7 +43,7 @@ public class DailyRewardsGui extends AbstractGui {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
 
         // Checks if the streak mode config option is enabled
-        if (ActivityRewarder.getConfigManager().isStreakModeEnabled()) {
+        if (dailyRewardsModule.isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
             LocalDate lastCollectedDate = rewardUser.getLastCollectedDate();
             if (lastCollectedDate == null || lastCollectedDate.isBefore(LocalDate.now().minusDays(1))) {
@@ -175,7 +175,7 @@ public class DailyRewardsGui extends AbstractGui {
 
                                 Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
 
-                                if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+                                if (dailyRewardsModule.shouldStackRewards()) {
                                     rewardDay.giveAllRewards(player);
                                 } else {
                                     priorityReward.giveAll(player);
@@ -214,7 +214,7 @@ public class DailyRewardsGui extends AbstractGui {
                     dateIndex[0] = dateIndex[0].plusDays(1);
                 });
                 case 'U', 'N' -> {
-                    String upcomingCategory = ActivityRewarder.getConfigManager().getUpcomingCategory();
+                    String upcomingCategory = dailyRewardsModule.getUpcomingCategory();
                     Optional<DailyRewardCollection> upcomingReward = dailyRewardsModule.findNextRewardFromCategory(dayIndex.get(), dateIndex[0], upcomingCategory);
 
                     // Adds the upcoming reward to the GUI if it exists

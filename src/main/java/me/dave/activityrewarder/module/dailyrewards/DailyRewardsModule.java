@@ -23,7 +23,10 @@ public class DailyRewardsModule extends Module {
     private int rewardsIndex;
     private HashMap<Integer, DailyRewardCollection> rewards;
     private int resetDaysAt;
+    private boolean streakMode;
+    private boolean allowRewardsStacking;
     private Sound defaultRedeemSound;
+    private String upcomingCategory;
     private boolean dateAsAmount;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
@@ -43,7 +46,10 @@ public class DailyRewardsModule extends Module {
         }
 
         this.resetDaysAt = config.getInt("reset-days-at", -1);
+        this.streakMode = config.getBoolean("streak-mode", false);
+        this.allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         this.defaultRedeemSound = ConfigParser.getSound(config.getString("default-redeem-sound", "none").toUpperCase());
+        this.upcomingCategory = config.getString("upcoming-category");
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         this.dateAsAmount = config.getBoolean("gui.date-as-amount", false);
@@ -182,8 +188,20 @@ public class DailyRewardsModule extends Module {
         return resetDaysAt;
     }
 
+    public boolean isStreakModeEnabled() {
+        return streakMode;
+    }
+
+    public boolean shouldStackRewards() {
+        return allowRewardsStacking;
+    }
+
     public Sound getDefaultRedeemSound() {
         return defaultRedeemSound;
+    }
+
+    public String getUpcomingCategory() {
+        return upcomingCategory;
     }
 
     public boolean showDateAsAmount() {
@@ -209,7 +227,7 @@ public class DailyRewardsModule extends Module {
 
         Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
 
-        if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+        if (shouldStackRewards()) {
             rewardDay.giveAllRewards(player);
         } else {
             priorityReward.giveAll(player);

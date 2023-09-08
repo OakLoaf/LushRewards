@@ -4,15 +4,10 @@ modules:
   daily-playtime-goals: true
   global-playtime-goals: true
 
-# Whether players will receive all rewards on a day or just the one with the highest priority
-allow-reward-stacking: false
-
 # The length in seconds between reminders being sent
 reminder-period: 1800
 # The sound that will be played when a player is sent a reminder
 reminder-sound: block_note_block_pling
-# Whether a player will reset to day 1 if they miss a day
-streak-mode: true
 
 # Display items for different reward categories
 categories:
@@ -25,9 +20,6 @@ categories:
   large:
     material: player_head
     skull-texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyODdhZjk3ZjkzZDM3MTg5NzNmNGUxM2VkMGZhM2E2ZjQzOWU3MmMxNDVmZTRjZDkwMmIwNWMxYzEwYWYxOCJ9fX0=
-
-# Upcoming category to display
-upcoming-category: large
 
 # Display item templates
 item-templates:

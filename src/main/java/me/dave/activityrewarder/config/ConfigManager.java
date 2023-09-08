@@ -29,13 +29,10 @@ public class ConfigManager {
     private File rewardsFile;
     private File dailyGoalsFile;
     private File globalGoalsFile;
-    private boolean allowRewardsStacking;
     private boolean performanceMode;
     private LocalDate date;
     private int reminderPeriod;
     private Sound reminderSound;
-    private boolean streakMode;
-    private String upcomingCategory;
 
     public ConfigManager() {
         ActivityRewarder.getInstance().saveDefaultConfig();
@@ -48,7 +45,6 @@ public class ConfigManager {
         ActivityRewarder.getInstance().reloadConfig();
         FileConfiguration config = ActivityRewarder.getInstance().getConfig();
 
-        allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
         performanceMode = config.getBoolean("enable-performance-mode", false);
         if (performanceMode) {
@@ -57,8 +53,6 @@ public class ConfigManager {
 
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none").toUpperCase());
-        streakMode = config.getBoolean("streak-mode", false);
-        upcomingCategory = config.getString("upcoming-category");
 
         ActivityRewarder.unregisterAllModules();
 
@@ -120,10 +114,6 @@ public class ConfigManager {
         return itemTemplate.clone();
     }
 
-    public String getUpcomingCategory() {
-        return upcomingCategory;
-    }
-
     public SimpleItemStack getItemTemplate(String key) {
         SimpleItemStack itemTemplate = itemTemplates.get(key);
         if (itemTemplate == null) {
@@ -132,10 +122,6 @@ public class ConfigManager {
         }
 
         return itemTemplate.clone();
-    }
-
-    public boolean shouldStackRewards() {
-        return allowRewardsStacking;
     }
 
     public boolean isPerformanceModeEnabled() {
@@ -154,10 +140,6 @@ public class ConfigManager {
 
     public Sound getReminderSound() {
         return reminderSound;
-    }
-
-    public boolean isStreakModeEnabled() {
-        return streakMode;
     }
 
     private void reloadCategoryMap(ConfigurationSection categoriesSection) {

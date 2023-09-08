@@ -1,8 +1,15 @@
 # Resets player back to day 1, this does not affect streaks (Set to -1 to disable)
 reset-days-at: -1
+# Whether a player will reset to day 1 if they miss a day
+streak-mode: true
+# Whether players will receive all rewards on a day or just the one with the highest priority
+allow-reward-stacking: false
 
 # The redeem sound to play if unspecified
 default-redeem-sound: ENTITY_ENDER_DRAGON_HURT
+
+# Upcoming category to display
+upcoming-category: large
 
 # List of rewards (%user% - The user being given the reward)
 daily-rewards:
