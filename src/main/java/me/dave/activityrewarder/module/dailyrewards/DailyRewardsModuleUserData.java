@@ -41,7 +41,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     }
 
     public void setDayNum(int dayNum) {
-        startDate = LocalDate.now().minusDays(dayNum);
+        startDate = LocalDate.now().minusDays(dayNum - 1);
     }
 
     public int getStreakLength() {
