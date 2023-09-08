@@ -17,13 +17,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-public class YmlStorage implements Storage<RewardUser> {
+public class YmlStorage implements Storage<RewardUser, UUID> {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
     private final File dataFolder = new File(plugin.getDataFolder(), "data");
 
     @Override
-    public RewardUser load(UUID uuid) {
+    public CompletableFuture<RewardUser> load(UUID uuid) {
         ConfigurationSection configurationSection = loadOrCreateFile(uuid);
 
         String name = configurationSection.getString("name");
@@ -40,10 +41,12 @@ public class YmlStorage implements Storage<RewardUser> {
             int streakLength = moduleSection.getInt("streak-length", 0);
             int highestStreak = moduleSection.getInt("highest-streak", 0);
             String startDate = moduleSection.getString("start-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            String lastCollectedDate = moduleSection.getString("last-collected-date", null);
+
+            String lastCollectedDateRaw = moduleSection.getString("last-collected-date");
+            LocalDate lastCollectedDate = lastCollectedDateRaw != null ? LocalDate.parse(lastCollectedDateRaw, DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
             List<String> collectedDates = moduleSection.getStringList("collected-dates");
 
-            rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), streakLength, highestStreak, LocalDate.parse(startDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), LocalDate.parse(lastCollectedDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), collectedDates));
+            rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), streakLength, highestStreak, LocalDate.parse(startDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), lastCollectedDate, collectedDates));
         }
 
         if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) != null) {
@@ -69,7 +72,7 @@ public class YmlStorage implements Storage<RewardUser> {
             rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName(), lastCollectedPlaytime));
         }
 
-        return rewardUser;
+        return CompletableFuture.completedFuture(rewardUser);
     }
 
     @Override

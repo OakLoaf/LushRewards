@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class DataManager {
-    private final IOHandler<RewardUser> ioHandler = new IOHandler<>(new YmlStorage());
+    private final IOHandler<RewardUser, UUID> ioHandler = new IOHandler<RewardUser, UUID>(new YmlStorage());
     private final ConcurrentHashMap<UUID, RewardUser> uuidToRewardUser = new ConcurrentHashMap<>();
 
     public DataManager() {
@@ -44,7 +44,7 @@ public class DataManager {
     }
 
     public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
-        return ioHandler.loadPlayer(uuid).thenApply((rewardUser) -> {
+        return ioHandler.loadData(uuid).thenApply((rewardUser) -> {
             uuidToRewardUser.put(uuid, rewardUser);
             Bukkit.getScheduler().runTask(ActivityRewarder.getInstance(), () -> ActivityRewarder.getInstance().callEvent(new RewardUserLoadEvent(rewardUser)));
             return rewardUser;
@@ -60,11 +60,11 @@ public class DataManager {
     }
 
     public void saveRewardUser(Player player) {
-        ioHandler.savePlayer(getRewardUser(player));
+        ioHandler.saveData(getRewardUser(player));
     }
 
     public void saveRewardUser(RewardUser rewardUser) {
-        ioHandler.savePlayer(rewardUser);
+        ioHandler.saveData(rewardUser);
     }
 
     public void saveAll() {
@@ -99,7 +99,7 @@ public class DataManager {
         return uuidToRewardUser.containsKey(uuid);
     }
 
-    public IOHandler<RewardUser> getIoHandler() {
+    public IOHandler<RewardUser, UUID> getIoHandler() {
         return ioHandler;
     }
 }

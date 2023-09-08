@@ -24,7 +24,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     shadow("space.arim.morepaperlib:morepaperlib:0.4.2")
-    shadow(files("libs/EnchantedStorage.jar"))
+    shadow(files("libs/EnchantedStorage-2.0.0.jar"))
     shadow("com.github.CoolDCB:ChatColorHandler:v2.1.3")
 }
 
