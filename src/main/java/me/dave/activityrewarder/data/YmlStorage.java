@@ -40,13 +40,15 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
 
             int streakLength = moduleSection.getInt("streak-length", 0);
             int highestStreak = moduleSection.getInt("highest-streak", 0);
-            String startDate = moduleSection.getString("start-date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            List<String> collectedDates = moduleSection.getStringList("collected-dates");
+
+            String startDateRaw = moduleSection.getString("start-date");
+            LocalDate startDate = startDateRaw != null ? LocalDate.parse(startDateRaw, DateTimeFormatter.ofPattern("dd-MM-yyyy")) : LocalDate.now();
 
             String lastCollectedDateRaw = moduleSection.getString("last-collected-date");
             LocalDate lastCollectedDate = lastCollectedDateRaw != null ? LocalDate.parse(lastCollectedDateRaw, DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
-            List<String> collectedDates = moduleSection.getStringList("collected-dates");
 
-            rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), streakLength, highestStreak, LocalDate.parse(startDate, DateTimeFormatter.ofPattern("dd-MM-yyyy")), lastCollectedDate, collectedDates));
+            rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), streakLength, highestStreak, startDate, lastCollectedDate, collectedDates));
         }
 
         if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) != null) {
