@@ -9,7 +9,7 @@ public class RewardTypes {
 
     static {
         register("broadcast", BroadcastReward.class);
-        register("command", CommandReward.class);
+        register("command", ConsoleCommandReward.class);
         register("item", ItemReward.class);
         register("message", MessageReward.class);
         register("permission", PermissionReward.class);

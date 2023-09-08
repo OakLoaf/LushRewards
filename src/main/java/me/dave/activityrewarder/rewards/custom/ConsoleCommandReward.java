@@ -9,15 +9,15 @@ import org.geysermc.floodgate.api.FloodgateApi;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandReward implements Reward {
+public class ConsoleCommandReward implements Reward {
     private static final ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     private final String command;
 
-    public CommandReward(String command) {
+    public ConsoleCommandReward(String command) {
         this.command = command;
     }
 
-    public CommandReward(Map<?, ?> map) {
+    public ConsoleCommandReward(Map<?, ?> map) {
         this.command = (String) map.get("command");
     }
 

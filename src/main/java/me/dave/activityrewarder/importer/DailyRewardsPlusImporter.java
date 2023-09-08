@@ -2,7 +2,7 @@ package me.dave.activityrewarder.importer;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
-import me.dave.activityrewarder.rewards.custom.CommandReward;
+import me.dave.activityrewarder.rewards.custom.ConsoleCommandReward;
 import me.dave.activityrewarder.rewards.custom.MessageReward;
 import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
@@ -67,7 +67,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     }
 
                     Collection<Reward> rewards = new ArrayList<>();
-                    rewardSection.getStringList("RewardCommands").forEach(command -> rewards.add(new CommandReward(command)));
+                    rewardSection.getStringList("RewardCommands").forEach(command -> rewards.add(new ConsoleCommandReward(command)));
                     if (rewardSection.contains("RewardMessage")) {
                         rewards.add(new MessageReward(rewardSection.getString("RewardMessage")));
                     }
