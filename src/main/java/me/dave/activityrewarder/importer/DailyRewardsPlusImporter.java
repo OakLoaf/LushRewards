@@ -43,12 +43,13 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                 completableFuture.complete(false);
                 return;
             }
+
             ActivityRewarder.getInstance().saveResource("config.yml", true);
             ActivityRewarder.getInstance().saveResource("modules/daily-rewards.yml", true);
             YamlConfiguration arConfig = YamlConfiguration.loadConfiguration(newConfigFile);
             YamlConfiguration arRewardsConfig = YamlConfiguration.loadConfiguration(newRewardsFile);
 
-
+            // TODO: Import config.yml settings
 
             arRewardsConfig.createSection("daily-rewards");
             AtomicInteger highestDayNum = new AtomicInteger(0);
