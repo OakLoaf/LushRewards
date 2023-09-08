@@ -96,103 +96,116 @@ public class DailyRewardsGui extends AbstractGui {
         for (Character character : slotMap.keySet()) {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {
-                    // Get the day's reward for the current slot
-                    RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex[0], dayIndex.get());
-                    DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
-
-                    String itemTemplate;
-                    if (dayIndex.get() < currDayNum) {
-                        itemTemplate = (collectedDates.contains(dateIndex[0].format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) ? "collected-reward" : "missed-reward";
-                    } else if (dayIndex.get() == currDayNum) {
-                        itemTemplate = collectedToday ? "collected-reward" : "redeemable-reward";
-                    } else {
-                        itemTemplate = "default-reward";
-                    }
-                    SimpleItemStack displayItem;
-                    if (!rewardDay.isEmpty()) {
-                        displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
-
-                        if (displayItem.getDisplayName() != null) {
-                            displayItem.setDisplayName(displayItem.getDisplayName()
-                                .replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth())));
-                        }
-
-                        if (displayItem.getLore() != null) {
-                            displayItem.setLore(displayItem.getLore().stream().map(line ->
-                                line.replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                    .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
-                            ).toList());
-                        }
-
-                        displayItem.parseColors(player);
-                    } else {
-                        displayItem = new SimpleItemStack(Material.AIR);
-                    }
-
                     ItemStack itemStack;
-                    try {
-                        itemStack = displayItem.getItemStack(player);
-                    } catch (IllegalArgumentException e) {
-                        ActivityRewarder.getInstance().getLogger().severe("Failed to display item-template '" + itemTemplate + "' as it does not specify a valid material");
-                        itemStack = new ItemStack(Material.STONE);
-                    }
+                    if (dailyRewardsModule.getScrollType().equals(ScrollType.MONTH) && dateIndex[0].getMonthValue() != LocalDate.now().getMonthValue()) {
+                        SimpleItemStack simpleItemStack = ActivityRewarder.getConfigManager().getItemTemplate(String.valueOf('#'));
 
-                    // Changes item data based on if the reward has been collected or not
-                    if (dayIndex.get() == currDayNum && !collectedToday) {
-                        addButton(slot, (event) -> {
-                            // Gets clicked item and checks if it exists
-                            ItemStack currItem = event.getCurrentItem();
-                            if (currItem == null) {
-                                return;
+                        if (!simpleItemStack.hasType()) {
+                            simpleItemStack.setType(Material.STONE);
+                            ActivityRewarder.getInstance().getLogger().severe("Failed to display custom item-template '#' as it does not specify a valid material");
+                        }
+                        simpleItemStack.parseColors(player);
+
+                        itemStack = simpleItemStack.getItemStack(player);
+                    } else {
+                        // Get the day's reward for the current slot
+                        RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex[0], dayIndex.get());
+                        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
+
+                        String itemTemplate;
+                        if (dayIndex.get() < currDayNum) {
+                            itemTemplate = (collectedDates.contains(dateIndex[0].format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) ? "collected-reward" : "missed-reward";
+                        } else if (dayIndex.get() == currDayNum) {
+                            itemTemplate = collectedToday ? "collected-reward" : "redeemable-reward";
+                        } else {
+                            itemTemplate = "default-reward";
+                        }
+
+                        SimpleItemStack displayItem;
+                        if (!rewardDay.isEmpty()) {
+                            displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
+
+                            if (displayItem.getDisplayName() != null) {
+                                displayItem.setDisplayName(displayItem.getDisplayName()
+                                    .replaceAll("%day%", String.valueOf(dayIndex.get()))
+                                    .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth())));
                             }
 
-                            removeButton(slot);
-
-                            SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward"));
-                            if (collectedItem.getDisplayName() != null) {
-                                collectedItem.setDisplayName(collectedItem.getDisplayName()
-                                    .replaceAll("%day%", String.valueOf(currDayNum))
-                                    .replaceAll("%month_day%", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
-                            }
-                            collectedItem.parseColors(player);
-
-                            inventory.setItem(slot, collectedItem.getItemStack());
-
-                            Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
-
-                            Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-
-                            if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
-                                rewardDay.giveAllRewards(player);
-                            } else {
-                                priorityReward.giveAll(player);
+                            if (displayItem.getLore() != null) {
+                                displayItem.setLore(displayItem.getLore().stream().map(line ->
+                                    line.replaceAll("%day%", String.valueOf(dayIndex.get()))
+                                        .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                ).toList());
                             }
 
-                            Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-                            ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
+                            displayItem.parseColors(player);
+                        } else {
+                            displayItem = new SimpleItemStack(Material.AIR);
+                        }
 
-                            Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
+                        try {
+                            itemStack = displayItem.getItemStack(player);
+                        } catch (IllegalArgumentException e) {
+                            ActivityRewarder.getInstance().getLogger().severe("Failed to display item-template '" + itemTemplate + "' as it does not specify a valid material");
+                            itemStack = new ItemStack(Material.STONE);
+                        }
 
-                            if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-                                RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
-                                if (hourlyRewards != null && !hourlyRewards.isEmpty()) {
-                                    Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                                    hourlyRewards.giveAll(player);
-                                    Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
+                        // Changes item data based on if the reward has been collected or not
+                        if (dayIndex.get() == currDayNum && !collectedToday) {
+                            addButton(slot, (event) -> {
+                                // Gets clicked item and checks if it exists
+                                ItemStack currItem = event.getCurrentItem();
+                                if (currItem == null) {
+                                    return;
                                 }
-                            }
 
-                            player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-                            rewardUser.incrementStreakLength();
-                            rewardUser.setLastCollectedDate(LocalDate.now());
-                            rewardUser.addCollectedDate(LocalDate.now());
-                        });
-                    }
+                                removeButton(slot);
 
-                    // Sets the size of the stack to the same amount as the current date
-                    if (dailyRewardsModule.showDateAsAmount()) {
-                        itemStack.setAmount(dateIndex[0].getDayOfMonth());
+                                SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward"));
+                                if (collectedItem.getDisplayName() != null) {
+                                    collectedItem.setDisplayName(collectedItem.getDisplayName()
+                                        .replaceAll("%day%", String.valueOf(currDayNum))
+                                        .replaceAll("%month_day%", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
+                                }
+                                collectedItem.parseColors(player);
+
+                                inventory.setItem(slot, collectedItem.getItemStack());
+
+                                Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
+
+                                Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+
+                                if (ActivityRewarder.getConfigManager().shouldStackRewards()) {
+                                    rewardDay.giveAllRewards(player);
+                                } else {
+                                    priorityReward.giveAll(player);
+                                }
+
+                                Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+                                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
+
+                                Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
+
+                                if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
+                                    RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
+                                    if (hourlyRewards != null && !hourlyRewards.isEmpty()) {
+                                        Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
+                                        hourlyRewards.giveAll(player);
+                                        Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
+                                    }
+                                }
+
+                                player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
+                                rewardUser.incrementStreakLength();
+                                rewardUser.setLastCollectedDate(LocalDate.now());
+                                rewardUser.addCollectedDate(LocalDate.now());
+                            });
+                        }
+
+                        // Sets the size of the stack to the same amount as the current date
+                        if (dailyRewardsModule.showDateAsAmount()) {
+                            itemStack.setAmount(dateIndex[0].getDayOfMonth());
+                        }
                     }
 
                     inventory.setItem(slot, itemStack);
