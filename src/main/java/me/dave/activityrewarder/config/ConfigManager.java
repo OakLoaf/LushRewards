@@ -2,6 +2,7 @@ package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.InventoryHandler;
+import me.dave.activityrewarder.importer.ActivityRewarderConfigUpdater;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
@@ -35,6 +36,14 @@ public class ConfigManager {
     private Sound reminderSound;
 
     public ConfigManager() {
+        if (isOutdated()) {
+            try {
+                new ActivityRewarderConfigUpdater().startImport();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         ActivityRewarder.getInstance().saveDefaultConfig();
         initRewardsYmls();
     }
@@ -214,5 +223,11 @@ public class ConfigManager {
         this.rewardsFile = dailyRewardsFile;
         this.dailyGoalsFile = dailyGoalsFile;
         this.globalGoalsFile = globalGoalsFile;
+    }
+
+    private boolean isOutdated() {
+        FileConfiguration config = ActivityRewarder.getInstance().getConfig();
+
+        return config.contains("reward-days", true) && !config.contains("modules", true);
     }
 }

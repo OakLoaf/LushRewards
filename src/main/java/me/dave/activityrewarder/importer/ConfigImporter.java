@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.importer;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -35,7 +36,7 @@ public abstract class ConfigImporter {
         File parent = oldFile.getParentFile();
         String name = oldFile.getName();
 
-        if (!oldFile.renameTo(new File(parent, name + "-old-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy--HH-mm-ss")) + ".yml"))) {
+        if (!oldFile.renameTo(new File(parent, FilenameUtils.removeExtension(name) + "-old-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy--HH-mm-ss")) + ".yml"))) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to rename file");
             return null;
         }
