@@ -86,7 +86,9 @@ public class YmlStorage implements Storage<RewardUser> {
             configurationSection.set(moduleName + ".streak-length", dailyRewardsModuleData.getStreakLength());
             configurationSection.set(moduleName + ".highest-streak", dailyRewardsModuleData.getHighestStreak());
             configurationSection.set(moduleName + ".start-date", dailyRewardsModuleData.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            if (dailyRewardsModuleData.getLastCollectedDate() != null) configurationSection.set(moduleName + ".last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            if (dailyRewardsModuleData.getLastCollectedDate() != null) {
+                configurationSection.set(moduleName + ".last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            }
             configurationSection.set(moduleName + ".collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
 
