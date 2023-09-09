@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.dave.activityrewarder.ActivityRewarder;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -15,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.UUID;
-
 
 public class SkullCreator {
     private static Method skullMetaSetProfileMethod;
@@ -75,9 +73,16 @@ public class SkullCreator {
         }
     }
 
-    // TODO: Fix for older versions
     public static String getTexture(Player player) {
-        GameProfile profile = ((CraftPlayer) player).getProfile();
+        GameProfile profile;
+        try {
+            Method getProfileMethod = player.getClass().getDeclaredMethod("getProfile");
+            profile = (GameProfile) getProfileMethod.invoke(player);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return "";
+        }
+
         Property property = profile.getProperties().get("textures").iterator().next();
         return property.getValue();
     }
@@ -96,5 +101,11 @@ public class SkullCreator {
         GameProfile profile = new GameProfile(id, "Player");
         profile.getProperties().put("textures", new Property("textures", b64));
         return profile;
+    }
+
+    private static void logClassInfo(Class clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            ActivityRewarder.getInstance().getLogger().info(method.getReturnType().getCanonicalName() + " " + method.getName());
+        }
     }
 }
