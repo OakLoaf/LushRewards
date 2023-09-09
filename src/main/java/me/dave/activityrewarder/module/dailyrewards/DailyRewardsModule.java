@@ -93,7 +93,7 @@ public class DailyRewardsModule extends Module {
                         }
                     }
 
-                    for (LocalDate dateIndex = lowestDate; dateIndex.isAfter(highestDate); dateIndex = dateIndex.plusDays(1)) {
+                    for (LocalDate dateIndex = lowestDate; !dateIndex.isAfter(highestDate); dateIndex = dateIndex.plusDays(1)) {
                         if (dailyRewardCollection.isAvailableOn(dateIndex)) {
                             registerRewardCollection(dailyRewardCollection);
                             break;
