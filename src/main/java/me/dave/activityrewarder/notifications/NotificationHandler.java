@@ -18,6 +18,10 @@ public class NotificationHandler {
     }
 
     private void startNotificationTask(int reminderPeriod) {
+        if (reminderPeriod <= 0) {
+            return;
+        }
+
         int reminderPeriodMs = reminderPeriod * 50;
         int thisNotifNum = counter;
 
