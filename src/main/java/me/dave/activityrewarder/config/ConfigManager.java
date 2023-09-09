@@ -38,7 +38,9 @@ public class ConfigManager {
     public ConfigManager() {
         if (isOutdated()) {
             try {
-                new ActivityRewarderConfigUpdater().startImport();
+                new ActivityRewarderConfigUpdater().startImport().thenAccept(success -> {
+                    reloadConfig();
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
