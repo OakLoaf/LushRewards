@@ -101,9 +101,12 @@ public class GuiFormat {
         public static class DefaultTemplate {
 
             private static final String[] DEFAULT = new String[]{
+                "RRRRRRRRR",
+                "RRRRRRRRR",
+                "RRRRRRRRR",
+                "RRRR#####",
                 "#########",
-                "RRRRRRR#N",
-                "#########"
+                "####P####"
             };
 
             private static final String[] COMPACT = new String[]{
@@ -112,6 +115,12 @@ public class GuiFormat {
 
             private static final String[] COMPACT_PROFILE = new String[]{
                 "P RRRRRRR"
+            };
+
+            private static final String[] BORDERED = new String[]{
+                "#########",
+                "RRRRRRR#N",
+                "#########"
             };
 
             private static final String[] BORDERED_LARGE = new String[]{
@@ -148,6 +157,9 @@ public class GuiFormat {
                     }
                     case "COMPACT_PROFILE" -> {
                         return new GuiTemplate(COMPACT_PROFILE);
+                    }
+                    case "BORDERED" -> {
+                        return new GuiTemplate(BORDERED);
                     }
                     case "BORDERED_LARGE" -> {
                         return new GuiTemplate(BORDERED_LARGE);
