@@ -6,7 +6,7 @@ streak-mode: true
 allow-reward-stacking: false
 
 # The redeem sound to play if unspecified
-default-redeem-sound: ENTITY_ENDER_DRAGON_HURT
+default-redeem-sound: ENTITY_PLAYER_LEVELUP
 
 # Upcoming category to display
 upcoming-category: large
