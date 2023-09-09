@@ -101,41 +101,41 @@ public class GuiFormat {
         public static class DefaultTemplate {
 
             private static final String[] DEFAULT = new String[]{
-                    "#########",
-                    "RRRRRRR#N",
-                    "#########"
+                "#########",
+                "RRRRRRR#N",
+                "#########"
             };
 
             private static final String[] COMPACT = new String[]{
-                    "RRRRRRR N"
+                "RRRRRRR N"
             };
 
             private static final String[] COMPACT_PROFILE = new String[]{
-                    "P RRRRRRR"
+                "P RRRRRRR"
             };
 
             private static final String[] BORDERED_LARGE = new String[]{
-                    "#########",
-                    "#RRRRRRR#",
-                    "#RRRRRRR#",
-                    "#RRRRRRR#",
-                    "#RRRRRRR#",
-                    "####P####"
+                "#########",
+                "#RRRRRRR#",
+                "#RRRRRRR#",
+                "#RRRRRRR#",
+                "#RRRRRRR#",
+                "####P####"
             };
 
             private static final String[] DAILY_REWARDS_PLUS = new String[]{
-                    "RRRRRRRRR",
-                    "RRRRRRRRR",
-                    "#RRRRRRR#",
-                    "##RRRRR##",
-                    "#########",
-                    "####P####"
+                "RRRRRRRRR",
+                "RRRRRRRRR",
+                "#RRRRRRR#",
+                "##RRRRR##",
+                "#########",
+                "####P####"
             };
 
             private static final String[] NDAILY_REWARDS = new String[]{
-                    "#########",
-                    "#RRRRRRR#",
-                    "#########"
+                "#########",
+                "#RRRRRRR#",
+                "#########"
             };
 
             public static GuiTemplate valueOf(String string) {
