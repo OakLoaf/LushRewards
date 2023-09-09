@@ -56,7 +56,7 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
 
             ConfigurationSection sizesSection = oldConfig.getConfigurationSection("sizes");
             if (sizesSection != null) {
-                sizesSection.getValues(false).forEach((size, materialName) -> arConfig.set("categories." + size, materialName));
+                sizesSection.getValues(false).forEach((size, materialName) -> arConfig.set("categories." + size + ".material", materialName));
             }
 
             if (oldConfig.contains("gui.redeemable-name")) {
