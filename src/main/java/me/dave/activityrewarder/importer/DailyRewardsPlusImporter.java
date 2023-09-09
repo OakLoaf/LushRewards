@@ -9,12 +9,14 @@ import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -49,7 +51,37 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
             YamlConfiguration arConfig = YamlConfiguration.loadConfiguration(newConfigFile);
             YamlConfiguration arRewardsConfig = YamlConfiguration.loadConfiguration(newRewardsFile);
 
-            // TODO: Import config.yml settings
+            if (drpConfig.getBoolean("DailyRewardReminderEnabled", false)) {
+                arConfig.set("reminder-period", drpConfig.getInt("DailyRewardClaimReminder", 1800));
+            } else {
+                arConfig.set("reminder-period", -1);
+            }
+
+            String lineIndent = drpConfig.getString("LineIndent", "");
+
+            if (drpConfig.contains("UnclaimedReward")) {
+                drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("UnclaimedReward"), lineIndent).save(arConfig.createSection("item-templates.redeemable-reward"));
+            }
+            if (drpConfig.contains("RewardNotReady")) {
+                drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("RewardNotReady"), lineIndent).save(arConfig.createSection("item-templates.default-reward"));
+            }
+            if (drpConfig.contains("MissedReward")) {
+                drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("MissedReward"), lineIndent).save(arConfig.createSection("item-templates.missed-reward"));
+            }
+            if (drpConfig.contains("ClaimedReward")) {
+                drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("ClaimedReward"), lineIndent).save(arConfig.createSection("item-templates.collected-reward"));
+            }
+            if (drpConfig.contains("FutureReward")) {
+                drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("FutureReward"), lineIndent).save(arConfig.createSection("item-templates.upcoming-reward"));
+            }
+            if (drpConfig.contains("Placeholder")) {
+                drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("Placeholder"), lineIndent).save(arConfig.createSection("item-templates.#"));
+            }
+            if (drpConfig.getBoolean("DataBar.Enabled", false)) {
+                if (drpConfig.contains("DataBar.Statistics")) {
+                    drpTemplateToSimpleItemStack(drpConfig.getConfigurationSection("DataBar.Statistics"), lineIndent).save(arConfig.createSection("item-templates.P"));
+                }
+            }
 
             arRewardsConfig.createSection("daily-rewards");
             AtomicInteger highestDayNum = new AtomicInteger(0);
@@ -81,15 +113,22 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                             displayItem.setEnchanted(true);
                         }
                     }
-                    displayItem.setAmount(Math.min(dayNum, 64));
+
+                    if (drpConfig.getBoolean("ShowDayQuantity")) {
+                        displayItem.setAmount(Math.min(dayNum, 64));
+                    }
 
                     DailyRewardCollection rewardCollection = new DailyRewardCollection(null, null, null, dayNum, null, rewards, 0, "small", displayItem, null);
                     rewardCollection.save(arRewardsConfig.createSection("daily-rewards.day-" + dayNum));
                 }
 
-                if (highestDayNum.get() > 0) {
+                if (drpConfig.getBoolean("ResetWhenStreakCompleted", false) && highestDayNum.get() > 0) {
                     arRewardsConfig.set("reset-days-at", highestDayNum.get());
                 }
+
+                arRewardsConfig.set("streak-mode", !drpConfig.getBoolean("PauseStreakWhenMissed", false));
+
+                arRewardsConfig.set("default-redeem-sound", drpConfig.getString("SoundEffect", "ENTITY_PLAYER_LEVELUP"));
 
                 arRewardsConfig.createSection("gui");
                 arRewardsConfig.set("gui.title", drpConfig.getString("PluginGuiTitle", "          <color:#529bf2><bold>Daily Rewards</bold>"));
@@ -104,9 +143,47 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                 }
             });
 
+            try {
+                arConfig.save(newConfigFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+                completableFuture.complete(false);
+            }
+
             completableFuture.complete(true);
         });
 
         return completableFuture;
+    }
+
+    private SimpleItemStack drpTemplateToSimpleItemStack(ConfigurationSection configurationSection, @NotNull String lineIndent) {
+        SimpleItemStack simpleItemStack = new SimpleItemStack();
+
+        String materialRaw = configurationSection.getString("Icon");
+        if (materialRaw != null && materialRaw.equalsIgnoreCase("<phead>")) {
+            materialRaw = "player_head";
+            simpleItemStack.setSkullTexture("mirror");
+        }
+        simpleItemStack.setType(ConfigParser.getMaterial(materialRaw));
+
+        String displayName = configurationSection.getString("Title");
+        if (displayName != null) {
+            displayName = translatePlaceholders(displayName);
+        }
+        simpleItemStack.setDisplayName(displayName);
+
+        List<String> lore = new ArrayList<>();
+        configurationSection.getStringList("Lore").forEach(line -> lore.add(translatePlaceholders(lineIndent + line)));
+        simpleItemStack.setLore(lore);
+
+        return simpleItemStack;
+    }
+
+    private String translatePlaceholders(@NotNull String string) {
+        return string
+            .replaceAll("<dayNum>", "%day%")
+            .replaceAll("<timeUntilNextReward>", "%rewarder_countdown%")
+            .replaceAll("<playerName>", "%player_name%")
+            .replaceAll("<playerStreak>", "%rewarder_streak%");
     }
 }
