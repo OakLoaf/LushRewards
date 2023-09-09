@@ -56,6 +56,7 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
 
             ConfigurationSection sizesSection = oldConfig.getConfigurationSection("sizes");
             if (sizesSection != null) {
+                arConfig.createSection("categories");
                 sizesSection.getValues(false).forEach((size, materialName) -> arConfig.set("categories." + size + ".material", materialName));
             }
 
@@ -109,17 +110,15 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
 
                         String category = rewardSection.getString("size");
 
-                        int dayNum;
+                        Integer dayNum = null;
                         try {
                             dayNum = Integer.parseInt(key.replaceAll("\\D", ""));
-                        } catch(NumberFormatException e) {
-                            return;
-                        }
+                        } catch(NumberFormatException ignored) {}
 
                         Collection<Reward> rewards = new ArrayList<>();
                         rewardSection.getStringList("rewards.commands").forEach(command -> rewards.add(new ConsoleCommandReward(command)));
 
-                        ConfigurationSection itemRewardsSection = rewardSection.getConfigurationSection("items");
+                        ConfigurationSection itemRewardsSection = rewardSection.getConfigurationSection("rewards.items");
                         if (itemRewardsSection != null) {
                             itemRewardsSection.getValues(false).forEach((materialRaw, data) -> {
                                 Material material = ConfigParser.getMaterial(materialRaw);
@@ -139,7 +138,12 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
                         }
 
                         DailyRewardCollection rewardCollection = new DailyRewardCollection(repeatFrequency, rewardDate, null, dayNum, null, rewards, priority, category, displayItem, null);
-                        rewardCollection.save(arRewardsConfig.createSection("daily-rewards.day-" + dayNum));
+
+                        if (dayNum != null) {
+                            rewardCollection.save(arRewardsConfig.createSection("daily-rewards.day-" + dayNum));
+                        } else {
+                            rewardCollection.save(arRewardsConfig.createSection("daily-rewards.default"));
+                        }
                     }
                 });
             }

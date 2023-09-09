@@ -31,8 +31,8 @@ public final class ActivityRewarder extends JavaPlugin {
 
         morePaperLib = new MorePaperLib(plugin);
         configManager = new ConfigManager();
-        configManager.reloadConfig();
         dataManager = new DataManager();
+        configManager.reloadConfig();
 
         Listener[] listeners = new Listener[] {
             new RewardUserEvents(),
