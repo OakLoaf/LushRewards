@@ -176,7 +176,7 @@ public class DailyRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return rewardList != null ? new DailyRewardCollection(repeatFrequency, rewardDate, repeatsUntilDate, rewardDayNum, repeatsUntilDay, rewardList, priority, category, itemStack, redeemSound) : DailyRewardCollection.empty();
+        return new DailyRewardCollection(repeatFrequency, rewardDate, repeatsUntilDate, rewardDayNum, repeatsUntilDay, rewardList, priority, category, itemStack, redeemSound);
     }
 
     public static DailyRewardCollection empty() {
