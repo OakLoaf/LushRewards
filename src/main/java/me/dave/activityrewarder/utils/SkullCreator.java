@@ -102,10 +102,4 @@ public class SkullCreator {
         profile.getProperties().put("textures", new Property("textures", b64));
         return profile;
     }
-
-    private static void logClassInfo(Class clazz) {
-        for (Method method : clazz.getDeclaredMethods()) {
-            ActivityRewarder.getInstance().getLogger().info(method.getReturnType().getCanonicalName() + " " + method.getName());
-        }
-    }
 }
