@@ -228,8 +228,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if (!setStreak(sender, args[1], 1)) return true;
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", args[2]));
+                    if (!setDay(sender, args[1], 1)) {
+                        return true;
+                    }
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", "1"));
                     return true;
                 }
                 case "set-days" -> {
@@ -252,8 +254,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if (!setStreak(sender, args[1], 1)) return true;
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", args[2]));
+                    if (!setStreak(sender, args[1], 1)) {
+                        return true;
+                    }
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", "1"));
                     return true;
                 }
                 case "set-streak" -> {
