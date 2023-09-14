@@ -19,7 +19,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -139,13 +141,21 @@ public class DailyRewardsGui extends AbstractGui {
                             if (displayItem.getDisplayName() != null) {
                                 displayItem.setDisplayName(displayItem.getDisplayName()
                                     .replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                    .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth())));
+                                    .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                    .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                    .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
+                                    .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                    .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
                             }
 
                             if (displayItem.getLore() != null) {
                                 displayItem.setLore(displayItem.getLore().stream().map(line ->
                                     line.replaceAll("%day%", String.valueOf(dayIndex.get()))
+                                        .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
                                         .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                        .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
+                                        .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                        .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy")))
                                 ).toList());
                             }
 
@@ -249,6 +259,9 @@ public class DailyRewardsGui extends AbstractGui {
                         slotMap.get(character).forEach(slot -> inventory.setItem(slot, itemStack));
                     }
                 }
+                case ' ' -> slotMap.get(character).forEach(slot -> {
+                    inventory.setItem(slot, new ItemStack(Material.AIR));
+                });
                 default -> slotMap.get(character).forEach(slot -> {
                     SimpleItemStack simpleItemStack = ActivityRewarder.getConfigManager().getItemTemplate(String.valueOf(character));
 
