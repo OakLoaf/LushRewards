@@ -25,8 +25,6 @@ public class RewardUser {
         this.minutesPlayed = minutesPlayed;
     }
 
-    // TODO: Add reload modules
-
     public UUID getUniqueId() {
         return this.uuid;
     }
