@@ -117,7 +117,7 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
                         } catch(NumberFormatException ignored) {}
 
                         Collection<Reward> rewards = new ArrayList<>();
-                        rewardSection.getStringList("rewards.commands").forEach(command -> rewards.add(new ConsoleCommandReward(command)));
+                        rewards.add(new ConsoleCommandReward(rewardSection.getStringList("rewards.commands")));
 
                         ConfigurationSection itemRewardsSection = rewardSection.getConfigurationSection("rewards.items");
                         if (itemRewardsSection != null) {

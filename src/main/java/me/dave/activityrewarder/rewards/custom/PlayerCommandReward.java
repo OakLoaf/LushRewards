@@ -1,48 +1,57 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerCommandReward implements Reward {
-    private final String command;
+    private final List<String> commands;
 
-    public PlayerCommandReward(String command) {
-        this.command = command;
+    public PlayerCommandReward(List<String> commands) {
+        this.commands = commands;
     }
 
+    @SuppressWarnings("unchecked")
     public PlayerCommandReward(Map<?, ?> map) {
-        this.command = (String) map.get("command");
+        this.commands = (List<String>) map.get("commands");
     }
 
     @Override
     public void giveTo(Player player) {
-        String[] commandArr = command.split("\\|");
         boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
-        for (String thisCommand : commandArr) {
-            thisCommand = thisCommand.replaceAll("%user%", player.getName());
+        commands.forEach(command -> {
+            String thisCommand = command.replaceAll("%user%", player.getName());
+
+            PlaceholderAPIHook placeholderAPIHook = ActivityRewarder.getPlaceholderAPIHook();
+            if (placeholderAPIHook != null) {
+                thisCommand = placeholderAPIHook.parseString(player, thisCommand);
+            }
+
             if (thisCommand.startsWith("java:")) {
                 thisCommand = thisCommand.substring(5);
 
                 if (isFloodgateEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                    continue;
+                    return;
                 }
             } else if (thisCommand.startsWith("bedrock:")) {
                 thisCommand = thisCommand.substring(8);
 
                 if (!isFloodgateEnabled) {
-                    continue;
+                    return;
                 } else if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                    continue;
+                    return;
                 }
             }
 
             Bukkit.dispatchCommand(player, thisCommand);
-        }
+        });
+
     }
 
     @Override
@@ -50,7 +59,7 @@ public class PlayerCommandReward implements Reward {
         Map<String, Object> rewardMap = new ConcurrentHashMap<>();
 
         rewardMap.put("type", "command");
-        rewardMap.put("command", command);
+        rewardMap.put("commands", commands);
 
         return rewardMap;
     }

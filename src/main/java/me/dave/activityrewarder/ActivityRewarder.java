@@ -23,6 +23,7 @@ public final class ActivityRewarder extends JavaPlugin {
     private static ConfigManager configManager;
     private static DataManager dataManager;
     private static boolean floodgateEnabled = false;
+    private static PlaceholderAPIHook placeholderAPIHook = null;
 
     @Override
     public void onEnable() {
@@ -50,7 +51,8 @@ public final class ActivityRewarder extends JavaPlugin {
         }
 
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderAPIHook().register();
+            placeholderAPIHook = new PlaceholderAPIHook();
+            placeholderAPIHook.register();
             plugin.getLogger().info("Found plugin \"PlaceholderAPI\". PlaceholderAPI support enabled.");
         }
     }
@@ -123,5 +125,9 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static boolean isFloodgateEnabled() {
         return floodgateEnabled;
+    }
+
+    public static PlaceholderAPIHook getPlaceholderAPIHook() {
+        return placeholderAPIHook;
     }
 }

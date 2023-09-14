@@ -100,7 +100,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     }
 
                     Collection<Reward> rewards = new ArrayList<>();
-                    rewardSection.getStringList("RewardCommands").forEach(command -> rewards.add(new ConsoleCommandReward(command)));
+                    rewards.add(new ConsoleCommandReward(rewardSection.getStringList("RewardCommands")));
                     if (rewardSection.contains("RewardMessage")) {
                         rewards.add(new MessageReward(rewardSection.getString("RewardMessage")));
                     }
