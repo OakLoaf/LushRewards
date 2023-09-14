@@ -8,16 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RewardUser {
     private final UUID uuid;
     private String username;
     private int minutesPlayed;
 
-    private final HashMap<String, ModuleData> moduleDataMap = new HashMap<>();
+    private final ConcurrentHashMap<String, ModuleData> moduleDataMap = new ConcurrentHashMap<>();
 
     public RewardUser(@NotNull UUID uuid, String username, int minutesPlayed) {
         this.uuid = uuid;

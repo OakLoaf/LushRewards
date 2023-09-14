@@ -5,8 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerCommandReward implements Reward {
     private final String command;
@@ -47,7 +47,7 @@ public class PlayerCommandReward implements Reward {
 
     @Override
     public Map<String, Object> asMap() {
-        Map<String, Object> rewardMap = new HashMap<>();
+        Map<String, Object> rewardMap = new ConcurrentHashMap<>();
 
         rewardMap.put("type", "command");
         rewardMap.put("command", command);

@@ -15,13 +15,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocalPlaceholders {
     private static final String identifier = "rewarder";
-    private static final HashMap<String, PlaceholderFunction<String>> stringPlaceholders = new HashMap<>();
-    private static final HashMap<String, PlaceholderFunction<String>> regexPlaceholders = new HashMap<>();
+    private static final ConcurrentHashMap<String, PlaceholderFunction<String>> stringPlaceholders = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, PlaceholderFunction<String>> regexPlaceholders = new ConcurrentHashMap<>();
     private static final Pattern regexPattern = Pattern.compile("%" + identifier + "_([a-zA-Z0-9_ ]+)%");
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 

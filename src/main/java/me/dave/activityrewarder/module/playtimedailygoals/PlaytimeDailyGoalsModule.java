@@ -5,7 +5,6 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -13,14 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeDailyGoalsModule extends Module {
     private int refreshTime;
     private GuiFormat guiFormat;
-    private HashMap<Integer, RewardCollection> minutesToReward;
+    private ConcurrentHashMap<Integer, RewardCollection> minutesToReward;
 
     public PlaytimeDailyGoalsModule(String id) {
         super(id);
@@ -43,7 +42,7 @@ public class PlaytimeDailyGoalsModule extends Module {
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
-        this.minutesToReward = new HashMap<>();
+        this.minutesToReward = new ConcurrentHashMap<>();
         for (Map<?, ?> rewardMap : config.getMapList("daily-goals")) {
             RewardCollection rewardCollection;
             try {

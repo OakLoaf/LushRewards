@@ -26,7 +26,7 @@ public class ConfigManager {
     private final NotificationHandler notificationHandler = new NotificationHandler();
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
-    private final HashMap<String, String> messages = new HashMap<>();
+    private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
     private File rewardsFile;
     private File dailyGoalsFile;
     private File globalGoalsFile;

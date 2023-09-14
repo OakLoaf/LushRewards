@@ -18,10 +18,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DailyRewardsModule extends Module {
     private int rewardsIndex;
-    private HashMap<Integer, DailyRewardCollection> rewards;
+    private ConcurrentHashMap<Integer, DailyRewardCollection> rewards;
     private int resetDaysAt;
     private boolean streakMode;
     private boolean allowRewardsStacking;
@@ -59,7 +60,7 @@ public class DailyRewardsModule extends Module {
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         this.rewardsIndex = 0;
-        this.rewards = new HashMap<>();
+        this.rewards = new ConcurrentHashMap<>();
 
         LocalDate today = LocalDate.now();
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {

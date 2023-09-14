@@ -11,16 +11,16 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public abstract class AbstractGui {
     protected final Inventory inventory;
     protected final Player player;
-    protected final HashMap<Integer, Consumer<InventoryClickEvent> > buttons = new HashMap<>();
-    private final HashMap<Integer, Boolean> slotLockMap = new HashMap<>();
+    protected final ConcurrentHashMap<Integer, Consumer<InventoryClickEvent> > buttons = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, Boolean> slotLockMap = new ConcurrentHashMap<>();
 
     public AbstractGui(int size, String title, Player player) {
         inventory = Bukkit.createInventory(null, size, title);
