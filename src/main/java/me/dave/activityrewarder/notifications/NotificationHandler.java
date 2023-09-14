@@ -1,6 +1,9 @@
 package me.dave.activityrewarder.notifications;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,7 +36,13 @@ public class NotificationHandler {
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                boolean collectedToday = ActivityRewarder.getDataManager().getRewardUser(player).hasCollectedToday();
+                RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+                    continue;
+                }
+
+
+                boolean collectedToday = moduleUserData.hasCollectedToday();
                 if (collectedToday) {
                     continue;
                 }

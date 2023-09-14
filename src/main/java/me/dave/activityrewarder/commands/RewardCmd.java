@@ -7,6 +7,7 @@ import me.dave.activityrewarder.importer.DailyRewardsPlusImporter;
 import me.dave.activityrewarder.importer.NDailyRewardsImporter;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -415,10 +416,16 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            rewardUser.setStreakLength(streak);
+            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+                moduleUserData.setStreakLength(streak);
+                rewardUser.save();
+            }
         } else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                rewardUser.setStreakLength(streak);
+                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+                    moduleUserData.setStreakLength(streak);
+                    rewardUser.save();
+                }
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
             }));
         }

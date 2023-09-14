@@ -40,18 +40,30 @@ public class DailyRewardsGui extends AbstractGui {
 
         // Gets RewardUser
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+        // Gets ModuleUserData
+        if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+            SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
+            errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
+            errorItem.setLore(List.of("&7&oIf this continues please", "report to your server administrator"));
+            errorItem.parseColors(player);
+
+            inventory.setItem(4, errorItem.getItemStack());
+
+            return;
+        }
 
         // Checks if the streak mode config option is enabled
         if (dailyRewardsModule.isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
-            LocalDate lastCollectedDate = rewardUser.getLastCollectedDate();
+            LocalDate lastCollectedDate = moduleUserData.getLastCollectedDate();
             if (lastCollectedDate == null || lastCollectedDate.isBefore(LocalDate.now().minusDays(1))) {
-                rewardUser.restartStreak();
+                moduleUserData.restartStreak();
+                rewardUser.save();
             }
         }
 
         // Checks if the reward has been collected today
-        boolean collectedToday = rewardUser.hasCollectedToday();
+        boolean collectedToday = moduleUserData.hasCollectedToday();
         // The current day number being shown to the user
         int currDayNum = rewardUser.getDayNum();
 
@@ -91,7 +103,7 @@ public class DailyRewardsGui extends AbstractGui {
             slotMap.put(character, slot);
         }
 
-        List<String> collectedDates = rewardUser.getCollectedDates();
+        List<String> collectedDates = moduleUserData.getCollectedDates();
         for (Character character : slotMap.keySet()) {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {
@@ -195,9 +207,10 @@ public class DailyRewardsGui extends AbstractGui {
                                 }
 
                                 player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-                                rewardUser.incrementStreakLength();
-                                rewardUser.setLastCollectedDate(LocalDate.now());
-                                rewardUser.addCollectedDate(LocalDate.now());
+                                moduleUserData.incrementStreakLength();
+                                moduleUserData.setLastCollectedDate(LocalDate.now());
+                                moduleUserData.addCollectedDate(LocalDate.now());
+                                rewardUser.save();
                             });
                         }
 

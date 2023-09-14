@@ -51,6 +51,12 @@ public class DailyRewardsModuleUserData extends ModuleData {
         this.streakLength = streakLength;
     }
 
+    public void restartStreak() {
+        setDayNum(1);
+        setStreakLength(1);
+        clearCollectedDates();
+    }
+
     public void incrementStreakLength() {
         this.streakLength += 1;
         if (streakLength > highestStreak) {
