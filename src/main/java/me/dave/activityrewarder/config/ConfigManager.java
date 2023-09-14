@@ -87,6 +87,10 @@ public class ConfigManager {
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadMessages(config.getConfigurationSection("messages"));
         notificationHandler.reloadNotifications(reminderPeriod);
+
+        if (ActivityRewarder.getDataManager() != null) {
+            ActivityRewarder.getDataManager().reloadRewardUsers();
+        }
     }
 
     public YamlConfiguration getDailyRewardsConfig() {

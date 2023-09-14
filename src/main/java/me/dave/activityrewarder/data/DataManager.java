@@ -39,6 +39,13 @@ public class DataManager {
         }
     }
 
+    public void reloadRewardUsers() {
+        uuidToRewardUser.keySet().forEach(uuid -> {
+            unloadRewarderUser(uuid);
+            loadRewardUser(uuid);
+        });
+    }
+
     @NotNull
     public CompletableFuture<RewardUser> getOrLoadRewardUser(@NotNull Player player) {
         CompletableFuture<RewardUser> completableFuture = new CompletableFuture<>();
