@@ -65,6 +65,7 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
             }
             if (oldConfig.contains("gui.collected-item")) {
                 arConfig.set("item-templates.collected-reward.material", oldConfig.getString("gui.collected-item"));
+                arConfig.set("item-templates.collected-reward.skull-texture", null);
             }
             if (oldConfig.contains("gui.collected-name")) {
                 arConfig.set("item-templates.collected-reward.display-name", oldConfig.getString("gui.collected-name"));
