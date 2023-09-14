@@ -1,7 +1,6 @@
 package me.dave.activityrewarder.module.dailyrewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.ModuleData;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +27,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
     public int getDayNum() {
         int dayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay()) + 1;
 
-        if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) {
+        if (ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
             int resetDay = dailyRewardsModule.getResetDay();
 
             if (resetDay > 0 && dayNum > resetDay) {

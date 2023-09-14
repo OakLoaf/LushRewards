@@ -2,8 +2,11 @@ package me.dave.activityrewarder.utils;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
@@ -29,7 +32,7 @@ public class LocalPlaceholders {
     static {
         // String placeholders
         registerPlaceholder("category", (params, player) -> {
-            if (!(ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
+            if (!(ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
                 return null;
             }
 
@@ -74,7 +77,7 @@ public class LocalPlaceholders {
         });
 
         registerPlaceholder("global_playtime", (params, player) -> {
-            if (!(ActivityRewarder.getModule(Module.ModuleType.PLAYTIME_TRACKER.getName()) instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
+            if (!(ActivityRewarder.getModule(PlaytimeTrackerModule.ID) instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
                 return null;
             }
 
@@ -99,18 +102,36 @@ public class LocalPlaceholders {
             return String.valueOf(rewardUser.getHighestStreak());
         });
 
-        // TODO: Replace with a placeholder for each goal module
-//        registerPlaceholder("playtime", (params, player) -> {
-//            if (player == null) {
-//                return null;
-//            }
-//
-//            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-//            return String.valueOf(rewardUser.getPlayTimeSinceLastCollected());
-//        });
+        registerPlaceholder("playtime_since_collected_daily_goals", (params, player) -> {
+            if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) == null || player == null) {
+                return null;
+            }
+
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+
+            if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModuleUserData moduleData) {
+                return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
+            } else {
+                return null;
+            }
+        });
+
+        registerPlaceholder("playtime_since_collected_global_goals", (params, player) -> {
+            if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) == null || player == null) {
+                return null;
+            }
+
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+
+            if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData moduleData) {
+                return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
+            } else {
+                return null;
+            }
+        });
 
         registerPlaceholder("session_playtime", (params, player) -> {
-            if (!(ActivityRewarder.getModule(Module.ModuleType.PLAYTIME_TRACKER.getName()) instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
+            if (!(ActivityRewarder.getModule(PlaytimeTrackerModule.ID) instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
                 return null;
             }
 
@@ -127,7 +148,7 @@ public class LocalPlaceholders {
         });
 
         registerPlaceholder("total_rewards", (params, player) -> {
-            if (!(ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
+            if (!(ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) || player == null) {
                 return null;
             }
 
@@ -138,7 +159,7 @@ public class LocalPlaceholders {
         });
 
         registerPlaceholder("total_session_playtime", (params, player) -> {
-            if (!(ActivityRewarder.getModule(Module.ModuleType.PLAYTIME_TRACKER.getName()) instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
+            if (!(ActivityRewarder.getModule(PlaytimeTrackerModule.ID) instanceof PlaytimeTrackerModule playtimeTrackerModule) || player == null) {
                 return null;
             }
 
@@ -147,7 +168,7 @@ public class LocalPlaceholders {
 
         // Regex Placeholders
         registerRegexPlaceholder("day_[0-9]+.+", (params, player) -> {
-            if (!(ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule)) {
+            if (!(ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule)) {
                 return null;
             }
 

@@ -1,8 +1,8 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.ModuleData;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,26 +61,26 @@ public class RewardUser {
     }
 
     public int getDayNum() {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getDayNum();
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getDayNum();
     }
 
     public void setDayNum(int dayNum) {
-        ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).setDayNum(dayNum);
+        ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).setDayNum(dayNum);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     // TODO: Needs moving into ModuleData
     public int getStreakLength() {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getStreakLength();
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getStreakLength();
     }
 
     public void setStreakLength(int dayNum) {
-        ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).setStreakLength(dayNum);
+        ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).setStreakLength(dayNum);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void restartStreak() {
-        DailyRewardsModuleUserData dailyRewardsModuleUserData = (DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName());
+        DailyRewardsModuleUserData dailyRewardsModuleUserData = (DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID);
 
         dailyRewardsModuleUserData.setDayNum(1);
         dailyRewardsModuleUserData.setStreakLength(1);
@@ -89,42 +89,42 @@ public class RewardUser {
     }
 
     public void incrementStreakLength() {
-        ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).incrementStreakLength();
+        ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).incrementStreakLength();
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public int getHighestStreak() {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getHighestStreak();
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getHighestStreak();
     }
 
     @Nullable
     public LocalDate getLastCollectedDate() {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getLastCollectedDate();
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getLastCollectedDate();
     }
 
     public void setLastCollectedDate(LocalDate date) {
-        ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).setLastCollectedDate(date);
+        ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).setLastCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public LocalDate getDateAtStreakLength(int dayNum) {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getDateAtStreakLength(dayNum);
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getDateAtStreakLength(dayNum);
     }
 
     public int getDayNumOffset() {
-        return getDayNum() - ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getStreakLength();
+        return getDayNum() - ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getStreakLength();
     }
 
     public boolean hasCollectedToday() {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).hasCollectedToday();
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).hasCollectedToday();
     }
 
     public List<String> getCollectedDates() {
-        return ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).getCollectedDates();
+        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getCollectedDates();
     }
 
     public void addCollectedDate(LocalDate date) {
-        ((DailyRewardsModuleUserData) getModuleData(Module.ModuleType.DAILY_REWARDS.getName())).addCollectedDate(date);
+        ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).addCollectedDate(date);
         ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 }

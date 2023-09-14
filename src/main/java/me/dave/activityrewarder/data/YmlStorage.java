@@ -1,9 +1,11 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -32,10 +34,10 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
 
         RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
 
-        if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) != null) {
-            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(Module.ModuleType.DAILY_REWARDS.getName());
+        if (ActivityRewarder.getModule(DailyRewardsModule.ID) != null) {
+            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(DailyRewardsModule.ID);
             if (moduleSection == null) {
-                moduleSection = configurationSection.createSection(Module.ModuleType.DAILY_REWARDS.getName());
+                moduleSection = configurationSection.createSection(DailyRewardsModule.ID);
             }
 
             int streakLength = moduleSection.getInt("streak-length", 0);
@@ -48,30 +50,30 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             String lastCollectedDateRaw = moduleSection.getString("last-collected-date");
             LocalDate lastCollectedDate = lastCollectedDateRaw != null ? LocalDate.parse(lastCollectedDateRaw, DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
 
-            rewardUser.addModuleData(new DailyRewardsModuleUserData(Module.ModuleType.DAILY_REWARDS.getName(), streakLength, highestStreak, startDate, lastCollectedDate, collectedDates));
+            rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, streakLength, highestStreak, startDate, lastCollectedDate, collectedDates));
         }
 
-        if (ActivityRewarder.getModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) != null) {
-            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
+        if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) != null) {
+            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(PlaytimeDailyGoalsModule.ID);
             if (moduleSection == null) {
-                moduleSection = configurationSection.createSection(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
+                moduleSection = configurationSection.createSection(PlaytimeDailyGoalsModule.ID);
             }
 
             String date = moduleSection.getString("date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             int lastCollectedPlaytime = moduleSection.getInt("last-collected-playtime", 0);
 
-            rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName(), lastCollectedPlaytime, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
+            rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, lastCollectedPlaytime, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
         }
 
-        if (ActivityRewarder.getModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) != null) {
-            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName());
+        if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) != null) {
+            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(PlaytimeGlobalGoalsModule.ID);
             if (moduleSection == null) {
-                moduleSection = configurationSection.createSection(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName());
+                moduleSection = configurationSection.createSection(PlaytimeGlobalGoalsModule.ID);
             }
 
             int lastCollectedPlaytime = moduleSection.getInt("last-collected-playtime", 0);
 
-            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName(), lastCollectedPlaytime));
+            rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(PlaytimeGlobalGoalsModule.ID, lastCollectedPlaytime));
         }
 
         return CompletableFuture.completedFuture(rewardUser);
@@ -84,8 +86,8 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         configurationSection.set("name", rewardUser.getUsername());
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
-        if (rewardUser.getModuleData(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModuleUserData dailyRewardsModuleData) {
-            String moduleName = Module.ModuleType.DAILY_REWARDS.getName();
+        if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData dailyRewardsModuleData) {
+            String moduleName = DailyRewardsModule.ID;
 
             configurationSection.set(moduleName + ".day-num", dailyRewardsModuleData.getDayNum());
             configurationSection.set(moduleName + ".streak-length", dailyRewardsModuleData.getStreakLength());
@@ -97,14 +99,14 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             configurationSection.set(moduleName + ".collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
 
-        if (rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()) instanceof PlaytimeDailyGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
-            String moduleName = Module.ModuleType.DAILY_PLAYTIME_GOALS.getName();
+        if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
+            String moduleName = PlaytimeDailyGoalsModule.ID;
 
             configurationSection.set(moduleName + ".last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
         }
 
-        if (rewardUser.getModuleData(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()) instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
-            String moduleName = Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName();
+        if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
+            String moduleName = PlaytimeGlobalGoalsModule.ID;
 
             configurationSection.set(moduleName + ".last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
         }

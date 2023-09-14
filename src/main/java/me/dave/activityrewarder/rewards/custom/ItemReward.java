@@ -1,9 +1,7 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
-import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.SimpleItemStack;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

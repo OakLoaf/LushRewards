@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DailyRewardsModule extends Module {
+    public static final String ID = "daily-rewards";
     private int rewardsIndex;
     private ConcurrentHashMap<Integer, DailyRewardCollection> rewards;
     private int resetDaysAt;

@@ -3,7 +3,6 @@ package me.dave.activityrewarder.rewards.collections;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.rewards.custom.Reward;
 import me.dave.activityrewarder.utils.ConfigParser;
@@ -166,7 +165,7 @@ public class DailyRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "none").toUpperCase());
-        if (redeemSound == null && ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) {
+        if (redeemSound == null && ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
             redeemSound = dailyRewardsModule.getDefaultRedeemSound();
         }
 

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeDailyGoalsModule extends Module {
+    public static final String ID = "daily-playtime-goals";
     private int refreshTime;
     private GuiFormat guiFormat;
     private ConcurrentHashMap<Integer, RewardCollection> minutesToReward;
@@ -98,7 +99,7 @@ public class PlaytimeDailyGoalsModule extends Module {
 
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-        PlaytimeDailyGoalsModuleUserData playtimeDailyGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName());
+        PlaytimeDailyGoalsModuleUserData playtimeDailyGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID);
         int minutesPlayed = rewardUser.getMinutesPlayed();
 
         if (!playtimeDailyGoalsModuleUserData.getDate().isEqual(LocalDate.now())) {

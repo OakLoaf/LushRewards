@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeTrackerModule extends Module {
+    public static final String ID = "playtime-tracker";
     private ConcurrentHashMap<UUID, PlaytimeTracker> playtimeTrackers;
     private boolean poison;
 
@@ -27,7 +28,7 @@ public class PlaytimeTrackerModule extends Module {
 
         ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
                 (task) -> {
-                    if (poison || ActivityRewarder.getModule(Module.ModuleType.PLAYTIME_TRACKER.getName()) == null) {
+                    if (poison || ActivityRewarder.getModule(PlaytimeTrackerModule.ID) == null) {
                         task.cancel();
                         return;
                     }

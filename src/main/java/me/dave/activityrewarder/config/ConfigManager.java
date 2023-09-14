@@ -3,7 +3,6 @@ package me.dave.activityrewarder.config;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.importer.ActivityRewarderConfigUpdater;
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
@@ -69,18 +68,18 @@ public class ConfigManager {
 
         boolean requiresPlaytimeTracker = false;
         if (config.getBoolean("modules.daily-rewards", false)) {
-            ActivityRewarder.registerModule(new DailyRewardsModule(Module.ModuleType.DAILY_REWARDS.getName()));
+            ActivityRewarder.registerModule(new DailyRewardsModule(DailyRewardsModule.ID));
         }
         if (config.getBoolean("modules.daily-playtime-goals", false)) {
-            ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule(Module.ModuleType.DAILY_PLAYTIME_GOALS.getName()));
+            ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule(PlaytimeDailyGoalsModule.ID));
             requiresPlaytimeTracker = true;
         }
         if (config.getBoolean("modules.global-playtime-goals", false)) {
-            ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule(Module.ModuleType.GLOBAL_PLAYTIME_GOALS.getName()));
+            ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule(PlaytimeGlobalGoalsModule.ID));
             requiresPlaytimeTracker = true;
         }
         if (requiresPlaytimeTracker) {
-            ActivityRewarder.registerModule(new PlaytimeTrackerModule(Module.ModuleType.PLAYTIME_TRACKER.getName()));
+            ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
         }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
