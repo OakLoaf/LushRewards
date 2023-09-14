@@ -2,8 +2,6 @@ package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.ModuleData;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,15 +54,6 @@ public class RewardUser {
 
     public void addModuleData(ModuleData moduleData) {
         moduleDataMap.put(moduleData.getId(), moduleData);
-    }
-
-    public int getDayNum() {
-        return ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).getDayNum();
-    }
-
-    public void setDayNum(int dayNum) {
-        ((DailyRewardsModuleUserData) getModuleData(DailyRewardsModule.ID)).setDayNum(dayNum);
-        ActivityRewarder.getDataManager().saveRewardUser(this);
     }
 
     public void save() {

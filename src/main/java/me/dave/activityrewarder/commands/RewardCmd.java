@@ -389,10 +389,16 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            rewardUser.setDayNum(dayNum);
+            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+                moduleUserData.setDayNum(dayNum);
+                rewardUser.save();
+            }
         } else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                rewardUser.setDayNum(dayNum);
+                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+                    moduleUserData.setDayNum(dayNum);
+                    rewardUser.save();
+                }
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
             }));
         }

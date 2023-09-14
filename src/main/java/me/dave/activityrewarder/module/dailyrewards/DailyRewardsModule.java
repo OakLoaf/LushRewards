@@ -220,11 +220,15 @@ public class DailyRewardsModule extends Module {
 
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-        if (rewardUser.hasCollectedToday()) {
+        if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
             return false;
         }
 
-        RewardDay rewardDay = getRewardDay(LocalDate.now(), rewardUser.getDayNum());
+        if (moduleUserData.hasCollectedToday()) {
+            return false;
+        }
+
+        RewardDay rewardDay = getRewardDay(LocalDate.now(), moduleUserData.getDayNum());
         DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
 
         Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
@@ -239,9 +243,10 @@ public class DailyRewardsModule extends Module {
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
 
         player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-        rewardUser.incrementStreakLength();
-        rewardUser.setLastCollectedDate(LocalDate.now());
-        rewardUser.addCollectedDate(LocalDate.now());
+        moduleUserData.incrementStreakLength();
+        moduleUserData.setLastCollectedDate(LocalDate.now());
+        moduleUserData.addCollectedDate(LocalDate.now());
+        rewardUser.save();
 
         return true;
     }

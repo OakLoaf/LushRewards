@@ -65,7 +65,7 @@ public class DailyRewardsGui extends AbstractGui {
         // Checks if the reward has been collected today
         boolean collectedToday = moduleUserData.hasCollectedToday();
         // The current day number being shown to the user
-        int currDayNum = rewardUser.getDayNum();
+        int currDayNum = moduleUserData.getDayNum();
 
         // First reward day shown
         AtomicInteger dayIndex = new AtomicInteger();
