@@ -320,13 +320,15 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
 
         if (!player.hasPermission("activityrewarder.use")) {
-            player.sendMessage("§cInsufficient permissions");
+            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
             return true;
         }
 
         if (ActivityRewarder.getModule(Module.ModuleType.DAILY_REWARDS.getName()) instanceof DailyRewardsModule dailyRewardsModule) {
             DailyRewardsGui dailyRewardsGui = new DailyRewardsGui(dailyRewardsModule, player);
             dailyRewardsGui.openInventory();
+        } else {
+            ChatColorHandler.sendMessage(player, "&#ff6969DailyRewards module is disabled");
         }
 
         return true;
