@@ -186,7 +186,11 @@ public class DailyRewardsGui extends AbstractGui {
                                 if (collectedItem.getDisplayName() != null) {
                                     collectedItem.setDisplayName(collectedItem.getDisplayName()
                                         .replaceAll("%day%", String.valueOf(currDayNum))
-                                        .replaceAll("%month_day%", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
+                                        .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                        .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                        .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
+                                        .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                        .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
                                 }
                                 collectedItem.parseColors(player);
 
@@ -249,9 +253,14 @@ public class DailyRewardsGui extends AbstractGui {
 
                         if (simpleItemStack.getDisplayName() != null) {
                             simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack
-                                            .getDisplayName()
-                                            .replaceAll("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum())),
-                                    player));
+                                    .getDisplayName()
+                                    .replaceAll("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum()))
+                                    .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                    .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                    .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
+                                    .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                    .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))),
+                                player));
                         }
                         simpleItemStack.setLore(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getLore(), player));
 
