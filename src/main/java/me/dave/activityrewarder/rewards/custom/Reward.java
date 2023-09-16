@@ -12,44 +12,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public interface Reward {
-    void giveTo(Player player);
+public abstract class Reward {
+    abstract void giveTo(Player player);
 
-    Map<String, Object> asMap();
+    abstract Map<String, Object> asMap();
 
-    SchedulerType getSchedulerType();
+    abstract SchedulerType getSchedulerType();
 
-    static void giveReward(Reward reward, Player player) {
-        switch (reward.getSchedulerType()) {
+    public void giveReward(Player player) {
+        switch (this.getSchedulerType()) {
             case ASYNC -> ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
                 try {
-                    reward.giveTo(player);
+                    this.giveTo(player);
                 } catch (Exception e) {
-                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + this + ") to " + player.getName());
                     e.printStackTrace();
                 }
             });
             case PLAYER -> ActivityRewarder.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
                 try {
-                    reward.giveTo(player);
+                    this.giveTo(player);
                 } catch (Exception e) {
-                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + this + ") to " + player.getName());
                     e.printStackTrace();
                 }
             }, () -> {});
             case GLOBAL -> ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                 try {
-                    reward.giveTo(player);
+                    this.giveTo(player);
                 } catch (Exception e) {
-                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + this + ") to " + player.getName());
                     e.printStackTrace();
                 }
             });
             case REGION -> ActivityRewarder.getMorePaperLib().scheduling().regionSpecificScheduler(player.getLocation()).run(() -> {
                 try {
-                    reward.giveTo(player);
+                    this.giveTo(player);
                 } catch (Exception e) {
-                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + this + ") to " + player.getName());
                     e.printStackTrace();
                 }
             });

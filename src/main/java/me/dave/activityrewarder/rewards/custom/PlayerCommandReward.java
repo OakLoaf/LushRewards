@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlayerCommandReward implements Reward {
+public class PlayerCommandReward extends Reward {
     private final List<String> commands;
 
     public PlayerCommandReward(List<String> commands) {

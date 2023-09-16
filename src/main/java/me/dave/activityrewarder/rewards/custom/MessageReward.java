@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageReward implements Reward {
+public class MessageReward extends Reward {
     private final String message;
 
     public MessageReward(String message) {

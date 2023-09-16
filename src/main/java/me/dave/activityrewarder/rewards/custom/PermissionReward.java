@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PermissionReward  implements Reward {
+public class PermissionReward  extends Reward {
     private final String permission;
     private final List<Reward> rewards;
 
@@ -37,7 +37,7 @@ public class PermissionReward  implements Reward {
         if (player.hasPermission(permission)) {
             rewards.forEach(reward -> {
                 try {
-                    Reward.giveReward(reward, player);
+                    reward.giveReward(player);
                 } catch (Exception e) {
                     ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                     e.printStackTrace();

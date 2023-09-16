@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemReward implements Reward {
+public class ItemReward extends Reward {
     private final SimpleItemStack itemStack;
 
     public ItemReward(SimpleItemStack itemStack) {

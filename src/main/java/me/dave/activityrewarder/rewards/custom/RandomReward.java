@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class RandomReward implements Reward {
+public class RandomReward extends Reward {
     private final RandomCollection<Reward> rewards;
 
     public RandomReward(RandomCollection<Reward> rewards) {
@@ -41,7 +41,7 @@ public class RandomReward implements Reward {
             Reward reward = rewards.next();
 
             try {
-                Reward.giveReward(reward, player);
+                reward.giveReward(player);
             } catch (Exception e) {
                 ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                 e.printStackTrace();
