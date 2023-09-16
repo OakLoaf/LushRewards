@@ -62,7 +62,7 @@ public class RewardCollection {
     public void giveAll(Player player) {
         rewards.forEach(reward -> {
             try {
-                reward.giveTo(player);
+                Reward.giveReward(reward, player);
             } catch (Exception e) {
                 ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                 e.printStackTrace();

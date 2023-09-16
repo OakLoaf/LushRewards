@@ -2,6 +2,7 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
+import me.dave.activityrewarder.utils.SchedulerType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
@@ -62,5 +63,10 @@ public class PlayerCommandReward implements Reward {
         rewardMap.put("commands", commands);
 
         return rewardMap;
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.PLAYER;
     }
 }

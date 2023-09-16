@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
+import me.dave.activityrewarder.utils.SchedulerType;
 import me.dave.activityrewarder.utils.SimpleItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,5 +41,10 @@ public class ItemReward implements Reward {
         rewardMap.put("type", "item");
 
         return rewardMap;
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.PLAYER;
     }
 }

@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.rewards.custom;
 
+import me.dave.activityrewarder.utils.SchedulerType;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.entity.Player;
 
@@ -30,5 +31,10 @@ public class BroadcastReward implements Reward {
         rewardMap.put("message", message);
 
         return rewardMap;
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.ASYNC;
     }
 }

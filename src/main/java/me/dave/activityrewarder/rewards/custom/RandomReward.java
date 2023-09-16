@@ -3,6 +3,7 @@ package me.dave.activityrewarder.rewards.custom;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.utils.RandomCollection;
+import me.dave.activityrewarder.utils.SchedulerType;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -40,7 +41,7 @@ public class RandomReward implements Reward {
             Reward reward = rewards.next();
 
             try {
-                reward.giveTo(player);
+                Reward.giveReward(reward, player);
             } catch (Exception e) {
                 ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                 e.printStackTrace();
@@ -63,5 +64,10 @@ public class RandomReward implements Reward {
         rewardMap.put("rewards", rewardsMap);
 
         return rewardMap;
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.ASYNC;
     }
 }

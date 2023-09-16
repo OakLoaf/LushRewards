@@ -3,6 +3,7 @@ package me.dave.activityrewarder.rewards.custom;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.rewards.RewardTypes;
+import me.dave.activityrewarder.utils.SchedulerType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,45 @@ public interface Reward {
     void giveTo(Player player);
 
     Map<String, Object> asMap();
+
+    SchedulerType getSchedulerType();
+
+    static void giveReward(Reward reward, Player player) {
+        switch (reward.getSchedulerType()) {
+            case ASYNC -> ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+                try {
+                    reward.giveTo(player);
+                } catch (Exception e) {
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    e.printStackTrace();
+                }
+            });
+            case PLAYER -> ActivityRewarder.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
+                try {
+                    reward.giveTo(player);
+                } catch (Exception e) {
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    e.printStackTrace();
+                }
+            }, () -> {});
+            case GLOBAL -> ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
+                try {
+                    reward.giveTo(player);
+                } catch (Exception e) {
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    e.printStackTrace();
+                }
+            });
+            case REGION -> ActivityRewarder.getMorePaperLib().scheduling().regionSpecificScheduler(player.getLocation()).run(() -> {
+                try {
+                    reward.giveTo(player);
+                } catch (Exception e) {
+                    ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" + reward + ") to " + player.getName());
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
 
     @Nullable
     static Reward loadReward(Map<?, ?> rewardMap, String path) {

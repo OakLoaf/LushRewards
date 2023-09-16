@@ -2,6 +2,7 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
+import me.dave.activityrewarder.utils.SchedulerType;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class PermissionReward  implements Reward {
         if (player.hasPermission(permission)) {
             rewards.forEach(reward -> {
                 try {
-                    reward.giveTo(player);
+                    Reward.giveReward(reward, player);
                 } catch (Exception e) {
                     ActivityRewarder.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                     e.printStackTrace();
@@ -56,5 +57,10 @@ public class PermissionReward  implements Reward {
         rewardMap.put("rewards", rewardsMap);
 
         return rewardMap;
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.ASYNC;
     }
 }
