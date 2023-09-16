@@ -1,6 +1,6 @@
 package me.dave.activityrewarder.module.dailyrewards;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.TreeMultimap;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
@@ -97,7 +97,7 @@ public class DailyRewardsGui extends AbstractGui {
             }
         }
 
-        HashMultimap<Character, Integer> slotMap = HashMultimap.create();
+        TreeMultimap<Character, Integer> slotMap = TreeMultimap.create();
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             char character = guiTemplate.getCharAt(slot);
             if (character == 'N') character = 'U';
