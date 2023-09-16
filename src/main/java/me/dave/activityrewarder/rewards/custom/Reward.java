@@ -57,7 +57,7 @@ public abstract class Reward {
     }
 
     @Nullable
-    static Reward loadReward(Map<?, ?> rewardMap, String path) {
+    public static Reward loadReward(Map<?, ?> rewardMap, String path) {
         String rewardType = (String) rewardMap.get("type");
         if (!RewardTypes.isRewardRegistered(rewardType)) {
             ActivityRewarder.getInstance().getLogger().severe("Invalid reward type at '" + path + "'");
@@ -73,7 +73,7 @@ public abstract class Reward {
     }
 
     @Nullable
-    static List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
+    public static List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
         List<Reward> rewardList = new ArrayList<>();
 
         maps.forEach((map) -> {
