@@ -15,9 +15,9 @@ import java.util.Map;
 public abstract class Reward {
     protected abstract void giveTo(Player player);
 
-    abstract Map<String, Object> asMap();
+    protected abstract SchedulerType getSchedulerType();
 
-    abstract SchedulerType getSchedulerType();
+    public abstract Map<String, Object> asMap();
 
     public void giveReward(Player player) {
         switch (this.getSchedulerType()) {
