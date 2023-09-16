@@ -19,7 +19,7 @@ public class BroadcastReward extends Reward {
     }
 
     @Override
-    public void giveTo(Player player) {
+    protected void giveTo(Player player) {
         ChatColorHandler.broadcastMessage(message);
     }
 

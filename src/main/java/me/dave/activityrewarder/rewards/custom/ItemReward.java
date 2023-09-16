@@ -29,7 +29,7 @@ public class ItemReward extends Reward {
     }
 
     @Override
-    public void giveTo(Player player) {
+    protected void giveTo(Player player) {
         HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack.getItemStack(player));
         droppedItems.values().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
     }

@@ -26,7 +26,7 @@ public class ConsoleCommandReward extends Reward {
     }
 
     @Override
-    public void giveTo(Player player) {
+    protected void giveTo(Player player) {
         boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
         commands.forEach(command -> {
             String thisCommand = command.replaceAll("%user%", player.getName());

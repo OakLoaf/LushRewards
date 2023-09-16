@@ -36,7 +36,7 @@ public class RandomReward extends Reward {
     }
 
     @Override
-    public void giveTo(Player player) {
+    protected void giveTo(Player player) {
         if (rewards != null && !rewards.isEmpty()) {
             Reward reward = rewards.next();
 

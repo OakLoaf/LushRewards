@@ -19,7 +19,7 @@ public class MessageReward extends Reward {
     }
 
     @Override
-    public void giveTo(Player player) {
+    protected void giveTo(Player player) {
         ChatColorHandler.sendMessage(player, message);
     }
 

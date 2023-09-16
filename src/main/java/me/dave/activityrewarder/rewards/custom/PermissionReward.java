@@ -33,7 +33,7 @@ public class PermissionReward  extends Reward {
     }
 
     @Override
-    public void giveTo(Player player) {
+    protected void giveTo(Player player) {
         if (player.hasPermission(permission)) {
             rewards.forEach(reward -> {
                 try {

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Reward {
-    abstract void giveTo(Player player);
+    protected abstract void giveTo(Player player);
 
     abstract Map<String, Object> asMap();
 
