@@ -62,13 +62,17 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
                     if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
                         if (playtimeDailyGoalsModule.claimRewards(player)) {
-                            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given").replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed())));
+                            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given")
+                                .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
+                                .replaceAll("%hours%,", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
                         }
                     }
 
                     if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
                         if (playtimeGlobalGoalsModule.claimRewards(player)) {
-                            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given").replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed())));
+                            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given")
+                                .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
+                                .replaceAll("%hours%,", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
                         }
                     }
 
