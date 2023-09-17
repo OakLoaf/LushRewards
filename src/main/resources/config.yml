@@ -81,7 +81,7 @@ messages:
 
 # Performance mode only stores rewards that are currently viewable to players.
 # The config will automatically reload at the start of each day when enabled
-enable-performance-mode: true
+enable-performance-mode: false
 
 # Debug Modes: none, daily, playtime, all
 debug-mode: none
