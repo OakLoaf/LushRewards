@@ -123,7 +123,7 @@ public class LocalPlaceholders {
             return String.valueOf(moduleUserData.getHighestStreak());
         });
 
-        registerPlaceholder("playtime_since_collected_daily_goals", (params, player) -> {
+        registerPlaceholder("playtime_since_daily_goals", (params, player) -> {
             if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) == null || player == null) {
                 return null;
             }
@@ -137,7 +137,7 @@ public class LocalPlaceholders {
             }
         });
 
-        registerPlaceholder("playtime_since_collected_global_goals", (params, player) -> {
+        registerPlaceholder("playtime_since_global_goals", (params, player) -> {
             if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) == null || player == null) {
                 return null;
             }
