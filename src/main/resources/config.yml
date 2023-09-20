@@ -1,4 +1,6 @@
-# Enable or disable specific Activity Rewarder modules
+# For more details on configuring ActivityRewarder check out the documentation at https://dave-12.gitbook.io/activity-rewarder
+
+# Enable or disable specific ActivityRewarder modules
 modules:
   daily-rewards: true
   daily-playtime-goals: true
