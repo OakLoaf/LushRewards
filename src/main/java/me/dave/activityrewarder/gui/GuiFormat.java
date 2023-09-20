@@ -114,7 +114,7 @@ public class GuiFormat {
             };
 
             private static final String[] COMPACT_PROFILE = new String[]{
-                "P RRRRRRR"
+                "RRRRRRR P"
             };
 
             private static final String[] BORDERED = new String[]{
