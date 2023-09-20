@@ -110,19 +110,6 @@ public class LocalPlaceholders {
             return String.valueOf(moduleUserData.getHighestStreak());
         });
 
-        registerPlaceholder("multiplier", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
-                return null;
-            }
-
-            return String.valueOf(moduleUserData.getHighestStreak());
-        });
-
         registerPlaceholder("playtime_since_daily_goals", (params, player) -> {
             if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) == null || player == null) {
                 return null;

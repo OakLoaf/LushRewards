@@ -58,8 +58,9 @@ item-templates:
     skull-texture: mirror
     lore:
       - "&#c4f8ffDay Number: &f%rewarder_day_num%"
+      - "&#c4f8ffCollected: &f%rewarder_collected%"
+      - "&#c4f8ffCurrent Streak: &f%rewarder_streak%"
       - "&#c4f8ffHighest Streak: &f%rewarder_highest_streak%"
-      - "&#c4f8ffMultiplier: &fx%rewarder_multiplier%"
 
 messages:
   prefix: "<gradient:#CEB5FE:#81BAFE><bold>Rewards</bold></gradient> &8» "
