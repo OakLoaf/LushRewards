@@ -234,6 +234,6 @@ gui:
   # Sets first day of gui (DAY: Starts at current day, MONTH: Starts at beginning of current month, GRID: Starts on day 1 and loops when passing end of page)
   scroll-type: GRID
   # Available templates: DEFAULT, COMPACT, COMPACT_PROFILE, BORDERED, BORDERED_DAILY, DAILY_REWARDS_PLUS, NDAILY_REWARDS, CUSTOM
-  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
+  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-templates#custom-templates for more info on
   # creating and using templates
   template: "DEFAULT"

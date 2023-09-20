@@ -29,7 +29,7 @@ global-goals:
 gui:
   title: "   <color:#529bf2><bold>Global Playtime Rewards</bold>"
   # Available templates: DEFAULT, COMPACT
-  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
+  # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-templates#custom-templates for more info on
   # creating and using templates
   template: "CUSTOM"
   format:
