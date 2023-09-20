@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlaytimeDailyGoalsModule extends Module {
     public static final String ID = "daily-playtime-goals";
     private int refreshTime;
+    private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
     private ConcurrentHashMap<Integer, RewardCollection> minutesToReward;
 
@@ -37,6 +38,7 @@ public class PlaytimeDailyGoalsModule extends Module {
         }
 
         refreshTime = config.getInt("refresh-time");
+        receiveWithDailyRewards = config.getBoolean("give-with-daily-rewards");
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
@@ -70,6 +72,10 @@ public class PlaytimeDailyGoalsModule extends Module {
 
     public int getRefreshTime() {
         return refreshTime;
+    }
+
+    public boolean shouldReceiveWithDailyRewards() {
+        return receiveWithDailyRewards;
     }
 
     @Nullable

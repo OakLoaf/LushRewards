@@ -2,6 +2,8 @@
 
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)
 refresh-time: 30
+# Whether rewards should be given when claiming daily rewards
+give-with-daily-rewards: false
 
 daily-goals:
   - category: small

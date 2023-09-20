@@ -5,6 +5,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
@@ -214,11 +215,20 @@ public class DailyRewardsGui extends AbstractGui {
 
                                 Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
 
-                                if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    RewardCollection hourlyRewards = globalGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
-                                    if (hourlyRewards != null && !hourlyRewards.isEmpty()) {
+                                if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
+                                    RewardCollection dailyGoalRewards = dailyGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
+                                    if (dailyGoalRewards != null && !dailyGoalRewards.isEmpty()) {
                                         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                                        hourlyRewards.giveAll(player);
+                                        dailyGoalRewards.giveAll(player);
+                                        Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
+                                    }
+                                }
+
+                                if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
+                                    RewardCollection globalGoalRewards = globalGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
+                                    if (globalGoalRewards != null && !globalGoalRewards.isEmpty()) {
+                                        Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
+                                        globalGoalRewards.giveAll(player);
                                         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
                                     }
                                 }
