@@ -59,8 +59,9 @@ daily-goals:
         material: diamond
         amount: 3
 
+# The gui is not currently available for this module
 gui:
-  title: "&8&lDaily Playtime Rewards"
+  title: "    <color:#529bf2><bold>Daily Playtime Rewards</bold>"
   # Available templates: DEFAULT, COMPACT
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-and-templates#custom-templates for more info on
   # creating and using templates
