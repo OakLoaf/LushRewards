@@ -83,7 +83,13 @@ public class SkullCreator {
             return "";
         }
 
-        Property property = profile.getProperties().get("textures").iterator().next();
+        Property property;
+        try {
+            property = profile.getProperties().get("textures").iterator().next();
+        } catch(Exception e) {
+            return "";
+        }
+
         return property.getValue();
     }
 
