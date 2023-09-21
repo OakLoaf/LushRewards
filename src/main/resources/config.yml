@@ -27,7 +27,7 @@ categories:
 item-templates:
   # Template for default rewards
   default-reward:
-    display-name: "<gradient:#CEB5FE:#81BAFE>Day %day%</gradient>"
+    display-name: "&#A5B8FEDay %day%"
   # Template for collectable rewards
   redeemable-reward:
     material: player_head
@@ -56,7 +56,7 @@ item-templates:
     display-name: "&7"
   'P':
     material: player_head
-    display-name: "<gradient:#CEB5FE:#81BAFE><bold>Profile:</bold></gradient>"
+    display-name: "&#A5B8FE&lProfile:"
     skull-texture: mirror
     lore:
       - "&#c4f8ffDay Number: &f%rewarder_day_num%"
@@ -65,7 +65,7 @@ item-templates:
       - "&#c4f8ffHighest Streak: &f%rewarder_highest_streak%"
 
 messages:
-  prefix: "<gradient:#CEB5FE:#81BAFE><bold>Rewards</bold></gradient> &8» "
+  prefix: "&#A5B8FE&lRewards &8» "
   reload: "&#b7faa2ActivityRewarder has been reloaded &#66b04f🔃"
   reminder: "%prefix% &#ffe27aIt looks like you haven't collected today's reward from &#ffc940/rewards"
   daily-reward-given: "&#b7faa2You have collected today's daily reward"

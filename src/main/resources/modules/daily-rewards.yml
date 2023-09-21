@@ -228,7 +228,7 @@ daily-rewards:
         amount: 1
 
 gui:
-  title: "          <color:#529bf2><bold>Daily Rewards</bold>"
+  title: "          &#529bf2&lDaily Rewards"
   # Displays the date of the month as the amount of the item stack
   date-as-amount: false
   # Sets first day of gui (DAY: Starts at current day, MONTH: Starts at beginning of current month, GRID: Starts on day 1 and loops when passing end of page)

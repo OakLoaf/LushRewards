@@ -63,7 +63,7 @@ daily-goals:
 
 # The gui is not currently available for this module
 gui:
-  title: "    <color:#529bf2><bold>Daily Playtime Rewards</bold>"
+  title: "    &#529bf2&lDaily Playtime Rewards"
   # Available templates: DEFAULT, COMPACT
   # Read https://dave-12.gitbook.io/activity-rewarder/configuring/gui-templates#custom-templates for more info on
   # creating and using templates

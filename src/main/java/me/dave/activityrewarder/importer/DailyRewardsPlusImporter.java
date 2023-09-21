@@ -131,7 +131,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                 arRewardsConfig.set("default-redeem-sound", drpConfig.getString("SoundEffect", "ENTITY_PLAYER_LEVELUP"));
 
                 arRewardsConfig.createSection("gui");
-                arRewardsConfig.set("gui.title", drpConfig.getString("PluginGuiTitle", "          <color:#529bf2><bold>Daily Rewards</bold>"));
+                arRewardsConfig.set("gui.title", drpConfig.getString("PluginGuiTitle", "          &#529bf2>&lDaily Rewards"));
                 arRewardsConfig.set("gui.scroll-type", "GRID");
                 arRewardsConfig.set("gui.template", "DAILY_REWARDS_PLUS");
 
