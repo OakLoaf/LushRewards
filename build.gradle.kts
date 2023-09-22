@@ -1,8 +1,7 @@
 plugins {
     java
-    `kotlin-dsl`
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version("7.1.2")
+    id("com.github.johnrengelman.shadow") version("8.1.1")
 }
 
 group = "me.dave"
@@ -23,13 +22,12 @@ dependencies {
     compileOnly("org.spigotmc:spigot:1.20-R0.1-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
-    shadow("space.arim.morepaperlib:morepaperlib:0.4.2")
-    shadow(files("libs/EnchantedStorage-2.0.0.jar"))
-    shadow("com.github.CoolDCB:ChatColorHandler:v2.1.4")
+    implementation("space.arim.morepaperlib:morepaperlib:0.4.2")
+    implementation(files("libs/EnchantedStorage-2.0.0.jar"))
+    implementation("com.github.CoolDCB:ChatColorHandler:v2.1.4")
 }
 
 java {
-    configurations.shadow.get().dependencies.remove(dependencies.gradleApi())
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
@@ -37,13 +35,17 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
+
     shadowJar {
-        minimize()
-        configurations = listOf(project.configurations.shadow.get())
+        relocate("space.arim", "me.dave.activityrewarder.libraries.paperlib")
+        relocate("org.enchantedskies", "me.dave.activityrewarder.libraries.enchantedskies")
+        relocate("me.dave.chatcolorhandler", "me.dave.activityrewarder.libraries.chatcolor")
+
         val folder = System.getenv("pluginFolder_1-20")
         if (folder != null) destinationDirectory.set(file(folder))
         archiveFileName.set("${project.name}-${project.version}.jar")
     }
+
     processResources{
         expand(project.properties)
 
