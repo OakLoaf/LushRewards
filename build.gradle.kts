@@ -22,7 +22,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot:1.20-R0.1-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
-    implementation("space.arim.morepaperlib:morepaperlib:0.4.2")
+    implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
     implementation(files("libs/EnchantedStorage-2.0.0.jar"))
     implementation("com.github.CoolDCB:ChatColorHandler:v2.1.4")
 }
