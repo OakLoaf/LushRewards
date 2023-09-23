@@ -259,9 +259,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if (!setDay(sender, args[1], 1) || !setStreak(sender, args[1], 1)) {
+                    if (!setDay(sender, args[1], 1) || !setStreak(sender, args[1], 1) || !removeCollectedDays(sender, args[1])) {
                         return true;
                     }
+
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", "1"));
                     return true;
                 }
@@ -496,6 +497,41 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
                 if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
                     moduleUserData.setStreakLength(streak);
+                    rewardUser.save();
+                }
+                ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
+            }));
+        }
+
+        return true;
+    }
+
+    private boolean removeCollectedDays(CommandSender sender, String nameOrUuid) {
+        Player player = Bukkit.getPlayer(nameOrUuid);
+        UUID uuid;
+        if (player != null) {
+            uuid = player.getUniqueId();
+        } else {
+            try {
+                uuid = UUID.fromString(nameOrUuid);
+            } catch (IllegalArgumentException e) {
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                return false;
+            }
+        }
+
+        if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
+            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+                moduleUserData.clearCollectedDates();
+                moduleUserData.setLastCollectedDate(null);
+                rewardUser.save();
+            }
+        } else {
+            ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
+                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+                    moduleUserData.clearCollectedDates();
+                    moduleUserData.setLastCollectedDate(null);
                     rewardUser.save();
                 }
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
