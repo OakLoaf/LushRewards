@@ -57,7 +57,7 @@ public class ConsoleCommandReward extends Reward {
     public Map<String, Object> asMap() {
         Map<String, Object> rewardMap = new HashMap<>();
 
-        rewardMap.put("type", "player-command");
+        rewardMap.put("type", "command");
         rewardMap.put("commands", commands);
 
         return rewardMap;

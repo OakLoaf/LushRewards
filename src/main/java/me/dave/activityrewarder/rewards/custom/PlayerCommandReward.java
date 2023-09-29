@@ -59,7 +59,7 @@ public class PlayerCommandReward extends Reward {
     public Map<String, Object> asMap() {
         Map<String, Object> rewardMap = new ConcurrentHashMap<>();
 
-        rewardMap.put("type", "command");
+        rewardMap.put("type", "player-command");
         rewardMap.put("commands", commands);
 
         return rewardMap;
