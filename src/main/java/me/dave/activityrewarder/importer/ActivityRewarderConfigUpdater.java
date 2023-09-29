@@ -57,21 +57,39 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
             ConfigurationSection sizesSection = oldConfig.getConfigurationSection("sizes");
             if (sizesSection != null) {
                 arConfig.createSection("categories");
-                sizesSection.getValues(false).forEach((size, materialName) -> arConfig.set("categories." + size + ".material", materialName));
+                sizesSection.getValues(false).forEach((size, sizeData) -> {
+                    String[] sizeDataArr = ((String) sizeData).split(";");
+                    String materialName = sizeDataArr[0];
+                    arConfig.set("categories." + size + ".material", materialName);
+
+                    if (sizeDataArr.length >= 2) {
+                        arConfig.set("categories." + size + ".custom-model-data", sizeDataArr[1]);
+                    }
+                });
             }
 
             if (oldConfig.contains("gui.redeemable-name")) {
                 arConfig.set("item-templates.redeemable-reward.display-name", oldConfig.getString("gui.redeemable-name"));
             }
             if (oldConfig.contains("gui.collected-item")) {
-                arConfig.set("item-templates.collected-reward.material", oldConfig.getString("gui.collected-item"));
+                String[] sizeDataArr = oldConfig.getString("gui.collected-item", "").split(";");
+                String materialName = sizeDataArr[0];
+                String customModelData = sizeDataArr.length >= 2 ? sizeDataArr[1] : null;
+
+                arConfig.set("item-templates.collected-reward.material", materialName);
+                arConfig.set("item-templates.collected-reward.custom-model-data", customModelData);
                 arConfig.set("item-templates.collected-reward.skull-texture", null);
             }
             if (oldConfig.contains("gui.collected-name")) {
                 arConfig.set("item-templates.collected-reward.display-name", oldConfig.getString("gui.collected-name"));
             }
             if (oldConfig.contains("gui.border-item")) {
-                arConfig.set("item-templates.#.material", oldConfig.getString("gui.border-item"));
+                String[] sizeDataArr = oldConfig.getString("gui.collected-item", "").split(";");
+                String materialName = sizeDataArr[0];
+                String customModelData = sizeDataArr.length >= 2 ? sizeDataArr[1] : null;
+
+                arConfig.set("item-templates.#.material", materialName);
+                arConfig.set("item-templates.#.custom-model-data", customModelData);
             }
 
             if (oldConfig.getBoolean("gui.upcoming-reward.enabled", false) && oldConfig.contains("gui.upcoming-reward.lore")) {
