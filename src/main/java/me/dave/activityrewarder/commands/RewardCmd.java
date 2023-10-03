@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -458,12 +459,14 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
             if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
                 moduleUserData.setDayNum(dayNum);
+                moduleUserData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
                 rewardUser.save();
             }
         } else {
             ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
                 if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
                     moduleUserData.setDayNum(dayNum);
+                    moduleUserData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
                     rewardUser.save();
                 }
                 ActivityRewarder.getDataManager().unloadRewarderUser(uuid);

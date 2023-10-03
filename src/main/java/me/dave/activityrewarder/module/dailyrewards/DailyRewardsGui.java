@@ -59,7 +59,7 @@ public class DailyRewardsGui extends AbstractGui {
         if (dailyRewardsModule.isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
             LocalDate lastCollectedDate = moduleUserData.getLastCollectedDate();
-            if (lastCollectedDate == null || lastCollectedDate.isBefore(LocalDate.now().minusDays(1))) {
+            if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
                 moduleUserData.restartStreak();
                 rewardUser.save();
             }
