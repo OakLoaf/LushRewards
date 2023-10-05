@@ -95,6 +95,8 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             configurationSection.set(moduleName + ".start-date", dailyRewardsModuleData.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             if (dailyRewardsModuleData.getLastCollectedDate() != null) {
                 configurationSection.set(moduleName + ".last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            } else {
+                configurationSection.set(moduleName + ".last-collected-date", null);
             }
             configurationSection.set(moduleName + ".collected-dates", dailyRewardsModuleData.getCollectedDates());
         }
