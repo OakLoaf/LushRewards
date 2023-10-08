@@ -4,6 +4,7 @@ import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
 import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.utils.Updater;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -24,10 +25,12 @@ public final class ActivityRewarder extends JavaPlugin {
     private static DataManager dataManager;
     private static boolean floodgateEnabled = false;
     private static PlaceholderAPIHook placeholderAPIHook = null;
+    private Updater updater;
 
     @Override
     public void onEnable() {
         plugin = this;
+        updater = new Updater(this, 107545, "rewards update");
         modules = new ConcurrentHashMap<>();
 
         morePaperLib = new MorePaperLib(plugin);
@@ -59,6 +62,8 @@ public final class ActivityRewarder extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        updater.shutdown();
+
         if (morePaperLib != null) {
             morePaperLib.scheduling().cancelGlobalTasks();
             morePaperLib = null;
@@ -91,6 +96,10 @@ public final class ActivityRewarder extends JavaPlugin {
         for (Listener listener : listeners) {
             getServer().getPluginManager().registerEvents(listener, this);
         }
+    }
+
+    public Updater getUpdater() {
+        return updater;
     }
 
     public static Module getModule(String id) {

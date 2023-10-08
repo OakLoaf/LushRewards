@@ -10,6 +10,7 @@ import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.utils.Updater;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -159,6 +160,26 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     }
 
                     ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
+                    return true;
+                }
+                case "update" -> {
+                    if (!sender.hasPermission("activityrewarder.update")) {
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        return true;
+                    }
+
+                    Updater updater = ActivityRewarder.getInstance().getUpdater();
+
+                    if (updater.isAlreadyDownloaded() || !updater.isUpdateAvailable()) {
+                        ChatColorHandler.sendMessage(sender, "&#ff6969It looks like there is no new update available!");
+                        return true;
+                    }
+
+                    if (updater.downloadUpdate()) {
+                        ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully updated ActivityRewarder, restart the server to apply changes!");
+                    } else {
+                        ChatColorHandler.sendMessage(sender, "&#ff6969Failed to update ActivityRewarder!");
+                    }
                     return true;
                 }
             }
@@ -422,6 +443,9 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             }
             if (commandSender.hasPermission("activityrewarder.setstreak")) {
                 tabComplete.add("set-streak");
+            }
+            if (commandSender.hasPermission("activityrewarder.update")) {
+                tabComplete.add("update");
             }
         } else if (args.length == 2) {
             switch (args[0].toLowerCase()) {

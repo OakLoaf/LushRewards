@@ -4,6 +4,9 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTracker;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
+import me.dave.activityrewarder.utils.Updater;
+import me.dave.chatcolorhandler.ChatColorHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +26,15 @@ public class RewardUserEvents implements Listener {
                     playtimeTrackerModule.startPlaytimeTracker(event.getPlayer());
                 }
             });
+
+        if (player.hasPermission("activityrewarder.update")) {
+            Updater updater = ActivityRewarder.getInstance().getUpdater();
+            if (updater.isUpdateAvailable() && !updater.isAlreadyDownloaded()) {
+                Bukkit.getScheduler().runTaskLater(ActivityRewarder.getInstance(), () -> {
+                    ChatColorHandler.sendMessage(player, "&#ffe27aA new update is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!");
+                }, 40);
+            }
+        }
     }
 
     @EventHandler
