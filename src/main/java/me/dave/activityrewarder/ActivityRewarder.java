@@ -4,7 +4,13 @@ import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
 import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
+import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.Updater;
+import me.dave.activityrewarder.utils.skullcreator.LegacySkullCreator;
+import me.dave.activityrewarder.utils.skullcreator.NewSkullCreator;
+import me.dave.activityrewarder.utils.skullcreator.SkullCreator;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -23,6 +29,7 @@ public final class ActivityRewarder extends JavaPlugin {
     private static MorePaperLib morePaperLib;
     private static ConfigManager configManager;
     private static DataManager dataManager;
+    private static NotificationHandler notificationHandler;
     private static boolean floodgateEnabled = false;
     private static PlaceholderAPIHook placeholderAPIHook = null;
     private Updater updater;
@@ -34,6 +41,7 @@ public final class ActivityRewarder extends JavaPlugin {
         modules = new ConcurrentHashMap<>();
 
         morePaperLib = new MorePaperLib(plugin);
+        notificationHandler = new NotificationHandler();
         configManager = new ConfigManager();
         configManager.reloadConfig();
         dataManager = new DataManager();
@@ -58,6 +66,10 @@ public final class ActivityRewarder extends JavaPlugin {
             placeholderAPIHook.register();
             plugin.getLogger().info("Found plugin \"PlaceholderAPI\". PlaceholderAPI support enabled.");
         }
+
+        if (getModule(PlaytimeTrackerModule.ID) instanceof PlaytimeTrackerModule module) {
+            Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
+        }
     }
 
     @Override
@@ -67,6 +79,11 @@ public final class ActivityRewarder extends JavaPlugin {
         if (morePaperLib != null) {
             morePaperLib.scheduling().cancelGlobalTasks();
             morePaperLib = null;
+        }
+
+        if (notificationHandler != null) {
+            notificationHandler.stopNotificationTask();
+            notificationHandler = null;
         }
 
         if (dataManager != null) {
@@ -130,6 +147,10 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static DataManager getDataManager() {
         return dataManager;
+    }
+
+    public static NotificationHandler getNotificationHandler() {
+        return notificationHandler;
     }
 
     public static boolean isFloodgateEnabled() {

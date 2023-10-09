@@ -24,8 +24,6 @@ public class PlaytimeTrackerModule extends Module {
         playtimeTrackers = new ConcurrentHashMap<>();
         poison = false;
 
-        Bukkit.getOnlinePlayers().forEach(this::startPlaytimeTracker);
-
         ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
                 (task) -> {
                     if (poison || ActivityRewarder.getModule(PlaytimeTrackerModule.ID) == null) {

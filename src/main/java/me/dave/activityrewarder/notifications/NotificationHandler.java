@@ -7,34 +7,26 @@ import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 public class NotificationHandler {
-    private int counter = 0;
+    private ScheduledTask notificationTask;
 
-
-    public void reloadNotifications(int reminderPeriod) {
-        counter += 1;
-        startNotificationTask(reminderPeriod);
-    }
-
-    private void startNotificationTask(int reminderPeriod) {
+    public void startNotificationTask(int reminderPeriod) {
         if (reminderPeriod <= 0) {
             return;
         }
 
         int reminderPeriodMs = reminderPeriod * 50;
-        int thisNotifNum = counter;
 
+        if (this.notificationTask != null) {
+            notificationTask.cancel();
+        }
 
-        ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate((task) -> {
-            if (counter != thisNotifNum) {
-                task.cancel();
-                return;
-            }
-
+        this.notificationTask = ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
                 if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
@@ -52,5 +44,17 @@ public class NotificationHandler {
             }
 
         }, Duration.of(Math.round((double) reminderPeriodMs / 3), ChronoUnit.MILLIS), Duration.of(reminderPeriodMs, ChronoUnit.MILLIS));
+    }
+
+    public void stopNotificationTask() {
+        if (notificationTask != null) {
+            this.notificationTask.cancel();
+            this.notificationTask = null;
+        }
+    }
+
+    public void reloadNotifications() {
+        stopNotificationTask();
+        startNotificationTask(ActivityRewarder.getConfigManager().getReminderPeriod());
     }
 }

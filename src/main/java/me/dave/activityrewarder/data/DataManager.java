@@ -36,9 +36,7 @@ public class DataManager {
             }
         }
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            getOrLoadRewardUser(player).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName()));
-        }
+        Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
 
     public void reloadRewardUsers() {

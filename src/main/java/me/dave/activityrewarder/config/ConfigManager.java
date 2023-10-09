@@ -7,7 +7,6 @@ import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
@@ -22,7 +21,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigManager {
-    private final NotificationHandler notificationHandler = new NotificationHandler();
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
@@ -87,7 +85,7 @@ public class ConfigManager {
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadMessages(config.getConfigurationSection("messages"));
-        notificationHandler.reloadNotifications(reminderPeriod);
+        ActivityRewarder.getNotificationHandler().reloadNotifications();
 
         if (ActivityRewarder.getDataManager() != null) {
             ActivityRewarder.getDataManager().reloadRewardUsers();
