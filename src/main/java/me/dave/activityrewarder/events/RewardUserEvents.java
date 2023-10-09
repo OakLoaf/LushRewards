@@ -13,6 +13,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 public class RewardUserEvents implements Listener {
 
     @EventHandler
@@ -30,9 +33,9 @@ public class RewardUserEvents implements Listener {
         if (player.hasPermission("activityrewarder.update")) {
             Updater updater = ActivityRewarder.getInstance().getUpdater();
             if (updater.isUpdateAvailable() && !updater.isAlreadyDownloaded()) {
-                Bukkit.getScheduler().runTaskLater(ActivityRewarder.getInstance(), () -> {
+                ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> {
                     ChatColorHandler.sendMessage(player, "&#ffe27aA new update is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!");
-                }, 40);
+                }, Duration.of(2, ChronoUnit.SECONDS));
             }
         }
     }
