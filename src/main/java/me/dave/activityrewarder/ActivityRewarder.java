@@ -47,7 +47,7 @@ public final class ActivityRewarder extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        updater = new Updater(this, 107545, "rewards update");
+        updater = new Updater(this, "activity-rewarder", "rewards update");
         modules = new ConcurrentHashMap<>();
 
         morePaperLib = new MorePaperLib(plugin);

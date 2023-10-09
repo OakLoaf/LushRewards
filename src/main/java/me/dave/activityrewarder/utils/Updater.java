@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.utils;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.dave.activityrewarder.ActivityRewarder;
@@ -20,21 +21,22 @@ public class Updater {
     private final ScheduledExecutorService updateExecutor = Executors.newScheduledThreadPool(1);
     private final Logger logger;
 
-    private final int spigotResourceId;
+    private final String modrinthProjectSlug;
     private final String currentVersion;
     private final String jarName;
     private final String downloadCommand;
 
     private boolean enabled;
     private String latestVersion;
+    private String downloadUrl;
 
     private boolean updateAvailable = false;
     private boolean ready = false;
     private boolean alreadyDownloaded = false;
 
-    public Updater(Plugin plugin, int spigotResourceId, String downloadCommand) {
+    public Updater(Plugin plugin, String modrinthProjectSlug, String downloadCommand) {
         this.logger = plugin.getLogger();
-        this.spigotResourceId = spigotResourceId;
+        this.modrinthProjectSlug = modrinthProjectSlug;
         String currentVersion = plugin.getDescription().getVersion();
         this.currentVersion = currentVersion.contains("-") ? currentVersion.split("-")[0] : currentVersion;
         this.jarName = plugin.getDescription().getName();
@@ -54,7 +56,7 @@ public class Updater {
             return;
         }
 
-        URL url = new URL("https://api.spiget.org/v2/resources/" + spigotResourceId + "/versions/latest");
+        URL url = new URL("https://api.modrinth.com/v2/project/" + modrinthProjectSlug + "/version?featured=true");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.addRequestProperty("User-Agent", jarName + "/" + currentVersion);
 
@@ -65,9 +67,11 @@ public class Updater {
         InputStream inputStream = connection.getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
 
-        JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+        JsonArray versionsJson = JsonParser.parseReader(reader).getAsJsonArray();
+        JsonObject currVersionJson = versionsJson.get(0).getAsJsonObject();
 
-        latestVersion = json.get("name").getAsString();
+        latestVersion = currVersionJson.get("version_number").getAsString();
+        downloadUrl = currVersionJson.get("files").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString();
 
         if (latestVersion.contains("-")) {
             latestVersion = latestVersion.split("-")[0];
@@ -109,6 +113,7 @@ public class Updater {
         } else if (!ready) {
             logger.info("You are up to date! (" + latestVersion + ")");
         }
+
         ready = true;
     }
 
@@ -145,7 +150,7 @@ public class Updater {
         }
 
         try {
-            URL url = new URL("https://api.spiget.org/v2/resources/" + spigotResourceId + "/download");
+            URL url = new URL(downloadUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.addRequestProperty("User-Agent", jarName + "/" + currentVersion);
             connection.setInstanceFollowRedirects(true);

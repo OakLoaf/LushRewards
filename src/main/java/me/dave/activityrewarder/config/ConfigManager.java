@@ -86,7 +86,7 @@ public class ConfigManager {
             try {
                 ActivityRewarder.getInstance().getUpdater().check();
             } catch (Exception e) {
-                ActivityRewarder.getInstance().getLogger().info("Unable to check for update: " + e.getMessage());
+                ActivityRewarder.getInstance().getLogger().severe("Unable to check for update: " + e.getMessage());
             }
         }
 
