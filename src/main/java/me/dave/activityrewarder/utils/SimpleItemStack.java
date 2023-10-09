@@ -1,5 +1,6 @@
 package me.dave.activityrewarder.utils;
 
+import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.Material;
@@ -165,9 +166,9 @@ public class SimpleItemStack implements Cloneable {
             }
             if (itemMeta instanceof SkullMeta skullMeta && skullTexture != null) {
                 if (skullTexture.equals("mirror") && player != null) {
-                    SkullCreator.mutateItemMeta(skullMeta, SkullCreator.getTexture(player));
+                    ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, ActivityRewarder.getSkullCreator().getTexture(player));
                 } else {
-                    SkullCreator.mutateItemMeta(skullMeta, skullTexture);
+                    ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, skullTexture);
                 }
             }
 
@@ -280,7 +281,7 @@ public class SimpleItemStack implements Cloneable {
                 simpleItemStack.setCustomModelData(itemMeta.getCustomModelData());
             }
             if (itemMeta instanceof SkullMeta) {
-                simpleItemStack.setSkullTexture(SkullCreator.getB64(itemStack));
+                simpleItemStack.setSkullTexture(ActivityRewarder.getSkullCreator().getB64(itemStack));
             }
         }
         return simpleItemStack;

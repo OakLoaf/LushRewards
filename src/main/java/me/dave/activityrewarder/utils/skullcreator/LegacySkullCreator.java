@@ -1,4 +1,4 @@
-package me.dave.activityrewarder.utils;
+package me.dave.activityrewarder.utils.skullcreator;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -15,11 +15,11 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.UUID;
 
-public class SkullCreator {
-    private static Method skullMetaSetProfileMethod;
-    private static Field skullMetaProfileField;
+public class LegacySkullCreator implements SkullCreator {
+    private Method skullMetaSetProfileMethod;
+    private Field skullMetaProfileField;
 
-    public static ItemStack getCustomSkull(String texture) {
+    public ItemStack getCustomSkull(String texture) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         if (item.getItemMeta() instanceof SkullMeta meta) {
             mutateItemMeta(meta, texture);
@@ -30,7 +30,7 @@ public class SkullCreator {
         }
     }
 
-    public static void mutateItemMeta(SkullMeta meta, String b64) {
+    public void mutateItemMeta(SkullMeta meta, String b64) {
         try {
             if (skullMetaSetProfileMethod == null) {
                 skullMetaSetProfileMethod = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
@@ -53,7 +53,7 @@ public class SkullCreator {
     }
 
     @Nullable
-    public static String getB64(ItemStack itemStack) {
+    public String getB64(ItemStack itemStack) {
         try {
             if (itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof SkullMeta skullMeta) {
                 if (skullMetaProfileField == null) {
@@ -73,7 +73,7 @@ public class SkullCreator {
         }
     }
 
-    public static String getTexture(Player player) {
+    public String getTexture(Player player) {
         GameProfile profile;
         try {
             Method getProfileMethod = player.getClass().getDeclaredMethod("getProfile");
@@ -93,7 +93,7 @@ public class SkullCreator {
         return property.getValue();
     }
 
-    private static GameProfile makeProfile(String b64) {
+    private GameProfile makeProfile(String b64) {
         UUID id = null;
         try {
             id = new UUID(b64.substring(b64.length() - 20).hashCode(), b64.substring(b64.length() - 10).hashCode());
