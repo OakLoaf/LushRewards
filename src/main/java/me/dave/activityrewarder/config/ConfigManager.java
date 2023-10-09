@@ -80,7 +80,7 @@ public class ConfigManager {
             ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
         }
 
-        ActivityRewarder.getInstance().getUpdater().setEnabled(config.getBoolean("enable-updater"));
+        ActivityRewarder.getInstance().getUpdater().setEnabled(config.getBoolean("enable-updater", true));
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
