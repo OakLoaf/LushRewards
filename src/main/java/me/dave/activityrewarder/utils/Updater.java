@@ -54,7 +54,7 @@ public class Updater {
             return;
         }
 
-        URL url = new URL("https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=" + spigotResourceId);
+        URL url = new URL("https://api.spiget.org/v2/resources/" + spigotResourceId + "/versions/latest");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.addRequestProperty("User-Agent", jarName + "/" + currentVersion);
 
@@ -67,7 +67,7 @@ public class Updater {
 
         JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
 
-        latestVersion = json.get("current_version").getAsString();
+        latestVersion = json.get("name").getAsString();
 
         if (latestVersion.contains("-")) {
             latestVersion = latestVersion.split("-")[0];

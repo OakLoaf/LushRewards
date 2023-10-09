@@ -80,7 +80,15 @@ public class ConfigManager {
             ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
         }
 
-        ActivityRewarder.getInstance().getUpdater().setEnabled(config.getBoolean("enable-updater", true));
+        boolean enableUpdater = config.getBoolean("enable-updater", true);
+        ActivityRewarder.getInstance().getUpdater().setEnabled(enableUpdater);
+        if (enableUpdater) {
+            try {
+                ActivityRewarder.getInstance().getUpdater().check();
+            } catch (Exception e) {
+                ActivityRewarder.getInstance().getLogger().info("Unable to check for update: " + e.getMessage());
+            }
+        }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
