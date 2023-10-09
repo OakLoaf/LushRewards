@@ -35,9 +35,8 @@ public class Updater {
     public Updater(Plugin plugin, int spigotResourceId, String downloadCommand) {
         this.logger = plugin.getLogger();
         this.spigotResourceId = spigotResourceId;
-//        String currentVersion = plugin.getDescription().getVersion();
-//        this.currentVersion = currentVersion.contains("-") ? currentVersion.split("-")[0] : currentVersion;
-        this.currentVersion = "2.0.5";
+        String currentVersion = plugin.getDescription().getVersion();
+        this.currentVersion = currentVersion.contains("-") ? currentVersion.split("-")[0] : currentVersion;
         this.jarName = plugin.getDescription().getName();
         this.downloadCommand = downloadCommand;
 
