@@ -40,7 +40,8 @@ public class DataManager {
     }
 
     public void reloadRewardUsers() {
-        uuidToRewardUser.keySet().forEach(uuid -> {
+        uuidToRewardUser.forEach((uuid, rewardUser) -> {
+            rewardUser.save();
             unloadRewarderUser(uuid);
             loadRewardUser(uuid);
         });

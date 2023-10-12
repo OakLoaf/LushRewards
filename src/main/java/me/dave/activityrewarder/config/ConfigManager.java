@@ -36,9 +36,7 @@ public class ConfigManager {
     public ConfigManager() {
         if (isOutdated()) {
             try {
-                new ActivityRewarderConfigUpdater().startImport().thenAccept(success -> {
-                    reloadConfig();
-                });
+                new ActivityRewarderConfigUpdater().startImport().thenAccept(success -> reloadConfig());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -78,12 +76,7 @@ public class ConfigManager {
             requiresPlaytimeTracker = true;
         }
         if (requiresPlaytimeTracker) {
-            PlaytimeTrackerModule module = new PlaytimeTrackerModule(PlaytimeTrackerModule.ID);
-            ActivityRewarder.registerModule(module);
-
-            if (ActivityRewarder.getDataManager() != null) {
-                Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
-            }
+            ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);
@@ -103,6 +96,9 @@ public class ConfigManager {
 
         if (ActivityRewarder.getDataManager() != null) {
             ActivityRewarder.getDataManager().reloadRewardUsers();
+
+            PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule(PlaytimeTrackerModule.ID);
+            Bukkit.getOnlinePlayers().forEach(playtimeTrackerModule::startPlaytimeTracker);
         }
     }
 
