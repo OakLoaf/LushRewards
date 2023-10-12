@@ -10,6 +10,7 @@ import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -77,7 +78,12 @@ public class ConfigManager {
             requiresPlaytimeTracker = true;
         }
         if (requiresPlaytimeTracker) {
-            ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
+            PlaytimeTrackerModule module = new PlaytimeTrackerModule(PlaytimeTrackerModule.ID);
+            ActivityRewarder.registerModule(module);
+
+            if (ActivityRewarder.getDataManager() != null) {
+                Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
+            }
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);
