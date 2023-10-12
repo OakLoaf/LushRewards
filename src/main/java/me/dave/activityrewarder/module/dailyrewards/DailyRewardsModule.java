@@ -18,12 +18,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DailyRewardsModule extends Module {
     public static final String ID = "daily-rewards";
-    private int rewardsIndex;
-    private ConcurrentHashMap<Integer, DailyRewardCollection> rewards;
+    private HashSet<DailyRewardCollection> rewards;
     private int resetDaysAt;
     private boolean streakMode;
     private boolean allowRewardsStacking;
@@ -60,8 +58,7 @@ public class DailyRewardsModule extends Module {
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
-        this.rewardsIndex = 0;
-        this.rewards = new ConcurrentHashMap<>();
+        this.rewards = new HashSet<>();
 
         LocalDate today = LocalDate.now();
         for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
@@ -97,12 +94,12 @@ public class DailyRewardsModule extends Module {
 
                     for (LocalDate dateIndex = lowestDate; !dateIndex.isAfter(highestDate); dateIndex = dateIndex.plusDays(1)) {
                         if (dailyRewardCollection.isAvailableOn(dateIndex)) {
-                            registerRewardCollection(dailyRewardCollection);
+                            rewards.add(dailyRewardCollection);
                             break;
                         }
                     }
                 } else {
-                    registerRewardCollection(dailyRewardCollection);
+                    rewards.add(dailyRewardCollection);
                 }
             }
         }
@@ -118,23 +115,16 @@ public class DailyRewardsModule extends Module {
         }
 
         guiFormat = null;
-        rewardsIndex = 0;
-    }
-
-    public int registerRewardCollection(DailyRewardCollection collection) {
-        rewardsIndex++;
-        rewards.put(rewardsIndex, collection);
-        return rewardsIndex;
     }
 
     @NotNull
     public Collection<DailyRewardCollection> getDayNumRewards(int day) {
-        return rewards.values().stream().filter(rewardCollection -> rewardCollection.isAvailableOn(day)).toList();
+        return rewards.stream().filter(rewardCollection -> rewardCollection.isAvailableOn(day)).toList();
     }
 
     @NotNull
     public Collection<DailyRewardCollection> getDateRewards(LocalDate date) {
-        return rewards.values().stream().filter(rewardCollection -> rewardCollection.isAvailableOn(date)).toList();
+        return rewards.stream().filter(rewardCollection -> rewardCollection.isAvailableOn(date)).toList();
     }
 
     public RewardDay getRewardDay(LocalDate date, int streakDay) {
@@ -153,7 +143,7 @@ public class DailyRewardsModule extends Module {
      */
     public Optional<DailyRewardCollection> findNextRewardFromCategory(int day, LocalDate date, String category) {
 
-        return rewards.values().stream()
+        return rewards.stream()
                 .filter(reward ->
                         !(reward.getCategory().equalsIgnoreCase(category)
                                 || (reward.getRewardDayNum() != null && reward.getRewardDayNum() < day)
