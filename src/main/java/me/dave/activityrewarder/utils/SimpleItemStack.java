@@ -291,13 +291,13 @@ public class SimpleItemStack implements Cloneable {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
 
         if (configurationSection.contains("material")) {
-            simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material")));
+            simpleItemStack.setType(ConfigParser.getMaterial(configurationSection.getString("material", null)));
         }
         if (configurationSection.contains("amount")) {
             simpleItemStack.setAmount(configurationSection.getInt("amount", 1));
         }
         if (configurationSection.contains("display-name")) {
-            simpleItemStack.setDisplayName(configurationSection.getString("display-name"));
+            simpleItemStack.setDisplayName(configurationSection.getString("display-name", null));
         }
         if (configurationSection.contains("lore")) {
             simpleItemStack.setLore(configurationSection.getStringList("lore"));
@@ -309,7 +309,7 @@ public class SimpleItemStack implements Cloneable {
             simpleItemStack.setCustomModelData(configurationSection.getInt("custom-model-data"));
         }
         if (configurationSection.contains("skull-texture")) {
-            simpleItemStack.setSkullTexture(configurationSection.getString("skull-texture"));
+            simpleItemStack.setSkullTexture(configurationSection.getString("skull-texture", null));
         }
 
         return simpleItemStack;

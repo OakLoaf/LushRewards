@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ActivityRewarderConfigUpdater extends ConfigImporter {
@@ -68,8 +69,17 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
                 });
             }
 
+            arConfig.set("item-templates.redeemable-reward.material", null);
+            arConfig.set("item-templates.redeemable-reward.skull-texture", null);
+
+            arConfig.set("item-templates.missed-reward.material", null);
+            arConfig.set("item-templates.missed-reward.skull-texture", null);
+
             if (oldConfig.contains("gui.redeemable-name")) {
+                arConfig.set("item-templates.default-reward.display-name", oldConfig.getString("gui.redeemable-name"));
                 arConfig.set("item-templates.redeemable-reward.display-name", oldConfig.getString("gui.redeemable-name"));
+                arConfig.set("item-templates.missed-reward.display-name", oldConfig.getString("gui.redeemable-name") + " &8(Missed)");
+                arConfig.set("item-templates.upcoming-reward.display-name", oldConfig.getString("gui.redeemable-name") + " &8(Upcoming)");
             }
             if (oldConfig.contains("gui.collected-item")) {
                 String[] sizeDataArr = oldConfig.getString("gui.collected-item", "").split(";");
@@ -84,7 +94,7 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
                 arConfig.set("item-templates.collected-reward.display-name", oldConfig.getString("gui.collected-name"));
             }
             if (oldConfig.contains("gui.border-item")) {
-                String[] sizeDataArr = oldConfig.getString("gui.collected-item", "").split(";");
+                String[] sizeDataArr = oldConfig.getString("gui.border-item", "").split(";");
                 String materialName = sizeDataArr[0];
                 String customModelData = sizeDataArr.length >= 2 ? sizeDataArr[1] : null;
 
@@ -107,7 +117,17 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
                 arRewardsConfig.set("gui.title", oldConfig.getString("gui.title"));
             }
             if (oldConfig.contains("gui.template")) {
-                arRewardsConfig.set("gui.template", oldConfig.getString("gui.template"));
+                String oldTemplate = oldConfig.getString("gui.template", "DEFAULT");
+                if (oldTemplate.equalsIgnoreCase("DEFAULT")) {
+                    arRewardsConfig.set("gui.template", "CUSTOM");
+                    arRewardsConfig.set("gui.format", List.of(
+                        "#########",
+                        "RRRRRRR#U",
+                        "#########"
+                    ));
+                } else {
+                    arRewardsConfig.set("gui.template", oldTemplate);
+                }
             }
             if (oldConfig.contains("gui.format")) {
                 arRewardsConfig.set("gui.format", oldConfig.getStringList("gui.format"));
