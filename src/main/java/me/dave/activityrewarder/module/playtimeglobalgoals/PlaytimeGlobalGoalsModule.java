@@ -5,7 +5,7 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
-import me.dave.activityrewarder.rewards.collections.RewardCollection;
+import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
-    private ConcurrentHashMap<Integer, RewardCollection> minutesToReward;
+    private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
     public PlaytimeGlobalGoalsModule(String id) {
         super(id);
@@ -46,9 +46,9 @@ public class PlaytimeGlobalGoalsModule extends Module {
 
         this.minutesToReward = new ConcurrentHashMap<>();
         for (Map<?, ?> rewardMap : config.getMapList("global-goals")) {
-            RewardCollection rewardCollection;
+            PlaytimeRewardCollection rewardCollection;
             try {
-                rewardCollection = RewardCollection.from(rewardMap);
+                rewardCollection = PlaytimeRewardCollection.from(rewardMap);
             } catch(InvalidRewardException e) {
                 e.printStackTrace();
                 continue;
@@ -78,24 +78,13 @@ public class PlaytimeGlobalGoalsModule extends Module {
     }
 
     @Nullable
-    public RewardCollection getRewardCollection(int minutes) {
+    public PlaytimeRewardCollection getRewardCollection(int minutes) {
         return minutesToReward.get(minutes);
     }
 
     @NotNull
-    public List<RewardCollection> getRewardCollectionsInRange(int lower, int upper) {
-        return getKeysInRange(lower, upper).stream().map(key -> minutesToReward.get(key)).toList();
-    }
-
-    /**
-     *
-     * @param lower Lower bound (inclusive)
-     * @param upper Upper bound (exclusive)
-     * @return List of keys that fit within the range
-     */
-    @NotNull
-    private List<Integer> getKeysInRange(int lower, int upper) {
-        return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
+    public List<PlaytimeRewardCollection> getRewardCollectionsInRange(int lower, int upper) {
+        return minutesToReward.values().stream().filter(playtimeRewardCollection -> playtimeRewardCollection.isAvailableAt(lower, upper)).toList();
     }
 
     public GuiFormat getGuiFormat() {
@@ -107,7 +96,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
         PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
         int minutesPlayed = rewardUser.getMinutesPlayed();
 
-        List<RewardCollection> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
+        List<PlaytimeRewardCollection> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
         if (rewards.isEmpty()) {
             return false;
         }
