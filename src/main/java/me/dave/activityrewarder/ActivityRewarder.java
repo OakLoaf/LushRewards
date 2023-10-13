@@ -102,12 +102,12 @@ public final class ActivityRewarder extends JavaPlugin {
             dataManager = null;
         }
 
-        configManager = null;
-
         if (modules != null) {
-            modules.clear();
+            unregisterAllModules();
             modules = null;
         }
+
+        configManager = null;
     }
 
     public boolean callEvent(Event event) {
@@ -136,6 +136,14 @@ public final class ActivityRewarder extends JavaPlugin {
     public static void registerModule(Module module) {
         modules.put(module.getId(), module);
         module.enable();
+    }
+
+    public static void unregisterModule(String moduleId) {
+        Module module = modules.get(moduleId);
+        if (module != null) {
+            module.disable();
+        }
+        modules.remove(moduleId);
     }
 
     public static void unregisterAllModules() {
