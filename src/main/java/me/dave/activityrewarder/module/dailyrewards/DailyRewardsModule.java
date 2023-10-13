@@ -142,38 +142,40 @@ public class DailyRewardsModule extends Module {
      * @return The reward found
      */
     public Optional<DailyRewardCollection> findNextRewardFromCategory(int day, LocalDate date, String category) {
-
         return rewards.stream()
-                .filter(reward ->
-                        !(reward.getCategory().equalsIgnoreCase(category)
-                                || (reward.getRewardDayNum() != null && reward.getRewardDayNum() < day)
-                                || (reward.getRewardDate() != null && reward.getRewardDate().isBefore(date))))
-                .min((reward1, reward2) -> {
-                    LocalDate date1 = reward1.getRewardDate();
-                    LocalDate date2 = reward2.getRewardDate();
+            .filter(reward ->
+                reward.getCategory().equalsIgnoreCase(category)
+                    && ((
+                    reward.getRewardDayNum() != null && reward.getRewardDayNum() >= day)
+                    || (reward.getRewardDate() != null && !reward.getRewardDate().isBefore(date))
+                )
+            )
+            .min((reward1, reward2) -> {
+                LocalDate date1 = reward1.getRewardDate();
+                LocalDate date2 = reward2.getRewardDate();
 
-                    if (date1 == null) {
-                        Integer dayNum1 = reward1.getRewardDayNum();
+                if (date1 == null) {
+                    Integer dayNum1 = reward1.getRewardDayNum();
 
-                        if (dayNum1 != null) {
-                            date1 = date.plusDays(dayNum1 - day);
-                        }
+                    if (dayNum1 != null) {
+                        date1 = date.plusDays(dayNum1 - day);
                     }
+                }
 
-                    if (date2 == null) {
-                        Integer dayNum2 = reward2.getRewardDayNum();
+                if (date2 == null) {
+                    Integer dayNum2 = reward2.getRewardDayNum();
 
-                        if (dayNum2 != null) {
-                            date2 = date.plusDays(dayNum2 - day);
-                        }
+                    if (dayNum2 != null) {
+                        date2 = date.plusDays(dayNum2 - day);
                     }
+                }
 
-                    if (date1 == null || date2 == null) {
-                        return date1 == null && date2 == null ? 0 : (date1 == null ? -1 : 1);
-                    }
+                if (date1 == null || date2 == null) {
+                    return date1 == null && date2 == null ? 0 : (date1 == null ? -1 : 1);
+                }
 
-                    return date1.compareTo(date2);
-                });
+                return date1.compareTo(date2);
+            });
     }
 
     public int getResetDay() {
