@@ -145,8 +145,7 @@ public class DailyRewardsModule extends Module {
         return rewards.stream()
             .filter(reward ->
                 reward.getCategory().equalsIgnoreCase(category)
-                    && ((
-                    reward.getRewardDayNum() != null && reward.getRewardDayNum() >= day)
+                    && ((reward.getRewardDayNum() != null && reward.getRewardDayNum() >= day)
                     || (reward.getRewardDate() != null && !reward.getRewardDate().isBefore(date))
                 )
             )
