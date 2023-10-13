@@ -3,6 +3,7 @@ package me.dave.activityrewarder.config;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.importer.ActivityRewarderConfigUpdater;
+import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
@@ -10,7 +11,6 @@ import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -61,7 +61,9 @@ public class ConfigManager {
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none").toUpperCase());
 
-        ActivityRewarder.unregisterAllModules();
+        ActivityRewarder.unregisterModule(DailyRewardsModule.ID);
+        ActivityRewarder.unregisterModule(PlaytimeDailyGoalsModule.ID);
+        ActivityRewarder.unregisterModule(PlaytimeGlobalGoalsModule.ID);
 
         boolean requiresPlaytimeTracker = false;
         if (config.getBoolean("modules.daily-rewards", false)) {
@@ -75,8 +77,12 @@ public class ConfigManager {
             ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule(PlaytimeGlobalGoalsModule.ID));
             requiresPlaytimeTracker = true;
         }
-        if (requiresPlaytimeTracker) {
+
+        Module playtimeTrackerModule = ActivityRewarder.getModule(PlaytimeTrackerModule.ID);
+        if (requiresPlaytimeTracker && playtimeTrackerModule == null) {
             ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
+        } else if (!requiresPlaytimeTracker && playtimeTrackerModule != null) {
+            ActivityRewarder.unregisterModule(PlaytimeTrackerModule.ID);
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);
@@ -96,9 +102,6 @@ public class ConfigManager {
 
         if (ActivityRewarder.getDataManager() != null) {
             ActivityRewarder.getDataManager().reloadRewardUsers();
-
-            PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule(PlaytimeTrackerModule.ID);
-            Bukkit.getOnlinePlayers().forEach(playtimeTrackerModule::startPlaytimeTracker);
         }
     }
 
