@@ -47,7 +47,7 @@ public class DailyRewardsModule extends Module {
 
         this.resetDaysAt = config.getInt("reset-days-at", -1);
         this.streakMode = config.getBoolean("streak-mode", false);
-        this.allowRewardsStacking = config.getBoolean("allow-rewards-stacking", true);
+        this.allowRewardsStacking = config.getBoolean("allow-reward-stacking", true);
         this.defaultRedeemSound = ConfigParser.getSound(config.getString("default-redeem-sound", "none").toUpperCase());
         this.upcomingCategory = config.getString("upcoming-category");
 
