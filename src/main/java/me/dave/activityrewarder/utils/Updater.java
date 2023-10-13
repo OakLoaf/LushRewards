@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -133,47 +134,53 @@ public class Updater {
         return alreadyDownloaded;
     }
 
-    public boolean downloadUpdate() {
+    public CompletableFuture<Boolean> downloadUpdate() {
+
         if (!isEnabled()) {
             logger.warning("Updater is disabled");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         if (!isUpdateAvailable()) {
             logger.warning("No update is available!");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         if (isAlreadyDownloaded()) {
             logger.warning("The update has already been downloaded!");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
-        try {
-            URL url = new URL(downloadUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.addRequestProperty("User-Agent", jarName + "/" + currentVersion);
-            connection.setInstanceFollowRedirects(true);
-            HttpURLConnection.setFollowRedirects(true);
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        Bukkit.getScheduler().runTaskAsynchronously(ActivityRewarder.getInstance(), () -> {
+            try {
+                URL url = new URL(downloadUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.addRequestProperty("User-Agent", jarName + "/" + currentVersion);
+                connection.setInstanceFollowRedirects(true);
+                HttpURLConnection.setFollowRedirects(true);
 
-            if (connection.getResponseCode() != 200) {
-                throw new IllegalStateException("Response code was " + connection.getResponseCode());
+                if (connection.getResponseCode() != 200) {
+                    throw new IllegalStateException("Response code was " + connection.getResponseCode());
+                }
+
+                ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
+                File out = new File(getUpdateFolder(), jarName + "-" + latestVersion + ".jar");
+                logger.info(out.getAbsolutePath());
+                FileOutputStream fos = new FileOutputStream(out);
+                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                fos.close();
+
+                updateAvailable = false;
+                alreadyDownloaded = true;
+                completableFuture.complete(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                completableFuture.complete(false);
             }
+        });
 
-            ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
-            File out = new File(getUpdateFolder(), jarName + "-" + latestVersion + ".jar");
-            logger.info(out.getAbsolutePath());
-            FileOutputStream fos = new FileOutputStream(out);
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-            fos.close();
-
-            updateAvailable = false;
-            alreadyDownloaded = true;
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return completableFuture;
     }
 
     public void shutdown() {

@@ -175,11 +175,14 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if (updater.downloadUpdate()) {
-                        ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully updated ActivityRewarder, restart the server to apply changes!");
-                    } else {
-                        ChatColorHandler.sendMessage(sender, "&#ff6969Failed to update ActivityRewarder!");
-                    }
+                    updater.downloadUpdate().thenAccept(success -> {
+                        if (success) {
+                            ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully updated ActivityRewarder, restart the server to apply changes!");
+                        } else {
+                            ChatColorHandler.sendMessage(sender, "&#ff6969Failed to update ActivityRewarder!");
+                        }
+                    });
+
                     return true;
                 }
             }
