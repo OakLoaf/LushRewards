@@ -11,7 +11,7 @@ default-redeem-sound: ENTITY_PLAYER_LEVELUP
 # Upcoming category to display
 upcoming-category: large
 
-# List of rewards (%user% - The user being given the reward)
+# List of rewards (%player% - The user being given the reward)
 daily-rewards:
   default:
     on-date: 01-10-1982

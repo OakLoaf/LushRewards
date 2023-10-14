@@ -27,7 +27,7 @@ public class PlayerCommandReward extends Reward {
     protected void giveTo(Player player) {
         boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
         commands.forEach(command -> {
-            String thisCommand = command.replaceAll("%user%", player.getName());
+            String thisCommand = command.replaceAll("%user%", player.getName()).replaceAll("%player%", player.getName());
 
             PlaceholderAPIHook placeholderAPIHook = ActivityRewarder.getPlaceholderAPIHook();
             if (placeholderAPIHook != null) {
