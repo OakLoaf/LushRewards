@@ -136,7 +136,7 @@ public class PlaytimeDailyGoalsModule extends Module {
 
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given")
             .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
-            .replaceAll("%hours%,", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+            .replaceAll("%hours%", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
 
         playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);

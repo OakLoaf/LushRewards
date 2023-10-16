@@ -30,13 +30,18 @@ public class PlaytimeRewardCollection extends RewardCollection {
     }
 
     public int isAvailableAt(int lastCollected, int totalMinutes) {
+        int amount = 0;
         int repeatsUntil = this.repeatsUntil != null ? this.repeatsUntil : Integer.MAX_VALUE;
 
-        if (repeatFrequency <= 0 || totalMinutes < minutes || lastCollected > repeatsUntil) {
-            return 0;
+        if (minutes > lastCollected && minutes < totalMinutes) {
+            amount++;
         }
 
-        return (Math.min(totalMinutes, repeatsUntil) - minutes) / repeatFrequency;
+        if (repeatFrequency <= 0 || totalMinutes < minutes || lastCollected > repeatsUntil) {
+            return amount;
+        }
+
+        return amount + (Math.min(totalMinutes, repeatsUntil) - minutes) / repeatFrequency;
     }
 
     @NotNull
