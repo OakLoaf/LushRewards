@@ -7,6 +7,7 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -132,6 +133,11 @@ public class PlaytimeDailyGoalsModule extends Module {
                 rewardCollection.giveAll(player);
             }
         });
+
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given")
+            .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
+            .replaceAll("%hours%,", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+
         playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
 

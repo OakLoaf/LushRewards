@@ -6,11 +6,8 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
-import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
@@ -23,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -205,45 +201,14 @@ public class DailyRewardsGui extends AbstractGui {
 
                                 Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
-                                Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-
-                                if (dailyRewardsModule.shouldStackRewards()) {
-                                    rewardDay.giveAllRewards(player);
-                                } else {
-                                    priorityReward.giveAll(player);
-                                }
-
-                                Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-                                ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
-
-                                Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
+                               dailyRewardsModule.claimRewards(player);
 
                                 if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    PlaytimeDailyGoalsModuleUserData playtimeUser = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
-                                    HashMap<PlaytimeRewardCollection, Integer> dailyGoalRewards = dailyGoalsModule.getRewardCollectionsInRange(playtimeUser.getLastCollectedPlaytime(), rewardUser.getMinutesPlayed());
-                                    if (!dailyGoalRewards.isEmpty()) {
-                                        Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                                        dailyGoalRewards.forEach((rewardCollection, amount) -> {
-                                            for (int i = 0; i < amount; i++) {
-                                                rewardCollection.giveAll(player);
-                                            }
-                                        });
-                                        Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
-                                    }
+                                    dailyGoalsModule.claimRewards(player);
                                 }
 
                                 if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    PlaytimeGoalsModuleUserData playtimeUser = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
-                                    HashMap<PlaytimeRewardCollection, Integer> globalGoalRewards = globalGoalsModule.getRewardCollectionsInRange(playtimeUser.getLastCollectedPlaytime(), rewardUser.getMinutesPlayed());
-                                    if (!globalGoalRewards.isEmpty()) {
-                                        Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                                        globalGoalRewards.forEach((rewardCollection, amount) -> {
-                                            for (int i = 0; i < amount; i++) {
-                                                rewardCollection.giveAll(player);
-                                            }
-                                        });
-                                        Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
-                                    }
+                                    globalGoalsModule.claimRewards(player);
                                 }
 
                                 player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
@@ -295,9 +260,7 @@ public class DailyRewardsGui extends AbstractGui {
                         slotMap.get(character).forEach(slot -> inventory.setItem(slot, itemStack));
                     }
                 }
-                case ' ' -> slotMap.get(character).forEach(slot -> {
-                    inventory.setItem(slot, new ItemStack(Material.AIR));
-                });
+                case ' ' -> slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                 default -> slotMap.get(character).forEach(slot -> {
                     SimpleItemStack simpleItemStack = ActivityRewarder.getConfigManager().getItemTemplate(String.valueOf(character));
 

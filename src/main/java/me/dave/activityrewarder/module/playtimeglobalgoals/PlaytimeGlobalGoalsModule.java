@@ -6,6 +6,7 @@ import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
+import me.dave.chatcolorhandler.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -113,6 +114,11 @@ public class PlaytimeGlobalGoalsModule extends Module {
                 rewardCollection.giveAll(player);
             }
         });
+
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given")
+            .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
+            .replaceAll("%hours%,", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+
         playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
 
