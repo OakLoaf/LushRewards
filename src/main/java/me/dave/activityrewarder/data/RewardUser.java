@@ -45,9 +45,7 @@ public class RewardUser {
     }
 
     public void setMinutesPlayed(int minutesPlayed) {
-        Bukkit.getScheduler().runTask(ActivityRewarder.getInstance(), () -> {
-            ActivityRewarder.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed));
-        });
+        ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> ActivityRewarder.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
 
         this.minutesPlayed = minutesPlayed;
         ActivityRewarder.getDataManager().saveRewardUser(this);

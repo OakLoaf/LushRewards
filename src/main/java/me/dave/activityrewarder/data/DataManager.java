@@ -65,7 +65,7 @@ public class DataManager {
     public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
         return ioHandler.loadData(uuid).thenApply((rewardUser) -> {
             uuidToRewardUser.put(uuid, rewardUser);
-            Bukkit.getScheduler().runTask(ActivityRewarder.getInstance(), () -> ActivityRewarder.getInstance().callEvent(new RewardUserLoadEvent(rewardUser)));
+            ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> ActivityRewarder.getInstance().callEvent(new RewardUserLoadEvent(rewardUser)));
             return rewardUser;
         });
     }

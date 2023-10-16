@@ -152,7 +152,8 @@ public class Updater {
         }
 
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        Bukkit.getScheduler().runTaskAsynchronously(ActivityRewarder.getInstance(), () -> {
+
+        ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
             try {
                 URL url = new URL(downloadUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
