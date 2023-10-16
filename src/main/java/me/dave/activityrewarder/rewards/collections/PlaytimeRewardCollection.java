@@ -33,7 +33,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         int amount = 0;
         int repeatsUntil = this.repeatsUntil != null ? this.repeatsUntil : Integer.MAX_VALUE;
 
-        if (minutes > lastCollected && minutes < totalMinutes) {
+        if (minutes > lastCollected && minutes <= totalMinutes) {
             amount++;
         }
 
