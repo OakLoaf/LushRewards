@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.List;
 
 public class DailyRewardsModuleUserData extends ModuleData {
     private int streakLength;
