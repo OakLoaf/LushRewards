@@ -89,7 +89,11 @@ public class PlaytimeTracker {
                     playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(0);
                 }
 
-                playtimeDailyGoalsModule.getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
+                playtimeDailyGoalsModule.getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach((rewardCollection, amount) -> {
+                    for (int i = 0; i < amount; i++) {
+                        rewardCollection.giveAll(player);
+                    }
+                });
                 playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(globalTime);
                 ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
             }
@@ -100,7 +104,11 @@ public class PlaytimeTracker {
                 RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
                 PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
 
-                playtimeGlobalGoalsModule.getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach(rewardCollection -> rewardCollection.giveAll(player));
+                playtimeGlobalGoalsModule.getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), globalTime).forEach((rewardCollection, amount) -> {
+                    for (int i = 0; i < amount; i++) {
+                        rewardCollection.giveAll(player);
+                    }
+                });
                 playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(globalTime);
                 ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
             }

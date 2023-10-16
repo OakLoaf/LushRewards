@@ -25,24 +25,18 @@ public class PlaytimeRewardCollection extends RewardCollection {
         this.repeatsUntil = repeatsUntil;
     }
 
-    public boolean isAvailableAt(int totalMinutes) {
+    public int isAvailableAt(int totalMinutes) {
         return isAvailableAt(0, totalMinutes);
     }
 
-    public boolean isAvailableAt(int lastCollected, int totalMinutes) {
-        if (minutes > lastCollected && minutes <= totalMinutes) {
-            return true;
+    public int isAvailableAt(int lastCollected, int totalMinutes) {
+        int repeatsUntil = this.repeatsUntil != null ? this.repeatsUntil : Integer.MAX_VALUE;
+
+        if (repeatFrequency <= 0 || totalMinutes < minutes || lastCollected > repeatsUntil) {
+            return 0;
         }
 
-        if (repeatFrequency <= 0 || totalMinutes < minutes) {
-            return false;
-        }
-
-        if (repeatsUntil == null || totalMinutes < repeatsUntil) {
-            return (totalMinutes - minutes) % repeatFrequency == 0;
-        } else {
-            return false;
-        }
+        return (Math.min(totalMinutes, repeatsUntil) - minutes) / repeatFrequency;
     }
 
     @NotNull

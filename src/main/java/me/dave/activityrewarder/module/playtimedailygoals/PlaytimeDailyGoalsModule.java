@@ -5,6 +5,7 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +23,7 @@ public class PlaytimeDailyGoalsModule extends Module {
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
-    private ConcurrentHashMap<Integer, RewardCollection> minutesToReward;
+    private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
     public PlaytimeDailyGoalsModule(String id) {
         super(id);
@@ -47,9 +49,9 @@ public class PlaytimeDailyGoalsModule extends Module {
 
         this.minutesToReward = new ConcurrentHashMap<>();
         for (Map<?, ?> rewardMap : config.getMapList("daily-goals")) {
-            RewardCollection rewardCollection;
+            PlaytimeRewardCollection rewardCollection;
             try {
-                rewardCollection = RewardCollection.from(rewardMap);
+                rewardCollection = PlaytimeRewardCollection.from(rewardMap);
             } catch(InvalidRewardException e) {
                 e.printStackTrace();
                 continue;
@@ -84,8 +86,15 @@ public class PlaytimeDailyGoalsModule extends Module {
     }
 
     @NotNull
-    public List<RewardCollection> getRewardCollectionsInRange(int lower, int upper) {
-        return getKeysInRange(lower, upper).stream().map(key -> minutesToReward.get(key)).toList();
+    public HashMap<PlaytimeRewardCollection, Integer> getRewardCollectionsInRange(int lower, int upper) {
+        HashMap<PlaytimeRewardCollection, Integer> output = new HashMap<>();
+        minutesToReward.values().forEach(rewardCollection -> {
+            int amount = rewardCollection.isAvailableAt(lower, upper);
+            if (amount > 0) {
+                output.put(rewardCollection, amount);
+            }
+        });
+        return output;
     }
 
     /**
@@ -113,12 +122,16 @@ public class PlaytimeDailyGoalsModule extends Module {
             playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(0);
         }
 
-        List<RewardCollection> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
         if (rewards.isEmpty()) {
             return false;
         }
 
-        rewards.forEach(rewardCollection -> rewardCollection.giveAll(player));
+        rewards.forEach((rewardCollection, amount) -> {
+            for (int i = 0; i < amount; i++) {
+                rewardCollection.giveAll(player);
+            }
+        });
         playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
 

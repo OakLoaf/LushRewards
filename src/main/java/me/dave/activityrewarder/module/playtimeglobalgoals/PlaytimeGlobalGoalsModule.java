@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -83,8 +83,15 @@ public class PlaytimeGlobalGoalsModule extends Module {
     }
 
     @NotNull
-    public List<PlaytimeRewardCollection> getRewardCollectionsInRange(int lower, int upper) {
-        return minutesToReward.values().stream().filter(playtimeRewardCollection -> playtimeRewardCollection.isAvailableAt(lower, upper)).toList();
+    public HashMap<PlaytimeRewardCollection, Integer> getRewardCollectionsInRange(int lower, int upper) {
+        HashMap<PlaytimeRewardCollection, Integer> output = new HashMap<>();
+        minutesToReward.values().forEach(rewardCollection -> {
+            int amount = rewardCollection.isAvailableAt(lower, upper);
+            if (amount > 0) {
+                output.put(rewardCollection, amount);
+            }
+        });
+        return output;
     }
 
     public GuiFormat getGuiFormat() {
@@ -96,12 +103,16 @@ public class PlaytimeGlobalGoalsModule extends Module {
         PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
         int minutesPlayed = rewardUser.getMinutesPlayed();
 
-        List<PlaytimeRewardCollection> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
         if (rewards.isEmpty()) {
             return false;
         }
 
-        rewards.forEach(rewardCollection -> rewardCollection.giveAll(player));
+        rewards.forEach((rewardCollection, amount) -> {
+            for (int i = 0; i < amount; i++) {
+                rewardCollection.giveAll(player);
+            }
+        });
         playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
 

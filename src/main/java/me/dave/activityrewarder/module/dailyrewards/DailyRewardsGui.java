@@ -6,9 +6,11 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
-import me.dave.activityrewarder.rewards.collections.RewardCollection;
+import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.activityrewarder.utils.SimpleItemStack;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -216,19 +219,29 @@ public class DailyRewardsGui extends AbstractGui {
                                 Debugger.sendDebugMessage("Attempting to send playtime rewards to " + player.getName(), Debugger.DebugMode.PLAYTIME);
 
                                 if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    RewardCollection dailyGoalRewards = dailyGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
-                                    if (dailyGoalRewards != null && !dailyGoalRewards.isEmpty()) {
+                                    PlaytimeDailyGoalsModuleUserData playtimeUser = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
+                                    HashMap<PlaytimeRewardCollection, Integer> dailyGoalRewards = dailyGoalsModule.getRewardCollectionsInRange(playtimeUser.getLastCollectedPlaytime(), rewardUser.getMinutesPlayed());
+                                    if (!dailyGoalRewards.isEmpty()) {
                                         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                                        dailyGoalRewards.giveAll(player);
+                                        dailyGoalRewards.forEach((rewardCollection, amount) -> {
+                                            for (int i = 0; i < amount; i++) {
+                                                rewardCollection.giveAll(player);
+                                            }
+                                        });
                                         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
                                     }
                                 }
 
                                 if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    RewardCollection globalGoalRewards = globalGoalsModule.getRewardCollection(rewardUser.getHoursPlayed());
-                                    if (globalGoalRewards != null && !globalGoalRewards.isEmpty()) {
+                                    PlaytimeGoalsModuleUserData playtimeUser = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
+                                    HashMap<PlaytimeRewardCollection, Integer> globalGoalRewards = globalGoalsModule.getRewardCollectionsInRange(playtimeUser.getLastCollectedPlaytime(), rewardUser.getMinutesPlayed());
+                                    if (!globalGoalRewards.isEmpty()) {
                                         Debugger.sendDebugMessage("Attempting to give rewards to player", Debugger.DebugMode.PLAYTIME);
-                                        globalGoalRewards.giveAll(player);
+                                        globalGoalRewards.forEach((rewardCollection, amount) -> {
+                                            for (int i = 0; i < amount; i++) {
+                                                rewardCollection.giveAll(player);
+                                            }
+                                        });
                                         Debugger.sendDebugMessage("Successfully gave player rewards", Debugger.DebugMode.PLAYTIME);
                                     }
                                 }
