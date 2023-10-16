@@ -175,6 +175,9 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
                     return true;
                 }
+                case "version" -> {
+                    ChatColorHandler.sendMessage(sender, "&#a8e1ffYou are currently running ActivityRewarder version &#58b1e0" + ActivityRewarder.getInstance().getDescription().getVersion());
+                }
             }
         } else if (args.length == 2) {
             switch (args[0].toLowerCase()) {
