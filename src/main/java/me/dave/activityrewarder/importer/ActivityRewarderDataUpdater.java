@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -60,7 +60,7 @@ public class ActivityRewarderDataUpdater extends ConfigImporter {
                     LocalDate lastCollectedDate = lastCollectedDateRaw != null ? LocalDate.parse(lastCollectedDateRaw, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
 
                     RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
-                    rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, dayNum, dayNum, startDate, lastCollectedDate, new ArrayList<>()));
+                    rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, dayNum, dayNum, startDate, lastCollectedDate, new HashSet<>()));
 
                     ActivityRewarder.getInstance().getLogger().info("Translating RewardUser data for " + name + " (" + uuid + ")");
                     try {

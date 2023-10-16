@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -105,7 +106,7 @@ public class DailyRewardsGui extends AbstractGui {
             slotMap.put(character, slot);
         }
 
-        List<String> collectedDates = moduleUserData.getCollectedDates();
+        HashSet<String> collectedDates = moduleUserData.getCollectedDates();
         for (Character character : slotMap.keySet()) {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {

@@ -17,7 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -42,7 +43,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
 
             int streakLength = moduleSection.getInt("streak-length", 0);
             int highestStreak = moduleSection.getInt("highest-streak", 0);
-            List<String> collectedDates = moduleSection.getStringList("collected-dates");
+            HashSet<String> collectedDates =  new HashSet<>(moduleSection.getStringList("collected-dates"));
 
             String startDateRaw = moduleSection.getString("start-date");
             LocalDate startDate = startDateRaw != null ? LocalDate.parse(startDateRaw, DateTimeFormatter.ofPattern("dd-MM-yyyy")) : LocalDate.now();
@@ -98,7 +99,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             } else {
                 configurationSection.set(moduleName + ".last-collected-date", null);
             }
-            configurationSection.set(moduleName + ".collected-dates", dailyRewardsModuleData.getCollectedDates());
+            configurationSection.set(moduleName + ".collected-dates", new ArrayList<>(dailyRewardsModuleData.getCollectedDates()));
         }
 
         if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {

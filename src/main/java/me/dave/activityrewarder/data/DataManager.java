@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -99,7 +99,7 @@ public class DataManager {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
             if (ActivityRewarder.getModule(DailyRewardsModule.ID) != null) {
-                rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, 0, 0, LocalDate.now(), null, new ArrayList<>()));
+                rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, 0, 0, LocalDate.now(), null, new HashSet<>()));
             }
 
             if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) != null) {

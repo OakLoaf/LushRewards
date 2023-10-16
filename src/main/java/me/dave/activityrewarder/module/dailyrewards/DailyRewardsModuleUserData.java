@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 
 public class DailyRewardsModuleUserData extends ModuleData {
@@ -13,9 +14,9 @@ public class DailyRewardsModuleUserData extends ModuleData {
     private int highestStreak;
     private LocalDate startDate;
     private LocalDate lastCollectedDate;
-    private final List<String> collectedDates;
+    private final HashSet<String> collectedDates;
 
-    public DailyRewardsModuleUserData(String id, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, List<String> collectedDates) {
+    public DailyRewardsModuleUserData(String id, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
         super(id);
         this.streakLength = streakLength;
         this.highestStreak = highestStreak;
@@ -85,7 +86,7 @@ public class DailyRewardsModuleUserData extends ModuleData {
         this.lastCollectedDate = date;
     }
 
-    public List<String> getCollectedDates() {
+    public HashSet<String> getCollectedDates() {
         return collectedDates;
     }
 
