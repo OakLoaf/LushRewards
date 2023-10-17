@@ -30,6 +30,7 @@ public class ConfigManager {
     private File globalGoalsFile;
     private boolean performanceMode;
     private LocalDate date;
+    private boolean playtimeIgnoreAfk;
     private int reminderPeriod;
     private Sound reminderSound;
 
@@ -58,6 +59,7 @@ public class ConfigManager {
             date = LocalDate.now();
         }
 
+        playtimeIgnoreAfk = config.getBoolean("playtime-ignore-afk", true);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none").toUpperCase());
 
@@ -159,6 +161,10 @@ public class ConfigManager {
         if (performanceMode && !date.isEqual(LocalDate.now())) {
             reloadConfig();
         }
+    }
+
+    public boolean getPlaytimeIgnoreAfk() {
+        return playtimeIgnoreAfk;
     }
 
     public int getReminderPeriod() {

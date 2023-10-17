@@ -39,11 +39,15 @@ public class PlaytimeTracker {
             return;
         }
 
-        if (hasMoved()) {
-            updateLocation();
+        if (ActivityRewarder.getConfigManager().getPlaytimeIgnoreAfk()) {
             whileActive();
         } else {
-            whileInactive();
+            if (hasMoved()) {
+                updateLocation();
+                whileActive();
+            } else {
+                whileInactive();
+            }
         }
     }
 

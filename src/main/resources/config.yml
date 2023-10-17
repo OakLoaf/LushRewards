@@ -6,6 +6,8 @@ modules:
   daily-playtime-goals: true
   global-playtime-goals: true
 
+# If false then playtime will include afk/idle time
+playtime-ignore-afk: true
 # The length in seconds between reminders being sent (Set to -1 to disable)
 reminder-period: 1800
 # The sound that will be played when a player is sent a reminder
