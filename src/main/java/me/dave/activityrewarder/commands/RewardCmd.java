@@ -416,6 +416,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             tabComplete.add("about");
+            tabComplete.add("version");
             if (commandSender.hasPermission("activityrewarder.use")) {
                 tabComplete.add("claim");
             }
