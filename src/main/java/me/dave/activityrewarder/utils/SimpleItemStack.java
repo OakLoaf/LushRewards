@@ -166,7 +166,10 @@ public class SimpleItemStack implements Cloneable {
             }
             if (itemMeta instanceof SkullMeta skullMeta && skullTexture != null) {
                 if (skullTexture.equals("mirror") && player != null) {
-                    ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, ActivityRewarder.getSkullCreator().getTexture(player));
+                    String playerB64 = ActivityRewarder.getSkullCreator().getTexture(player);
+                    if (playerB64 != null) {
+                        ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, playerB64);
+                    }
                 } else {
                     ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, skullTexture);
                 }
