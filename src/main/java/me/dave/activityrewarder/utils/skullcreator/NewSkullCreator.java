@@ -1,5 +1,7 @@
 package me.dave.activityrewarder.utils.skullcreator;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import me.dave.activityrewarder.ActivityRewarder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,11 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NewSkullCreator implements SkullCreator {
-    private static final Pattern skinJsonPattern = Pattern.compile("\"?skin\"?:\\{\"?url\"?:\"?(.[^{}\"]+)\"?}", Pattern.CASE_INSENSITIVE);
 
     public ItemStack getCustomSkull(String texture) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
@@ -79,12 +78,18 @@ public class NewSkullCreator implements SkullCreator {
     }
 
     private URL getUrlFromBase64(String base64) throws MalformedURLException {
-        String decoded = new String(Base64.getDecoder().decode(base64));
-        Matcher matcher = skinJsonPattern.matcher(decoded);
-        if (matcher.find()) {
-            return new URL(matcher.group(1));
+        String dataRaw = new String(Base64.getDecoder().decode(base64)).toLowerCase();
+        JsonObject data = JsonParser.parseString(dataRaw).getAsJsonObject();
+
+        String decoded;
+        try {
+            decoded = data.get("textures").getAsJsonObject().get("skins").getAsJsonObject().get("url").getAsString();
+        } catch (NullPointerException e) {
+            ActivityRewarder.getInstance().getLogger().severe(base64 + " does not appear to be a valid texture.");
+            return null;
         }
-        return null;
+
+        return new URL(decoded);
     }
 
     private String getBase64FromUrl(URL url) {
