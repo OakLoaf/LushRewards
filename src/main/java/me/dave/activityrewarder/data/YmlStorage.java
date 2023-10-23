@@ -105,6 +105,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModuleUserData dailyPlaytimeGoalsModuleUserData) {
             String moduleName = PlaytimeDailyGoalsModule.ID;
 
+            configurationSection.set(moduleName + ".date", dailyPlaytimeGoalsModuleUserData.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             configurationSection.set(moduleName + ".last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
         }
 
