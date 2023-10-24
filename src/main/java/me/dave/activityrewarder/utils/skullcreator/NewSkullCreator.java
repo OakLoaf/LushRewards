@@ -83,7 +83,7 @@ public class NewSkullCreator implements SkullCreator {
 
         String decoded;
         try {
-            decoded = data.get("textures").getAsJsonObject().get("skins").getAsJsonObject().get("url").getAsString();
+            decoded = data.get("textures").getAsJsonObject().get("skin").getAsJsonObject().get("url").getAsString();
         } catch (NullPointerException e) {
             ActivityRewarder.getInstance().getLogger().severe(base64 + " does not appear to be a valid texture.");
             return null;
