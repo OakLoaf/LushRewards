@@ -116,15 +116,21 @@ public class PlaytimeDailyGoalsModule extends Module {
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
         PlaytimeDailyGoalsModuleUserData playtimeDailyGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID);
-        int minutesPlayed = rewardUser.getMinutesPlayed();
+        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
 
+        boolean saveRewardUser = false;
         if (!playtimeDailyGoalsModuleUserData.getDate().isEqual(LocalDate.now())) {
             playtimeDailyGoalsModuleUserData.setDate(LocalDate.now());
-            playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(0);
+            playtimeDailyGoalsModuleUserData.setPreviousDayEndPlaytime(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime());
+            saveRewardUser = true;
         }
 
-        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), totalMinutesPlayed);
         if (rewards.isEmpty()) {
+            if (saveRewardUser) {
+                ActivityRewarder.getDataManager().saveRewardUser(player);
+            }
+            ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("no-rewards-available"));
             return false;
         }
 
@@ -138,7 +144,7 @@ public class PlaytimeDailyGoalsModule extends Module {
             .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
             .replaceAll("%hours%", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
 
-        playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
+        playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(totalMinutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
 
         return true;

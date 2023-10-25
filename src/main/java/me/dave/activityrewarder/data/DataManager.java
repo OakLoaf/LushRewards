@@ -103,7 +103,7 @@ public class DataManager {
             }
 
             if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) != null) {
-                rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, 0, LocalDate.now()));
+                rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, 0, LocalDate.now(), 0));
             }
 
             if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) != null) {

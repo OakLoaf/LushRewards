@@ -60,10 +60,11 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
                 moduleSection = configurationSection.createSection(PlaytimeDailyGoalsModule.ID);
             }
 
+            int previousDayEnd = moduleSection.getInt("previous-day-end", 0);
             String date = moduleSection.getString("date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             int lastCollectedPlaytime = moduleSection.getInt("last-collected-playtime", 0);
 
-            rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, lastCollectedPlaytime, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
+            rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, lastCollectedPlaytime, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")), previousDayEnd));
         }
 
         if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) != null) {
@@ -107,6 +108,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
 
             configurationSection.set(moduleName + ".date", dailyPlaytimeGoalsModuleUserData.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             configurationSection.set(moduleName + ".last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
+            configurationSection.set(moduleName + ".previous-day-end", dailyPlaytimeGoalsModuleUserData.getPreviousDayEndPlaytime());
         }
 
         if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {

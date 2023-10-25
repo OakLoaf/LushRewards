@@ -7,10 +7,12 @@ import java.time.LocalDate;
 
 public class PlaytimeDailyGoalsModuleUserData extends PlaytimeGoalsModuleUserData {
     private LocalDate date;
+    private int previousDayEndPlaytime;
 
-    public PlaytimeDailyGoalsModuleUserData(String id, int lastCollectedPlaytime, @NotNull LocalDate date) {
+    public PlaytimeDailyGoalsModuleUserData(String id, int lastCollectedPlaytime, @NotNull LocalDate date, int previousDayEndPlaytime) {
         super(id, lastCollectedPlaytime);
         this.date = date;
+        this.previousDayEndPlaytime = previousDayEndPlaytime;
     }
 
     @NotNull
@@ -20,5 +22,13 @@ public class PlaytimeDailyGoalsModuleUserData extends PlaytimeGoalsModuleUserDat
 
     public void setDate(@NotNull LocalDate date) {
         this.date = date;
+    }
+
+    public int getPreviousDayEndPlaytime() {
+        return previousDayEndPlaytime;
+    }
+
+    public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
+        this.previousDayEndPlaytime = previousDayEndPlaytime;
     }
 }
