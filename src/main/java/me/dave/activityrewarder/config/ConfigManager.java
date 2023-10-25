@@ -120,7 +120,11 @@ public class ConfigManager {
     }
 
     public String getMessage(String messageName) {
-        String output = messages.getOrDefault(messageName, "");
+        return getMessage(messageName, "");
+    }
+
+    public String getMessage(String messageName, String def) {
+        String output = messages.getOrDefault(messageName, def);
 
         if (messages.containsKey("prefix")) {
             return output.replaceAll("%prefix%", messages.get("prefix"));
