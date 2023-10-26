@@ -33,7 +33,7 @@ public class RewardUserEvents implements Listener {
             Updater updater = ActivityRewarder.getInstance().getUpdater();
             if (updater.isUpdateAvailable() && !updater.isAlreadyDownloaded()) {
                 ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> {
-                    ChatColorHandler.sendMessage(player, "&#ffe27aA new update is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!");
+                    ChatColorHandler.sendMessage(player, "&#ffe27aA new &#e0c01bActivityRewarder &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!");
                 }, Duration.of(2, ChronoUnit.SECONDS));
             }
         }
