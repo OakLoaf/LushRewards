@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class SimpleItemStack implements Cloneable {
     private Material material = null;
     private int amount = 1;
