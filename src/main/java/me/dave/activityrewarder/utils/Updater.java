@@ -68,7 +68,13 @@ public class Updater {
         InputStream inputStream = connection.getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
 
-        JsonArray versionsJson = JsonParser.parseReader(reader).getAsJsonArray();
+        JsonArray versionsJson;
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        if (bukkitVersion.contains("1.16") || bukkitVersion.contains("1.17")) {
+            versionsJson = new JsonParser().parse(reader).getAsJsonArray();
+        } else {
+            versionsJson = JsonParser.parseReader(reader).getAsJsonArray();
+        }
         JsonObject currVersionJson = versionsJson.get(0).getAsJsonObject();
 
         latestVersion = currVersionJson.get("version_number").getAsString();
