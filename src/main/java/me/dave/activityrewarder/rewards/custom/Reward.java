@@ -67,7 +67,11 @@ public abstract class Reward {
         try {
             return RewardTypes.getClass(rewardType).getConstructor(Map.class).newInstance(rewardMap);
         } catch (InvalidRewardException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+            if (e instanceof InvocationTargetException invocationTargetException && invocationTargetException.getCause() instanceof InvalidRewardException cause) {
+                ActivityRewarder.getInstance().getLogger().warning(cause.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return null;
     }
