@@ -117,7 +117,7 @@ public class PlaytimeGlobalGoalsModule extends Module {
 
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given")
             .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
-            .replaceAll("%hours%", String.valueOf(Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+            .replaceAll("%hours%", String.valueOf((int) Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
 
         playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
