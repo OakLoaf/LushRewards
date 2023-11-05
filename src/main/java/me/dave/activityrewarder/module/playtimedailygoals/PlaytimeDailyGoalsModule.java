@@ -125,7 +125,8 @@ public class PlaytimeDailyGoalsModule extends Module {
             saveRewardUser = true;
         }
 
-        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime(), totalMinutesPlayed);
+        int previousDayEnd =  playtimeDailyGoalsModuleUserData.getPreviousDayEndPlaytime();
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd);
         if (rewards.isEmpty()) {
             if (saveRewardUser) {
                 ActivityRewarder.getDataManager().saveRewardUser(player);
