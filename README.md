@@ -10,23 +10,18 @@ ActivityRewarder is a Minecraft plugin that allows you to reward your players fo
 - Easy to use and highly configurable
 
 ## Installations 
-- Download the latest version of ActivityRewarder from Modrinth or GitHub
+- Download the latest version of ActivityRewarder from Modrinth
 - Place the ActivityRewarder.jar file in your plugins folder
-- Restart or reload your server
-- Edit the config.yml and rewards.yml files to your liking
+- Restart your server
+- Edit the config.yml and modules files
 - Enjoy!
 
 ## Commands and Permissions
-- /ar reload: Reloads the plugin’s configuration and rewards files
-  - Permission: activityrewarder.reload
-- /ar check: Checks your current progress and rewards
-  - Permission: activityrewarder.check
-- /ar claim: Claims your available rewards
-  - Permission: activityrewarder.claim
-- /ar help: Shows the plugin’s help menu
-  - Permission: activityrewarder.help
+- /rewards - Open the rewards menu
+- /rewards about - Displays ActivityRewarder plugin information
+- /rewards claim - Claims available rewards
+- /rewards import <plugin> - Import configurations from other plugins
+- /rewards reload - Reload the plugin
+- Find more commands and permissions at https://dave-12.gitbook.io/activity-rewarder/commands-and-permissions
 
-## Support
-- If you have any questions, suggestions, or issues with the plugin, please report them on the GitHub issues page
-- If you like the plugin, please leave a review and a star on GitHub or Modrinth
-- If you want to support the development of the plugin, you can donate to the author on [PayPal]
+If you have a bug to report or need help setting up your plugin join the [Discord Support Server](https://discord.gg/p3duRZsZ2f)
