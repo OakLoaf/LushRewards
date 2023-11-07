@@ -1,7 +1,7 @@
 # Activity Rewarder
 ActivityRewarder is a Minecraft plugin that allows you to reward your players for playing on your server. You can configure different types of rewards, such as daily rewards or playtime rewards, and customize them to suit your server’s needs. You can also use various placeholders and commands to create dynamic and interactive rewards.
 
-## Featues
+## Features
 - Reward your players for logging in every day or for playing a certain amount of hours on your server
 - Customize the rewards with different items, commands, messages, sounds, and more
 - Use placeholders to display information such as player name, reward name, reward amount, etc.
