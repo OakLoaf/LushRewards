@@ -115,9 +115,10 @@ public class PlaytimeGlobalGoalsModule extends Module {
             }
         });
 
+        int minutesSinceLastCollected = rewardUser.getMinutesPlayed() - playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime();
         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given")
-            .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
-            .replaceAll("%hours%", String.valueOf((int) Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+            .replaceAll("%minutes%", String.valueOf(minutesSinceLastCollected))
+            .replaceAll("%hours%", String.valueOf((int) Math.floor(minutesSinceLastCollected / 60D))));
 
         playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
         ActivityRewarder.getDataManager().saveRewardUser(rewardUser);

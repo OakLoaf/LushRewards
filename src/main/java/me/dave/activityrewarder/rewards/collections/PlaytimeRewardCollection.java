@@ -41,7 +41,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
             return amount;
         }
 
-        return amount + (Math.min(totalMinutes, repeatsUntil) - minutes) / repeatFrequency;
+        return (amount + (Math.min(totalMinutes, repeatsUntil) - minutes) - lastCollected) / repeatFrequency;
     }
 
     @NotNull
