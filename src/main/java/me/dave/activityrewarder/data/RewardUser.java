@@ -3,7 +3,6 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.api.event.RewardUserPlaytimeChangeEvent;
 import me.dave.activityrewarder.module.ModuleData;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,10 +37,6 @@ public class RewardUser {
 
     public int getMinutesPlayed() {
         return this.minutesPlayed;
-    }
-
-    public int getHoursPlayed() {
-        return this.minutesPlayed * 60;
     }
 
     public void setMinutesPlayed(int minutesPlayed) {
