@@ -24,7 +24,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
     implementation(files("libs/EnchantedStorage-2.0.0.jar"))
-    implementation("com.github.CoolDCB:ChatColorHandler:v2.2.0")
+    implementation("com.github.CoolDCB:ChatColorHandler:v2.2.1")
 }
 
 java {
