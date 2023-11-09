@@ -131,7 +131,6 @@ public class PlaytimeDailyGoalsModule extends Module {
             if (saveRewardUser) {
                 ActivityRewarder.getDataManager().saveRewardUser(player);
             }
-            ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("no-rewards-available"));
             return false;
         }
 

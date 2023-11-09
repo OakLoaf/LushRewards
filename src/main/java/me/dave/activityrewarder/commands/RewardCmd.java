@@ -65,16 +65,28 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
+                    boolean rewardGiven = false;
+
                     if (ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
-                        dailyRewardsModule.claimRewards(player);
+                        if (dailyRewardsModule.claimRewards(player)) {
+                            rewardGiven = true;
+                        }
                     }
 
                     if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
-                        playtimeDailyGoalsModule.claimRewards(player);
+                        if (playtimeDailyGoalsModule.claimRewards(player)) {
+                            rewardGiven = true;
+                        }
                     }
 
                     if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
-                        playtimeGlobalGoalsModule.claimRewards(player);
+                        if (playtimeGlobalGoalsModule.claimRewards(player)) {
+                            rewardGiven = true;
+                        }
+                    }
+
+                    if (!rewardGiven) {
+                        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("no-rewards-available"));
                     }
 
                     return true;
