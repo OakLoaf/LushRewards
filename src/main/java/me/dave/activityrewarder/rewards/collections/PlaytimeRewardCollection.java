@@ -41,7 +41,10 @@ public class PlaytimeRewardCollection extends RewardCollection {
             return amount;
         }
 
-        return (amount + (Math.min(totalMinutes, repeatsUntil) - minutes) - lastCollected) / repeatFrequency;
+        // TODO: Change calculation to be based off of all-time time instead of difference between collections
+        int validMinutesSinceCollected = Math.min(totalMinutes, repeatsUntil) - lastCollected;
+
+        return (amount + validMinutesSinceCollected) / repeatFrequency;
     }
 
     @NotNull

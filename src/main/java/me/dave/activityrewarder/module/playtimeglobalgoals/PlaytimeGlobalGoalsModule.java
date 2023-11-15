@@ -83,6 +83,12 @@ public class PlaytimeGlobalGoalsModule extends Module {
         return minutesToReward.get(minutes);
     }
 
+    /**
+     * Get RewardCollections and the amount of rewards within the range
+     * @param lower Lower bound (inclusive)
+     * @param upper Upper bound (exclusive)
+     * @return A map of RewardCollections and the amount of rewards
+     */
     @NotNull
     public HashMap<PlaytimeRewardCollection, Integer> getRewardCollectionsInRange(int lower, int upper) {
         HashMap<PlaytimeRewardCollection, Integer> output = new HashMap<>();
