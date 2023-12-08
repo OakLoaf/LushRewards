@@ -175,7 +175,7 @@ public class SimpleItemStack implements Cloneable {
                     } else {
                         ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, skullTexture);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
