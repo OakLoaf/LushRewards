@@ -166,13 +166,17 @@ public class SimpleItemStack implements Cloneable {
                 itemMeta.setCustomModelData(customModelData);
             }
             if (itemMeta instanceof SkullMeta skullMeta && skullTexture != null) {
-                if (skullTexture.equals("mirror") && player != null) {
-                    String playerB64 = ActivityRewarder.getSkullCreator().getTexture(player);
-                    if (playerB64 != null) {
-                        ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, playerB64);
+                try {
+                    if (skullTexture.equals("mirror") && player != null) {
+                        String playerB64 = ActivityRewarder.getSkullCreator().getTexture(player);
+                        if (playerB64 != null) {
+                            ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, playerB64);
+                        }
+                    } else {
+                        ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, skullTexture);
                     }
-                } else {
-                    ActivityRewarder.getSkullCreator().mutateItemMeta(skullMeta, skullTexture);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
