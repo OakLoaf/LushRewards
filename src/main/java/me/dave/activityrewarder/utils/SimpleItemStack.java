@@ -136,10 +136,10 @@ public class SimpleItemStack implements Cloneable {
 
     public void parseColors(Player player) {
         if (hasDisplayName()) {
-            displayName = ChatColorHandler.translateAlternateColorCodes(displayName, player);
+            displayName = ChatColorHandler.translate(displayName, player);
         }
         if (hasLore()) {
-            lore = ChatColorHandler.translateAlternateColorCodes(lore, player);
+            lore = lore.stream().map(line -> ChatColorHandler.translate(line, player)).toList();
         }
     }
 

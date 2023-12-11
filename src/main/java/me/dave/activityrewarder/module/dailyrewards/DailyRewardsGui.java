@@ -31,7 +31,7 @@ public class DailyRewardsGui extends AbstractGui {
     private final GuiFormat.GuiTemplate guiTemplate;
 
     public DailyRewardsGui(DailyRewardsModule dailyRewardsModule, Player player) {
-        super(dailyRewardsModule.getGuiFormat().getTemplate().getRowCount() * 9, ChatColorHandler.translateAlternateColorCodes(dailyRewardsModule.getGuiFormat().getTitle()), player);
+        super(dailyRewardsModule.getGuiFormat().getTemplate().getRowCount() * 9, ChatColorHandler.translate(dailyRewardsModule.getGuiFormat().getTitle()), player);
         this.guiTemplate = dailyRewardsModule.getGuiFormat().getTemplate();
         this.dailyRewardsModule = dailyRewardsModule;
     }
@@ -244,7 +244,7 @@ public class DailyRewardsGui extends AbstractGui {
                         SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"), upcomingRewardCollection.getDisplayItem());
 
                         if (simpleItemStack.getDisplayName() != null) {
-                            simpleItemStack.setDisplayName(ChatColorHandler.translateAlternateColorCodes(simpleItemStack
+                            simpleItemStack.setDisplayName(ChatColorHandler.translate(simpleItemStack
                                     .getDisplayName()
                                     .replaceAll("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum()))
                                     .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
@@ -255,7 +255,10 @@ public class DailyRewardsGui extends AbstractGui {
                                     .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))),
                                 player));
                         }
-                        simpleItemStack.setLore(ChatColorHandler.translateAlternateColorCodes(simpleItemStack.getLore(), player));
+
+                        if (simpleItemStack.getLore() != null) {
+                            simpleItemStack.setLore(simpleItemStack.getLore().stream().map(line -> ChatColorHandler.translate(line, player)).toList());
+                        }
 
                         ItemStack itemStack = simpleItemStack.getItemStack(player);
                         slotMap.get(character).forEach(slot -> inventory.setItem(slot, itemStack));
