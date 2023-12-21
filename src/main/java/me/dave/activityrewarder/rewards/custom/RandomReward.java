@@ -28,7 +28,7 @@ public class RandomReward extends Reward {
 
         rewardMaps.forEach((rewardMap) -> {
             Reward reward = Reward.loadReward(rewardMap, rewardMap.toString());
-            double weight = rewardMap.containsKey("weight") ? (double) rewardMap.get("weight") : 1;
+            int weight = rewardMap.containsKey("weight") ? (int) rewardMap.get("weight") : 1;
             if (reward != null) {
                 rewards.add(weight, reward);
             }
