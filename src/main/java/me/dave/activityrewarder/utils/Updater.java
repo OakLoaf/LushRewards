@@ -52,7 +52,17 @@ public class Updater {
         }, 2, 600, TimeUnit.SECONDS);
     }
 
-    public void check() throws IOException {
+    public void queueCheck() {
+        updateExecutor.schedule(() -> {
+            try {
+                check();
+            } catch (Exception e) {
+                logger.info("Unable to check for update: " + e.getMessage());
+            }
+        }, 0, TimeUnit.SECONDS);
+    }
+
+    private void check() throws IOException {
         if (!enabled) {
             return;
         }

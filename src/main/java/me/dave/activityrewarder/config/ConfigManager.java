@@ -90,11 +90,7 @@ public class ConfigManager {
         boolean enableUpdater = config.getBoolean("enable-updater", true);
         ActivityRewarder.getInstance().getUpdater().setEnabled(enableUpdater);
         if (enableUpdater) {
-            try {
-                ActivityRewarder.getInstance().getUpdater().check();
-            } catch (Exception e) {
-                ActivityRewarder.getInstance().getLogger().severe("Unable to check for update: " + e.getMessage());
-            }
+            ActivityRewarder.getInstance().getUpdater().queueCheck();
         }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
