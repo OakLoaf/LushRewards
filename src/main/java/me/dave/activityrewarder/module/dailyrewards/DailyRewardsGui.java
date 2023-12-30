@@ -202,7 +202,7 @@ public class DailyRewardsGui extends AbstractGui {
 
                                 Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
-                               dailyRewardsModule.claimRewards(player);
+                                dailyRewardsModule.claimRewards(player);
 
                                 if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
                                     dailyGoalsModule.claimRewards(player);
@@ -211,12 +211,6 @@ public class DailyRewardsGui extends AbstractGui {
                                 if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
                                     globalGoalsModule.claimRewards(player);
                                 }
-
-                                player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-                                moduleUserData.incrementStreakLength();
-                                moduleUserData.setLastCollectedDate(LocalDate.now());
-                                moduleUserData.addCollectedDate(LocalDate.now());
-                                rewardUser.save();
                             });
                         }
 
