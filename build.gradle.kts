@@ -12,10 +12,11 @@ repositories {
     mavenLocal()
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-    maven { url = uri("https://mvn-repo.arim.space/lesser-gpl3/") }
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")}
+    maven { url = uri("https://repo.opencollab.dev/main/") } // Floodgate
+    maven { url = uri("https://mvn-repo.arim.space/lesser-gpl3/") } // MorePaperLib
+    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")} // PlaceholderAPI
     maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
-    maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://jitpack.io") } // ChatColorHandler
 }
 
 dependencies {
