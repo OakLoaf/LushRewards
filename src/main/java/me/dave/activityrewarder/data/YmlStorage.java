@@ -27,7 +27,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
     private final File dataFolder = new File(plugin.getDataFolder(), "data");
 
     @Override
-    public CompletableFuture<RewardUser> load(UUID uuid) {
+    public RewardUser load(UUID uuid) {
         ConfigurationSection configurationSection = loadOrCreateFile(uuid);
 
         String name = configurationSection.getString("name");
@@ -78,7 +78,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(PlaytimeGlobalGoalsModule.ID, lastCollectedPlaytime));
         }
 
-        return CompletableFuture.completedFuture(rewardUser);
+        return rewardUser;
     }
 
     @Override
