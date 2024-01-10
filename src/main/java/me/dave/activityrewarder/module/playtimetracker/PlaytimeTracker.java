@@ -78,19 +78,21 @@ public class PlaytimeTracker {
     private void incrementGlobalTime() {
         globalTime++;
 
-        if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
-            if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
-                playtimeDailyGoalsModule.claimRewards(player);
+        if (player.hasPermission("activityrewarder.use")) {
+            if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
+                if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
+                    playtimeDailyGoalsModule.claimRewards(player);
+                }
+            }
+
+            if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
+                if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
+                    playtimeGlobalGoalsModule.claimRewards(player);
+                }
             }
         }
 
-        if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
-            if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
-                playtimeGlobalGoalsModule.claimRewards(player);
-            }
-        }
-
-        if (globalTime % 15 == 0) {
+        if (globalTime % 5 == 0) {
             ActivityRewarder.getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
         }
     }
