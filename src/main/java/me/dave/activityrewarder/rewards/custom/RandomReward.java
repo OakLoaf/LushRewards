@@ -2,8 +2,8 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
-import me.dave.activityrewarder.utils.RandomCollection;
 import me.dave.activityrewarder.utils.SchedulerType;
+import me.dave.platyutils.utils.RandomCollection;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -30,7 +30,7 @@ public class RandomReward extends Reward {
             Reward reward = Reward.loadReward(rewardMap, rewardMap.toString());
             int weight = rewardMap.containsKey("weight") ? (int) rewardMap.get("weight") : 1;
             if (reward != null) {
-                rewards.add(weight, reward);
+                rewards.add(reward, weight);
             }
         });
     }

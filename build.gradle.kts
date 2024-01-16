@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.dave"
-version = "2.1.8"
+version = "3.0-BETA"
 
 repositories {
     mavenCentral()
@@ -25,6 +25,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
     implementation(files("libs/EnchantedStorage-3.0.0.jar"))
+    implementation(files("libs/PlatyUtils-0.1.21.jar"))
     implementation("com.github.CoolDCB:ChatColorHandler:v2.5.0")
 }
 

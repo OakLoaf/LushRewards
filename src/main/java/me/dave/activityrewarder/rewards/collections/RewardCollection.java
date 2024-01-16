@@ -2,9 +2,9 @@ package me.dave.activityrewarder.rewards.collections;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.rewards.custom.Reward;
-import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.activityrewarder.utils.SimpleItemStack;
+import me.dave.platyutils.utils.SimpleItemStack;
+import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -85,7 +85,7 @@ public class RewardCollection {
         SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
-        Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP").toUpperCase());
+        Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP"), Sound.class).orElse(null);
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
@@ -112,7 +112,7 @@ public class RewardCollection {
         SimpleItemStack itemStack = itemMap != null ? SimpleItemStack.from(itemMap) : new SimpleItemStack();
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
-        Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? ConfigParser.getSound((String) rewardCollectionMap.get("redeem-sound")) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+        Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? StringUtils.getEnum((String) rewardCollectionMap.get("redeem-sound"), Sound.class).orElse(null) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = (List<Map<?, ?>>) rewardCollectionMap.get("rewards");

@@ -5,9 +5,10 @@ import me.dave.activityrewarder.exceptions.InvalidRewardException;
 
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.rewards.custom.Reward;
-import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.activityrewarder.utils.SimpleItemStack;
+import me.dave.platyutils.module.Module;
+import me.dave.platyutils.utils.SimpleItemStack;
+import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class DailyRewardCollection extends RewardCollection {
     private final Integer repeatFrequency;
@@ -164,9 +166,12 @@ public class DailyRewardCollection extends RewardCollection {
         SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
-        Sound redeemSound = ConfigParser.getSound(rewardCollectionSection.getString("redeem-sound", "none").toUpperCase());
-        if (redeemSound == null && ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
-            redeemSound = dailyRewardsModule.getDefaultRedeemSound();
+        Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "none"), Sound.class).orElse(null);
+        if (redeemSound == null) {
+            Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID);
+            if (optionalModule.isPresent()) {
+                redeemSound = ((DailyRewardsModule) optionalModule.get()).getDefaultRedeemSound();
+            }
         }
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);

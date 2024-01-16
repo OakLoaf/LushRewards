@@ -98,15 +98,15 @@ public class DataManager {
         if (rewardUser == null) {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
-            if (ActivityRewarder.getModule(DailyRewardsModule.ID) != null) {
+            if (ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID).isPresent()) {
                 rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, 0, 0, LocalDate.now(), null, new HashSet<>()));
             }
 
-            if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) != null) {
+            if (ActivityRewarder.getInstance().getModule(PlaytimeDailyGoalsModule.ID).isPresent()) {
                 rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, 0, LocalDate.now(), 0));
             }
 
-            if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) != null) {
+            if (ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID).isPresent()) {
                 rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(PlaytimeGlobalGoalsModule.ID, 0));
             }
         }

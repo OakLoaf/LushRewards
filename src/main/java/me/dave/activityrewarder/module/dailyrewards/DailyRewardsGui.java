@@ -10,8 +10,9 @@ import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsMo
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.activityrewarder.utils.SimpleItemStack;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.module.Module;
+import me.dave.platyutils.utils.SimpleItemStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -50,7 +51,7 @@ public class DailyRewardsGui extends AbstractGui {
             errorItem.setLore(List.of("&7&oIf this continues please", "report to your server administrator"));
             errorItem.parseColors(player);
 
-            inventory.setItem(4, errorItem.getItemStack());
+            inventory.setItem(4, errorItem.asItemStack());
 
             return;
         }
@@ -120,7 +121,7 @@ public class DailyRewardsGui extends AbstractGui {
                         }
                         simpleItemStack.parseColors(player);
 
-                        itemStack = simpleItemStack.getItemStack(player);
+                        itemStack = simpleItemStack.asItemStack(player);
                     } else {
                         // Get the day's reward for the current slot
                         RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex[0], dayIndex.get());
@@ -168,7 +169,7 @@ public class DailyRewardsGui extends AbstractGui {
                         }
 
                         try {
-                            itemStack = displayItem.getItemStack(player);
+                            itemStack = displayItem.asItemStack(player);
                         } catch (IllegalArgumentException e) {
                             ActivityRewarder.getInstance().getLogger().severe("Failed to display item-template '" + itemTemplate + "' as it does not specify a valid material");
                             itemStack = new ItemStack(Material.STONE);
@@ -198,17 +199,19 @@ public class DailyRewardsGui extends AbstractGui {
                                 }
                                 collectedItem.parseColors(player);
 
-                                inventory.setItem(slot, collectedItem.getItemStack());
+                                inventory.setItem(slot, collectedItem.asItemStack());
 
                                 Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
                                 dailyRewardsModule.claimRewards(player);
 
-                                if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
+                                Optional<Module> optionDailyGoalsModule = ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID);
+                                if (optionDailyGoalsModule.isPresent() && optionDailyGoalsModule.get() instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
                                     dailyGoalsModule.claimRewards(player);
                                 }
 
-                                if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
+                                Optional<Module> optionGlobalGoalsModule = ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID);
+                                if (optionGlobalGoalsModule.isPresent() && optionGlobalGoalsModule.get() instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
                                     globalGoalsModule.claimRewards(player);
                                 }
                             });
@@ -254,7 +257,7 @@ public class DailyRewardsGui extends AbstractGui {
                             simpleItemStack.setLore(simpleItemStack.getLore().stream().map(line -> ChatColorHandler.translate(line, player)).toList());
                         }
 
-                        ItemStack itemStack = simpleItemStack.getItemStack(player);
+                        ItemStack itemStack = simpleItemStack.asItemStack(player);
                         slotMap.get(character).forEach(slot -> inventory.setItem(slot, itemStack));
                     }
                 }
@@ -268,7 +271,7 @@ public class DailyRewardsGui extends AbstractGui {
                     }
                     simpleItemStack.parseColors(player);
 
-                    inventory.setItem(slot, simpleItemStack.getItemStack(player));
+                    inventory.setItem(slot, simpleItemStack.asItemStack(player));
                 });
             }
         }

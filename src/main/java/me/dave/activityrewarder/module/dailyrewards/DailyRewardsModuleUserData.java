@@ -2,11 +2,13 @@ package me.dave.activityrewarder.module.dailyrewards;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.ModuleData;
+import me.dave.platyutils.module.Module;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Optional;
 
 public class DailyRewardsModuleUserData extends ModuleData {
     private int streakLength;
@@ -27,7 +29,8 @@ public class DailyRewardsModuleUserData extends ModuleData {
     public int getDayNum() {
         int dayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay()) + 1;
 
-        if (ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
+        Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID);
+        if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
             int resetDay = dailyRewardsModule.getResetDay();
 
             if (resetDay > 0 && dayNum > resetDay) {

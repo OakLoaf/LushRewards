@@ -4,7 +4,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
-import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlaytimeDailyGoalsModule extends Module {
+public class PlaytimeDailyGoalsModule extends RewardModule {
     public static final String ID = "daily-playtime-goals";
     private int refreshTime;
     private boolean receiveWithDailyRewards;

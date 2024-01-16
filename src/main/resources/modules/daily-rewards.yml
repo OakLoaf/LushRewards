@@ -1,3 +1,7 @@
+module: DAILY_REWARDS
+id: daily-rewards
+enabled: true
+
 # Resets player back to day 1, this does not affect streaks (Set to -1 to disable)
 reset-days-at: -1
 # Whether a player will reset to day 1 if they miss a day

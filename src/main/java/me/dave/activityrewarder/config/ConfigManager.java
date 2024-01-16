@@ -2,15 +2,15 @@ package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.InventoryHandler;
-import me.dave.activityrewarder.importer.internal.ActivityRewarderConfigUpdater;
-import me.dave.activityrewarder.module.Module;
+import me.dave.activityrewarder.importer.ActivityRewarderConfigUpdater;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.activityrewarder.utils.SimpleItemStack;
+import me.dave.platyutils.module.Module;
+import me.dave.platyutils.utils.SimpleItemStack;
+import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,6 +22,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigManager {
+    private static final File modulesFolder = new File(ActivityRewarder.getInstance().getDataFolder(), "modules");
+
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
@@ -44,7 +46,9 @@ public class ConfigManager {
         }
 
         ActivityRewarder.getInstance().saveDefaultConfig();
-        initRewardsYmls();
+        ActivityRewarder.getInstance().saveDefaultResource("modules/daily-rewards.yml");
+        ActivityRewarder.getInstance().saveDefaultResource("modules/daily-playtime-goals.yml");
+        ActivityRewarder.getInstance().saveDefaultResource("modules/global-playtime-goals.yml");
     }
 
     public void reloadConfig() {
@@ -61,30 +65,32 @@ public class ConfigManager {
 
         playtimeIgnoreAfk = config.getBoolean("playtime-ignore-afk", true);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
-        reminderSound = ConfigParser.getSound(config.getString("reminder-sound", "none").toUpperCase());
+        reminderSound = StringUtils.getEnum(config.getString("reminder-sound", "none"), Sound.class).orElse(null);
 
-        ActivityRewarder.unregisterModule(DailyRewardsModule.ID);
-        ActivityRewarder.unregisterModule(PlaytimeDailyGoalsModule.ID);
-        ActivityRewarder.unregisterModule(PlaytimeGlobalGoalsModule.ID);
+        ActivityRewarder.getInstance().unregisterModule(DailyRewardsModule.ID);
+        ActivityRewarder.getInstance().unregisterModule(PlaytimeDailyGoalsModule.ID);
+        ActivityRewarder.getInstance().unregisterModule(PlaytimeGlobalGoalsModule.ID);
+
+
 
         boolean requiresPlaytimeTracker = false;
         if (config.getBoolean("modules.daily-rewards", false)) {
-            ActivityRewarder.registerModule(new DailyRewardsModule(DailyRewardsModule.ID));
+            ActivityRewarder.getInstance().registerModule(new DailyRewardsModule(DailyRewardsModule.ID));
         }
         if (config.getBoolean("modules.daily-playtime-goals", false)) {
-            ActivityRewarder.registerModule(new PlaytimeDailyGoalsModule(PlaytimeDailyGoalsModule.ID));
+            ActivityRewarder.getInstance().registerModule(new PlaytimeDailyGoalsModule(PlaytimeDailyGoalsModule.ID));
             requiresPlaytimeTracker = true;
         }
         if (config.getBoolean("modules.global-playtime-goals", false)) {
-            ActivityRewarder.registerModule(new PlaytimeGlobalGoalsModule(PlaytimeGlobalGoalsModule.ID));
+            ActivityRewarder.getInstance().registerModule(new PlaytimeGlobalGoalsModule(PlaytimeGlobalGoalsModule.ID));
             requiresPlaytimeTracker = true;
         }
 
-        Module playtimeTrackerModule = ActivityRewarder.getModule(PlaytimeTrackerModule.ID);
-        if (requiresPlaytimeTracker && playtimeTrackerModule == null) {
-            ActivityRewarder.registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
-        } else if (!requiresPlaytimeTracker && playtimeTrackerModule != null) {
-            ActivityRewarder.unregisterModule(PlaytimeTrackerModule.ID);
+        Optional<Module> playtimeTrackerModule = ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID);
+        if (requiresPlaytimeTracker && playtimeTrackerModule.isEmpty()) {
+            ActivityRewarder.getInstance().registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
+        } else if (!requiresPlaytimeTracker && playtimeTrackerModule.isPresent()) {
+            ActivityRewarder.getInstance().unregisterModule(PlaytimeTrackerModule.ID);
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);

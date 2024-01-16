@@ -1,8 +1,9 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.utils.SchedulerType;
+import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.chatcolorhandler.parsers.custom.PlaceholderAPIParser;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -31,10 +32,7 @@ public class ConsoleCommandReward extends Reward {
         commands.forEach(command -> {
             String thisCommand = command.replaceAll("%user%", player.getName()).replaceAll("%player%", player.getName());
 
-            PlaceholderAPIHook placeholderAPIHook = ActivityRewarder.getPlaceholderAPIHook();
-            if (placeholderAPIHook != null) {
-                thisCommand = placeholderAPIHook.parseString(player, thisCommand);
-            }
+            thisCommand = ChatColorHandler.translate(thisCommand, player, List.of(PlaceholderAPIParser.class));
 
             if (thisCommand.startsWith("java:")) {
                 thisCommand = thisCommand.substring(5);

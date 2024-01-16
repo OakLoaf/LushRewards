@@ -1,7 +1,7 @@
 package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.module.Module;
+import me.dave.platyutils.module.Module;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -25,7 +25,7 @@ public class PlaytimeTrackerModule extends Module {
 
         ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
                 (task) -> {
-                    if (poison || ActivityRewarder.getModule(PlaytimeTrackerModule.ID) == null) {
+                    if (poison || ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID).isEmpty()) {
                         task.cancel();
                         return;
                     }

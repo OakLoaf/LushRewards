@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class YmlStorage implements Storage<RewardUser, UUID> {
     private final ActivityRewarder plugin = ActivityRewarder.getInstance();
@@ -35,7 +34,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
 
         RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
 
-        if (ActivityRewarder.getModule(DailyRewardsModule.ID) != null) {
+        if (ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID).isPresent()) {
             ConfigurationSection moduleSection = configurationSection.getConfigurationSection(DailyRewardsModule.ID);
             if (moduleSection == null) {
                 moduleSection = configurationSection.createSection(DailyRewardsModule.ID);
@@ -54,7 +53,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, streakLength, highestStreak, startDate, lastCollectedDate, collectedDates));
         }
 
-        if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) != null) {
+        if (ActivityRewarder.getInstance().getModule(PlaytimeDailyGoalsModule.ID).isPresent()) {
             ConfigurationSection moduleSection = configurationSection.getConfigurationSection(PlaytimeDailyGoalsModule.ID);
             if (moduleSection == null) {
                 moduleSection = configurationSection.createSection(PlaytimeDailyGoalsModule.ID);
@@ -67,7 +66,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, lastCollectedPlaytime, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")), previousDayEnd));
         }
 
-        if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) != null) {
+        if (ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID).isPresent()) {
             ConfigurationSection moduleSection = configurationSection.getConfigurationSection(PlaytimeGlobalGoalsModule.ID);
             if (moduleSection == null) {
                 moduleSection = configurationSection.createSection(PlaytimeGlobalGoalsModule.ID);

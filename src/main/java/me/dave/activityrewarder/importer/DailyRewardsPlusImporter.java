@@ -5,8 +5,9 @@ import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.custom.ConsoleCommandReward;
 import me.dave.activityrewarder.rewards.custom.MessageReward;
 import me.dave.activityrewarder.rewards.custom.Reward;
-import me.dave.activityrewarder.utils.ConfigParser;
-import me.dave.activityrewarder.utils.SimpleItemStack;
+import me.dave.platyutils.utils.SimpleItemStack;
+import me.dave.platyutils.utils.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -105,10 +106,10 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                         rewards.add(new MessageReward(rewardSection.getString("RewardMessage")));
                     }
 
-                    String displayMaterial = rewardSection.getString("RewardIcon");
+                    String displayMaterialRaw = rewardSection.getString("RewardIcon");
                     SimpleItemStack displayItem = new SimpleItemStack();
-                    if (displayMaterial != null && !displayMaterial.isBlank()) {
-                        displayItem = new SimpleItemStack(ConfigParser.getMaterial(displayMaterial));
+                    if (displayMaterialRaw != null && !displayMaterialRaw.isBlank()) {
+                        displayItem = new SimpleItemStack(StringUtils.getEnum(displayMaterialRaw, Material.class).orElse(null));
                         if (rewardSection.getBoolean("Extras.Enchanted")) {
                             displayItem.setEnchanted(true);
                         }
@@ -164,7 +165,8 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
             materialRaw = "player_head";
             simpleItemStack.setSkullTexture("mirror");
         }
-        simpleItemStack.setType(ConfigParser.getMaterial(materialRaw));
+
+        simpleItemStack.setType(StringUtils.getEnum(materialRaw, Material.class).orElse(null));
 
         String displayName = configurationSection.getString("Title");
         if (displayName != null) {
