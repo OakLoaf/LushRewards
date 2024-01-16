@@ -103,11 +103,11 @@ public class PlaytimeTracker {
     }
 
     public void updateLocation() {
-        this.lastLocation = SimpleLocation.from(player.getLocation());
+        this.lastLocation = SimpleLocation.adapt(player.getLocation());
     }
 
     public boolean hasMoved() {
-        return !SimpleLocation.from(player.getLocation()).equals(lastLocation);
+        return !SimpleLocation.adapt(player.getLocation()).equals(lastLocation);
     }
 
     public int getIdlePlaytime() {
