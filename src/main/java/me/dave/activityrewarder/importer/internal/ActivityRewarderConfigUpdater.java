@@ -1,6 +1,7 @@
-package me.dave.activityrewarder.importer;
+package me.dave.activityrewarder.importer.internal;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.importer.ConfigImporter;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.custom.ConsoleCommandReward;
 import me.dave.activityrewarder.rewards.custom.ItemReward;

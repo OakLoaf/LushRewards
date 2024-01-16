@@ -3,7 +3,7 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.api.event.RewardUserLoadEvent;
 import me.dave.activityrewarder.api.event.RewardUserUnloadEvent;
-import me.dave.activityrewarder.importer.ActivityRewarderDataUpdater;
+import me.dave.activityrewarder.importer.internal.ActivityRewarderDataUpdater;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;

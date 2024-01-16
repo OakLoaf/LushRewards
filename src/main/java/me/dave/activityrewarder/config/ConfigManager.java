@@ -2,7 +2,7 @@ package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.InventoryHandler;
-import me.dave.activityrewarder.importer.ActivityRewarderConfigUpdater;
+import me.dave.activityrewarder.importer.internal.ActivityRewarderConfigUpdater;
 import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;

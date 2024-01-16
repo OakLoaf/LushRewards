@@ -1,7 +1,8 @@
-package me.dave.activityrewarder.importer;
+package me.dave.activityrewarder.importer.internal;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.importer.ConfigImporter;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import org.bukkit.configuration.file.YamlConfiguration;
