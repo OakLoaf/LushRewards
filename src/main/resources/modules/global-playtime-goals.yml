@@ -1,4 +1,7 @@
 # Global playtime goals that do not reset
+module: GLOBAL_PLAYTIME_GOALS
+id: global-playtime-goals
+enabled: true
 
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)
 refresh-time: 30

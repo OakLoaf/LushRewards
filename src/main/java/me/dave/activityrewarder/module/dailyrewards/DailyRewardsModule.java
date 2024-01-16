@@ -4,12 +4,12 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
-import me.dave.activityrewarder.utils.ConfigParser;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.module.Module;
+import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +21,7 @@ import java.util.*;
 
 public class DailyRewardsModule extends Module {
     public static final String ID = "daily-rewards";
+
     private HashSet<DailyRewardCollection> rewards;
     private int resetDaysAt;
     private boolean streakMode;
@@ -40,7 +41,7 @@ public class DailyRewardsModule extends Module {
         YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyRewardsConfig();
         ConfigurationSection configurationSection = config.getConfigurationSection("daily-rewards");
         if (configurationSection == null) {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in 'daily-rewards.yml'");
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in ' + moduleFile.getName() + '");
             this.disable();
             return;
         }
@@ -48,7 +49,7 @@ public class DailyRewardsModule extends Module {
         this.resetDaysAt = config.getInt("reset-days-at", -1);
         this.streakMode = config.getBoolean("streak-mode", false);
         this.allowRewardsStacking = config.getBoolean("allow-reward-stacking", true);
-        this.defaultRedeemSound = ConfigParser.getSound(config.getString("default-redeem-sound", "none").toUpperCase());
+        this.defaultRedeemSound = StringUtils.getEnum(config.getString("default-redeem-sound", "none"), Sound.class).orElse(null);
         this.upcomingCategory = config.getString("upcoming-category");
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");

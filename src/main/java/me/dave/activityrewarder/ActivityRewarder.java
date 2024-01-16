@@ -3,28 +3,24 @@ package me.dave.activityrewarder;
 import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.events.GuiEvents;
-import me.dave.activityrewarder.module.Module;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
-import me.dave.activityrewarder.utils.Updater;
-import me.dave.activityrewarder.utils.skullcreator.LegacySkullCreator;
-import me.dave.activityrewarder.utils.skullcreator.NewSkullCreator;
-import me.dave.activityrewarder.utils.skullcreator.SkullCreator;
+import me.dave.platyutils.module.Module;
+import me.dave.platyutils.plugin.SpigotPlugin;
+import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import me.dave.activityrewarder.config.ConfigManager;
 import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
 import space.arim.morepaperlib.MorePaperLib;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class ActivityRewarder extends JavaPlugin {
-    private static final SkullCreator skullCreator;
+public final class ActivityRewarder extends SpigotPlugin {
     private static ActivityRewarder plugin;
     private static ConcurrentHashMap<String, Module> modules;
     private static MorePaperLib morePaperLib;
@@ -32,22 +28,16 @@ public final class ActivityRewarder extends JavaPlugin {
     private static DataManager dataManager;
     private static NotificationHandler notificationHandler;
     private static boolean floodgateEnabled = false;
-    private static PlaceholderAPIHook placeholderAPIHook = null;
     private Updater updater;
 
-    static {
-        String version = Bukkit.getBukkitVersion();
-        if (version.contains("1.16") || version.contains("1.17") || version.contains("1.18")) {
-            skullCreator = new LegacySkullCreator();
-        } else {
-            skullCreator = new NewSkullCreator();
-        }
+    @Override
+    public void onLoad() {
+        plugin = this;
     }
 
     @Override
     public void onEnable() {
-        plugin = this;
-        updater = new Updater(this, "activity-rewarder", "rewards update");
+        updater = new Updater(this, "activity-rewarder", "activityrewarder.update", "rewards update");
         modules = new ConcurrentHashMap<>();
 
         morePaperLib = new MorePaperLib(plugin);
@@ -56,28 +46,19 @@ public final class ActivityRewarder extends JavaPlugin {
         configManager.reloadConfig();
         dataManager = new DataManager();
 
+        addHook("floodgate", () -> floodgateEnabled = true);
+        addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
+
         Listener[] listeners = new Listener[] {
-            new RewardUserEvents(),
-            new GuiEvents()
+                new RewardUserEvents(),
+                new GuiEvents()
         };
         registerEvents(listeners);
 
         getCommand("rewards").setExecutor(new RewardCmd());
 
-        PluginManager pluginManager = getServer().getPluginManager();
-
-        if (pluginManager.getPlugin("floodgate") != null) {
-            floodgateEnabled = true;
-            plugin.getLogger().info("Found plugin \"Floodgate\". Floodgate support enabled.");
-        }
-
-        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
-            placeholderAPIHook = new PlaceholderAPIHook();
-            placeholderAPIHook.register();
-            plugin.getLogger().info("Found plugin \"PlaceholderAPI\". PlaceholderAPI support enabled.");
-        }
-
-        if (getModule(PlaytimeTrackerModule.ID) instanceof PlaytimeTrackerModule module) {
+        Optional<Module> playtimeTracker = getModule(PlaytimeTrackerModule.ID);
+        if (playtimeTracker.isPresent() && playtimeTracker.get() instanceof PlaytimeTrackerModule module) {
             Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
         }
     }
@@ -129,38 +110,12 @@ public final class ActivityRewarder extends JavaPlugin {
         return updater;
     }
 
-    public static Module getModule(String id) {
-        return modules.get(id);
-    }
-
-    public static void registerModule(Module module) {
-        modules.put(module.getId(), module);
-        module.enable();
-    }
-
-    public static void unregisterModule(String moduleId) {
-        Module module = modules.get(moduleId);
-        if (module != null) {
-            module.disable();
-        }
-        modules.remove(moduleId);
-    }
-
-    public static void unregisterAllModules() {
-        modules.values().forEach(Module::disable);
-        modules.clear();
-    }
-
     public static ActivityRewarder getInstance() {
         return plugin;
     }
 
     public static MorePaperLib getMorePaperLib() {
         return morePaperLib;
-    }
-
-    public static SkullCreator getSkullCreator() {
-        return skullCreator;
     }
 
     public static ConfigManager getConfigManager() {
@@ -177,9 +132,5 @@ public final class ActivityRewarder extends JavaPlugin {
 
     public static boolean isFloodgateEnabled() {
         return floodgateEnabled;
-    }
-
-    public static PlaceholderAPIHook getPlaceholderAPIHook() {
-        return placeholderAPIHook;
     }
 }

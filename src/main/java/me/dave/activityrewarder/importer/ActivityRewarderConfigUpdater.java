@@ -5,8 +5,8 @@ import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.custom.ConsoleCommandReward;
 import me.dave.activityrewarder.rewards.custom.ItemReward;
 import me.dave.activityrewarder.rewards.custom.Reward;
-import me.dave.activityrewarder.utils.ConfigParser;
-import me.dave.activityrewarder.utils.SimpleItemStack;
+import me.dave.platyutils.utils.SimpleItemStack;
+import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -160,7 +160,7 @@ public class ActivityRewarderConfigUpdater extends ConfigImporter {
                         ConfigurationSection itemRewardsSection = rewardSection.getConfigurationSection("rewards.items");
                         if (itemRewardsSection != null) {
                             itemRewardsSection.getValues(false).forEach((materialRaw, data) -> {
-                                Material material = ConfigParser.getMaterial(materialRaw);
+                                Material material = StringUtils.getEnum(materialRaw, Material.class).orElse(null);
                                 int amount = 1;
 
                                 if (data instanceof ConfigurationSection dataSection) {

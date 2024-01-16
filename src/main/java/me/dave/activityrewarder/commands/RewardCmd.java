@@ -5,13 +5,12 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.importer.ConfigImporter;
 import me.dave.activityrewarder.importer.DailyRewardsPlusImporter;
 import me.dave.activityrewarder.importer.NDailyRewardsImporter;
+import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
-import me.dave.activityrewarder.utils.Updater;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RewardCmd implements CommandExecutor, TabCompleter {
     private static final String[] ABOUT_MESSAGES = new String[]{
@@ -65,27 +65,16 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    boolean rewardGiven = false;
-
-                    if (ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
-                        if (dailyRewardsModule.claimRewards(player)) {
-                            rewardGiven = true;
+                    AtomicInteger rewardsGiven = new AtomicInteger();
+                    ActivityRewarder.getInstance().getModules().forEach(module -> {
+                        if (module instanceof RewardModule rewardModule) {
+                            rewardModule.claimRewards(player);
+                            rewardsGiven.getAndIncrement();
                         }
-                    }
+                    });
 
-                    if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
-                        if (playtimeDailyGoalsModule.claimRewards(player)) {
-                            rewardGiven = true;
-                        }
-                    }
 
-                    if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
-                        if (playtimeGlobalGoalsModule.claimRewards(player)) {
-                            rewardGiven = true;
-                        }
-                    }
-
-                    if (!rewardGiven) {
+                    if (rewardsGiven.get() == 0) {
                         ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("no-rewards-available"));
                     }
 
@@ -408,12 +397,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (ActivityRewarder.getModule(DailyRewardsModule.ID) instanceof DailyRewardsModule dailyRewardsModule) {
-            DailyRewardsGui dailyRewardsGui = new DailyRewardsGui(dailyRewardsModule, player);
-            dailyRewardsGui.openInventory();
-        } else {
-            ChatColorHandler.sendMessage(player, "&#ff6969DailyRewards module is disabled");
-        }
+        ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID).ifPresentOrElse(
+                module -> new DailyRewardsGui((DailyRewardsModule) module, player).openInventory(),
+                () -> ChatColorHandler.sendMessage(player, "&#ff6969DailyRewards module is disabled")
+        );
 
         return true;
     }
@@ -475,6 +462,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         return tabComplete;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean setDay(CommandSender sender, String nameOrUuid, int dayNum) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
@@ -510,6 +498,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean setStreak(CommandSender sender, String nameOrUuid, int streak) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;

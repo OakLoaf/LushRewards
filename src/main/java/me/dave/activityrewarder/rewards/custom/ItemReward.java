@@ -2,7 +2,7 @@ package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.utils.SchedulerType;
-import me.dave.activityrewarder.utils.SimpleItemStack;
+import me.dave.platyutils.utils.SimpleItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class ItemReward extends Reward {
 
     @Override
     protected void giveTo(Player player) {
-        HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack.getItemStack(player));
+        HashMap<Integer, ItemStack> droppedItems = player.getInventory().addItem(itemStack.asItemStack(player));
         droppedItems.values().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
     }
 

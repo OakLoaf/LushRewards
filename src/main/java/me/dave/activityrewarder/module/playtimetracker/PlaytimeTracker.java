@@ -3,8 +3,11 @@ package me.dave.activityrewarder.module.playtimetracker;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
-import me.dave.activityrewarder.utils.SimpleLocation;
+import me.dave.platyutils.module.Module;
+import me.dave.platyutils.utils.SimpleLocation;
 import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 public class PlaytimeTracker {
     private static final int IDLE_TIME_TO_AFK = 300;
@@ -26,8 +29,8 @@ public class PlaytimeTracker {
 
     public void tick() {
         if (!player.isOnline()) {
-            PlaytimeTrackerModule playtimeTrackerModule = (PlaytimeTrackerModule) ActivityRewarder.getModule(PlaytimeTrackerModule.ID);
-            if (playtimeTrackerModule != null) {
+            Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID);
+            if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
                 playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             }
 
@@ -79,13 +82,15 @@ public class PlaytimeTracker {
         globalTime++;
 
         if (player.hasPermission("activityrewarder.use")) {
-            if (ActivityRewarder.getModule(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
+            Optional<Module> optionalDailyGoalsModule = ActivityRewarder.getInstance().getModule(PlaytimeDailyGoalsModule.ID);
+            if (optionalDailyGoalsModule.isPresent() && optionalDailyGoalsModule.get() instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
                 if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
                     playtimeDailyGoalsModule.claimRewards(player);
                 }
             }
 
-            if (ActivityRewarder.getModule(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
+            Optional<Module> optionalGlobalGoalsModule = ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID);
+            if (optionalGlobalGoalsModule.isPresent() && optionalGlobalGoalsModule.get() instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
                 if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
                     playtimeGlobalGoalsModule.claimRewards(player);
                 }
