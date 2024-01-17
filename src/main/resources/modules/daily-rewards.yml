@@ -1,4 +1,4 @@
-module: DAILY_REWARDS
+rewards-type: DAILY_REWARDS
 id: daily-rewards
 enabled: true
 

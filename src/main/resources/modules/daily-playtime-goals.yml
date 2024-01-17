@@ -1,5 +1,5 @@
 # Hourly playtime goals that reset daily
-module: DAILY_PLAYTIME_GOALS
+rewards-type: DAILY_PLAYTIME_GOALS
 id: daily-playtime-goals
 enabled: true
 

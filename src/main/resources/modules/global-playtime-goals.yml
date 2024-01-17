@@ -1,5 +1,5 @@
 # Global playtime goals that do not reset
-module: GLOBAL_PLAYTIME_GOALS
+rewards-type: GLOBAL_PLAYTIME_GOALS
 id: global-playtime-goals
 enabled: true
 
