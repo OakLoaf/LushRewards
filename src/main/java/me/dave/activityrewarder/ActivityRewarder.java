@@ -2,7 +2,6 @@ package me.dave.activityrewarder;
 
 import me.dave.activityrewarder.commands.RewardCmd;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
-import me.dave.activityrewarder.events.GuiEvents;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.platyutils.module.Module;
@@ -50,8 +49,7 @@ public final class ActivityRewarder extends SpigotPlugin {
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
 
         Listener[] listeners = new Listener[] {
-                new RewardUserEvents(),
-                new GuiEvents()
+                new RewardUserEvents()
         };
         registerEvents(listeners);
 

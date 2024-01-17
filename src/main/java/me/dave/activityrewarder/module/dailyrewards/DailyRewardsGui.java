@@ -4,13 +4,13 @@ import com.google.common.collect.TreeMultimap;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.data.RewardUser;
-import me.dave.activityrewarder.gui.abstracts.AbstractGui;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.gui.inventory.Gui;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleItemStack;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DailyRewardsGui extends AbstractGui {
+public class DailyRewardsGui extends Gui {
     private final DailyRewardsModule dailyRewardsModule;
     private final GuiFormat.GuiTemplate guiTemplate;
 
