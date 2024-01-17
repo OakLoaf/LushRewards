@@ -1,8 +1,6 @@
 package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.api.event.RewardUserLoadEvent;
-import me.dave.activityrewarder.api.event.RewardUserUnloadEvent;
 import me.dave.activityrewarder.importer.internal.ActivityRewarderDataUpdater;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
@@ -65,7 +63,6 @@ public class DataManager {
     public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
         return ioHandler.loadData(uuid).thenApply((rewardUser) -> {
             uuidToRewardUser.put(uuid, rewardUser);
-            ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> ActivityRewarder.getInstance().callEvent(new RewardUserLoadEvent(rewardUser)));
             return rewardUser;
         });
     }
@@ -73,7 +70,7 @@ public class DataManager {
     public void unloadRewarderUser(UUID uuid) {
         RewardUser rewardUser = uuidToRewardUser.get(uuid);
 
-        if (rewardUser != null && ActivityRewarder.getInstance().callEvent(new RewardUserUnloadEvent(rewardUser))) {
+        if (rewardUser != null) {
             uuidToRewardUser.remove(uuid);
         }
     }
