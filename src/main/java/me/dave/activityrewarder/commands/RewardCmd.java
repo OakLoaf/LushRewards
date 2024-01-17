@@ -8,7 +8,6 @@ import me.dave.activityrewarder.importer.NDailyRewardsImporter;
 import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
@@ -43,7 +42,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        ActivityRewarder.getConfigManager().checkRefresh();
+        ActivityRewarder.getInstance().getConfigManager().checkRefresh();
 
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
@@ -61,7 +60,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                     }
 
                     if (!sender.hasPermission("activityrewarder.use")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
@@ -75,87 +74,87 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
 
 
                     if (rewardsGiven.get() == 0) {
-                        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("no-rewards-available"));
+                        ChatColorHandler.sendMessage(player, ActivityRewarder.getInstance().getConfigManager().getMessage("no-rewards-available"));
                     }
 
                     return true;
                 }
                 case "import" -> {
                     if (!sender.hasPermission("activityrewarder.import")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards import <plugin>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards import <plugin>"));
                     return true;
                 }
                 case "messages" -> {
                     if (!sender.hasPermission("activityrewarder.viewmessages")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ActivityRewarder.getConfigManager().getMessages().forEach(message -> ChatColorHandler.sendMessage(sender, message));
+                    ActivityRewarder.getInstance().getConfigManager().getMessages().forEach(message -> ChatColorHandler.sendMessage(sender, message));
                     return true;
                 }
                 case "reload" -> {
                     if (!sender.hasPermission("activityrewarder.reload")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
-                    ActivityRewarder.getConfigManager().reloadConfig();
+                    ActivityRewarder.getInstance().getConfigManager().reloadConfig();
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reload"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("reload"));
                     return true;
                 }
                 case "reset" -> {
                     if (!sender.hasPermission("activityrewarder.reset")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset <player>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset <player>"));
                     return true;
                 }
                 case "reset-days" -> {
                     if (!sender.hasPermission("activityrewarder.resetdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player>"));
                     return true;
                 }
                 case "set-days" -> {
                     if (!sender.hasPermission("activityrewarder.setdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
                     return true;
                 }
                 case "reset-streak" -> {
                     if (!sender.hasPermission("activityrewarder.resetstreak")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player>"));
                     return true;
                 }
                 case "set-streak" -> {
                     if (!sender.hasPermission("activityrewarder.setstreak")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
                     return true;
                 }
                 case "update" -> {
                     if (!sender.hasPermission("activityrewarder.update")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
@@ -185,7 +184,7 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             switch (args[0].toLowerCase()) {
                 case "import" -> {
                     if (!sender.hasPermission("activityrewarder.import")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
@@ -207,10 +206,10 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                             .thenAccept(success -> {
                                 if (success) {
                                     ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully imported configuration from &#66b04f'" + args[1] + "' &#b7faa2in &#66b04f" + (Instant.now().toEpochMilli() - startMs) + "ms");
-                                    ActivityRewarder.getConfigManager().reloadConfig();
-                                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reload"));
+                                    ActivityRewarder.getInstance().getConfigManager().reloadConfig();
+                                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("reload"));
                                 } else {
-                                    ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) +"ms");
+                                    ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
                                 }
                             });
                     } else {
@@ -221,47 +220,47 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 }
                 case "reset" -> {
                     if (!sender.hasPermission("activityrewarder.reset")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reset").replaceAll("%target%", args[1]));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("reset").replaceAll("%target%", args[1]));
                     return true;
                 }
                 case "reset-days" -> {
                     if (!sender.hasPermission("activityrewarder.resetdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reset-days").replaceAll("%target%", args[1]));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("reset-days").replaceAll("%target%", args[1]));
                     return true;
                 }
                 case "set-days" -> {
                     if (!sender.hasPermission("activityrewarder.setdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
                     return true;
                 }
                 case "reset-streak" -> {
                     if (!sender.hasPermission("activityrewarder.resetstreak")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("reset-streak").replaceAll("%target%", args[1]));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("reset-streak").replaceAll("%target%", args[1]));
                     return true;
                 }
                 case "set-streak" -> {
                     if (!sender.hasPermission("activityrewarder.setstreak")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
                     return true;
                 }
             }
@@ -270,12 +269,12 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             switch (args[0].toLowerCase()) {
                 case "reset" -> {
                     if (!sender.hasPermission("activityrewarder.resetdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
                     if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset <player> confirm"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset <player> confirm"));
                         return true;
                     }
 
@@ -283,71 +282,71 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", "1"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", "1"));
                     return true;
                 }
                 case "reset-days" -> {
                     if (!sender.hasPermission("activityrewarder.resetdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
                     if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player> confirm"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player> confirm"));
                         return true;
                     }
 
                     if (!setDay(sender, args[1], 1)) {
                         return true;
                     }
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", "1"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", "1"));
                     return true;
                 }
                 case "set-days" -> {
                     if (!sender.hasPermission("activityrewarder.setdays")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days").replaceAll("%target%", args[1]).replaceAll("%day%", args[2]));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-days").replaceAll("%target%", args[1]).replaceAll("%day%", args[2]));
                     return true;
                 }
                 case "reset-streak" -> {
                     if (!sender.hasPermission("activityrewarder.resetstreak")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
                     if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player> confirm"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player> confirm"));
                         return true;
                     }
 
                     if (!setStreak(sender, args[1], 1)) {
                         return true;
                     }
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", "1"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", "1"));
                     return true;
                 }
                 case "set-streak" -> {
                     if (!sender.hasPermission("activityrewarder.setstreak")) {
-                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                        ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak").replaceAll("%target%", args[1]).replaceAll("%streak%", args[2]));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-streak").replaceAll("%target%", args[1]).replaceAll("%streak%", args[2]));
                     return true;
                 }
             }
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("set-days")) {
                 if (!sender.hasPermission("activityrewarder.setdays")) {
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                     return true;
                 }
 
                 if (!args[3].equalsIgnoreCase("confirm")) {
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
                     return true;
                 }
 
@@ -355,21 +354,21 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 try {
                     dayNum = Integer.parseInt(args[2]);
                 } catch (NumberFormatException e) {
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
                     return true;
                 }
 
                 if (!setDay(sender, args[1], dayNum)) return true;
-                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", String.valueOf(dayNum)));
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[1]).replaceAll("%day%", String.valueOf(dayNum)));
                 return true;
             } else if (args[0].equalsIgnoreCase("set-streak")) {
                 if (!sender.hasPermission("activityrewarder.setstreak")) {
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
                     return true;
                 }
 
                 if (!args[3].equalsIgnoreCase("confirm")) {
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
                     return true;
                 }
 
@@ -377,12 +376,12 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
                 try {
                     streak = Integer.parseInt(args[2]);
                 } catch (NumberFormatException e) {
-                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
+                    ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
                     return true;
                 }
 
                 if (!setStreak(sender, args[1], streak)) return true;
-                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", String.valueOf(streak)));
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[1]).replaceAll("%streak%", String.valueOf(streak)));
                 return true;
             }
         }
@@ -393,14 +392,17 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
         }
 
         if (!player.hasPermission("activityrewarder.use")) {
-            ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("no-permissions"));
+            ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("no-permissions"));
             return true;
         }
 
-        ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID).ifPresentOrElse(
-                module -> new DailyRewardsGui((DailyRewardsModule) module, player).openInventory(),
+        ActivityRewarder.getInstance().getModules().stream()
+            .filter(module -> module instanceof DailyRewardsModule)
+            .findFirst()
+            .ifPresentOrElse(
+                module -> new DailyRewardsGui((DailyRewardsModule) module, player).open(),
                 () -> ChatColorHandler.sendMessage(player, "&#ff6969DailyRewards module is disabled")
-        );
+            );
 
         return true;
     }
@@ -472,26 +474,26 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
                 return false;
             }
         }
 
-        if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+        if (player != null && ActivityRewarder.getInstance().getDataManager().isRewardUserLoaded(uuid)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
                 moduleUserData.setDayNum(dayNum);
                 moduleUserData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
                 rewardUser.save();
             }
         } else {
-            ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+            ActivityRewarder.getInstance().getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
+                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
                     moduleUserData.setDayNum(dayNum);
                     moduleUserData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
                     rewardUser.save();
                 }
-                ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
+                ActivityRewarder.getInstance().getDataManager().unloadRewarderUser(uuid);
             }));
         }
 
@@ -508,24 +510,24 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
                 return false;
             }
         }
 
-        if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+        if (player != null && ActivityRewarder.getInstance().getDataManager().isRewardUserLoaded(uuid)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
                 moduleUserData.setStreakLength(streak);
                 rewardUser.save();
             }
         } else {
-            ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+            ActivityRewarder.getInstance().getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
+                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
                     moduleUserData.setStreakLength(streak);
                     rewardUser.save();
                 }
-                ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
+                ActivityRewarder.getInstance().getDataManager().unloadRewarderUser(uuid);
             }));
         }
 
@@ -541,26 +543,26 @@ public class RewardCmd implements CommandExecutor, TabCompleter {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, ActivityRewarder.getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                ChatColorHandler.sendMessage(sender, ActivityRewarder.getInstance().getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
                 return false;
             }
         }
 
-        if (player != null && ActivityRewarder.getDataManager().isRewardUserLoaded(uuid)) {
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+        if (player != null && ActivityRewarder.getInstance().getDataManager().isRewardUserLoaded(uuid)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
                 moduleUserData.clearCollectedDates();
                 moduleUserData.setLastCollectedDate(null);
                 rewardUser.save();
             }
         } else {
-            ActivityRewarder.getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData) {
+            ActivityRewarder.getInstance().getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
+                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
                     moduleUserData.clearCollectedDates();
                     moduleUserData.setLastCollectedDate(null);
                     rewardUser.save();
                 }
-                ActivityRewarder.getDataManager().unloadRewarderUser(uuid);
+                ActivityRewarder.getInstance().getDataManager().unloadRewarderUser(uuid);
             }));
         }
 

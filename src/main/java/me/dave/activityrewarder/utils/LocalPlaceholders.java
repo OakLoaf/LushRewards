@@ -3,9 +3,7 @@ package me.dave.activityrewarder.utils;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
@@ -40,8 +38,8 @@ public class LocalPlaceholders {
 
             Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID);
             if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+                RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
                     return null;
                 }
 
@@ -58,8 +56,8 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
                 return null;
             }
 
@@ -87,8 +85,8 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
                 return null;
             }
             
@@ -113,8 +111,8 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
                 return null;
             }
 
@@ -126,9 +124,9 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
 
-            if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModuleUserData moduleData) {
+            if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData moduleData) {
                 return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
             } else {
                 return null;
@@ -140,7 +138,7 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
 
             if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData moduleData) {
                 return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
@@ -167,8 +165,8 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+            RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
                 return null;
             }
 
@@ -182,12 +180,12 @@ public class LocalPlaceholders {
 
             Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID);
             if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+                RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData userData)) {
                     return null;
                 }
 
-                RewardDay rewardDay = dailyRewardsModule.getRewardDay(LocalDate.now(), moduleUserData.getStreakLength());
+                RewardDay rewardDay = dailyRewardsModule.getRewardDay(LocalDate.now(), userData.getStreakLength());
 
                 return String.valueOf(rewardDay.getRewardCount());
             } else {
@@ -212,15 +210,15 @@ public class LocalPlaceholders {
         registerRegexPlaceholder("day_[0-9]+.+", (params, player) -> {
             Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID);
             if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+                RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData userData)) {
                     return null;
                 }
 
                 String[] paramArr = params.split("_", 3);
                 int dayNum = Integer.parseInt(paramArr[1]);
 
-                LocalDate date = moduleUserData.getDateAtStreakLength(dayNum);
+                LocalDate date = userData.getDateAtStreakLength(dayNum);
 
                 RewardDay rewardDay = dailyRewardsModule.getRewardDay(date, dayNum);
 
@@ -314,6 +312,6 @@ public class LocalPlaceholders {
 
     @FunctionalInterface
     private interface PlaceholderFunction<R> {
-        R apply(String string, Player player);
+        R apply(String string, Player player) ;
     }
 }

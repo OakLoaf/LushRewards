@@ -5,6 +5,7 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.RewardModule;
+import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardCollection;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -13,26 +14,32 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO: Combine playtime modules into one playtime module
 public class PlaytimeDailyGoalsModule extends RewardModule {
-    public static final String ID = "daily-playtime-goals";
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
-    public PlaytimeDailyGoalsModule(String id) {
-        super(id);
+    public PlaytimeDailyGoalsModule(String id, File moduleFile) {
+        super(id, moduleFile, UserData.class);
     }
 
     @Override
     public void onEnable() {
-        YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyGoalsConfig();
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(moduleFile);
+        if (!config.getBoolean("enabled", true)) {
+            ActivityRewarder.getInstance().getLogger().info("Module '" + id + "' is disabled in it's configuration");
+            this.disable();
+            return;
+        }
 
         if (!config.contains("daily-goals")) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-goals' section in 'daily-playtime-goals.yml'");
@@ -71,6 +78,43 @@ public class PlaytimeDailyGoalsModule extends RewardModule {
             minutesToReward.clear();
             minutesToReward = null;
         }
+    }
+
+    public boolean claimRewards(Player player) {
+        RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+        UserData playtimeDailyGoalsUserData = (UserData) rewardUser.getModuleData(id);
+        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
+
+        boolean saveRewardUser = false;
+        if (!playtimeDailyGoalsUserData.getDate().isEqual(LocalDate.now())) {
+            playtimeDailyGoalsUserData.setDate(LocalDate.now());
+            playtimeDailyGoalsUserData.setPreviousDayEndPlaytime(playtimeDailyGoalsUserData.getLastCollectedPlaytime());
+            saveRewardUser = true;
+        }
+
+        int previousDayEnd =  playtimeDailyGoalsUserData.getPreviousDayEndPlaytime();
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsUserData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd);
+        if (rewards.isEmpty()) {
+            if (saveRewardUser) {
+                ActivityRewarder.getInstance().getDataManager().saveRewardUser(player);
+            }
+            return false;
+        }
+
+        rewards.forEach((rewardCollection, amount) -> {
+            for (int i = 0; i < amount; i++) {
+                rewardCollection.giveAll(player);
+            }
+        });
+
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getInstance().getConfigManager().getMessage("daily-playtime-reward-given")
+            .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed()))
+            .replaceAll("%hours%", String.valueOf((int) Math.floor(ActivityRewarder.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+
+        playtimeDailyGoalsUserData.setLastCollectedPlaytime(totalMinutesPlayed);
+        ActivityRewarder.getInstance().getDataManager().saveRewardUser(rewardUser);
+
+        return true;
     }
 
     public int getRefreshTime() {
@@ -113,40 +157,31 @@ public class PlaytimeDailyGoalsModule extends RewardModule {
         return guiFormat;
     }
 
-    public boolean claimRewards(Player player) {
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-        PlaytimeDailyGoalsModuleUserData playtimeDailyGoalsModuleUserData = (PlaytimeDailyGoalsModuleUserData) rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID);
-        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
+    public static class UserData extends PlaytimeGoalsModuleUserData {
+        private LocalDate date;
+        private int previousDayEndPlaytime;
 
-        boolean saveRewardUser = false;
-        if (!playtimeDailyGoalsModuleUserData.getDate().isEqual(LocalDate.now())) {
-            playtimeDailyGoalsModuleUserData.setDate(LocalDate.now());
-            playtimeDailyGoalsModuleUserData.setPreviousDayEndPlaytime(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime());
-            saveRewardUser = true;
+        public UserData(String id, int lastCollectedPlaytime, @NotNull LocalDate date, int previousDayEndPlaytime) {
+            super(id, lastCollectedPlaytime);
+            this.date = date;
+            this.previousDayEndPlaytime = previousDayEndPlaytime;
         }
 
-        int previousDayEnd =  playtimeDailyGoalsModuleUserData.getPreviousDayEndPlaytime();
-        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeDailyGoalsModuleUserData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd);
-        if (rewards.isEmpty()) {
-            if (saveRewardUser) {
-                ActivityRewarder.getDataManager().saveRewardUser(player);
-            }
-            return false;
+        @NotNull
+        public LocalDate getDate() {
+            return date;
         }
 
-        rewards.forEach((rewardCollection, amount) -> {
-            for (int i = 0; i < amount; i++) {
-                rewardCollection.giveAll(player);
-            }
-        });
+        public void setDate(@NotNull LocalDate date) {
+            this.date = date;
+        }
 
-        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-playtime-reward-given")
-            .replaceAll("%minutes%", String.valueOf(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed()))
-            .replaceAll("%hours%", String.valueOf((int) Math.floor(ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+        public int getPreviousDayEndPlaytime() {
+            return previousDayEndPlaytime;
+        }
 
-        playtimeDailyGoalsModuleUserData.setLastCollectedPlaytime(totalMinutesPlayed);
-        ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
-
-        return true;
+        public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
+            this.previousDayEndPlaytime = previousDayEndPlaytime;
+        }
     }
 }

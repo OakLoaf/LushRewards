@@ -11,7 +11,7 @@ public abstract class RewardUserEvent extends Event {
         this.rewardUser = rewardUser;
     }
 
-    RewardUserEvent(@NotNull final RewardUser rewardUser, boolean async) {
+    public RewardUserEvent(@NotNull final RewardUser rewardUser, boolean async) {
         super(async);
         this.rewardUser = rewardUser;
     }

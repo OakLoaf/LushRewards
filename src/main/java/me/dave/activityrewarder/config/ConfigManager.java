@@ -1,13 +1,12 @@
 package me.dave.activityrewarder.config;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.gui.InventoryHandler;
 import me.dave.activityrewarder.importer.internal.ActivityRewarderConfigUpdater;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
+import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.utils.Debugger;
+import me.dave.platyutils.PlatyUtils;
+import me.dave.platyutils.manager.GuiManager;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleItemStack;
 import me.dave.platyutils.utils.StringUtils;
@@ -17,21 +16,22 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class ConfigManager {
     private static final File modulesFolder = new File(ActivityRewarder.getInstance().getDataFolder(), "modules");
+    private static LocalDate currentDate;
 
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
-    private File rewardsFile;
-    private File dailyGoalsFile;
-    private File globalGoalsFile;
     private boolean performanceMode;
-    private LocalDate date;
+
     private boolean playtimeIgnoreAfk;
     private int reminderPeriod;
     private Sound reminderSound;
@@ -52,73 +52,71 @@ public class ConfigManager {
     }
 
     public void reloadConfig() {
-        InventoryHandler.closeAll();
+        ActivityRewarder plugin = ActivityRewarder.getInstance();
+        PlatyUtils.getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
 
-        ActivityRewarder.getInstance().reloadConfig();
-        FileConfiguration config = ActivityRewarder.getInstance().getConfig();
+        plugin.unregisterAllModules();
+        plugin.reloadConfig();
+        FileConfiguration config = plugin.getConfig();
 
         Debugger.setDebugMode(Debugger.DebugMode.valueOf(config.getString("debug-mode", "NONE").toUpperCase()));
         performanceMode = config.getBoolean("enable-performance-mode", false);
         if (performanceMode) {
-            date = LocalDate.now();
+            currentDate = LocalDate.now();
         }
 
         playtimeIgnoreAfk = config.getBoolean("playtime-ignore-afk", true);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         reminderSound = StringUtils.getEnum(config.getString("reminder-sound", "none"), Sound.class).orElse(null);
 
-        ActivityRewarder.getInstance().unregisterModule(DailyRewardsModule.ID);
-        ActivityRewarder.getInstance().unregisterModule(PlaytimeDailyGoalsModule.ID);
-        ActivityRewarder.getInstance().unregisterModule(PlaytimeGlobalGoalsModule.ID);
+        try {
+            Files.newDirectoryStream(modulesFolder.toPath(), "*.yml").forEach(entry -> {
+                File moduleFile = entry.toFile();
+                YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
+                if (moduleConfig.getBoolean("enabled", true)) {
+                    String moduleId = moduleConfig.getString("id");
+                    if (moduleId == null) {
+                        plugin.log(Level.SEVERE, "No module id was found in '" + moduleFile.getName() + "'");
+                        return;
+                    } else if (plugin.getModule(moduleId).isPresent()) {
+                        plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
+                        return;
+                    }
 
+                    String rewardsType = moduleConfig.getString("rewards-type");
+                    if (rewardsType == null || !plugin.hasModuleType(rewardsType)) {
+                        plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'rewards-type'");
+                        return;
+                    }
 
-
-        boolean requiresPlaytimeTracker = false;
-        if (config.getBoolean("modules.daily-rewards", false)) {
-            ActivityRewarder.getInstance().registerModule(new DailyRewardsModule(DailyRewardsModule.ID));
+                    plugin.registerModule(plugin.loadModuleType(rewardsType, moduleId, moduleFile));
+                }
+            });
+        } catch (IOException e) {
+            plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files");
+            e.printStackTrace();
         }
-        if (config.getBoolean("modules.daily-playtime-goals", false)) {
-            ActivityRewarder.getInstance().registerModule(new PlaytimeDailyGoalsModule(PlaytimeDailyGoalsModule.ID));
-            requiresPlaytimeTracker = true;
-        }
-        if (config.getBoolean("modules.global-playtime-goals", false)) {
-            ActivityRewarder.getInstance().registerModule(new PlaytimeGlobalGoalsModule(PlaytimeGlobalGoalsModule.ID));
-            requiresPlaytimeTracker = true;
-        }
 
-        Optional<Module> playtimeTrackerModule = ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID);
-        if (requiresPlaytimeTracker && playtimeTrackerModule.isEmpty()) {
-            ActivityRewarder.getInstance().registerModule(new PlaytimeTrackerModule(PlaytimeTrackerModule.ID));
-        } else if (!requiresPlaytimeTracker && playtimeTrackerModule.isPresent()) {
-            ActivityRewarder.getInstance().unregisterModule(PlaytimeTrackerModule.ID);
+        if (plugin.getModules().stream().anyMatch(module -> module instanceof RewardModule rewardModule && rewardModule.requiresPlaytimeTracker())) {
+            plugin.registerModule(new PlaytimeTrackerModule());
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);
-        ActivityRewarder.getInstance().getUpdater().setEnabled(enableUpdater);
+        plugin.getUpdater().setEnabled(enableUpdater);
         if (enableUpdater) {
-            ActivityRewarder.getInstance().getUpdater().queueCheck();
+            plugin.getUpdater().queueCheck();
         }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadMessages(config.getConfigurationSection("messages"));
-        ActivityRewarder.getNotificationHandler().reloadNotifications();
+        plugin.getNotificationHandler().reloadNotifications();
 
-        if (ActivityRewarder.getDataManager() != null) {
-            ActivityRewarder.getDataManager().reloadRewardUsers();
+        if (plugin.getDataManager() != null) {
+            plugin.getDataManager().reloadRewardUsers();
         }
-    }
 
-    public YamlConfiguration getDailyRewardsConfig() {
-        return YamlConfiguration.loadConfiguration(rewardsFile);
-    }
-
-    public YamlConfiguration getDailyGoalsConfig() {
-        return YamlConfiguration.loadConfiguration(dailyGoalsFile);
-    }
-
-    public YamlConfiguration getGlobalGoalsConfig() {
-        return YamlConfiguration.loadConfiguration(globalGoalsFile);
+        plugin.getModules().forEach(Module::reload);
     }
 
     public String getMessage(String messageName) {
@@ -150,7 +148,7 @@ public class ConfigManager {
     }
 
     public SimpleItemStack getItemTemplate(String key) {
-        SimpleItemStack itemTemplate = itemTemplates.get(key);
+        SimpleItemStack itemTemplate = globalItemTemplates.get(key);
         if (itemTemplate == null) {
             ActivityRewarder.getInstance().getLogger().severe("Could not find item-template '" + key + "'");
             return new SimpleItemStack();
@@ -164,7 +162,7 @@ public class ConfigManager {
     }
 
     public void checkRefresh() {
-        if (performanceMode && !date.isEqual(LocalDate.now())) {
+        if (performanceMode && !currentDate.isEqual(LocalDate.now())) {
             reloadConfig();
         }
     }
@@ -200,7 +198,7 @@ public class ConfigManager {
 
     private void reloadItemTemplates(ConfigurationSection itemTemplatesSection) {
         // Clears category map
-        itemTemplates.clear();
+        globalItemTemplates.clear();
 
         // Checks if categories section exists
         if (itemTemplatesSection == null) {
@@ -210,7 +208,7 @@ public class ConfigManager {
         // Repopulates category map
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
-                itemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                globalItemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
                 ActivityRewarder.getInstance().getLogger().info("Loaded item-template: " + categorySection.getName());
             }
         });
@@ -227,32 +225,6 @@ public class ConfigManager {
 
         // Repopulates messages map
         messagesSection.getValues(false).forEach((key, value) -> messages.put(key, (String) value));
-    }
-
-    private void initRewardsYmls() {
-        ActivityRewarder plugin = ActivityRewarder.getInstance();
-
-        File dailyRewardsFile = new File(plugin.getDataFolder(), "modules/daily-rewards.yml");
-        if (!dailyRewardsFile.exists()) {
-            plugin.saveResource("modules/daily-rewards.yml", false);
-            plugin.getLogger().info("File Created: daily-rewards.yml");
-        }
-
-        File dailyGoalsFile = new File(plugin.getDataFolder(), "modules/daily-playtime-goals.yml");
-        if (!dailyGoalsFile.exists()) {
-            plugin.saveResource("modules/daily-playtime-goals.yml", false);
-            plugin.getLogger().info("File Created: daily-playtime-goals.yml");
-        }
-
-        File globalGoalsFile = new File(plugin.getDataFolder(), "modules/global-playtime-goals.yml");
-        if (!globalGoalsFile.exists()) {
-            plugin.saveResource("modules/global-playtime-goals.yml", false);
-            plugin.getLogger().info("File Created: global-playtime-goals.yml");
-        }
-
-        this.rewardsFile = dailyRewardsFile;
-        this.dailyGoalsFile = dailyGoalsFile;
-        this.globalGoalsFile = globalGoalsFile;
     }
 
     private boolean isOutdated() {

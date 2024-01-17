@@ -1,37 +1,46 @@
 package me.dave.activityrewarder;
 
 import me.dave.activityrewarder.commands.RewardCmd;
+import me.dave.activityrewarder.hooks.FloodgateHook;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
+import me.dave.activityrewarder.module.ModuleType;
+import me.dave.activityrewarder.module.RewardModule;
+import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
+import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
 import me.dave.activityrewarder.config.ConfigManager;
 import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
+import org.jetbrains.annotations.NotNull;
 import space.arim.morepaperlib.MorePaperLib;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public final class ActivityRewarder extends SpigotPlugin {
     private static ActivityRewarder plugin;
-    private static ConcurrentHashMap<String, Module> modules;
     private static MorePaperLib morePaperLib;
-    private static ConfigManager configManager;
-    private static DataManager dataManager;
-    private static NotificationHandler notificationHandler;
-    private static boolean floodgateEnabled = false;
+    private ConfigManager configManager;
+    private DataManager dataManager;
+    private NotificationHandler notificationHandler;
     private Updater updater;
+    private ConcurrentHashMap<String, RewardModule.CallableRewardModule<RewardModule>> moduleTypes;
 
     @Override
     public void onLoad() {
         plugin = this;
+
+        moduleTypes = new ConcurrentHashMap<>();
+        registerModuleType(ModuleType.DAILY_REWARDS.toString(), DailyRewardsModule::new);
+//        registerModuleType(ModuleType.ONE_TIME_REWARDS.toString(), OneTimeRewardsModule::new);
+        registerModuleType(ModuleType.PLAYTIME_REWARDS.toString(), PlaytimeDailyGoalsModule::new);
     }
 
     @Override
@@ -45,13 +54,10 @@ public final class ActivityRewarder extends SpigotPlugin {
         configManager.reloadConfig();
         dataManager = new DataManager();
 
-        addHook("floodgate", () -> floodgateEnabled = true);
+        addHook("floodgate", () -> registerHook(new FloodgateHook()));
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
 
-        Listener[] listeners = new Listener[] {
-                new RewardUserEvents()
-        };
-        registerEvents(listeners);
+        new RewardUserEvents().registerListeners();
 
         getCommand("rewards").setExecutor(new RewardCmd());
 
@@ -65,14 +71,24 @@ public final class ActivityRewarder extends SpigotPlugin {
     public void onDisable() {
         updater.shutdown();
 
-        if (morePaperLib != null) {
-            morePaperLib.scheduling().cancelGlobalTasks();
-            morePaperLib = null;
-        }
-
         if (notificationHandler != null) {
             notificationHandler.stopNotificationTask();
             notificationHandler = null;
+        }
+
+        if (hooks != null) {
+            unregisterAllHooks();
+            hooks = null;
+        }
+
+        if (modules != null) {
+            unregisterAllModules();
+            modules = null;
+        }
+
+        if (morePaperLib != null) {
+            morePaperLib.scheduling().cancelGlobalTasks();
+            morePaperLib = null;
         }
 
         if (dataManager != null) {
@@ -81,31 +97,46 @@ public final class ActivityRewarder extends SpigotPlugin {
             dataManager = null;
         }
 
-        if (modules != null) {
-            unregisterAllModules();
-            modules = null;
-        }
-
         configManager = null;
     }
 
-    public boolean callEvent(Event event) {
-        getServer().getPluginManager().callEvent(event);
-        if (event instanceof Cancellable cancellable) {
-            return !cancellable.isCancelled();
-        } else {
-            return true;
-        }
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 
-    public void registerEvents(Listener[] listeners) {
-        for (Listener listener : listeners) {
-            getServer().getPluginManager().registerEvents(listener, this);
-        }
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public NotificationHandler getNotificationHandler() {
+        return notificationHandler;
     }
 
     public Updater getUpdater() {
         return updater;
+    }
+
+    public boolean hasModuleType(@NotNull String type) {
+        return moduleTypes.containsKey(type);
+    }
+
+    public RewardModule loadModuleType(@NotNull String type, @NotNull String moduleId, @NotNull File moduleFile) {
+        type = type.toUpperCase();
+        return moduleTypes.containsKey(type) ? moduleTypes.get(type).call(moduleId, moduleFile) : null;
+    }
+
+    public void registerModuleType(String id, RewardModule.CallableRewardModule<RewardModule> callable) {
+        id = id.toUpperCase();
+
+        if (moduleTypes.containsKey(id)) {
+            log(Level.SEVERE, "Failed to register module type with id '" + id + "', a module type with this id is already registered");
+        } else {
+            moduleTypes.put(id, callable);
+        }
+    }
+
+    public void unregisterModuleType(String id) {
+        moduleTypes.remove(id);
     }
 
     public static ActivityRewarder getInstance() {
@@ -114,21 +145,5 @@ public final class ActivityRewarder extends SpigotPlugin {
 
     public static MorePaperLib getMorePaperLib() {
         return morePaperLib;
-    }
-
-    public static ConfigManager getConfigManager() {
-        return configManager;
-    }
-
-    public static DataManager getDataManager() {
-        return dataManager;
-    }
-
-    public static NotificationHandler getNotificationHandler() {
-        return notificationHandler;
-    }
-
-    public static boolean isFloodgateEnabled() {
-        return floodgateEnabled;
     }
 }

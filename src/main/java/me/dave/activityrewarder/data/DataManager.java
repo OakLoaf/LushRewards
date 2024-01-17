@@ -3,9 +3,7 @@ package me.dave.activityrewarder.data;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.importer.internal.ActivityRewarderDataUpdater;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModuleUserData;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import org.bukkit.Bukkit;
@@ -96,11 +94,11 @@ public class DataManager {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
             if (ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID).isPresent()) {
-                rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, 0, 0, LocalDate.now(), null, new HashSet<>()));
+                rewardUser.addModuleData(new DailyRewardsModule.UserData(DailyRewardsModule.ID, 0, 0, LocalDate.now(), null, new HashSet<>()));
             }
 
             if (ActivityRewarder.getInstance().getModule(PlaytimeDailyGoalsModule.ID).isPresent()) {
-                rewardUser.addModuleData(new PlaytimeDailyGoalsModuleUserData(PlaytimeDailyGoalsModule.ID, 0, LocalDate.now(), 0));
+                rewardUser.addModuleData(new PlaytimeDailyGoalsModule.UserData(PlaytimeDailyGoalsModule.ID, 0, LocalDate.now(), 0));
             }
 
             if (ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID).isPresent()) {

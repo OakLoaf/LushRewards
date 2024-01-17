@@ -43,9 +43,9 @@ public class DailyRewardsGui extends Gui {
         clearButtons();
 
         // Gets RewardUser
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+        RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
         // Gets ModuleUserData
-        if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
+        if (!(rewardUser.getModuleData(dailyRewardsModule.getId()) instanceof DailyRewardsModule.UserData moduleUserData)) {
             SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
             errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
             errorItem.setLore(List.of("&7&oIf this continues please", "report to your server administrator"));
@@ -113,7 +113,7 @@ public class DailyRewardsGui extends Gui {
                 case 'R' -> slotMap.get(character).forEach(slot -> {
                     ItemStack itemStack;
                     if (dailyRewardsModule.getScrollType().equals(ScrollType.MONTH) && dateIndex[0].getMonthValue() != LocalDate.now().getMonthValue()) {
-                        SimpleItemStack simpleItemStack = ActivityRewarder.getConfigManager().getItemTemplate(String.valueOf('#'));
+                        SimpleItemStack simpleItemStack = ActivityRewarder.getInstance().getConfigManager().getItemTemplate(String.valueOf('#'));
 
                         if (!simpleItemStack.hasType()) {
                             simpleItemStack.setType(Material.STONE);
@@ -138,7 +138,7 @@ public class DailyRewardsGui extends Gui {
 
                         SimpleItemStack displayItem;
                         if (!rewardDay.isEmpty()) {
-                            displayItem = SimpleItemStack.overwrite(ActivityRewarder.getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
+                            displayItem = SimpleItemStack.overwrite(ActivityRewarder.getInstance().getConfigManager().getCategoryTemplate(priorityReward.getCategory()), ActivityRewarder.getInstance().getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
 
                             if (displayItem.getDisplayName() != null) {
                                 displayItem.setDisplayName(displayItem.getDisplayName()
@@ -186,7 +186,7 @@ public class DailyRewardsGui extends Gui {
 
                                 removeButton(slot);
 
-                                SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getConfigManager().getItemTemplate("collected-reward"));
+                                SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), ActivityRewarder.getInstance().getConfigManager().getItemTemplate("collected-reward"));
                                 if (collectedItem.getDisplayName() != null) {
                                     collectedItem.setDisplayName(collectedItem.getDisplayName()
                                         .replaceAll("%day%", String.valueOf(currDayNum))
@@ -235,10 +235,10 @@ public class DailyRewardsGui extends Gui {
                     // Adds the upcoming reward to the GUI if it exists
                     if (upcomingReward.isPresent()) {
                         DailyRewardCollection upcomingRewardCollection = upcomingReward.get();
-                        SimpleItemStack categoryItem = ActivityRewarder.getConfigManager().getCategoryTemplate(upcomingCategory);
+                        SimpleItemStack categoryItem = ActivityRewarder.getInstance().getConfigManager().getCategoryTemplate(upcomingCategory);
 
                         // Get the day's reward for the current slot
-                        SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getConfigManager().getItemTemplate("upcoming-reward"), upcomingRewardCollection.getDisplayItem());
+                        SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, ActivityRewarder.getInstance().getConfigManager().getItemTemplate("upcoming-reward"), upcomingRewardCollection.getDisplayItem());
 
                         if (simpleItemStack.getDisplayName() != null) {
                             simpleItemStack.setDisplayName(ChatColorHandler.translate(simpleItemStack
@@ -263,7 +263,7 @@ public class DailyRewardsGui extends Gui {
                 }
                 case ' ' -> slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                 default -> slotMap.get(character).forEach(slot -> {
-                    SimpleItemStack simpleItemStack = ActivityRewarder.getConfigManager().getItemTemplate(String.valueOf(character));
+                    SimpleItemStack simpleItemStack = ActivityRewarder.getInstance().getConfigManager().getItemTemplate(String.valueOf(character));
 
                     if (!simpleItemStack.hasType()) {
                         simpleItemStack.setType(Material.STONE);

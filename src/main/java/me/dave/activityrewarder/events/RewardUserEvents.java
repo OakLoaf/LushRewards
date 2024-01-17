@@ -5,22 +5,22 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTracker;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.listener.EventListener;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class RewardUserEvents implements Listener {
+public class RewardUserEvents implements EventListener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        ActivityRewarder.getDataManager().getOrLoadRewardUser(player)
+        ActivityRewarder.getInstance().getDataManager().getOrLoadRewardUser(player)
             .thenAccept((rewardUser) -> {
                 rewardUser.setUsername(player.getName());
 
@@ -42,7 +42,7 @@ public class RewardUserEvents implements Listener {
     @EventHandler
     public void onPlayerDisconnect(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
+        RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
 
         ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID).ifPresent(module -> {
             PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(player.getUniqueId());
@@ -51,7 +51,7 @@ public class RewardUserEvents implements Listener {
             }
         });
 
-        ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
-        ActivityRewarder.getDataManager().unloadRewarderUser(player.getUniqueId());
+        ActivityRewarder.getInstance().getDataManager().saveRewardUser(rewardUser);
+        ActivityRewarder.getInstance().getDataManager().unloadRewarderUser(player.getUniqueId());
     }
 }

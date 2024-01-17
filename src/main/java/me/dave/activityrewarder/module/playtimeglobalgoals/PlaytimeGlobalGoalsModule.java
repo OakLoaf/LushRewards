@@ -4,32 +4,39 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
+import me.dave.activityrewarder.module.ModuleData;
+import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
 import me.dave.chatcolorhandler.ChatColorHandler;
-import me.dave.platyutils.module.Module;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlaytimeGlobalGoalsModule extends Module {
-    public static final String ID = "global-playtime-goals";
+// TODO: Combine playtime modules into one playtime module
+public class PlaytimeGlobalGoalsModule extends RewardModule {
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
-    public PlaytimeGlobalGoalsModule(String id) {
-        super(id);
+    public PlaytimeGlobalGoalsModule(String id, File moduleFile) {
+        super(id, moduleFile, UserData.class);
     }
 
     @Override
     public void onEnable() {
-        YamlConfiguration config = ActivityRewarder.getConfigManager().getGlobalGoalsConfig();
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(moduleFile);
+        if (!config.getBoolean("enabled", true)) {
+            ActivityRewarder.getInstance().getLogger().info("Module '" + id + "' is disabled in it's configuration");
+            this.disable();
+            return;
+        }
 
         if (!config.contains("global-goals")) {
             ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'global-goals' section in 'global-playtime-goals.yml'");
@@ -70,6 +77,33 @@ public class PlaytimeGlobalGoalsModule extends Module {
         }
     }
 
+    public boolean claimRewards(Player player) {
+        RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+        PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(id);
+        int minutesPlayed = rewardUser.getMinutesPlayed();
+
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
+        if (rewards.isEmpty()) {
+            return false;
+        }
+
+        rewards.forEach((rewardCollection, amount) -> {
+            for (int i = 0; i < amount; i++) {
+                rewardCollection.giveAll(player);
+            }
+        });
+
+        int minutesSinceLastCollected = rewardUser.getMinutesPlayed() - playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime();
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getInstance().getConfigManager().getMessage("global-playtime-reward-given")
+            .replaceAll("%minutes%", String.valueOf(minutesSinceLastCollected))
+            .replaceAll("%hours%", String.valueOf((int) Math.floor(minutesSinceLastCollected / 60D))));
+
+        playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
+        ActivityRewarder.getInstance().getDataManager().saveRewardUser(rewardUser);
+
+        return true;
+    }
+
     public int getRefreshTime() {
         return refreshTime;
     }
@@ -105,30 +139,20 @@ public class PlaytimeGlobalGoalsModule extends Module {
         return guiFormat;
     }
 
-    public boolean claimRewards(Player player) {
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-        PlaytimeGoalsModuleUserData playtimeGlobalGoalsModuleUserData = (PlaytimeGoalsModuleUserData) rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID);
-        int minutesPlayed = rewardUser.getMinutesPlayed();
+    public static class UserData extends ModuleData {
+        private int lastCollectedPlaytime;
 
-        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
-        if (rewards.isEmpty()) {
-            return false;
+        public UserData(String id, int lastCollectedPlaytime) {
+            super(id);
+            this.lastCollectedPlaytime = lastCollectedPlaytime;
         }
 
-        rewards.forEach((rewardCollection, amount) -> {
-            for (int i = 0; i < amount; i++) {
-                rewardCollection.giveAll(player);
-            }
-        });
+        public int getLastCollectedPlaytime() {
+            return lastCollectedPlaytime;
+        }
 
-        int minutesSinceLastCollected = rewardUser.getMinutesPlayed() - playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime();
-        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("global-playtime-reward-given")
-            .replaceAll("%minutes%", String.valueOf(minutesSinceLastCollected))
-            .replaceAll("%hours%", String.valueOf((int) Math.floor(minutesSinceLastCollected / 60D))));
-
-        playtimeGlobalGoalsModuleUserData.setLastCollectedPlaytime(minutesPlayed);
-        ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
-
-        return true;
+        public void setLastCollectedPlaytime(int lastCollectedPlaytime) {
+            this.lastCollectedPlaytime = lastCollectedPlaytime;
+        }
     }
 }

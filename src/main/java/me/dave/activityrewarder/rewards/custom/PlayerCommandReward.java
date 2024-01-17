@@ -1,16 +1,18 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.ActivityRewarder;
-import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
+import me.dave.activityrewarder.hooks.FloodgateHook;
+import me.dave.activityrewarder.hooks.HookId;
 import me.dave.activityrewarder.utils.SchedulerType;
 import me.dave.chatcolorhandler.ChatColorHandler;
 import me.dave.chatcolorhandler.parsers.custom.PlaceholderAPIParser;
+import me.dave.platyutils.hook.Hook;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
@@ -28,29 +30,30 @@ public class PlayerCommandReward extends Reward {
 
     @Override
     protected void giveTo(Player player) {
-        boolean isFloodgateEnabled = ActivityRewarder.isFloodgateEnabled();
-        commands.forEach(command -> {
-            String thisCommand = command.replaceAll("%user%", player.getName()).replaceAll("%player%", player.getName());
+        commands.forEach(commandRaw -> {
+            commandRaw = commandRaw.replaceAll("%user%", player.getName()).replaceAll("%player%", player.getName());
+            String command = ChatColorHandler.translate(commandRaw, player, List.of(PlaceholderAPIParser.class));
 
-            thisCommand = ChatColorHandler.translate(thisCommand, player, List.of(PlaceholderAPIParser.class));
+            boolean dispatchCommand = true;
+            if (command.startsWith("java:")) {
+                command = command.substring(5);
 
-            if (thisCommand.startsWith("java:")) {
-                thisCommand = thisCommand.substring(5);
-
-                if (isFloodgateEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                    return;
+                Optional<Hook> optionalHook = ActivityRewarder.getInstance().getHook(HookId.FLOODGATE.toString());
+                if (optionalHook.isPresent() && ((FloodgateHook) optionalHook.get()).isFloodgatePlayer(player.getUniqueId())) {
+                    dispatchCommand = false;
                 }
-            } else if (thisCommand.startsWith("bedrock:")) {
-                thisCommand = thisCommand.substring(8);
+            } else if (command.startsWith("bedrock:")) {
+                command = command.substring(8);
 
-                if (!isFloodgateEnabled) {
-                    return;
-                } else if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                    return;
+                Optional<Hook> optionalHook = ActivityRewarder.getInstance().getHook(HookId.FLOODGATE.toString());
+                if (optionalHook.isEmpty() || !((FloodgateHook) optionalHook.get()).isFloodgatePlayer(player.getUniqueId())) {
+                    dispatchCommand = false;
                 }
             }
 
-            Bukkit.dispatchCommand(player, thisCommand);
+            if (dispatchCommand) {
+                Bukkit.dispatchCommand(player, command);
+            }
         });
 
     }

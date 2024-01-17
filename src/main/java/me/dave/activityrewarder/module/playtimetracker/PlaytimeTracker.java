@@ -23,7 +23,7 @@ public class PlaytimeTracker {
         this.afk = false;
         this.sessionTime = 0;
         this.idleTime = 0;
-        this.globalTime = ActivityRewarder.getDataManager().getRewardUser(player).getMinutesPlayed();
+        this.globalTime = ActivityRewarder.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed();
         updateLocation();
     }
 
@@ -37,7 +37,7 @@ public class PlaytimeTracker {
             return;
         }
 
-        if (ActivityRewarder.getConfigManager().getPlaytimeIgnoreAfk()) {
+        if (ActivityRewarder.getInstance().getConfigManager().getPlaytimeIgnoreAfk()) {
             whileActive();
         } else {
             if (hasMoved()) {
@@ -70,6 +70,10 @@ public class PlaytimeTracker {
         }
     }
 
+    public void saveData() {
+        ActivityRewarder.getInstance().getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
+    }
+
     private void incrementSessionTime() {
         sessionTime++;
 
@@ -82,23 +86,21 @@ public class PlaytimeTracker {
         globalTime++;
 
         if (player.hasPermission("activityrewarder.use")) {
-            Optional<Module> optionalDailyGoalsModule = ActivityRewarder.getInstance().getModule(PlaytimeDailyGoalsModule.ID);
-            if (optionalDailyGoalsModule.isPresent() && optionalDailyGoalsModule.get() instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
-                if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
-                    playtimeDailyGoalsModule.claimRewards(player);
+            ActivityRewarder.getInstance().getModules().forEach(module -> {
+                if (module instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
+                    if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
+                        playtimeDailyGoalsModule.claimRewards(player);
+                    }
+                } else if (module instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
+                    if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
+                        playtimeGlobalGoalsModule.claimRewards(player);
+                    }
                 }
-            }
-
-            Optional<Module> optionalGlobalGoalsModule = ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID);
-            if (optionalGlobalGoalsModule.isPresent() && optionalGlobalGoalsModule.get() instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
-                if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
-                    playtimeGlobalGoalsModule.claimRewards(player);
-                }
-            }
+            });
         }
 
         if (globalTime % 5 == 0) {
-            ActivityRewarder.getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
+            ActivityRewarder.getInstance().getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
         }
     }
 

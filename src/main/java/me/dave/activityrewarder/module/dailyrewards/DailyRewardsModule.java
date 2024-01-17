@@ -4,6 +4,8 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
+import me.dave.activityrewarder.module.ModuleData;
+import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
@@ -15,13 +17,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class DailyRewardsModule extends Module {
-    public static final String ID = "daily-rewards";
-
+public class DailyRewardsModule extends RewardModule {
     private HashSet<DailyRewardCollection> rewards;
     private int resetDaysAt;
     private boolean streakMode;
@@ -32,16 +35,22 @@ public class DailyRewardsModule extends Module {
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
 
-    public DailyRewardsModule(String id) {
-        super(id);
+    public DailyRewardsModule(String id, File moduleFile) {
+        super(id, moduleFile, UserData.class);
     }
 
     @Override
     public void onEnable() {
-        YamlConfiguration config = ActivityRewarder.getConfigManager().getDailyRewardsConfig();
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(moduleFile);
+        if (!config.getBoolean("enabled", true)) {
+            ActivityRewarder.getInstance().getLogger().info("Module '" + id + "' is disabled in it's configuration");
+            this.disable();
+            return;
+        }
+
         ConfigurationSection configurationSection = config.getConfigurationSection("daily-rewards");
         if (configurationSection == null) {
-            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in ' + moduleFile.getName() + '");
+            ActivityRewarder.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in '" + moduleFile.getName() + "'");
             this.disable();
             return;
         }
@@ -72,7 +81,7 @@ public class DailyRewardsModule extends Module {
                     continue;
                 }
 
-                if (ActivityRewarder.getConfigManager().isPerformanceModeEnabled() && dailyRewardCollection.getRewardDate() != null) {
+                if (ActivityRewarder.getInstance().getConfigManager().isPerformanceModeEnabled() && dailyRewardCollection.getRewardDate() != null) {
                     LocalDate lowestDate;
                     LocalDate highestDate;
                     switch (scrollType) {
@@ -116,6 +125,39 @@ public class DailyRewardsModule extends Module {
         }
 
         guiFormat = null;
+    }
+
+    public boolean claimRewards(Player player) {
+        RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
+        if (!(rewardUser.getModuleData(id) instanceof UserData userData)) {
+            return false;
+        }
+
+        if (userData.hasCollectedToday()) {
+            return false;
+        }
+
+        RewardDay rewardDay = getRewardDay(LocalDate.now(), userData.getDayNum());
+        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
+
+        Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+
+        if (shouldStackRewards()) {
+            rewardDay.giveAllRewards(player);
+        } else {
+            priorityReward.giveAll(player);
+        }
+
+        Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+        ChatColorHandler.sendMessage(player, ActivityRewarder.getInstance().getConfigManager().getMessage("daily-reward-given"));
+
+        player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
+        userData.incrementStreakLength();
+        userData.setLastCollectedDate(LocalDate.now());
+        userData.addCollectedDate(LocalDate.now());
+        rewardUser.save();
+
+        return true;
     }
 
     @NotNull
@@ -210,36 +252,98 @@ public class DailyRewardsModule extends Module {
         return guiFormat;
     }
 
-    public boolean claimRewards(Player player) {
-        RewardUser rewardUser = ActivityRewarder.getDataManager().getRewardUser(player);
-        if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModuleUserData moduleUserData)) {
-            return false;
+    public static class UserData extends ModuleData {
+        private int streakLength;
+        private int highestStreak;
+        private LocalDate startDate;
+        private LocalDate lastCollectedDate;
+        private final HashSet<String> collectedDates;
+
+        public UserData(String id, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
+            super(id);
+            this.streakLength = streakLength;
+            this.highestStreak = highestStreak;
+            this.startDate = startDate;
+            this.lastCollectedDate = lastCollectedDate;
+            this.collectedDates = collectedDates;
         }
 
-        if (moduleUserData.hasCollectedToday()) {
-            return false;
+        public int getDayNum() {
+            int dayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay()) + 1;
+
+            Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(id);
+            if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
+                int resetDay = dailyRewardsModule.getResetDay();
+
+                if (resetDay > 0 && dayNum > resetDay) {
+                    setDayNum(1);
+                    dayNum = 1;
+                }
+            }
+
+            return dayNum;
         }
 
-        RewardDay rewardDay = getRewardDay(LocalDate.now(), moduleUserData.getDayNum());
-        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
-
-        Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-
-        if (shouldStackRewards()) {
-            rewardDay.giveAllRewards(player);
-        } else {
-            priorityReward.giveAll(player);
+        public void setDayNum(int dayNum) {
+            startDate = LocalDate.now().minusDays(dayNum - 1);
         }
 
-        Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-        ChatColorHandler.sendMessage(player, ActivityRewarder.getConfigManager().getMessage("daily-reward-given"));
+        public int getStreakLength() {
+            return streakLength;
+        }
 
-        player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
-        moduleUserData.incrementStreakLength();
-        moduleUserData.setLastCollectedDate(LocalDate.now());
-        moduleUserData.addCollectedDate(LocalDate.now());
-        rewardUser.save();
+        public void setStreakLength(int streakLength) {
+            this.streakLength = streakLength;
+        }
 
-        return true;
+        public void restartStreak() {
+            setDayNum(1);
+            setStreakLength(1);
+            clearCollectedDates();
+        }
+
+        public void incrementStreakLength() {
+            this.streakLength += 1;
+            if (streakLength > highestStreak) {
+                highestStreak = streakLength;
+            }
+        }
+
+        public int getHighestStreak() {
+            return highestStreak;
+        }
+
+        public LocalDate getDateAtStreakLength(int streakLength) {
+            return LocalDate.now().plusDays(streakLength - getDayNum());
+        }
+
+        public LocalDate getStartDate() {
+            return this.startDate;
+        }
+
+        @Nullable
+        public LocalDate getLastCollectedDate() {
+            return this.lastCollectedDate;
+        }
+
+        public void setLastCollectedDate(LocalDate date) {
+            this.lastCollectedDate = date;
+        }
+
+        public HashSet<String> getCollectedDates() {
+            return collectedDates;
+        }
+
+        public boolean hasCollectedToday() {
+            return lastCollectedDate != null && lastCollectedDate.isEqual(LocalDate.now());
+        }
+
+        public void addCollectedDate(LocalDate date) {
+            collectedDates.add(date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        }
+
+        public void clearCollectedDates() {
+            collectedDates.clear();
+        }
     }
 }

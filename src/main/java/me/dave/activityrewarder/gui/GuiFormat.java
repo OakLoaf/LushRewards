@@ -28,9 +28,9 @@ public class GuiFormat {
         private final List<String> rows;
 
         //   Format:
-//     # - Border
-//     R - Reward
-//     N - Upcoming Reward
+        //     # - Border
+        //     R - Reward
+        //     N - Upcoming Reward
         public GuiTemplate() {
             this.rows = new ArrayList<>();
         }

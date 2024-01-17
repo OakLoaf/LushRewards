@@ -44,7 +44,7 @@ public class RewardCollection {
     }
 
     public SimpleItemStack getDisplayItem() {
-        return displayItem != null ? displayItem : ActivityRewarder.getConfigManager().getCategoryTemplate(category);
+        return displayItem != null ? displayItem : ActivityRewarder.getInstance().getConfigManager().getCategoryTemplate(category);
     }
 
     public Sound getSound() {

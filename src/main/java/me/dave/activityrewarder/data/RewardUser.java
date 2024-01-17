@@ -32,7 +32,7 @@ public class RewardUser {
 
     public void setUsername(String username) {
         this.username = username;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
+        ActivityRewarder.getInstance().getDataManager().saveRewardUser(this);
     }
 
     public int getMinutesPlayed() {
@@ -43,7 +43,7 @@ public class RewardUser {
         ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> ActivityRewarder.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
 
         this.minutesPlayed = minutesPlayed;
-        ActivityRewarder.getDataManager().saveRewardUser(this);
+        ActivityRewarder.getInstance().getDataManager().saveRewardUser(this);
     }
 
     @Nullable
@@ -56,6 +56,6 @@ public class RewardUser {
     }
 
     public void save() {
-        ActivityRewarder.getDataManager().saveRewardUser(this);
+        ActivityRewarder.getInstance().getDataManager().saveRewardUser(this);
     }
 }
