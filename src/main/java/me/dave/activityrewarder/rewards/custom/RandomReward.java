@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class RandomReward extends Reward {
     private final RandomCollection<Reward> rewards;
 

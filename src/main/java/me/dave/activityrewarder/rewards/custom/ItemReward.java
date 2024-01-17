@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class ItemReward extends Reward {
     private final SimpleItemStack itemStack;
 

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class PermissionReward  extends Reward {
     private final String permission;
     private final List<Reward> rewards;

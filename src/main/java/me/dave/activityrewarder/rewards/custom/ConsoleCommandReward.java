@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class ConsoleCommandReward extends Reward {
     private static final ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     private final List<String> commands;

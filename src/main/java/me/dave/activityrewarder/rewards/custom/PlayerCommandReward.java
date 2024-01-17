@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("unused")
 public class PlayerCommandReward extends Reward {
     private final List<String> commands;
 
