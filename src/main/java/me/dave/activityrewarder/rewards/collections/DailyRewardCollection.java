@@ -134,8 +134,12 @@ public class DailyRewardCollection extends RewardCollection {
             rewardDayNum = rewardCollectionSection.getInt("on-day-num");
         }
 
-        if (rewardDayNum == null && !rewardCollectionSection.getName().equalsIgnoreCase("default")) {
-            throw new InvalidRewardException("Failed to find 'on-date' or 'on-day-num' at '" + rewardCollectionSection.getCurrentPath() + "'");
+        if (rewardDate == null && rewardDayNum == null) {
+            if (rewardCollectionSection.getName().equalsIgnoreCase("default")) {
+                rewardDate = LocalDate.of(1982, 10, 1);
+            } else {
+                throw new InvalidRewardException("Failed to find 'on-date' or 'on-day-num' at '" + rewardCollectionSection.getCurrentPath() + "'");
+            }
         }
 
         int priority = rewardCollectionSection.getInt("priority", 0);
@@ -144,11 +148,21 @@ public class DailyRewardCollection extends RewardCollection {
         int repeatFrequency = rewardCollectionSection.getInt("repeat", 0);
         Debugger.sendDebugMessage("Reward collection repeat frequency set to " + repeatFrequency, debugMode);
 
+        if (rewardCollectionSection.getName().equalsIgnoreCase("default")) {
+            if (!rewardCollectionSection.contains("priority")) {
+                priority = -1;
+            }
+            if (!rewardCollectionSection.contains("repeat")) {
+                repeatFrequency = 1;
+            }
+        }
+
         Integer repeatsUntilDay = null;
         LocalDate repeatsUntilDate = null;
 
         if (rewardCollectionSection.contains("repeats-until")) {
             try {
+                //noinspection DataFlowIssue
                 repeatsUntilDate = LocalDate.parse(rewardCollectionSection.getString("repeats-until"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             } catch (DateTimeParseException e) {
                 repeatsUntilDay = rewardCollectionSection.getInt("repeats-until", -1);
@@ -163,12 +177,6 @@ public class DailyRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "none"), Sound.class).orElse(null);
-//        if (redeemSound == null) {
-//            Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID);
-//            if (optionalModule.isPresent()) {
-//                redeemSound = ((DailyRewardsModule) optionalModule.get()).getDefaultRedeemSound();
-//            }
-//        }
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
