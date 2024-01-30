@@ -71,8 +71,8 @@ public class DailyRewardsModule extends RewardModule {
         this.rewards = new HashSet<>();
 
         LocalDate today = LocalDate.now();
-        for (Map.Entry<String, Object> entry : configurationSection.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof ConfigurationSection rewardSection) {
+        for (Object entry : configurationSection.getValues(false).values()) {
+            if (entry instanceof ConfigurationSection rewardSection) {
                 DailyRewardCollection dailyRewardCollection;
                 try {
                     dailyRewardCollection = DailyRewardCollection.from(rewardSection);
