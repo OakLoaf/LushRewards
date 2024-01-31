@@ -116,6 +116,7 @@ public final class ActivityRewarder extends SpigotPlugin {
         return updater;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasModuleType(@NotNull String type) {
         return moduleTypes.containsKey(type);
     }
