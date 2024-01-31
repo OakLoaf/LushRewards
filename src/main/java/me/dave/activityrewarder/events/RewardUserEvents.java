@@ -2,6 +2,7 @@ package me.dave.activityrewarder.events;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
+import me.dave.activityrewarder.module.ModuleType;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTracker;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.chatcolorhandler.ChatColorHandler;
@@ -24,7 +25,7 @@ public class RewardUserEvents implements EventListener {
             .thenAccept((rewardUser) -> {
                 rewardUser.setUsername(player.getName());
 
-                ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID).ifPresent(module -> {
+                ActivityRewarder.getInstance().getModule(ModuleType.PLAYTIME_TRACKER).ifPresent(module -> {
                     ((PlaytimeTrackerModule) module).startPlaytimeTracker(player);
                 });
             });
@@ -44,7 +45,7 @@ public class RewardUserEvents implements EventListener {
         Player player = event.getPlayer();
         RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
 
-        ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID).ifPresent(module -> {
+        ActivityRewarder.getInstance().getModule(ModuleType.PLAYTIME_TRACKER).ifPresent(module -> {
             PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(player.getUniqueId());
             if (playtimeTracker != null) {
                 rewardUser.setMinutesPlayed(playtimeTracker.getGlobalPlaytime());
