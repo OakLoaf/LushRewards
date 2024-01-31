@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class YmlStorage implements Storage<RewardUser, UUID> {
-    private final ActivityRewarder plugin = ActivityRewarder.getInstance();
-    private final File dataFolder = new File(plugin.getDataFolder(), "data");
+    private final File dataFolder = new File(ActivityRewarder.getInstance().getDataFolder(), "data");
 
     @Override
     public RewardUser load(UUID uuid) {
