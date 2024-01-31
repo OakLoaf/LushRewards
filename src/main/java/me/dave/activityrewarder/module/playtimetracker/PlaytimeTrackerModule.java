@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.ModuleType;
 import me.dave.platyutils.module.Module;
 import org.bukkit.entity.Player;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
@@ -11,12 +12,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeTrackerModule extends Module {
-    public static final String ID = "playtime-tracker";
     private ConcurrentHashMap<UUID, PlaytimeTracker> playtimeTrackers;
     private ScheduledTask heartbeat;
 
     public PlaytimeTrackerModule() {
-        super(ID);
+        super(ModuleType.PLAYTIME_TRACKER);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class PlaytimeTrackerModule extends Module {
 
         heartbeat = ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
-                if (ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID).isEmpty()) {
+                if (!ActivityRewarder.getInstance().hasModuleType(ModuleType.PLAYTIME_TRACKER)) {
                     heartbeat.cancel();
                     return;
                 }

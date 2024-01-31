@@ -38,9 +38,9 @@ public final class ActivityRewarder extends SpigotPlugin {
         plugin = this;
 
         moduleTypes = new ConcurrentHashMap<>();
-        registerModuleType(ModuleType.DAILY_REWARDS.toString(), DailyRewardsModule::new);
-//        registerModuleType(ModuleType.ONE_TIME_REWARDS.toString(), OneTimeRewardsModule::new);
-        registerModuleType(ModuleType.PLAYTIME_REWARDS.toString(), PlaytimeDailyGoalsModule::new);
+        registerModuleType(ModuleType.DAILY_REWARDS, DailyRewardsModule::new);
+//        registerModuleType(ModuleType.ONE_TIME_REWARDS, OneTimeRewardsModule::new);
+        registerModuleType(ModuleType.PLAYTIME_REWARDS, PlaytimeDailyGoalsModule::new);
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class ActivityRewarder extends SpigotPlugin {
 
         getCommand("rewards").setExecutor(new RewardCmd());
 
-        Optional<Module> playtimeTracker = getModule(PlaytimeTrackerModule.ID);
+        Optional<Module> playtimeTracker = getModule(ModuleType.PLAYTIME_TRACKER);
         if (playtimeTracker.isPresent() && playtimeTracker.get() instanceof PlaytimeTrackerModule module) {
             Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
         }

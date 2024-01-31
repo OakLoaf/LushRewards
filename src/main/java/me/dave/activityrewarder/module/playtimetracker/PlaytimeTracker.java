@@ -1,6 +1,7 @@
 package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
+import me.dave.activityrewarder.module.ModuleType;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.platyutils.module.Module;
@@ -29,7 +30,7 @@ public class PlaytimeTracker {
 
     public void tick() {
         if (!player.isOnline()) {
-            Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(PlaytimeTrackerModule.ID);
+            Optional<Module> optionalModule = ActivityRewarder.getInstance().getModule(ModuleType.PLAYTIME_TRACKER);
             if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
                 playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             }
