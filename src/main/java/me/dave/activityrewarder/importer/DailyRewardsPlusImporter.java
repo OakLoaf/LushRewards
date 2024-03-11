@@ -5,6 +5,7 @@ import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.custom.ConsoleCommandReward;
 import me.dave.activityrewarder.rewards.custom.MessageReward;
 import me.dave.activityrewarder.rewards.custom.Reward;
+import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.utils.SimpleItemStack;
 import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Material;
@@ -36,7 +37,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
     public CompletableFuture<Boolean> startImport() {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+        PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
             YamlConfiguration drpConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Config.yml"));
             YamlConfiguration drpRewardsConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Rewards.yml"));
 

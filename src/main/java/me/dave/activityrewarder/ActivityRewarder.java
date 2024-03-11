@@ -9,6 +9,7 @@ import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.activityrewarder.notifications.NotificationHandler;
+import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
 import me.dave.platyutils.utils.Updater;
@@ -17,7 +18,6 @@ import me.dave.activityrewarder.config.ConfigManager;
 import me.dave.activityrewarder.data.DataManager;
 import me.dave.activityrewarder.events.RewardUserEvents;
 import org.jetbrains.annotations.NotNull;
-import space.arim.morepaperlib.MorePaperLib;
 
 import java.io.File;
 import java.util.Optional;
@@ -26,7 +26,6 @@ import java.util.logging.Level;
 
 public final class ActivityRewarder extends SpigotPlugin {
     private static ActivityRewarder plugin;
-    private static MorePaperLib morePaperLib;
     private ConfigManager configManager;
     private DataManager dataManager;
     private NotificationHandler notificationHandler;
@@ -36,6 +35,7 @@ public final class ActivityRewarder extends SpigotPlugin {
     @Override
     public void onLoad() {
         plugin = this;
+        PlatyUtils.enable(this);
 
         moduleTypes = new ConcurrentHashMap<>();
         registerModuleType(ModuleType.DAILY_REWARDS, DailyRewardsModule::new);
@@ -48,7 +48,6 @@ public final class ActivityRewarder extends SpigotPlugin {
         updater = new Updater(this, "activity-rewarder", "activityrewarder.update", "rewards update");
         modules = new ConcurrentHashMap<>();
 
-        morePaperLib = new MorePaperLib(plugin);
         notificationHandler = new NotificationHandler();
         configManager = new ConfigManager();
         configManager.reloadConfig();
@@ -84,11 +83,6 @@ public final class ActivityRewarder extends SpigotPlugin {
         if (modules != null) {
             unregisterAllModules();
             modules = null;
-        }
-
-        if (morePaperLib != null) {
-            morePaperLib.scheduling().cancelGlobalTasks();
-            morePaperLib = null;
         }
 
         if (dataManager != null) {
@@ -142,9 +136,5 @@ public final class ActivityRewarder extends SpigotPlugin {
 
     public static ActivityRewarder getInstance() {
         return plugin;
-    }
-
-    public static MorePaperLib getMorePaperLib() {
-        return morePaperLib;
     }
 }

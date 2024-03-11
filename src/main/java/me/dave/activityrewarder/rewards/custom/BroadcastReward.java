@@ -1,7 +1,7 @@
 package me.dave.activityrewarder.rewards.custom;
 
 import me.dave.activityrewarder.utils.SchedulerType;
-import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

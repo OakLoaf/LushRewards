@@ -2,9 +2,10 @@ package me.dave.activityrewarder.module.playtimetracker;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.module.ModuleType;
+import me.dave.platyutils.PlatyUtils;
+import me.dave.platyutils.libraries.paperlib.morepaperlib.scheduling.ScheduledTask;
 import me.dave.platyutils.module.Module;
 import org.bukkit.entity.Player;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -23,7 +24,7 @@ public class PlaytimeTrackerModule extends Module {
     public void onEnable() {
         playtimeTrackers = new ConcurrentHashMap<>();
 
-        heartbeat = ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
+        heartbeat = PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
                 if (!ActivityRewarder.getInstance().hasModuleType(ModuleType.PLAYTIME_TRACKER)) {
                     heartbeat.cancel();

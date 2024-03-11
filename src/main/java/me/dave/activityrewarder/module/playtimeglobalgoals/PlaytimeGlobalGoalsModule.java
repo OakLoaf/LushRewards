@@ -7,7 +7,7 @@ import me.dave.activityrewarder.gui.GuiFormat;
 import me.dave.activityrewarder.module.ModuleData;
 import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.rewards.collections.PlaytimeRewardCollection;
-import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

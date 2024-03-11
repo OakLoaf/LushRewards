@@ -5,7 +5,8 @@ import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.ModuleType;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTracker;
 import me.dave.activityrewarder.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.PlatyUtils;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import me.dave.platyutils.listener.EventListener;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class RewardUserEvents implements EventListener {
         if (player.hasPermission("activityrewarder.update")) {
             Updater updater = ActivityRewarder.getInstance().getUpdater();
             if (updater.isUpdateAvailable() && !updater.isAlreadyDownloaded()) {
-                ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> {
+                PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> {
                     ChatColorHandler.sendMessage(player, "&#ffe27aA new &#e0c01bActivityRewarder &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!");
                 }, Duration.of(2, ChronoUnit.SECONDS));
             }

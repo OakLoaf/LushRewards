@@ -9,7 +9,7 @@ import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
 import me.dave.activityrewarder.utils.Debugger;
-import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Sound;

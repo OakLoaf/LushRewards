@@ -3,10 +3,11 @@ package me.dave.activityrewarder.notifications;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.PlatyUtils;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
+import me.dave.platyutils.libraries.paperlib.morepaperlib.scheduling.ScheduledTask;
 import me.dave.platyutils.module.Module;
 import org.bukkit.Bukkit;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +26,7 @@ public class NotificationHandler {
             notificationTask.cancel();
         }
 
-        this.notificationTask = ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> {
+        this.notificationTask = PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
                 for (Module module : ActivityRewarder.getInstance().getModules()) {

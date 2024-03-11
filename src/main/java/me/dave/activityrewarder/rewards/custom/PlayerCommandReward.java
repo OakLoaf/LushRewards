@@ -4,9 +4,9 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.hooks.FloodgateHook;
 import me.dave.activityrewarder.hooks.HookId;
 import me.dave.activityrewarder.utils.SchedulerType;
-import me.dave.chatcolorhandler.ChatColorHandler;
-import me.dave.chatcolorhandler.parsers.custom.PlaceholderAPIParser;
 import me.dave.platyutils.hook.Hook;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
+import me.dave.platyutils.libraries.chatcolor.parsers.custom.PlaceholderAPIParser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

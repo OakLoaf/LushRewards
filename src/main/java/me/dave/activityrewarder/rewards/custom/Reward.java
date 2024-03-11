@@ -4,6 +4,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.rewards.RewardTypes;
 import me.dave.activityrewarder.utils.SchedulerType;
+import me.dave.platyutils.PlatyUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,7 @@ public abstract class Reward {
 
     public void giveReward(Player player) {
         switch (this.getSchedulerType()) {
-            case ASYNC -> ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+            case ASYNC -> PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -29,7 +30,7 @@ public abstract class Reward {
                     e.printStackTrace();
                 }
             });
-            case PLAYER -> ActivityRewarder.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
+            case PLAYER -> PlatyUtils.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -37,7 +38,7 @@ public abstract class Reward {
                     e.printStackTrace();
                 }
             }, () -> {});
-            case GLOBAL -> ActivityRewarder.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
+            case GLOBAL -> PlatyUtils.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -45,7 +46,7 @@ public abstract class Reward {
                     e.printStackTrace();
                 }
             });
-            case REGION -> ActivityRewarder.getMorePaperLib().scheduling().regionSpecificScheduler(player.getLocation()).run(() -> {
+            case REGION -> PlatyUtils.getMorePaperLib().scheduling().regionSpecificScheduler(player.getLocation()).run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {

@@ -8,7 +8,7 @@ import me.dave.activityrewarder.importer.NDailyRewardsImporter;
 import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsGui;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.chatcolorhandler.ChatColorHandler;
+import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

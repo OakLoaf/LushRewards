@@ -13,20 +13,19 @@ repositories {
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://repo.opencollab.dev/main/") } // Floodgate
+    maven { url = uri("https://repo.smrt-1.com/releases/") } // PlatyUtils
+    maven { url = uri("https://repo.smrt-1.com/snapshots/") } // PlatyUtils
     maven { url = uri("https://mvn-repo.arim.space/lesser-gpl3/") } // MorePaperLib
     maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")} // PlaceholderAPI
     maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
-    maven { url = uri("https://jitpack.io") } // ChatColorHandler
 }
 
 dependencies {
     compileOnly("org.spigotmc:spigot:1.20-R0.1-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
-    implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
     implementation(files("libs/EnchantedStorage-3.0.0.jar"))
-    implementation("me.dave:PlatyUtils:0.1.0.26")
-    implementation("com.github.CoolDCB:ChatColorHandler:v2.5.0")
+    implementation("me.dave:PlatyUtils:0.1.0.54")
 }
 
 java {
@@ -39,9 +38,7 @@ tasks {
     }
 
     shadowJar {
-        relocate("space.arim", "me.dave.activityrewarder.libraries.paperlib")
         relocate("org.enchantedskies", "me.dave.activityrewarder.libraries.enchantedskies")
-        relocate("me.dave.chatcolorhandler", "me.dave.activityrewarder.libraries.chatcolor")
 
         val folder = System.getenv("pluginFolder_1-20")
         if (folder != null) destinationDirectory.set(file(folder))

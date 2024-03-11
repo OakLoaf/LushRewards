@@ -4,7 +4,7 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.importer.ConfigImporter;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModuleUserData;
+import me.dave.platyutils.PlatyUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -30,7 +30,7 @@ public class ActivityRewarderDataUpdater extends ConfigImporter {
     public CompletableFuture<Boolean> startImport() {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        ActivityRewarder.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+        PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
             File playerDataFile = new File(dataFolder, "data");
             File oldPlayerDataFile = new File(dataFolder, "data-old");
             if (!playerDataFile.exists()) {
@@ -65,7 +65,7 @@ public class ActivityRewarderDataUpdater extends ConfigImporter {
 
                     ActivityRewarder.getInstance().getLogger().info("Translating RewardUser data for " + name + " (" + uuid + ")");
                     try {
-                        ActivityRewarder.getDataManager().saveRewardUser(rewardUser);
+                        ActivityRewarder.getInstance().getDataManager().saveRewardUser(rewardUser);
                         successes++;
                     } catch (Exception e) {
                         ActivityRewarder.getInstance().getLogger().severe("Failed to translate RewardUser data for " + name + " (" + uuid + ")");
