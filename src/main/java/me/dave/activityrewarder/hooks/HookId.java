@@ -1,9 +1,8 @@
 package me.dave.activityrewarder.hooks;
 
 public enum HookId {
-    PLACEHOLDER_API("placeholder-api"),
-    FLOODGATE("floodgate");
-
+    FLOODGATE("floodgate"),
+    PLACEHOLDER_API("placeholder-api");
 
     private final String id;
 
