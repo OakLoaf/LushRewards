@@ -1,1 +1,1 @@
-rootProject.name = "ActivityRewarder"
+rootProject.name = "LushRewards"

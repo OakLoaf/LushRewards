@@ -24,9 +24,9 @@ For further information on using setting-up and using this plugin check out the 
 
 
 ### Permissions
-- activityrewarder.use - Allow user to collect rewards (Given by default)
-- activityrewarder.bonus.groupName - Give user bonuses for playtime, groupNames need to be defined in the config.yml
-- activityrewarder.reload - Allow user to reload the plugin
+- lushrewards.use - Allow user to collect rewards (Given by default)
+- lushrewards.bonus.groupName - Give user bonuses for playtime, groupNames need to be defined in the config.yml
+- lushrewards.reload - Allow user to reload the plugin
 
 
 ### Hooks

@@ -1,6 +1,6 @@
-name: ActivityRewarder
+name: LushRewards
 version: ${project.version}
-main: me.dave.activityrewarder.ActivityRewarder
+main: me.dave.lushrewards.LushRewards
 api-version: 1.16
 softdepend: [floodgate, PlaceholderAPI]
 folia-supported: true
@@ -9,9 +9,9 @@ commands:
     description: Opens Rewards GUI
     usage: /rewards
 permissions:
-  activityrewarder.use:
-    description: Allows you to use the ActivityRewarder plugin
+  lushrewards.use:
+    description: Allows you to use the LushRewards plugin
     default: true
-  activityrewarder.reload:
-    description: Allows you to reload the ActivityRewarder plugin
+  lushrewards.reload:
+    description: Allows you to reload the LushRewards plugin
     default: op

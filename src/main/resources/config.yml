@@ -1,6 +1,6 @@
-# For more details on configuring ActivityRewarder check out the documentation at https://dave-12.gitbook.io/activity-rewarder
+# For more details on configuring LushRewards check out the documentation at https://dave-12.gitbook.io/lush-rewards
 
-# Enable or disable specific ActivityRewarder modules
+# Enable or disable specific LushRewards modules
 modules:
   daily-rewards: true
   daily-playtime-goals: true
@@ -68,7 +68,7 @@ item-templates:
 
 messages:
   prefix: "&#A5B8FE&lRewards &8» "
-  reload: "&#b7faa2ActivityRewarder has been reloaded &#66b04f🔃"
+  reload: "&#b7faa2LushRewards has been reloaded &#66b04f🔃"
   reminder: "%prefix% &#ffe27aIt looks like you haven't collected today's reward from &#ffc940/rewards"
   daily-reward-given: "&#b7faa2You have collected today's daily reward"
   daily-playtime-reward-given: "&#b7faa2You have collected your rewards for playing &#66b04f%minutes% &#b7faa2minutes"

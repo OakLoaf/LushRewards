@@ -38,7 +38,7 @@ tasks {
     }
 
     shadowJar {
-        relocate("org.enchantedskies", "me.dave.activityrewarder.libraries.enchantedskies")
+        relocate("org.enchantedskies", "me.dave.lushrewards.libraries.enchantedskies")
 
         val folder = System.getenv("pluginFolder_1-20")
         if (folder != null) destinationDirectory.set(file(folder))
