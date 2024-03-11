@@ -1,6 +1,6 @@
 package me.dave.activityrewarder;
 
-import me.dave.activityrewarder.commands.RewardCmd;
+import me.dave.activityrewarder.commands.RewardsCommand;
 import me.dave.activityrewarder.hooks.FloodgateHook;
 import me.dave.activityrewarder.hooks.PlaceholderAPIHook;
 import me.dave.activityrewarder.module.ModuleType;
@@ -58,7 +58,7 @@ public final class ActivityRewarder extends SpigotPlugin {
 
         new RewardUserEvents().registerListeners();
 
-        getCommand("rewards").setExecutor(new RewardCmd());
+        registerCommand(new RewardsCommand());
 
         Optional<Module> playtimeTracker = getModule(ModuleType.PLAYTIME_TRACKER);
         if (playtimeTracker.isPresent() && playtimeTracker.get() instanceof PlaytimeTrackerModule module) {
