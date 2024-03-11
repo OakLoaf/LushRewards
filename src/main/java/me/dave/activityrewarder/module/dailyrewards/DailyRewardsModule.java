@@ -4,7 +4,6 @@ import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.exceptions.InvalidRewardException;
 import me.dave.activityrewarder.gui.GuiFormat;
-import me.dave.activityrewarder.module.ModuleData;
 import me.dave.activityrewarder.module.RewardModule;
 import me.dave.activityrewarder.rewards.collections.DailyRewardCollection;
 import me.dave.activityrewarder.rewards.collections.RewardDay;
@@ -24,7 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class DailyRewardsModule extends RewardModule {
+public class DailyRewardsModule extends RewardModule<DailyRewardsModule.UserData> {
     private HashSet<DailyRewardCollection> rewards;
     private int resetDaysAt;
     private boolean streakMode;
@@ -36,7 +35,7 @@ public class DailyRewardsModule extends RewardModule {
     private GuiFormat guiFormat;
 
     public DailyRewardsModule(String id, File moduleFile) {
-        super(id, moduleFile, UserData.class);
+        super(id, moduleFile, UserData.class, () -> new UserData(id, 0, 0, LocalDate.now(), null, new HashSet<>()));
     }
 
     @Override
@@ -129,11 +128,8 @@ public class DailyRewardsModule extends RewardModule {
 
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = ActivityRewarder.getInstance().getDataManager().getRewardUser(player);
-        if (!(rewardUser.getModuleData(id) instanceof UserData userData)) {
-            return false;
-        }
-
-        if (userData.hasCollectedToday()) {
+        UserData userData = userDataMap.get(player.getUniqueId());
+        if (userData == null || userData.hasCollectedToday()) {
             return false;
         }
 
@@ -252,7 +248,7 @@ public class DailyRewardsModule extends RewardModule {
         return guiFormat;
     }
 
-    public static class UserData extends ModuleData {
+    public static class UserData extends RewardModule.UserData {
         private int streakLength;
         private int highestStreak;
         private LocalDate startDate;

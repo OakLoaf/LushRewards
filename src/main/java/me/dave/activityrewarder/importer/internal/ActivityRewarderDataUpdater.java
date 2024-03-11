@@ -3,6 +3,7 @@ package me.dave.activityrewarder.importer.internal;
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.data.RewardUser;
 import me.dave.activityrewarder.importer.ConfigImporter;
+import me.dave.activityrewarder.module.ModuleType;
 import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
 import me.dave.platyutils.PlatyUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -61,7 +62,7 @@ public class ActivityRewarderDataUpdater extends ConfigImporter {
                     LocalDate lastCollectedDate = lastCollectedDateRaw != null ? LocalDate.parse(lastCollectedDateRaw, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
 
                     RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
-                    rewardUser.addModuleData(new DailyRewardsModuleUserData(DailyRewardsModule.ID, dayNum, dayNum, startDate, lastCollectedDate, new HashSet<>()));
+                    rewardUser.addModuleData(new DailyRewardsModule.UserData(ModuleType.DAILY_REWARDS, dayNum, dayNum, startDate, lastCollectedDate, new HashSet<>()));
 
                     ActivityRewarder.getInstance().getLogger().info("Translating RewardUser data for " + name + " (" + uuid + ")");
                     try {

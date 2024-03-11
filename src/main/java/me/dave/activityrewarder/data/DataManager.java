@@ -2,10 +2,6 @@ package me.dave.activityrewarder.data;
 
 import me.dave.activityrewarder.ActivityRewarder;
 import me.dave.activityrewarder.importer.internal.ActivityRewarderDataUpdater;
-import me.dave.activityrewarder.module.dailyrewards.DailyRewardsModule;
-import me.dave.activityrewarder.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
-import me.dave.activityrewarder.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -13,8 +9,6 @@ import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -93,17 +87,9 @@ public class DataManager {
         if (rewardUser == null) {
             rewardUser = new RewardUser(uuid, player.getName(), 0);
 
-            if (ActivityRewarder.getInstance().getModule(DailyRewardsModule.ID).isPresent()) {
-                rewardUser.addModuleData(new DailyRewardsModule.UserData(DailyRewardsModule.ID, 0, 0, LocalDate.now(), null, new HashSet<>()));
-            }
-
-            if (ActivityRewarder.getInstance().getModule(PlaytimeDailyGoalsModule.ID).isPresent()) {
-                rewardUser.addModuleData(new PlaytimeDailyGoalsModule.UserData(PlaytimeDailyGoalsModule.ID, 0, LocalDate.now(), 0));
-            }
-
-            if (ActivityRewarder.getInstance().getModule(PlaytimeGlobalGoalsModule.ID).isPresent()) {
-                rewardUser.addModuleData(new PlaytimeGoalsModuleUserData(PlaytimeGlobalGoalsModule.ID, 0));
-            }
+            ActivityRewarder.getInstance().getRewardModules().forEach(module -> {
+                module.loadUserData(uuid, module.getUserDataConstructor().build());
+            });
         }
 
         return rewardUser;

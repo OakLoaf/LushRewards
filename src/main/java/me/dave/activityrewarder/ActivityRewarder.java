@@ -20,6 +20,7 @@ import me.dave.activityrewarder.events.RewardUserEvents;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -30,7 +31,7 @@ public final class ActivityRewarder extends SpigotPlugin {
     private DataManager dataManager;
     private NotificationHandler notificationHandler;
     private Updater updater;
-    private ConcurrentHashMap<String, RewardModule.CallableRewardModule<RewardModule>> moduleTypes;
+    private ConcurrentHashMap<String, RewardModule.Constructor<? extends RewardModule<RewardModule.UserData>>> moduleTypes;
 
     @Override
     public void onLoad() {
@@ -115,18 +116,23 @@ public final class ActivityRewarder extends SpigotPlugin {
         return moduleTypes.containsKey(type);
     }
 
-    public RewardModule loadModuleType(@NotNull String type, @NotNull String moduleId, @NotNull File moduleFile) {
-        type = type.toUpperCase();
-        return moduleTypes.containsKey(type) ? moduleTypes.get(type).call(moduleId, moduleFile) : null;
+    public List<? extends RewardModule<?>> getRewardModules() {
+        return modules.values().stream()
+            .filter(module -> module instanceof RewardModule<?>)
+            .map(module -> (RewardModule<? extends RewardModule.UserData>) module)
+            .toList();
     }
 
-    public void registerModuleType(String id, RewardModule.CallableRewardModule<RewardModule> callable) {
-        id = id.toUpperCase();
+    public RewardModule<? extends RewardModule.UserData> loadModuleType(@NotNull String type, @NotNull String moduleId, @NotNull File moduleFile) {
+        type = type.toUpperCase();
+        return moduleTypes.containsKey(type) ? moduleTypes.get(type).build(moduleId, moduleFile) : null;
+    }
 
+    public void registerModuleType(String id, RewardModule.Constructor<? extends RewardModule<RewardModule.UserData>> constructor) {
         if (moduleTypes.containsKey(id)) {
             log(Level.SEVERE, "Failed to register module type with id '" + id + "', a module type with this id is already registered");
         } else {
-            moduleTypes.put(id, callable);
+            moduleTypes.put(id, constructor);
         }
     }
 
