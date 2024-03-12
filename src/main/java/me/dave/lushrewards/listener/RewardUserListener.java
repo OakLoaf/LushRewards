@@ -1,4 +1,4 @@
-package me.dave.lushrewards.events;
+package me.dave.lushrewards.listener;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class RewardUserEvents implements EventListener {
+public class RewardUserListener implements EventListener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {

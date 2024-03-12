@@ -16,7 +16,7 @@ import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
 import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.data.DataManager;
-import me.dave.lushrewards.events.RewardUserEvents;
+import me.dave.lushrewards.listener.RewardUserListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -57,7 +57,7 @@ public final class LushRewards extends SpigotPlugin {
         addHook("floodgate", () -> registerHook(new FloodgateHook()));
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
 
-        new RewardUserEvents().registerListeners();
+        new RewardUserListener().registerListeners();
 
         registerCommand(new RewardsCommand());
 
