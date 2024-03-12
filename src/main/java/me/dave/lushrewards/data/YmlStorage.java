@@ -52,35 +52,6 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
             }
         });
 
-//        if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData dailyRewardsModuleData) {
-//            String moduleName = DailyRewardsModule.ID;
-//
-//            configurationSection.set(moduleName + ".day-num", dailyRewardsModuleData.getDayNum());
-//            configurationSection.set(moduleName + ".streak-length", dailyRewardsModuleData.getStreakLength());
-//            configurationSection.set(moduleName + ".highest-streak", dailyRewardsModuleData.getHighestStreak());
-//            configurationSection.set(moduleName + ".start-date", dailyRewardsModuleData.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-//            if (dailyRewardsModuleData.getLastCollectedDate() != null) {
-//                configurationSection.set(moduleName + ".last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-//            } else {
-//                configurationSection.set(moduleName + ".last-collected-date", null);
-//            }
-//            configurationSection.set(moduleName + ".collected-dates", new ArrayList<>(dailyRewardsModuleData.getCollectedDates()));
-//        }
-//
-//        if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData dailyPlaytimeGoalsModuleUserData) {
-//            String moduleName = PlaytimeDailyGoalsModule.ID;
-//
-//            configurationSection.set(moduleName + ".date", dailyPlaytimeGoalsModuleUserData.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-//            configurationSection.set(moduleName + ".last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-//            configurationSection.set(moduleName + ".previous-day-end", dailyPlaytimeGoalsModuleUserData.getPreviousDayEndPlaytime());
-//        }
-//
-//        if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
-//            String moduleName = PlaytimeGlobalGoalsModule.ID;
-//
-//            configurationSection.set(moduleName + ".last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-//        }
-
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());
         try {
             configurationSection.save(file);
