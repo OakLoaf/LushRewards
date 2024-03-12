@@ -104,6 +104,7 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
         int totalMinutesPlayed = rewardUser.getMinutesPlayed();
 
         boolean saveRewardUser = false;
+        // TODO: Make configurable (by days - allow daily and global)
         if (!userData.getDate().isEqual(LocalDate.now())) {
             userData.setDate(LocalDate.now());
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
