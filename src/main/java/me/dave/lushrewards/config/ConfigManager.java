@@ -1,7 +1,6 @@
 package me.dave.lushrewards.config;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.importer.internal.LushRewardsConfigUpdater;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.utils.Debugger;
@@ -37,14 +36,6 @@ public class ConfigManager {
     private Sound reminderSound;
 
     public ConfigManager() {
-        if (isOutdated()) {
-            try {
-                new LushRewardsConfigUpdater().startImport().thenAccept(success -> reloadConfig());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         LushRewards.getInstance().saveDefaultConfig();
         LushRewards.getInstance().saveDefaultResource("modules/daily-rewards.yml");
         LushRewards.getInstance().saveDefaultResource("modules/daily-playtime-goals.yml");
@@ -225,11 +216,5 @@ public class ConfigManager {
 
         // Repopulates messages map
         messagesSection.getValues(false).forEach((key, value) -> messages.put(key, (String) value));
-    }
-
-    private boolean isOutdated() {
-        FileConfiguration config = LushRewards.getInstance().getConfig();
-
-        return config.contains("reward-days", true) && !config.contains("modules", true);
     }
 }

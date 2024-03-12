@@ -1,7 +1,6 @@
 package me.dave.lushrewards.data;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.importer.internal.LushRewardsDataUpdater;
 import me.dave.lushrewards.module.UserDataModule;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,14 +18,6 @@ public class DataManager {
     private final ConcurrentHashMap<UUID, RewardUser> uuidToRewardUser = new ConcurrentHashMap<>();
 
     public DataManager() {
-        if (isOutdated()) {
-            try {
-                new LushRewardsDataUpdater().startImport();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
 
@@ -115,7 +106,7 @@ public class DataManager {
                 File dataFile = dataFiles[0];
                 YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
 
-                return data.contains("hoursPlayed", true) && !data.contains("minutes-played", true);
+                return data.contains("dailyrewards.day-num", true);
             }
         }
 
