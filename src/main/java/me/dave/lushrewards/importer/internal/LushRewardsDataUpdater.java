@@ -3,7 +3,7 @@ package me.dave.lushrewards.importer.internal;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.importer.ConfigImporter;
-import me.dave.lushrewards.module.ModuleType;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.platyutils.PlatyUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -62,7 +62,7 @@ public class LushRewardsDataUpdater extends ConfigImporter {
                     LocalDate lastCollectedDate = lastCollectedDateRaw != null ? LocalDate.parse(lastCollectedDateRaw, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
 
                     RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
-                    rewardUser.addModuleData(new DailyRewardsModule.UserData(ModuleType.DAILY_REWARDS, dayNum, dayNum, startDate, lastCollectedDate, new HashSet<>()));
+                    rewardUser.addModuleData(new DailyRewardsModule.UserData(RewardModule.Type.DAILY_REWARDS, dayNum, dayNum, startDate, lastCollectedDate, new HashSet<>()));
 
                     LushRewards.getInstance().getLogger().info("Translating RewardUser data for " + name + " (" + uuid + ")");
                     try {

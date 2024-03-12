@@ -1,7 +1,7 @@
 package me.dave.lushrewards.module.playtimetracker;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.module.ModuleType;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.platyutils.module.Module;
@@ -30,7 +30,7 @@ public class PlaytimeTracker {
 
     public void tick() {
         if (!player.isOnline()) {
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER);
+            Optional<Module> optionalModule = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
             if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
                 playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             }

@@ -3,7 +3,6 @@ package me.dave.lushrewards.module.dailyrewards;
 import com.google.common.collect.TreeMultimap;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.gui.GuiFormat;
-import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
@@ -42,10 +41,8 @@ public class DailyRewardsGui extends Gui {
         inventory.clear();
         clearButtons();
 
-        // Gets RewardUser
-        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-        // Gets ModuleUserData
-        if (!(rewardUser.getModuleData(dailyRewardsModule.getId()) instanceof DailyRewardsModule.UserData moduleUserData)) {
+        DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(player.getUniqueId());
+        if (userData == null) {
             SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
             errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
             errorItem.setLore(List.of("&7&oIf this continues please", "report to your server administrator"));
@@ -59,17 +56,17 @@ public class DailyRewardsGui extends Gui {
         // Checks if the streak mode config option is enabled
         if (dailyRewardsModule.isStreakModeEnabled()) {
             // Resets RewardUser to Day 1 if a day has been missed
-            LocalDate lastCollectedDate = moduleUserData.getLastCollectedDate();
+            LocalDate lastCollectedDate = userData.getLastCollectedDate();
             if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
-                moduleUserData.restartStreak();
-                rewardUser.save();
+                userData.restartStreak();
+                LushRewards.getInstance().getDataManager().saveRewardUser(player);
             }
         }
 
         // Checks if the reward has been collected today
-        boolean collectedToday = moduleUserData.hasCollectedToday();
+        boolean collectedToday = userData.hasCollectedToday();
         // The current day number being shown to the user
-        int currDayNum = moduleUserData.getDayNum();
+        int currDayNum = userData.getDayNum();
 
         // First reward day shown
         AtomicInteger dayIndex = new AtomicInteger();
@@ -107,7 +104,7 @@ public class DailyRewardsGui extends Gui {
             slotMap.put(character, slot);
         }
 
-        HashSet<String> collectedDates = moduleUserData.getCollectedDates();
+        HashSet<String> collectedDates = userData.getCollectedDates();
         for (Character character : slotMap.keySet()) {
             switch (character) {
                 case 'R' -> slotMap.get(character).forEach(slot -> {

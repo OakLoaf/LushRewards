@@ -1,8 +1,8 @@
 package me.dave.lushrewards.module.playtimeglobalgoals;
 
-import me.dave.lushrewards.module.ModuleData;
+import me.dave.lushrewards.module.UserDataModule;
 
-public class PlaytimeGoalsModuleUserData extends ModuleData {
+public class PlaytimeGoalsModuleUserData extends UserDataModule.UserData {
     private int lastCollectedPlaytime;
 
     public PlaytimeGoalsModuleUserData(String id, int lastCollectedPlaytime) {

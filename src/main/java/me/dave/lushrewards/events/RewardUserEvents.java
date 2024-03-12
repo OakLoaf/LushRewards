@@ -2,7 +2,7 @@ package me.dave.lushrewards.events;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
-import me.dave.lushrewards.module.ModuleType;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTracker;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.platyutils.PlatyUtils;
@@ -26,7 +26,7 @@ public class RewardUserEvents implements EventListener {
             .thenAccept((rewardUser) -> {
                 rewardUser.setUsername(player.getName());
 
-                LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER).ifPresent(module -> ((PlaytimeTrackerModule) module).startPlaytimeTracker(player));
+                LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> ((PlaytimeTrackerModule) module).startPlaytimeTracker(player));
             });
 
         if (player.hasPermission("lushrewards.update")) {
@@ -42,7 +42,7 @@ public class RewardUserEvents implements EventListener {
         Player player = event.getPlayer();
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
-        LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER).ifPresent(module -> {
+        LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
             PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(player.getUniqueId());
             if (playtimeTracker != null) {
                 rewardUser.setMinutesPlayed(playtimeTracker.getGlobalPlaytime());

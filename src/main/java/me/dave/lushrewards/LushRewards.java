@@ -39,9 +39,9 @@ public final class LushRewards extends SpigotPlugin {
         PlatyUtils.enable(this);
 
         moduleTypes = new ConcurrentHashMap<>();
-        registerModuleType(ModuleType.DAILY_REWARDS, DailyRewardsModule::new);
+        registerModuleType(RewardModule.Type.DAILY_REWARDS, DailyRewardsModule::new);
 //        registerModuleType(ModuleType.ONE_TIME_REWARDS, OneTimeRewardsModule::new);
-        registerModuleType(ModuleType.PLAYTIME_REWARDS, PlaytimeDailyGoalsModule::new);
+        registerModuleType(RewardModule.Type.PLAYTIME_REWARDS, PlaytimeDailyGoalsModule::new);
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class LushRewards extends SpigotPlugin {
 
         registerCommand(new RewardsCommand());
 
-        Optional<Module> playtimeTracker = getModule(ModuleType.PLAYTIME_TRACKER);
+        Optional<Module> playtimeTracker = getModule(RewardModule.Type.PLAYTIME_TRACKER);
         if (playtimeTracker.isPresent() && playtimeTracker.get() instanceof PlaytimeTrackerModule module) {
             Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
         }

@@ -2,7 +2,7 @@ package me.dave.lushrewards.utils;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
-import me.dave.lushrewards.module.ModuleType;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
@@ -99,7 +99,7 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER);
+            Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
             if (optionalPlaytimeTracker.isPresent() && optionalPlaytimeTracker.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
                 return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getGlobalPlaytime());
             } else {
@@ -153,7 +153,7 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER);
+            Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
             if (optionalPlaytimeTracker.isPresent() && optionalPlaytimeTracker.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
                 return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getSessionPlaytime());
             } else {
@@ -199,7 +199,7 @@ public class LocalPlaceholders {
                 return null;
             }
 
-            Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER);
+            Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
             if (optionalPlaytimeTracker.isPresent() && optionalPlaytimeTracker.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
                 return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getTotalSessionPlaytime());
             } else {

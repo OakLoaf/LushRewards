@@ -1,10 +1,10 @@
 package me.dave.lushrewards.module.playtimedailygoals;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
+import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardCollection;
@@ -19,17 +19,18 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 // TODO: Combine playtime modules into one playtime module
-public class PlaytimeDailyGoalsModule extends RewardModule {
+public class PlaytimeDailyGoalsModule extends RewardModule implements UserDataModule<PlaytimeGoalsModuleUserData> {
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
     public PlaytimeDailyGoalsModule(String id, File moduleFile) {
-        super(id, moduleFile, UserData.class);
+        super(id, moduleFile);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class PlaytimeDailyGoalsModule extends RewardModule {
     }
 
     public boolean claimRewards(Player player) {
-        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+//        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData playtimeDailyGoalsUserData = (UserData) rewardUser.getModuleData(id);
         int totalMinutesPlayed = rewardUser.getMinutesPlayed();
 
@@ -112,7 +113,7 @@ public class PlaytimeDailyGoalsModule extends RewardModule {
             .replaceAll("%hours%", String.valueOf((int) Math.floor(LushRewards.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
 
         playtimeDailyGoalsUserData.setLastCollectedPlaytime(totalMinutesPlayed);
-        LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
+        LushRewards.getInstance().getDataManager().saveRewardUser(player);
 
         return true;
     }
@@ -155,6 +156,31 @@ public class PlaytimeDailyGoalsModule extends RewardModule {
 
     public GuiFormat getGuiFormat() {
         return guiFormat;
+    }
+
+    @Override
+    public Class<PlaytimeGoalsModuleUserData> getUserDataClass() {
+        return PlaytimeGoalsModuleUserData.class;
+    }
+
+    @Override
+    public PlaytimeGoalsModuleUserData getDefaultData() {
+        return new PlaytimeGoalsModuleUserData(id, 0);
+    }
+
+    @Override
+    public PlaytimeGoalsModuleUserData getUserData(UUID uuid) {
+        return null;
+    }
+
+    @Override
+    public void loadUserData(UUID uuid, UserDataModule.UserData userData) {
+
+    }
+
+    @Override
+    public void unloadUserData(UUID uuid) {
+
     }
 
     public static class UserData extends PlaytimeGoalsModuleUserData {

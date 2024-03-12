@@ -1,7 +1,7 @@
 package me.dave.lushrewards.module.playtimetracker;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.module.ModuleType;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.libraries.paperlib.morepaperlib.scheduling.ScheduledTask;
 import me.dave.platyutils.module.Module;
@@ -17,7 +17,7 @@ public class PlaytimeTrackerModule extends Module {
     private ScheduledTask heartbeat;
 
     public PlaytimeTrackerModule() {
-        super(ModuleType.PLAYTIME_TRACKER);
+        super(RewardModule.Type.PLAYTIME_TRACKER);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class PlaytimeTrackerModule extends Module {
 
         heartbeat = PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
-                if (!LushRewards.getInstance().hasModuleType(ModuleType.PLAYTIME_TRACKER)) {
+                if (!LushRewards.getInstance().hasModuleType(RewardModule.Type.PLAYTIME_TRACKER)) {
                     heartbeat.cancel();
                     return;
                 }
