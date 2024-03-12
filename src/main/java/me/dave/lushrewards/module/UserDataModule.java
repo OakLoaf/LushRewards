@@ -24,10 +24,5 @@ public interface UserDataModule<T extends UserDataModule.UserData> {
         public String getId() {
             return id;
         }
-
-        @FunctionalInterface
-        public interface Constructor {
-            UserData build();
-        }
     }
 }
