@@ -77,6 +77,8 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
             minutesToReward.clear();
             minutesToReward = null;
         }
+
+        userDataCache.clear();
     }
 
     @Override

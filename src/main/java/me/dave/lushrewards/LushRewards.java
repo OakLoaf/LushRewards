@@ -26,6 +26,7 @@ import java.util.logging.Level;
 
 public final class LushRewards extends SpigotPlugin {
     private static LushRewards plugin;
+
     private ConfigManager configManager;
     private DataManager dataManager;
     private NotificationHandler notificationHandler;

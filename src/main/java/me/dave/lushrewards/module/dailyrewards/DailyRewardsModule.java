@@ -126,6 +126,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         guiFormat = null;
+        userDataCache.clear();
     }
 
     @Override
