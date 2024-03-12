@@ -2,6 +2,7 @@ package me.dave.lushrewards.data;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.importer.internal.LushRewardsDataUpdater;
+import me.dave.lushrewards.module.UserDataModule;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -29,12 +30,22 @@ public class DataManager {
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
 
-    public void reloadRewardUsers() {
-        uuidToRewardUser.forEach((uuid, rewardUser) -> {
-            rewardUser.save();
-            unloadRewarderUser(uuid);
-            loadRewardUser(uuid);
-        });
+    @NotNull
+    public RewardUser getRewardUser(@NotNull Player player) {
+        UUID uuid = player.getUniqueId();
+
+        RewardUser rewardUser = uuidToRewardUser.get(uuid);
+        if (rewardUser == null) {
+            rewardUser = new RewardUser(uuid, player.getName(), 0);
+
+            LushRewards.getInstance().getRewardModules().forEach(module -> {
+                if (module instanceof UserDataModule<?> userDataModule) {
+                    userDataModule.loadUserData(uuid, userDataModule.getDefaultData());
+                }
+            });
+        }
+
+        return rewardUser;
     }
 
     @NotNull
@@ -67,6 +78,14 @@ public class DataManager {
         }
     }
 
+    public void reloadRewardUsers() {
+        uuidToRewardUser.forEach((uuid, rewardUser) -> {
+            rewardUser.save();
+            unloadRewarderUser(uuid);
+            loadRewardUser(uuid);
+        });
+    }
+
     public void saveRewardUser(Player player) {
         ioHandler.saveData(getRewardUser(player));
     }
@@ -77,22 +96,6 @@ public class DataManager {
 
     public void saveAll() {
         uuidToRewardUser.values().forEach(this::saveRewardUser);
-    }
-
-    @NotNull
-    public RewardUser getRewardUser(@NotNull Player player) {
-        UUID uuid = player.getUniqueId();
-
-        RewardUser rewardUser = uuidToRewardUser.get(uuid);
-        if (rewardUser == null) {
-            rewardUser = new RewardUser(uuid, player.getName(), 0);
-
-            LushRewards.getInstance().getRewardModules().forEach(module -> {
-                module.loadUserData(uuid, module.getUserDataConstructor().build());
-            });
-        }
-
-        return rewardUser;
     }
 
     public boolean isRewardUserLoaded(UUID uuid) {
