@@ -466,6 +466,7 @@ public class RewardsCommand extends Command {
         }
     }
 
+    // TODO: Add module id (accept '*' for all modules)
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean setDay(CommandSender sender, String nameOrUuid, int dayNum) {
         Player player = Bukkit.getPlayer(nameOrUuid);
@@ -509,6 +510,7 @@ public class RewardsCommand extends Command {
         return true;
     }
 
+    // TODO: Add module id (accept '*' for all modules)
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean setStreak(CommandSender sender, String nameOrUuid, int streak) {
         Player player = Bukkit.getPlayer(nameOrUuid);
@@ -552,6 +554,7 @@ public class RewardsCommand extends Command {
         return true;
     }
 
+    // TODO: Add module id (accept '*' for all modules)
     private static boolean removeCollectedDays(CommandSender sender, String nameOrUuid) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
