@@ -4,7 +4,7 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
@@ -120,13 +120,13 @@ public class LocalPlaceholders {
         });
 
         registerPlaceholder("playtime_since_daily_goals", (params, player) -> {
-            if (player == null || LushRewards.getInstance().getModule(PlaytimeDailyGoalsModule.ID).isEmpty()) {
+            if (player == null || LushRewards.getInstance().getModule(PlaytimeGoalsModule.ID).isEmpty()) {
                 return null;
             }
 
             RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
-            if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData moduleData) {
+            if (rewardUser.getModuleData(PlaytimeGoalsModule.ID) instanceof PlaytimeGoalsModule.UserData moduleData) {
                 return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
             } else {
                 return null;
@@ -134,13 +134,13 @@ public class LocalPlaceholders {
         });
 
         registerPlaceholder("playtime_since_global_goals", (params, player) -> {
-            if (player == null || LushRewards.getInstance().getModule(PlaytimeDailyGoalsModule.ID).isEmpty()) {
+            if (player == null || LushRewards.getInstance().getModule(PlaytimeGoalsModule.ID).isEmpty()) {
                 return null;
             }
 
             RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
-            if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData moduleData) {
+            if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModule.UserData moduleData) {
                 return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
             } else {
                 return null;

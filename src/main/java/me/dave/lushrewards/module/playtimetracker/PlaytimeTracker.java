@@ -2,7 +2,7 @@ package me.dave.lushrewards.module.playtimetracker;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleLocation;
@@ -88,9 +88,9 @@ public class PlaytimeTracker {
 
         if (player.hasPermission("lushrewards.use")) {
             LushRewards.getInstance().getModules().forEach(module -> {
-                if (module instanceof PlaytimeDailyGoalsModule playtimeDailyGoalsModule) {
-                    if (playtimeDailyGoalsModule.getRefreshTime() > 0 && globalTime % playtimeDailyGoalsModule.getRefreshTime() == 0) {
-                        playtimeDailyGoalsModule.claimRewards(player);
+                if (module instanceof PlaytimeGoalsModule playtimeGoalsModule) {
+                    if (playtimeGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGoalsModule.getRefreshTime() == 0) {
+                        playtimeGoalsModule.claimRewards(player);
                     }
                 } else if (module instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
                     if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {

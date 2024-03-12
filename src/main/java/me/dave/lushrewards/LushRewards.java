@@ -5,7 +5,7 @@ import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.PlaceholderAPIHook;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
 import me.dave.platyutils.PlatyUtils;
@@ -40,7 +40,7 @@ public final class LushRewards extends SpigotPlugin {
         moduleTypes = new ConcurrentHashMap<>();
         registerModuleType(RewardModule.Type.DAILY_REWARDS, DailyRewardsModule::new);
 //        registerModuleType(ModuleType.ONE_TIME_REWARDS, OneTimeRewardsModule::new);
-        registerModuleType(RewardModule.Type.PLAYTIME_REWARDS, PlaytimeDailyGoalsModule::new);
+        registerModuleType(RewardModule.Type.PLAYTIME_REWARDS, PlaytimeGoalsModule::new);
     }
 
     @Override

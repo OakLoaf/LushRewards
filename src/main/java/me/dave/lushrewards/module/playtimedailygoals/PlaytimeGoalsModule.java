@@ -20,14 +20,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 // TODO: Combine playtime modules into one playtime module
-public class PlaytimeDailyGoalsModule extends RewardModule implements UserDataModule<PlaytimeDailyGoalsModule.UserData> {
+public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<PlaytimeGoalsModule.UserData> {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
-    public PlaytimeDailyGoalsModule(String id, File moduleFile) {
+    public PlaytimeGoalsModule(String id, File moduleFile) {
         super(id, moduleFile);
     }
 

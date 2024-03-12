@@ -6,7 +6,7 @@ import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
+import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -80,7 +80,7 @@ public class PlaytimeGlobalGoalsModule extends RewardModule {
 
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-        PlaytimeDailyGoalsModule.UserData playtimeGlobalGoalsModuleUserData = rewardUser.getModuleData(id);
+        PlaytimeGoalsModule.UserData playtimeGlobalGoalsModuleUserData = rewardUser.getModuleData(id);
         int minutesPlayed = rewardUser.getMinutesPlayed();
 
         HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(playtimeGlobalGoalsModuleUserData.getLastCollectedPlaytime(), minutesPlayed);
