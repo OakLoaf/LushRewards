@@ -22,6 +22,8 @@ public abstract class RewardModule extends Module {
         this.requiresTimeTracker = requiresTimeTracker;
     }
 
+    public abstract boolean hasClaimableRewards(Player player);
+
     @SuppressWarnings("UnusedReturnValue")
     public abstract boolean claimRewards(Player player);
 

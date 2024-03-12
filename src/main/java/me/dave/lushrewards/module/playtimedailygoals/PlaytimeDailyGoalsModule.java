@@ -79,6 +79,23 @@ public class PlaytimeDailyGoalsModule extends RewardModule implements UserDataMo
         }
     }
 
+    @Override
+    public boolean hasClaimableRewards(Player player) {
+        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+        UserData userData = userDataCache.get(player.getUniqueId());
+        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
+
+        if (!userData.getDate().isEqual(LocalDate.now())) {
+            userData.setDate(LocalDate.now());
+            userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
+            rewardUser.save();
+        }
+
+        int previousDayEnd =  userData.getPreviousDayEndPlaytime();
+        return !getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd).isEmpty();
+    }
+
+    @Override
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = userDataCache.get(player.getUniqueId());

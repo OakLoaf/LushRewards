@@ -128,6 +128,12 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         guiFormat = null;
     }
 
+    @Override
+    public boolean hasClaimableRewards(Player player) {
+        return !userDataCache.get(player.getUniqueId()).hasCollectedToday();
+    }
+
+    @Override
     public boolean claimRewards(Player player) {
         if (LushRewards.getInstance().getDataManager().isRewardUserLoaded(player.getUniqueId())) {
             return false;

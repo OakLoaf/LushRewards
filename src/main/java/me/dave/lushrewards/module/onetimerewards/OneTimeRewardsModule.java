@@ -12,6 +12,11 @@ public class OneTimeRewardsModule extends RewardModule {
     }
 
     @Override
+    public boolean hasClaimableRewards(Player player) {
+        return false;
+    }
+
+    @Override
     public boolean claimRewards(Player player) {
         return false;
     }
