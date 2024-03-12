@@ -1,7 +1,6 @@
 package me.dave.lushrewards.module.dailyrewards;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
@@ -130,7 +129,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     }
 
     public boolean claimRewards(Player player) {
-        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+        if (LushRewards.getInstance().getDataManager().isRewardUserLoaded(player.getUniqueId())) {
+            return false;
+        }
+
         UserData userData = userDataCache.get(player.getUniqueId());
         if (userData == null || userData.hasCollectedToday()) {
             return false;
@@ -154,7 +156,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         userData.incrementStreakLength();
         userData.setLastCollectedDate(LocalDate.now());
         userData.addCollectedDate(LocalDate.now());
-        rewardUser.save();
+        LushRewards.getInstance().getDataManager().saveRewardUser(player);
 
         return true;
     }
