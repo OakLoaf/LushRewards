@@ -3,7 +3,6 @@ package me.dave.lushrewards;
 import me.dave.lushrewards.commands.RewardsCommand;
 import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.PlaceholderAPIHook;
-import me.dave.lushrewards.module.ModuleType;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
