@@ -6,6 +6,7 @@ import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.ModuleData;
 import me.dave.lushrewards.module.RewardModule;
+import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,7 +27,7 @@ public class PlaytimeGlobalGoalsModule extends RewardModule {
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
     public PlaytimeGlobalGoalsModule(String id, File moduleFile) {
-        super(id, moduleFile, UserData.class);
+        super(id, moduleFile);
     }
 
     @Override
@@ -139,7 +140,7 @@ public class PlaytimeGlobalGoalsModule extends RewardModule {
         return guiFormat;
     }
 
-    public static class UserData extends ModuleData {
+    public static class UserData extends UserDataModule.UserData {
         private int lastCollectedPlaytime;
 
         public UserData(String id, int lastCollectedPlaytime) {
