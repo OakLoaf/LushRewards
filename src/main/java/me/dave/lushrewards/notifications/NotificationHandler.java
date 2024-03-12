@@ -26,6 +26,7 @@ public class NotificationHandler {
 
         this.notificationTask = PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
             for (RewardModule module : LushRewards.getInstance().getRewardModules()) {
+                // TODO: Add config option to modules to enable notifications for modules (Default true for DailyRewards and false for others)
                 if (module.hasClaimableRewards(player)) {
                     ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("reminder"));
                     player.playSound(player.getLocation(), LushRewards.getInstance().getConfigManager().getReminderSound(), 1f, 1.5f);
