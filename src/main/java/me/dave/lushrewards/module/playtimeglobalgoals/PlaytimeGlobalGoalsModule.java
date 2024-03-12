@@ -4,7 +4,6 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
-import me.dave.lushrewards.module.ModuleData;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
