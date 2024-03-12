@@ -1,4 +1,4 @@
-package me.dave.lushrewards.hooks;
+package me.dave.lushrewards.hook;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.utils.LocalPlaceholders;

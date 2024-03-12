@@ -1,4 +1,4 @@
-package me.dave.lushrewards.hooks;
+package me.dave.lushrewards.hook;
 
 public enum HookId {
     FLOODGATE("floodgate"),

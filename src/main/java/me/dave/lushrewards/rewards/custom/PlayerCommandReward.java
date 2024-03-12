@@ -1,8 +1,8 @@
 package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.hooks.FloodgateHook;
-import me.dave.lushrewards.hooks.HookId;
+import me.dave.lushrewards.hook.FloodgateHook;
+import me.dave.lushrewards.hook.HookId;
 import me.dave.lushrewards.utils.SchedulerType;
 import me.dave.platyutils.hook.Hook;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
