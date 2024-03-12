@@ -4,6 +4,7 @@ import me.dave.lushrewards.data.RewardUser;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class RewardUserPlaytimeChangeEvent extends RewardUserEvent {
     private static final HandlerList handlers = new HandlerList();
     private final int oldMinutesPlayed;

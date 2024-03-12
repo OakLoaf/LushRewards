@@ -4,6 +4,7 @@ import me.dave.lushrewards.data.RewardUser;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public abstract class RewardUserEvent extends Event {
     protected final RewardUser rewardUser;
 
