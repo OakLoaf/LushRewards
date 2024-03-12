@@ -26,17 +26,13 @@ public class RewardUserEvents implements EventListener {
             .thenAccept((rewardUser) -> {
                 rewardUser.setUsername(player.getName());
 
-                LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER).ifPresent(module -> {
-                    ((PlaytimeTrackerModule) module).startPlaytimeTracker(player);
-                });
+                LushRewards.getInstance().getModule(ModuleType.PLAYTIME_TRACKER).ifPresent(module -> ((PlaytimeTrackerModule) module).startPlaytimeTracker(player));
             });
 
         if (player.hasPermission("lushrewards.update")) {
             Updater updater = LushRewards.getInstance().getUpdater();
             if (updater.isUpdateAvailable() && !updater.isAlreadyDownloaded()) {
-                PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> {
-                    ChatColorHandler.sendMessage(player, "&#ffe27aA new &#e0c01bLushRewards &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!");
-                }, Duration.of(2, ChronoUnit.SECONDS));
+                PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> ChatColorHandler.sendMessage(player, "&#ffe27aA new &#e0c01bLushRewards &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!"), Duration.of(2, ChronoUnit.SECONDS));
             }
         }
     }
