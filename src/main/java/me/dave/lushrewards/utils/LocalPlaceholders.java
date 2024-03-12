@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class LocalPlaceholders {
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%rewarder_([a-zA-Z0-9_ ]+)%");
-    private static LocalDateTime NEXT_DAY = LocalDate.now().plusDays(1).atStartOfDay();
+    private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
     private final ConcurrentHashMap<String, PlaceholderFunction> stringPlaceholders = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, PlaceholderFunction> regexPlaceholders = new ConcurrentHashMap<>();
@@ -66,11 +66,11 @@ public class LocalPlaceholders {
 
         registerPlaceholder("countdown", (params, player) -> {
             LocalDateTime now = LocalDateTime.now();
-            long secondsUntil = now.until(NEXT_DAY, ChronoUnit.SECONDS);
+            long secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
 
             if (secondsUntil < 0) {
-                NEXT_DAY = LocalDate.now().plusDays(1).atStartOfDay();
-                secondsUntil = now.until(NEXT_DAY, ChronoUnit.SECONDS);
+                nextDay = LocalDate.now().plusDays(1).atStartOfDay();
+                secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
             }
 
             long hours = secondsUntil / 3600;

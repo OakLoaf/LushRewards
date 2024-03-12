@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class ConsoleCommandReward extends Reward {
-    private static final ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+    private static final ConsoleCommandSender CONSOLE = Bukkit.getServer().getConsoleSender();
     private final List<String> commands;
 
     public ConsoleCommandReward(List<String> commands) {
@@ -54,7 +54,7 @@ public class ConsoleCommandReward extends Reward {
             }
 
             if (dispatchCommand) {
-                Bukkit.dispatchCommand(console, command);
+                Bukkit.dispatchCommand(CONSOLE, command);
             }
         });
     }

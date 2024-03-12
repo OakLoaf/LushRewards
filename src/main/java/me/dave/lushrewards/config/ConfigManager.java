@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class ConfigManager {
-    private static final File modulesFolder = new File(LushRewards.getInstance().getDataFolder(), "modules");
+    private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
     private static LocalDate currentDate;
 
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
@@ -64,7 +64,7 @@ public class ConfigManager {
         reminderSound = StringUtils.getEnum(config.getString("reminder-sound", "none"), Sound.class).orElse(null);
 
         try {
-            Files.newDirectoryStream(modulesFolder.toPath(), "*.yml").forEach(entry -> {
+            Files.newDirectoryStream(MODULES_FOLDER.toPath(), "*.yml").forEach(entry -> {
                 File moduleFile = entry.toFile();
                 YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
                 if (moduleConfig.getBoolean("enabled", true)) {
