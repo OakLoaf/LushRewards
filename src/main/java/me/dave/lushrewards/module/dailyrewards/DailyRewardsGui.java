@@ -3,7 +3,7 @@ package me.dave.lushrewards.module.dailyrewards;
 import com.google.common.collect.TreeMultimap;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.gui.GuiFormat;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
+import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;

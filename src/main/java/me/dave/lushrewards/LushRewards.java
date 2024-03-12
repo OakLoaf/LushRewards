@@ -5,7 +5,7 @@ import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.PlaceholderAPIHook;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
+import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
 import me.dave.lushrewards.utils.LocalPlaceholders;

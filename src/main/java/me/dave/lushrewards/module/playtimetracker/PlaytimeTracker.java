@@ -2,7 +2,7 @@ package me.dave.lushrewards.module.playtimetracker;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
+import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleLocation;

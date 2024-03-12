@@ -1,4 +1,4 @@
-package me.dave.lushrewards.module.playtimedailygoals;
+package me.dave.lushrewards.module.playtimegoals;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;

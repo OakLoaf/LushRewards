@@ -4,7 +4,7 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
+import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
