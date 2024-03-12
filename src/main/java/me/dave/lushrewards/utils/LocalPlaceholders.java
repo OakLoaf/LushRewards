@@ -6,7 +6,6 @@ import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
 import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
-import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
@@ -141,7 +140,7 @@ public class LocalPlaceholders {
 
             RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
-            if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData moduleData) {
+            if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData moduleData) {
                 return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
             } else {
                 return null;
