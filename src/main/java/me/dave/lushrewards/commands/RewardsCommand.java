@@ -1,7 +1,6 @@
 package me.dave.lushrewards.commands;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.importer.ConfigImporter;
 import me.dave.lushrewards.importer.DailyRewardsPlusImporter;
 import me.dave.lushrewards.importer.NDailyRewardsImporter;
@@ -482,24 +481,31 @@ public class RewardsCommand extends Command {
             }
         }
 
-        if (player != null && LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid)) {
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
-                moduleUserData.setDayNum(dayNum);
-                moduleUserData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
-                rewardUser.save();
-            }
-        } else {
-            LushRewards.getInstance().getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
-                    moduleUserData.setDayNum(dayNum);
-                    moduleUserData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
-                    rewardUser.save();
-                }
-                LushRewards.getInstance().getDataManager().unloadRewarderUser(uuid);
-            }));
-        }
+        if (player != null) {
+            boolean loaded = LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid);
 
+            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept(rewardUser -> {
+                LushRewards.getInstance().getRewardModules().forEach(module -> {
+                    if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                        DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
+                        if (userData != null) {
+                            userData.setDayNum(dayNum);
+                            userData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
+                        }
+                    }
+                });
+
+                LushRewards.getInstance().getDataManager().saveRewardUser(player);
+
+                if (!loaded) {
+                    LushRewards.getInstance().getRewardModules().forEach(module -> {
+                        if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                            dailyRewardsModule.unloadUserData(uuid);
+                        }
+                    });
+                }
+            });
+        }
         return true;
     }
 
@@ -518,20 +524,29 @@ public class RewardsCommand extends Command {
             }
         }
 
-        if (player != null && LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid)) {
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
-                moduleUserData.setStreakLength(streak);
-                rewardUser.save();
-            }
-        } else {
-            LushRewards.getInstance().getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
-                    moduleUserData.setStreakLength(streak);
-                    rewardUser.save();
+        if (player != null) {
+            boolean loaded = LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid);
+
+            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept(rewardUser -> {
+                LushRewards.getInstance().getRewardModules().forEach(module -> {
+                    if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                        DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
+                        if (userData != null) {
+                            userData.setStreakLength(streak);
+                        }
+                    }
+                });
+
+                LushRewards.getInstance().getDataManager().saveRewardUser(player);
+
+                if (!loaded) {
+                    LushRewards.getInstance().getRewardModules().forEach(module -> {
+                        if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                            dailyRewardsModule.unloadUserData(uuid);
+                        }
+                    });
                 }
-                LushRewards.getInstance().getDataManager().unloadRewarderUser(uuid);
-            }));
+            });
         }
 
         return true;
@@ -551,22 +566,30 @@ public class RewardsCommand extends Command {
             }
         }
 
-        if (player != null && LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid)) {
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
-                moduleUserData.clearCollectedDates();
-                moduleUserData.setLastCollectedDate(null);
-                rewardUser.save();
-            }
-        } else {
-            LushRewards.getInstance().getDataManager().loadRewardUser(uuid).thenAccept((rewardUser -> {
-                if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData) {
-                    moduleUserData.clearCollectedDates();
-                    moduleUserData.setLastCollectedDate(null);
-                    rewardUser.save();
+        if (player != null) {
+            boolean loaded = LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid);
+
+            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept(rewardUser -> {
+                LushRewards.getInstance().getRewardModules().forEach(module -> {
+                    if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                        DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
+                        if (userData != null) {
+                            userData.clearCollectedDates();
+                            userData.setLastCollectedDate(null);
+                        }
+                    }
+                });
+
+                LushRewards.getInstance().getDataManager().saveRewardUser(player);
+
+                if (!loaded) {
+                    LushRewards.getInstance().getRewardModules().forEach(module -> {
+                        if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                            dailyRewardsModule.unloadUserData(uuid);
+                        }
+                    });
                 }
-                LushRewards.getInstance().getDataManager().unloadRewarderUser(uuid);
-            }));
+            });
         }
 
         return true;
