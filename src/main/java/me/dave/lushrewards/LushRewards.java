@@ -95,6 +95,7 @@ public final class LushRewards extends SpigotPlugin {
         }
 
         configManager = null;
+        localPlaceholders = null;
     }
 
     public ConfigManager getConfigManager() {
