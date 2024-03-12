@@ -23,13 +23,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocalPlaceholders {
-    private static final String identifier = "rewarder";
-    private static final ConcurrentHashMap<String, PlaceholderFunction<String>> stringPlaceholders = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, PlaceholderFunction<String>> regexPlaceholders = new ConcurrentHashMap<>();
-    private static final Pattern regexPattern = Pattern.compile("%" + identifier + "_([a-zA-Z0-9_ ]+)%");
-    private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%rewarder_([a-zA-Z0-9_ ]+)%");
+    private static LocalDateTime NEXT_DAY = LocalDate.now().plusDays(1).atStartOfDay();
 
-    static {
+    private final ConcurrentHashMap<String, PlaceholderFunction> stringPlaceholders = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, PlaceholderFunction> regexPlaceholders = new ConcurrentHashMap<>();
+
+    public LocalPlaceholders() {
         // String placeholders
         registerPlaceholder("category", (params, player) -> {
             if (player == null) {
@@ -66,11 +66,11 @@ public class LocalPlaceholders {
 
         registerPlaceholder("countdown", (params, player) -> {
             LocalDateTime now = LocalDateTime.now();
-            long secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
+            long secondsUntil = now.until(NEXT_DAY, ChronoUnit.SECONDS);
 
             if (secondsUntil < 0) {
-                nextDay = LocalDate.now().plusDays(1).atStartOfDay();
-                secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
+                NEXT_DAY = LocalDate.now().plusDays(1).atStartOfDay();
+                secondsUntil = now.until(NEXT_DAY, ChronoUnit.SECONDS);
             }
 
             long hours = secondsUntil / 3600;
@@ -238,7 +238,7 @@ public class LocalPlaceholders {
         });
     }
 
-    public static ItemStack parseItemStack(Player player, ItemStack itemStack) {
+    public ItemStack parseItemStack(Player player, ItemStack itemStack) {
         ItemStack item = itemStack.clone();
         ItemMeta itemMeta = item.getItemMeta();
 
@@ -259,8 +259,8 @@ public class LocalPlaceholders {
         return item;
     }
 
-    public static String parseString(String string, Player player) {
-        Matcher matcher = regexPattern.matcher(string);
+    public String parseString(String string, Player player) {
+        Matcher matcher = PLACEHOLDER_PATTERN.matcher(string);
         Set<String> matches = new HashSet<>();
         while (matcher.find()) {
             matches.add(matcher.group());
@@ -277,7 +277,7 @@ public class LocalPlaceholders {
         return string;
     }
 
-    public static String parsePlaceholder(String params, Player player) {
+    public String parsePlaceholder(String params, Player player) {
 
         if (stringPlaceholders.containsKey(params)) {
             try {
@@ -302,16 +302,16 @@ public class LocalPlaceholders {
         return null;
     }
 
-    public static void registerPlaceholder(String placeholder, PlaceholderFunction<String> method) {
+    public void registerPlaceholder(String placeholder, PlaceholderFunction method) {
         stringPlaceholders.put(placeholder, method);
     }
 
-    public static void registerRegexPlaceholder(String regex, PlaceholderFunction<String> method) {
+    public void registerRegexPlaceholder(String regex, PlaceholderFunction method) {
         regexPlaceholders.put(regex, method);
     }
 
     @FunctionalInterface
-    private interface PlaceholderFunction<R> {
-        R apply(String string, Player player) ;
+    public interface PlaceholderFunction {
+        String apply(String string, Player player) ;
     }
 }

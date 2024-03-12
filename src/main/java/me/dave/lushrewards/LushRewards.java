@@ -8,6 +8,7 @@ import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
+import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
@@ -30,6 +31,7 @@ public final class LushRewards extends SpigotPlugin {
     private ConfigManager configManager;
     private DataManager dataManager;
     private NotificationHandler notificationHandler;
+    private LocalPlaceholders localPlaceholders;
     private Updater updater;
     private ConcurrentHashMap<String, RewardModule.Constructor<? extends RewardModule>> moduleTypes;
 
@@ -47,12 +49,12 @@ public final class LushRewards extends SpigotPlugin {
     @Override
     public void onEnable() {
         updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
-        modules = new ConcurrentHashMap<>();
 
         notificationHandler = new NotificationHandler();
         configManager = new ConfigManager();
         configManager.reloadConfig();
         dataManager = new DataManager();
+        localPlaceholders = new LocalPlaceholders();
 
         addHook("floodgate", () -> registerHook(new FloodgateHook()));
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
@@ -105,6 +107,10 @@ public final class LushRewards extends SpigotPlugin {
 
     public NotificationHandler getNotificationHandler() {
         return notificationHandler;
+    }
+
+    public LocalPlaceholders getLocalPlaceholders() {
+        return localPlaceholders;
     }
 
     public Updater getUpdater() {

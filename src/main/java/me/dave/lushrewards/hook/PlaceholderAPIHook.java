@@ -30,7 +30,7 @@ public class PlaceholderAPIHook extends Hook {
     public static class PlaceholderExpansion extends me.clip.placeholderapi.expansion.PlaceholderExpansion {
 
         public String onPlaceholderRequest(Player player, @NotNull String params) {
-            return LocalPlaceholders.parsePlaceholder(params, player);
+            return LushRewards.getInstance().getLocalPlaceholders().parsePlaceholder(params, player);
         }
 
         public boolean persist() {
