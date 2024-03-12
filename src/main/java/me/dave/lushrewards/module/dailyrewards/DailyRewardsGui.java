@@ -4,13 +4,11 @@ import com.google.common.collect.TreeMultimap;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;
 import me.dave.platyutils.gui.inventory.Gui;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
-import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleItemStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -202,15 +200,11 @@ public class DailyRewardsGui extends Gui {
 
                                 dailyRewardsModule.claimRewards(player);
 
-                                Optional<Module> optionDailyGoalsModule = LushRewards.getInstance().getModule(PlaytimeGlobalGoalsModule.ID);
-                                if (optionDailyGoalsModule.isPresent() && optionDailyGoalsModule.get() instanceof PlaytimeDailyGoalsModule dailyGoalsModule && dailyGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    dailyGoalsModule.claimRewards(player);
-                                }
-
-                                Optional<Module> optionGlobalGoalsModule = LushRewards.getInstance().getModule(PlaytimeGlobalGoalsModule.ID);
-                                if (optionGlobalGoalsModule.isPresent() && optionGlobalGoalsModule.get() instanceof PlaytimeGlobalGoalsModule globalGoalsModule && globalGoalsModule.shouldReceiveWithDailyRewards()) {
-                                    globalGoalsModule.claimRewards(player);
-                                }
+                                LushRewards.getInstance().getRewardModules().forEach(module -> {
+                                    if (module instanceof PlaytimeDailyGoalsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
+                                        playtimeModule.claimRewards(player);
+                                    }
+                                });
                             });
                         }
 
