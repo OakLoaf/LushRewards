@@ -1,11 +1,7 @@
 package me.dave.lushrewards.data;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.module.RewardModule;
-import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimedailygoals.PlaytimeDailyGoalsModule;
-import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
-import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGoalsModuleUserData;
+import me.dave.lushrewards.module.UserDataModule;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,8 +10,6 @@ import org.enchantedskies.EnchantedStorage.Storage;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class YmlStorage implements Storage<RewardUser, UUID> {
@@ -31,15 +25,15 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
 
         LushRewards.getInstance().getRewardModules().forEach(module -> {
-            RewardModule.UserData userData = configurationSection.getObject(module.getId(), module.getUserDataClass());
+            if (module instanceof UserDataModule<? extends UserDataModule.UserData> userDataModule) {
+                UserDataModule.UserData userData = configurationSection.getObject(module.getId(), userDataModule.getUserDataClass());
+                if (userData == null) {
+                    configurationSection.createSection(module.getId());
+                    userData = userDataModule.getDefaultData();
+                }
 
-            ConfigurationSection moduleSection = configurationSection.getConfigurationSection(module.getId());
-            if (moduleSection == null) {
-                configurationSection.createSection(module.getId());
-                userData = module.getUserDataConstructor().build();
+                userDataModule.loadUserData(uuid, userData);
             }
-
-            module.loadUserData(uuid, userData);
         });
 
         return rewardUser;
@@ -52,34 +46,40 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         configurationSection.set("name", rewardUser.getUsername());
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
-        if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData dailyRewardsModuleData) {
-            String moduleName = DailyRewardsModule.ID;
-
-            configurationSection.set(moduleName + ".day-num", dailyRewardsModuleData.getDayNum());
-            configurationSection.set(moduleName + ".streak-length", dailyRewardsModuleData.getStreakLength());
-            configurationSection.set(moduleName + ".highest-streak", dailyRewardsModuleData.getHighestStreak());
-            configurationSection.set(moduleName + ".start-date", dailyRewardsModuleData.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            if (dailyRewardsModuleData.getLastCollectedDate() != null) {
-                configurationSection.set(moduleName + ".last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            } else {
-                configurationSection.set(moduleName + ".last-collected-date", null);
+        LushRewards.getInstance().getRewardModules().forEach(module -> {
+            if (module instanceof UserDataModule<? extends UserDataModule.UserData> userDataModule) {
+                configurationSection.set(module.getId(), userDataModule.getUserData(rewardUser.getUniqueId()));
             }
-            configurationSection.set(moduleName + ".collected-dates", new ArrayList<>(dailyRewardsModuleData.getCollectedDates()));
-        }
+        });
 
-        if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData dailyPlaytimeGoalsModuleUserData) {
-            String moduleName = PlaytimeDailyGoalsModule.ID;
-
-            configurationSection.set(moduleName + ".date", dailyPlaytimeGoalsModuleUserData.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            configurationSection.set(moduleName + ".last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-            configurationSection.set(moduleName + ".previous-day-end", dailyPlaytimeGoalsModuleUserData.getPreviousDayEndPlaytime());
-        }
-
-        if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
-            String moduleName = PlaytimeGlobalGoalsModule.ID;
-
-            configurationSection.set(moduleName + ".last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
-        }
+//        if (rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData dailyRewardsModuleData) {
+//            String moduleName = DailyRewardsModule.ID;
+//
+//            configurationSection.set(moduleName + ".day-num", dailyRewardsModuleData.getDayNum());
+//            configurationSection.set(moduleName + ".streak-length", dailyRewardsModuleData.getStreakLength());
+//            configurationSection.set(moduleName + ".highest-streak", dailyRewardsModuleData.getHighestStreak());
+//            configurationSection.set(moduleName + ".start-date", dailyRewardsModuleData.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+//            if (dailyRewardsModuleData.getLastCollectedDate() != null) {
+//                configurationSection.set(moduleName + ".last-collected-date", dailyRewardsModuleData.getLastCollectedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+//            } else {
+//                configurationSection.set(moduleName + ".last-collected-date", null);
+//            }
+//            configurationSection.set(moduleName + ".collected-dates", new ArrayList<>(dailyRewardsModuleData.getCollectedDates()));
+//        }
+//
+//        if (rewardUser.getModuleData(PlaytimeDailyGoalsModule.ID) instanceof PlaytimeDailyGoalsModule.UserData dailyPlaytimeGoalsModuleUserData) {
+//            String moduleName = PlaytimeDailyGoalsModule.ID;
+//
+//            configurationSection.set(moduleName + ".date", dailyPlaytimeGoalsModuleUserData.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+//            configurationSection.set(moduleName + ".last-collected-playtime", dailyPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
+//            configurationSection.set(moduleName + ".previous-day-end", dailyPlaytimeGoalsModuleUserData.getPreviousDayEndPlaytime());
+//        }
+//
+//        if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModuleUserData globalPlaytimeGoalsModuleUserData) {
+//            String moduleName = PlaytimeGlobalGoalsModule.ID;
+//
+//            configurationSection.set(moduleName + ".last-collected-playtime", globalPlaytimeGoalsModuleUserData.getLastCollectedPlaytime());
+//        }
 
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());
         try {

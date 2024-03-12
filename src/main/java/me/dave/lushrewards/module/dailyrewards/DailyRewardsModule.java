@@ -5,6 +5,7 @@ import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
+import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;
@@ -22,8 +23,10 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class DailyRewardsModule extends RewardModule<DailyRewardsModule.UserData> {
+public class DailyRewardsModule extends RewardModule implements UserDataModule<DailyRewardsModule.UserData> {
+    private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private HashSet<DailyRewardCollection> rewards;
     private int resetDaysAt;
     private boolean streakMode;
@@ -35,7 +38,7 @@ public class DailyRewardsModule extends RewardModule<DailyRewardsModule.UserData
     private GuiFormat guiFormat;
 
     public DailyRewardsModule(String id, File moduleFile) {
-        super(id, moduleFile, UserData.class, () -> new UserData(id, 0, 0, LocalDate.now(), null, new HashSet<>()));
+        super(id, moduleFile);
     }
 
     @Override
@@ -128,7 +131,7 @@ public class DailyRewardsModule extends RewardModule<DailyRewardsModule.UserData
 
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-        UserData userData = userDataMap.get(player.getUniqueId());
+        UserData userData = userDataCache.get(player.getUniqueId());
         if (userData == null || userData.hasCollectedToday()) {
             return false;
         }
@@ -248,7 +251,34 @@ public class DailyRewardsModule extends RewardModule<DailyRewardsModule.UserData
         return guiFormat;
     }
 
-    public static class UserData extends RewardModule.UserData {
+    @Override
+    public Class<UserData> getUserDataClass() {
+        return UserData.class;
+    }
+
+    @Override
+    public UserData getDefaultData() {
+        return new UserData(id, 0, 0, LocalDate.now(), null, new HashSet<>());
+    }
+
+    @Override
+    public UserData getUserData(UUID uuid) {
+        return userDataCache.get(uuid);
+    }
+
+    @Override
+    public void loadUserData(UUID uuid, UserDataModule.UserData userData) {
+        if (userData instanceof UserData data) {
+            userDataCache.put(uuid, data);
+        }
+    }
+
+    @Override
+    public void unloadUserData(UUID uuid) {
+        userDataCache.remove(uuid);
+    }
+
+    public static class UserData extends UserDataModule.UserData {
         private int streakLength;
         private int highestStreak;
         private LocalDate startDate;

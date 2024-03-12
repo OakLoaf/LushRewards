@@ -31,7 +31,7 @@ public final class LushRewards extends SpigotPlugin {
     private DataManager dataManager;
     private NotificationHandler notificationHandler;
     private Updater updater;
-    private ConcurrentHashMap<String, RewardModule.Constructor<? extends RewardModule<RewardModule.UserData>>> moduleTypes;
+    private ConcurrentHashMap<String, RewardModule.Constructor<? extends RewardModule>> moduleTypes;
 
     @Override
     public void onLoad() {
@@ -116,19 +116,19 @@ public final class LushRewards extends SpigotPlugin {
         return moduleTypes.containsKey(type);
     }
 
-    public List<? extends RewardModule<?>> getRewardModules() {
+    public List<? extends RewardModule> getRewardModules() {
         return modules.values().stream()
-            .filter(module -> module instanceof RewardModule<?>)
-            .map(module -> (RewardModule<? extends RewardModule.UserData>) module)
+            .filter(module -> module instanceof RewardModule)
+            .map(module -> (RewardModule) module)
             .toList();
     }
 
-    public RewardModule<? extends RewardModule.UserData> loadModuleType(@NotNull String type, @NotNull String moduleId, @NotNull File moduleFile) {
+    public RewardModule loadModuleType(@NotNull String type, @NotNull String moduleId, @NotNull File moduleFile) {
         type = type.toUpperCase();
         return moduleTypes.containsKey(type) ? moduleTypes.get(type).build(moduleId, moduleFile) : null;
     }
 
-    public void registerModuleType(String id, RewardModule.Constructor<? extends RewardModule<RewardModule.UserData>> constructor) {
+    public void registerModuleType(String id, RewardModule.Constructor<? extends RewardModule> constructor) {
         if (moduleTypes.containsKey(id)) {
             log(Level.SEVERE, "Failed to register module type with id '" + id + "', a module type with this id is already registered");
         } else {
