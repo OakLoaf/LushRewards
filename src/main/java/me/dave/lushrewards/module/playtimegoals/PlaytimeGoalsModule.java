@@ -114,7 +114,7 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
         HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd);
         if (rewards.isEmpty()) {
             if (saveRewardUser) {
-                LushRewards.getInstance().getDataManager().saveRewardUser(player);
+                LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
             }
             return false;
         }
@@ -126,12 +126,11 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
         });
 
         ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("daily-playtime-reward-given")
-            .replaceAll("%minutes%", String.valueOf(LushRewards.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed()))
-            .replaceAll("%hours%", String.valueOf((int) Math.floor(LushRewards.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed() / 60D))));
+            .replaceAll("%minutes%", String.valueOf(rewardUser.getMinutesPlayed()))
+            .replaceAll("%hours%", String.valueOf((int) Math.floor(rewardUser.getMinutesPlayed() / 60D))));
 
         userData.setLastCollectedPlaytime(totalMinutesPlayed);
-        LushRewards.getInstance().getDataManager().saveRewardUser(player);
-
+        rewardUser.save();
         return true;
     }
 
