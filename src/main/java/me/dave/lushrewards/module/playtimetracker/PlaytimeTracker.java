@@ -3,7 +3,6 @@ package me.dave.lushrewards.module.playtimetracker;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
-import me.dave.lushrewards.module.playtimeglobalgoals.PlaytimeGlobalGoalsModule;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleLocation;
 import org.bukkit.entity.Player;
@@ -91,10 +90,6 @@ public class PlaytimeTracker {
                 if (module instanceof PlaytimeGoalsModule playtimeGoalsModule) {
                     if (playtimeGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGoalsModule.getRefreshTime() == 0) {
                         playtimeGoalsModule.claimRewards(player);
-                    }
-                } else if (module instanceof PlaytimeGlobalGoalsModule playtimeGlobalGoalsModule) {
-                    if (playtimeGlobalGoalsModule.getRefreshTime() > 0 && globalTime % playtimeGlobalGoalsModule.getRefreshTime() == 0) {
-                        playtimeGlobalGoalsModule.claimRewards(player);
                     }
                 }
             });
