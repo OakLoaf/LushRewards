@@ -1,7 +1,5 @@
-# Hourly playtime goals that reset daily
-rewards-type: DAILY_PLAYTIME_GOALS
-id: daily-playtime-goals
-enabled: true
+# Daily Playtime Goals: Hourly playtime goals that reset daily
+type: playtime-rewards
 
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)
 refresh-time: 30
