@@ -1,6 +1,5 @@
-rewards-type: DAILY_REWARDS
-id: daily-rewards
-enabled: true
+# Daily Rewards: Rewards that are given daily
+type: daily-rewards
 
 # Resets player back to day 1, this does not affect streaks (Set to -1 to disable)
 reset-days-at: -1
