@@ -1,6 +1,7 @@
 package me.dave.lushrewards.config;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.utils.Debugger;
@@ -75,23 +76,21 @@ public class ConfigManager {
                     }
 
                     String rewardsType;
-                    if (moduleConfig.contains("rewards-type")) {
-                        rewardsType = moduleConfig.getString("rewards-type");
+                    if (moduleConfig.contains("type")) {
+                        rewardsType = moduleConfig.getString("type");
                     } else {
                         switch(moduleId) {
-                            case "daily-playtime-goals", "global-playtime-goals" -> {
-                                rewardsType = "playtime-rewards";
-                            }
+                            case "daily-playtime-goals", "global-playtime-goals" -> rewardsType = "playtime-rewards";
                             default -> rewardsType = moduleId;
                         }
                     }
 
-                    if (rewardsType == null || !plugin.hasModuleType(rewardsType)) {
-                        plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'rewards-type'");
-                        return;
+                    RewardModuleTypeManager rewardModuleTypes = PlatyUtils.getManager(RewardModuleTypeManager.class).orElse(null);
+                    if (rewardsType != null && rewardModuleTypes.isRegistered(rewardsType)) {
+                        rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile);
+                    } else {
+                        plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'type'");
                     }
-
-                    plugin.registerModule(plugin.loadModuleType(rewardsType, moduleId, moduleFile));
                 }
             });
         } catch (IOException e) {
