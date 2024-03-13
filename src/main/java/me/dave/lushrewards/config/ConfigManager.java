@@ -68,16 +68,24 @@ public class ConfigManager {
                 File moduleFile = entry.toFile();
                 YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
                 if (moduleConfig.getBoolean("enabled", true)) {
-                    String moduleId = moduleConfig.getString("id");
-                    if (moduleId == null) {
-                        plugin.log(Level.SEVERE, "No module id was found in '" + moduleFile.getName() + "'");
-                        return;
-                    } else if (plugin.getModule(moduleId).isPresent()) {
+                    String moduleId = moduleFile.getName();
+                    if (plugin.getModule(moduleId).isPresent()) {
                         plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
                         return;
                     }
 
-                    String rewardsType = moduleConfig.getString("rewards-type");
+                    String rewardsType;
+                    if (moduleConfig.contains("rewards-type")) {
+                        rewardsType = moduleConfig.getString("rewards-type");
+                    } else {
+                        switch(moduleId) {
+                            case "daily-playtime-goals", "global-playtime-goals" -> {
+                                rewardsType = "playtime-rewards";
+                            }
+                            default -> rewardsType = moduleId;
+                        }
+                    }
+
                     if (rewardsType == null || !plugin.hasModuleType(rewardsType)) {
                         plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'rewards-type'");
                         return;
