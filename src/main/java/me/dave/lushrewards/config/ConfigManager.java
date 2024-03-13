@@ -88,7 +88,7 @@ public class ConfigManager {
 
                     RewardModuleTypeManager rewardModuleTypes = PlatyUtils.getManager(RewardModuleTypeManager.class).orElse(null);
                     if (rewardsType != null && rewardModuleTypes.isRegistered(rewardsType)) {
-                        rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile);
+                        plugin.registerModule(rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile));
                     } else {
                         plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'type'");
                     }
