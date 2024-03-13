@@ -25,7 +25,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
 
         LushRewards.getInstance().getRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<? extends UserDataModule.UserData> userDataModule) {
+            if (module instanceof UserDataModule<?> userDataModule) {
                 UserDataModule.UserData userData = configurationSection.getObject(module.getId(), userDataModule.getUserDataClass());
                 if (userData == null) {
                     configurationSection.createSection(module.getId());
@@ -47,7 +47,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
 
         LushRewards.getInstance().getRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<? extends UserDataModule.UserData> userDataModule) {
+            if (module instanceof UserDataModule<?> userDataModule) {
                 configurationSection.set(module.getId(), userDataModule.getUserData(rewardUser.getUniqueId()));
             }
         });
