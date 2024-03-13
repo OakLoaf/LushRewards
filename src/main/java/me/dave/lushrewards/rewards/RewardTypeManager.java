@@ -28,7 +28,6 @@ public class RewardTypeManager extends Manager {
             rewardTypes.clear();
             rewardTypes = null;
         }
-
     }
 
     public boolean isRegistered(String type) {
