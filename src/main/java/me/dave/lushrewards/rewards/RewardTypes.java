@@ -21,6 +21,10 @@ public class RewardTypes {
         nameToRewardType.put(type, rewardClass);
     }
 
+    public static void unregister(String type) {
+        nameToRewardType.remove(type);
+    }
+
     public static boolean isRewardRegistered(String type) {
         return nameToRewardType.containsKey(type);
     }
