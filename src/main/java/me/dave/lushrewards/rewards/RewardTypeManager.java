@@ -7,11 +7,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RewardTypeManager extends Manager {
-    private ConcurrentHashMap<String, Reward.Constructor> nameToRewardType;
+    private ConcurrentHashMap<String, Reward.Constructor> rewardTypes;
 
     @Override
     public void onEnable() {
-        nameToRewardType = new ConcurrentHashMap<>();
+        rewardTypes = new ConcurrentHashMap<>();
 
         register("broadcast", BroadcastReward::new);
         register("command", ConsoleCommandReward::new);
@@ -24,27 +24,27 @@ public class RewardTypeManager extends Manager {
 
     @Override
     public void onDisable() {
-        if (nameToRewardType != null) {
-            nameToRewardType.clear();
-            nameToRewardType = null;
+        if (rewardTypes != null) {
+            rewardTypes.clear();
+            rewardTypes = null;
         }
 
     }
 
     public boolean isRegistered(String type) {
-        return nameToRewardType.containsKey(type);
+        return rewardTypes.containsKey(type);
     }
 
     public void register(String type, Reward.Constructor constructor) {
-        nameToRewardType.put(type, constructor);
+        rewardTypes.put(type, constructor);
     }
 
     public void unregister(String type) {
-        nameToRewardType.remove(type);
+        rewardTypes.remove(type);
     }
 
     @Nullable
     public Reward.Constructor getConstructor(String type) {
-        return nameToRewardType.get(type);
+        return rewardTypes.get(type);
     }
 }
