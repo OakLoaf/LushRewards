@@ -8,7 +8,9 @@ import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardCollection;
+import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
+import me.dave.platyutils.module.Module;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 // TODO: Combine playtime modules into one playtime module
 public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<PlaytimeGoalsModule.UserData> {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
+    private Placeholder placeholder;
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
-    private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
 
     public PlaytimeGoalsModule(String id, File moduleFile) {
         super(id, moduleFile);
@@ -68,6 +71,9 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
             minutesToReward.put(minutes, rewardCollection);
         }
 
+        placeholder = new Placeholder(id);
+        placeholder.register();
+
         LushRewards.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'daily-goals'");
     }
 
@@ -76,6 +82,11 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
         if (minutesToReward != null) {
             minutesToReward.clear();
             minutesToReward = null;
+        }
+
+        if (placeholder != null) {
+            placeholder.unregister();
+            placeholder = null;
         }
 
         userDataCache.clear();
@@ -171,6 +182,7 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
         return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
     }
 
+    // TODO: Add Gui
     public GuiFormat getGuiFormat() {
         return guiFormat;
     }
@@ -237,6 +249,42 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
 
         public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
             this.previousDayEndPlaytime = previousDayEndPlaytime;
+        }
+    }
+
+    public static class Placeholder {
+        private static final HashSet<LocalPlaceholders.Placeholder> placeholderCache = new HashSet<>();
+
+        static {
+            placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("playtime_since_last_collected", (params, player) -> {
+                if (player == null || LushRewards.getInstance().getModule(params[0]).isEmpty()) {
+                    return null;
+                }
+
+                RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+                Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
+                if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeGoalsModule module) {
+                    PlaytimeGoalsModule.UserData userData = module.getUserData(player.getUniqueId());
+                    return String.valueOf(rewardUser.getMinutesPlayed() - userData.getLastCollectedPlaytime());
+                } else {
+                    return null;
+                }
+            }));
+        }
+
+        private final String id;
+
+        public Placeholder(String id) {
+            this.id = id;
+        }
+
+        public void register() {
+            LocalPlaceholders.SimplePlaceholder modulePlaceholder = new LocalPlaceholders.SimplePlaceholder(id, (params, player) -> null);
+            placeholderCache.forEach(modulePlaceholder::addChild);
+        }
+
+        public void unregister() {
+            LushRewards.getInstance().getLocalPlaceholders().unregisterPlaceholder(id);
         }
     }
 }

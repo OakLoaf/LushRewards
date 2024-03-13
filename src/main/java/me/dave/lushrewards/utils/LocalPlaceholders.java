@@ -1,17 +1,13 @@
 package me.dave.lushrewards.utils;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.RewardModule;
-import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
-import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.platyutils.module.Module;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,45 +21,11 @@ public class LocalPlaceholders {
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%rewarder_([a-zA-Z0-9_ ]+)%");
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
-    private final ConcurrentHashMap<String, PlaceholderFunction> stringPlaceholders = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, PlaceholderFunction> regexPlaceholders = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Placeholder> placeholders = new ConcurrentHashMap<>();
 
     public LocalPlaceholders() {
-        // String placeholders
-        registerPlaceholder("category", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
 
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(DailyRewardsModule.ID);
-            if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
-                    return null;
-                }
-
-                RewardDay rewardDay = dailyRewardsModule.getRewardDay(LocalDate.now(), moduleUserData.getStreakLength());
-
-                return String.valueOf(rewardDay.getHighestPriorityRewardCollection().getCategory());
-            } else {
-                return null;
-            }
-        });
-
-        registerPlaceholder("collected", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
-                return null;
-            }
-
-            return String.valueOf(moduleUserData.hasCollectedToday());
-        });
-
-        registerPlaceholder("countdown", (params, player) -> {
+        registerPlaceholder(new SimplePlaceholder("countdown", (params, player) -> {
             LocalDateTime now = LocalDateTime.now();
             long secondsUntil = now.until(nextDay, ChronoUnit.SECONDS);
 
@@ -77,22 +39,9 @@ public class LocalPlaceholders {
             long seconds = secondsUntil % 60;
 
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        });
+        }));
 
-        registerPlaceholder("day_num", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
-                return null;
-            }
-            
-            return String.valueOf(moduleUserData.getDayNum());
-        });
-
-        registerPlaceholder("global_playtime", (params, player) -> {
+        registerPlaceholder(new SimplePlaceholder("global_playtime", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -103,50 +52,9 @@ public class LocalPlaceholders {
             } else {
                 return null;
             }
-        });
+        }));
 
-        registerPlaceholder("highest_streak", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
-                return null;
-            }
-
-            return String.valueOf(moduleUserData.getHighestStreak());
-        });
-
-        registerPlaceholder("playtime_since_daily_goals", (params, player) -> {
-            if (player == null || LushRewards.getInstance().getModule(PlaytimeGoalsModule.ID).isEmpty()) {
-                return null;
-            }
-
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-
-            if (rewardUser.getModuleData(PlaytimeGoalsModule.ID) instanceof PlaytimeGoalsModule.UserData moduleData) {
-                return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
-            } else {
-                return null;
-            }
-        });
-
-        registerPlaceholder("playtime_since_global_goals", (params, player) -> {
-            if (player == null || LushRewards.getInstance().getModule(PlaytimeGoalsModule.ID).isEmpty()) {
-                return null;
-            }
-
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-
-            if (rewardUser.getModuleData(PlaytimeGlobalGoalsModule.ID) instanceof PlaytimeGoalsModule.UserData moduleData) {
-                return String.valueOf(rewardUser.getMinutesPlayed() - moduleData.getLastCollectedPlaytime());
-            } else {
-                return null;
-            }
-        });
-
-        registerPlaceholder("session_playtime", (params, player) -> {
+        registerPlaceholder(new SimplePlaceholder("session_playtime", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -157,42 +65,9 @@ public class LocalPlaceholders {
             } else {
                 return null;
             }
-        });
+        }));
 
-        registerPlaceholder("streak", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData moduleUserData)) {
-                return null;
-            }
-
-            return String.valueOf(moduleUserData.getStreakLength());
-        });
-
-        registerPlaceholder("total_rewards", (params, player) -> {
-            if (player == null) {
-                return null;
-            }
-
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(DailyRewardsModule.ID);
-            if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData userData)) {
-                    return null;
-                }
-
-                RewardDay rewardDay = dailyRewardsModule.getRewardDay(LocalDate.now(), userData.getStreakLength());
-
-                return String.valueOf(rewardDay.getRewardCount());
-            } else {
-                return null;
-            }
-        });
-
-        registerPlaceholder("total_session_playtime", (params, player) -> {
+        registerPlaceholder(new SimplePlaceholder("total_session_playtime", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -203,38 +78,7 @@ public class LocalPlaceholders {
             } else {
                 return null;
             }
-        });
-
-        // Regex Placeholders
-        registerRegexPlaceholder("day_[0-9]+.+", (params, player) -> {
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(DailyRewardsModule.ID);
-            if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-                if (!(rewardUser.getModuleData(DailyRewardsModule.ID) instanceof DailyRewardsModule.UserData userData)) {
-                    return null;
-                }
-
-                String[] paramArr = params.split("_", 3);
-                int dayNum = Integer.parseInt(paramArr[1]);
-
-                LocalDate date = userData.getDateAtStreakLength(dayNum);
-
-                RewardDay rewardDay = dailyRewardsModule.getRewardDay(date, dayNum);
-
-                DailyRewardCollection dailyRewardCollection = rewardDay.getHighestPriorityRewardCollection();
-
-                switch (paramArr[2]) {
-                    case "category" -> {
-                        return String.valueOf(dailyRewardCollection.getCategory());
-                    }
-                    case "total_rewards" -> {
-                        return String.valueOf(dailyRewardCollection.getRewardCount());
-                    }
-                }
-            }
-
-            return null;
-        });
+        }));
     }
 
     public ItemStack parseItemStack(Player player, ItemStack itemStack) {
@@ -277,40 +121,141 @@ public class LocalPlaceholders {
     }
 
     public String parsePlaceholder(String params, Player player) {
+        String[] paramsArr = params.split("_");
 
-        if (stringPlaceholders.containsKey(params)) {
+        Placeholder currentPlaceholder = null;
+        String currParams = params;
+        for (int i = 0; i < paramsArr.length; i++) {
+            boolean found = false;
+
+            for (Placeholder subPlaceholder : currentPlaceholder != null ? currentPlaceholder.getChildren() : placeholders.values()) {
+                if (subPlaceholder.matches(params)) {
+                    currentPlaceholder = subPlaceholder;
+                    currParams = currParams.replace(subPlaceholder.getContent() + "_", "");
+
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                break;
+            }
+        }
+
+        if (currentPlaceholder != null) {
             try {
-                return stringPlaceholders.get(params).apply(params, player);
+                return currentPlaceholder.parse(paramsArr, player);
             } catch(Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
-        for (String regex : regexPlaceholders.keySet()) {
-            if (params.matches(regex)) {
-                try {
-                    return regexPlaceholders.get(params).apply(params, player);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        }
-
         return null;
     }
 
-    public void registerPlaceholder(String placeholder, PlaceholderFunction method) {
-        stringPlaceholders.put(placeholder, method);
+    public void registerPlaceholder(Placeholder placeholder) {
+        placeholders.put(placeholder.getContent(), placeholder);
     }
 
-    public void registerRegexPlaceholder(String regex, PlaceholderFunction method) {
-        regexPlaceholders.put(regex, method);
+    public void unregisterPlaceholder(String content) {
+        placeholders.remove(content);
     }
 
     @FunctionalInterface
     public interface PlaceholderFunction {
-        String apply(String string, Player player) ;
+        String apply(String[] params, Player player) ;
+    }
+
+    public static class SimplePlaceholder extends Placeholder {
+        private final PlaceholderFunction method;
+
+        public SimplePlaceholder(String content, PlaceholderFunction method) {
+            super(content);
+            this.method = method;
+        }
+
+        @Override
+        boolean matches(String string) {
+            return string.startsWith(content);
+        }
+
+        @Override
+        public String parse(String[] params, Player player) {
+            try {
+                return method.apply(params, player);
+            } catch(Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public SimplePlaceholder addChild(Placeholder placeholder) {
+            super.addChild(placeholder);
+            return this;
+        }
+    }
+
+    public static class RegexPlaceholder extends Placeholder {
+        private final PlaceholderFunction method;
+
+        public RegexPlaceholder(String content, PlaceholderFunction method) {
+            super(content);
+            this.method = method;
+        }
+
+        @Override
+        boolean matches(String string) {
+            return string.matches(content);
+        }
+
+        @Override
+        public String parse(String[] params, Player player) {
+            try {
+                return method.apply(params, player);
+            } catch(Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public RegexPlaceholder addChild(Placeholder placeholder) {
+            super.addChild(placeholder);
+            return this;
+        }
+    }
+
+    public static abstract class Placeholder {
+        protected final String content;
+        private Collection<Placeholder> children;
+
+        public Placeholder(String content) {
+            this.content = content;
+        }
+
+        abstract boolean matches(String string);
+
+        abstract String parse(String[] params, Player player);
+
+        public String getContent() {
+            return content;
+        }
+
+        @NotNull
+        public Collection<Placeholder> getChildren() {
+            return children != null ? children : Collections.emptyList();
+        }
+
+        public Placeholder addChild(Placeholder placeholder) {
+            if (children == null) {
+                children = new ArrayList<>();
+            }
+
+            children.add(placeholder);
+            return this;
+        }
     }
 }
