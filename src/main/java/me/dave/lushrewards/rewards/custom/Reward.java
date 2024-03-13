@@ -2,16 +2,16 @@ package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
-import me.dave.lushrewards.rewards.RewardTypes;
+import me.dave.lushrewards.rewards.RewardTypeManager;
 import me.dave.lushrewards.utils.SchedulerType;
 import me.dave.platyutils.PlatyUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class Reward {
     protected abstract void giveTo(Player player);
@@ -59,22 +59,25 @@ public abstract class Reward {
 
     @Nullable
     public static Reward loadReward(Map<?, ?> rewardMap, String path) {
+        Optional<RewardTypeManager> optionalManager = PlatyUtils.getManager(RewardTypeManager.class);
+        if (optionalManager.isEmpty()) {
+            return null;
+        }
+        RewardTypeManager rewardTypeManager = optionalManager.get();
+
         String rewardType = (String) rewardMap.get("type");
-        if (!RewardTypes.isRewardRegistered(rewardType)) {
+        if (!rewardTypeManager.isRegistered(rewardType)) {
             LushRewards.getInstance().getLogger().severe("Invalid reward type at '" + path + "'");
             return null;
         }
 
         try {
-            return RewardTypes.getClass(rewardType).getConstructor(Map.class).newInstance(rewardMap);
-        } catch (InvalidRewardException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            if (e instanceof InvocationTargetException invocationTargetException && invocationTargetException.getCause() instanceof InvalidRewardException cause) {
-                LushRewards.getInstance().getLogger().warning(cause.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+            Constructor rewardConstructor = rewardTypeManager.getConstructor(rewardType);
+            return rewardConstructor != null ? rewardConstructor.build(rewardMap) : null;
+        } catch (InvalidRewardException e) {
+            LushRewards.getInstance().getLogger().warning(e.getCause().getMessage());
+            return null;
         }
-        return null;
     }
 
     @Nullable
@@ -89,5 +92,10 @@ public abstract class Reward {
         });
 
         return !rewardList.isEmpty() ? rewardList : null;
+    }
+
+    @FunctionalInterface
+    public interface Constructor {
+        Reward build(Map<?, ?> map);
     }
 }

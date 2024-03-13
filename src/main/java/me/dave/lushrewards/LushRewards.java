@@ -8,6 +8,7 @@ import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
+import me.dave.lushrewards.rewards.RewardTypeManager;
 import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
@@ -40,6 +41,8 @@ public final class LushRewards extends SpigotPlugin {
         plugin = this;
         PlatyUtils.enable(this);
 
+
+        PlatyUtils.registerManager(new RewardTypeManager());
         moduleTypes = new ConcurrentHashMap<>();
         registerModuleType(RewardModule.Type.DAILY_REWARDS, DailyRewardsModule::new);
 //        registerModuleType(ModuleType.ONE_TIME_REWARDS, OneTimeRewardsModule::new);
@@ -96,6 +99,8 @@ public final class LushRewards extends SpigotPlugin {
 
         configManager = null;
         localPlaceholders = null;
+
+        PlatyUtils.disable();
     }
 
     public ConfigManager getConfigManager() {
