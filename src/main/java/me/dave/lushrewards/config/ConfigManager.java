@@ -10,6 +10,7 @@ import me.dave.platyutils.manager.GuiManager;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.SimpleItemStack;
 import me.dave.platyutils.utils.StringUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,7 +70,7 @@ public class ConfigManager {
                 File moduleFile = entry.toFile();
                 YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
                 if (moduleConfig.getBoolean("enabled", true)) {
-                    String moduleId = moduleFile.getName();
+                    String moduleId = FilenameUtils.removeExtension(moduleFile.getName());
                     if (plugin.getModule(moduleId).isPresent()) {
                         plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
                         return;
