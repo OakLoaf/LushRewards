@@ -43,7 +43,7 @@ public class DailyRewardsGui extends Gui {
         if (userData == null) {
             SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
             errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
-            errorItem.setLore(List.of("&7&oIf this continues please", "report to your server administrator"));
+            errorItem.setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"));
             errorItem.parseColors(player);
 
             inventory.setItem(4, errorItem.asItemStack());
