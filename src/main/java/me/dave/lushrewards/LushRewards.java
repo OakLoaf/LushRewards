@@ -129,6 +129,13 @@ public final class LushRewards extends SpigotPlugin {
 
     public List<? extends RewardModule> getRewardModules() {
         return modules.values().stream()
+            .filter(module -> module instanceof RewardModule)
+            .map(module -> (RewardModule) module)
+            .toList();
+    }
+
+    public List<? extends RewardModule> getEnabledRewardModules() {
+        return modules.values().stream()
             .filter(module -> module instanceof RewardModule && module.isEnabled())
             .map(module -> (RewardModule) module)
             .toList();

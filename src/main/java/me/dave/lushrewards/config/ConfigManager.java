@@ -116,7 +116,7 @@ public class ConfigManager {
 
         plugin.getRewardModules().forEach(Module::reload);
 
-        if (plugin.getRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
+        if (plugin.getEnabledRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
             Optional<Module> playtimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
             playtimeTracker.ifPresentOrElse(
                 Module::reload,

@@ -109,7 +109,7 @@ public class DataManager extends Manager {
     }
 
     public void loadModuleUserData(UUID uuid) {
-        LushRewards.getInstance().getRewardModules().forEach(module -> {
+        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
             if (module instanceof UserDataModule<?> userDataModule) {
                 LushRewards.getInstance().getStorageManager().loadData(uuid.toString(), userDataModule.getStorageProviderName(), userDataModule.getUserDataClass()).thenAccept(userData -> {
                     userDataModule.cacheUserData(uuid, userData != null ? userData : userDataModule.getDefaultData(uuid));
@@ -136,7 +136,7 @@ public class DataManager extends Manager {
     }
 
     public void saveModuleUserData(UUID uuid) {
-        LushRewards.getInstance().getRewardModules().forEach(module -> {
+        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
             if (module instanceof UserDataModule<?> userDataModule) {
                 StorageManager storageManager = LushRewards.getInstance().getStorageManager();
                 storageManager.getStorageProvider(userDataModule.getStorageProviderName()).getOrLoadObject(uuid.toString()).thenAccept(storageManager::saveData);

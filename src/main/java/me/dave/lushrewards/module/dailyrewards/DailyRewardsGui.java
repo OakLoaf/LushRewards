@@ -200,7 +200,7 @@ public class DailyRewardsGui extends Gui {
 
                                 dailyRewardsModule.claimRewards(player);
 
-                                LushRewards.getInstance().getRewardModules().forEach(module -> {
+                                LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
                                     if (module instanceof PlaytimeGoalsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
                                         playtimeModule.claimRewards(player);
                                     }
