@@ -4,6 +4,7 @@ main: me.dave.lushrewards.LushRewards
 api-version: 1.16
 softdepend:
 - floodgate
+- MythicDungeons # Fixes incompatibility
 - PlaceholderAPI
 folia-supported: true
 commands:
