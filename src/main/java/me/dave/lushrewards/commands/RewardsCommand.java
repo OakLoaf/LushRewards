@@ -4,7 +4,6 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.importer.ConfigImporter;
 import me.dave.lushrewards.importer.DailyRewardsPlusImporter;
 import me.dave.lushrewards.importer.NDailyRewardsImporter;
-import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsGui;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.platyutils.command.Command;
