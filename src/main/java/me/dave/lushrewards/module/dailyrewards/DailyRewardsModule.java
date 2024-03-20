@@ -1,6 +1,7 @@
 package me.dave.lushrewards.module.dailyrewards;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
@@ -9,6 +10,8 @@ import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;
 import me.dave.lushrewards.utils.LocalPlaceholders;
+import me.dave.lushrewards.storage.DataConstructor;
+import me.dave.lushrewards.storage.StorageProvider;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.StringUtils;
@@ -57,6 +60,58 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             this.disable();
             return;
         }
+
+        LushRewards.getInstance().getStorageManager().registerStorageProvider(new StorageProvider.Builder<>(getStorageProviderName(), UserData.class)
+            .setCollector(key -> {
+                UUID uuid;
+                try {
+                    uuid = UUID.fromString(key);
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+
+                return userDataCache.get(uuid);
+            })
+            .setLoader(storageObject -> {
+                UUID uuid;
+                try {
+                    uuid = UUID.fromString(storageObject.getKey());
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+
+                return new UserData(
+                    uuid,
+                    id,
+                    storageObject.getInteger("streak_length", 0),
+                    storageObject.getInteger("highest_streak", 0),
+                    storageObject.getObject("start_date", LocalDate.class, LocalDate.now()),
+                    storageObject.getObject("last_collected_date", LocalDate.class),
+                    new HashSet<>() // TODO
+                );
+            })
+            .addInteger(
+                "streak_length",
+                UserData::getStreakLength
+            )
+            .addInteger("highest_streak",
+                UserData::getHighestStreak
+            )
+            .addObject("start_date",
+                UserData::getStartDate,
+                DataConstructor.Loadable.DATE,
+                DataConstructor.Savable.DATE)
+            .addObject("last_collected_date",
+                UserData::getLastCollectedDate,
+                DataConstructor.Loadable.DATE,
+                DataConstructor.Savable.DATE)
+            // TODO: Add list storing
+//            .addObject("collected_dates",
+//                List.class,
+//                (userData) -> userData.getCollectedDates().stream().toList(),
+//                DataConstructor.Loadable.LIST_STRING,
+//                DataConstructor.Savable.LIST_STRING)
+            .build());
 
         this.resetDaysAt = config.getInt("reset-days-at", -1);
         this.streakMode = config.getBoolean("streak-mode", false);
@@ -137,21 +192,20 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         guiFormat = null;
         userDataCache.clear();
+
+        LushRewards.getInstance().getStorageManager().unregisterStorageProvider(getStorageProviderName());
     }
 
     @Override
     public boolean hasClaimableRewards(Player player) {
-        return !userDataCache.get(player.getUniqueId()).hasCollectedToday();
+        return userDataCache.containsKey(player.getUniqueId()) && !userDataCache.get(player.getUniqueId()).hasCollectedToday();
     }
 
     @Override
     public boolean claimRewards(Player player) {
-        if (LushRewards.getInstance().getDataManager().isRewardUserLoaded(player.getUniqueId())) {
-            return false;
-        }
-
+        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = userDataCache.get(player.getUniqueId());
-        if (userData == null || userData.hasCollectedToday()) {
+        if (rewardUser == null || userData == null || userData.hasCollectedToday()) {
             return false;
         }
 
@@ -173,7 +227,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         userData.incrementStreakLength();
         userData.setLastCollectedDate(LocalDate.now());
         userData.addCollectedDate(LocalDate.now());
-        LushRewards.getInstance().getDataManager().saveRewardUser(player);
+        // TODO: Make changes before giving rewards (Potentially add preClaimChecks)
+        LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
 
         return true;
     }
@@ -238,6 +293,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             });
     }
 
+    public String getStorageProviderName() {
+        return id.toLowerCase() + "_userdata";
+    }
+
     public int getResetDay() {
         return resetDaysAt;
     }
@@ -276,8 +335,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     }
 
     @Override
-    public UserData getDefaultData() {
-        return new UserData(id, 0, 0, LocalDate.now(), null, new HashSet<>());
+    public UserData getDefaultData(UUID uuid) {
+        return new UserData(uuid, id, 0, 0, LocalDate.now(), null, new HashSet<>());
     }
 
     @Override
@@ -286,14 +345,14 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     }
 
     @Override
-    public void loadUserData(UUID uuid, UserDataModule.UserData userData) {
+    public void cacheUserData(UUID uuid, UserDataModule.UserData userData) {
         if (userData instanceof UserData data) {
             userDataCache.put(uuid, data);
         }
     }
 
     @Override
-    public void unloadUserData(UUID uuid) {
+    public void uncacheUserData(UUID uuid) {
         userDataCache.remove(uuid);
     }
 
@@ -304,8 +363,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         private LocalDate lastCollectedDate;
         private final HashSet<String> collectedDates;
 
-        public UserData(String id, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
-            super(id);
+        public UserData(UUID uuid, String id, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
+            super(uuid, id);
             this.streakLength = streakLength;
             this.highestStreak = highestStreak;
             this.startDate = startDate;

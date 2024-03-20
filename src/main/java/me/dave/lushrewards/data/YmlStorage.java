@@ -1,7 +1,6 @@
 package me.dave.lushrewards.data;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.module.UserDataModule;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,21 +21,7 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
         String name = configurationSection.getString("name");
         int minutesPlayed = configurationSection.getInt("minutes-played", 0);
 
-        RewardUser rewardUser = new RewardUser(uuid, name, minutesPlayed);
-
-        LushRewards.getInstance().getRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
-                UserDataModule.UserData userData = configurationSection.getObject(module.getId(), userDataModule.getUserDataClass());
-                if (userData == null) {
-                    configurationSection.createSection(module.getId());
-                    userData = userDataModule.getDefaultData();
-                }
-
-                userDataModule.loadUserData(uuid, userData);
-            }
-        });
-
-        return rewardUser;
+        return new RewardUser(uuid, name, minutesPlayed);
     }
 
     @Override
@@ -45,12 +30,6 @@ public class YmlStorage implements Storage<RewardUser, UUID> {
 
         configurationSection.set("name", rewardUser.getUsername());
         configurationSection.set("minutes-played", rewardUser.getMinutesPlayed());
-
-        LushRewards.getInstance().getRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
-                configurationSection.set(module.getId(), userDataModule.getUserData(rewardUser.getUniqueId()));
-            }
-        });
 
         File file = new File(dataFolder, rewardUser.getUniqueId().toString());
         try {

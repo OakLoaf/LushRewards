@@ -2,41 +2,47 @@ package me.dave.lushrewards.data;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.UserDataModule;
+import me.dave.lushrewards.storage.StorageManager;
+import me.dave.platyutils.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class DataManager {
+public class DataManager extends Manager {
     private final IOHandler<RewardUser, UUID> ioHandler = new IOHandler<>(new YmlStorage());
-    private final ConcurrentHashMap<UUID, RewardUser> uuidToRewardUser = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, RewardUser> rewardUsersCache = new ConcurrentHashMap<>();
 
-    public DataManager() {
+    @Override
+    public void onEnable() {
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
 
-    @NotNull
+    @Override
+    public void onDisable() {
+        saveCachedRewardUsers();
+        ioHandler.disableIOHandler();
+    }
+
+    @Nullable
     public RewardUser getRewardUser(@NotNull Player player) {
-        UUID uuid = player.getUniqueId();
+        return rewardUsersCache.get(player.getUniqueId());
+    }
 
-        RewardUser rewardUser = uuidToRewardUser.get(uuid);
-        if (rewardUser == null) {
-            rewardUser = new RewardUser(uuid, player.getName(), 0);
+    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
+        loadModuleUserData(uuid);
 
-            LushRewards.getInstance().getRewardModules().forEach(module -> {
-                if (module instanceof UserDataModule<?> userDataModule) {
-                    userDataModule.loadUserData(uuid, userDataModule.getDefaultData());
-                }
-            });
-        }
-
-        return rewardUser;
+        return ioHandler.loadData(uuid).thenApply((rewardUser) -> {
+            rewardUsersCache.put(uuid, rewardUser);
+            return rewardUser;
+        });
     }
 
     @NotNull
@@ -44,7 +50,7 @@ public class DataManager {
         CompletableFuture<RewardUser> completableFuture = new CompletableFuture<>();
 
         UUID uuid = player.getUniqueId();
-        RewardUser rewardUser = uuidToRewardUser.get(uuid);
+        RewardUser rewardUser = rewardUsersCache.get(uuid);
         if (rewardUser != null) {
             completableFuture.complete(rewardUser);
         } else {
@@ -54,47 +60,88 @@ public class DataManager {
         return completableFuture;
     }
 
-    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
-        return ioHandler.loadData(uuid).thenApply((rewardUser) -> {
-            uuidToRewardUser.put(uuid, rewardUser);
-            return rewardUser;
-        });
+    @NotNull
+    public CompletableFuture<RewardUser> getOrTempLoadRewardUser(@NotNull Player player) {
+        CompletableFuture<RewardUser> completableFuture = new CompletableFuture<>();
+
+        UUID uuid = player.getUniqueId();
+        RewardUser rewardUser = rewardUsersCache.get(uuid);
+        if (rewardUser != null) {
+            completableFuture.complete(rewardUser);
+        } else {
+            ioHandler.loadData(uuid).thenAccept(completableFuture::complete);
+        }
+
+        return completableFuture;
     }
 
     public void unloadRewarderUser(UUID uuid) {
-        RewardUser rewardUser = uuidToRewardUser.get(uuid);
-
-        if (rewardUser != null) {
-            uuidToRewardUser.remove(uuid);
-        }
+        rewardUsersCache.remove(uuid);
+        unloadModuleUserData(uuid);
     }
 
     public void reloadRewardUsers() {
-        uuidToRewardUser.forEach((uuid, rewardUser) -> {
-            rewardUser.save();
+        rewardUsersCache.forEach((uuid, rewardUser) -> {
+            saveRewardUser(rewardUser);
             unloadRewarderUser(uuid);
             loadRewardUser(uuid);
         });
     }
 
-    public void saveRewardUser(Player player) {
-        ioHandler.saveData(getRewardUser(player));
+    public boolean isRewardUserLoaded(UUID uuid) {
+        return rewardUsersCache.containsKey(uuid);
     }
 
     public void saveRewardUser(RewardUser rewardUser) {
         ioHandler.saveData(rewardUser);
+        saveModuleUserData(rewardUser.getUniqueId());
     }
 
-    public void saveAll() {
-        uuidToRewardUser.values().forEach(this::saveRewardUser);
+    public void saveRewardUser(Player player) {
+        RewardUser rewardUser = getRewardUser(player);
+        if (rewardUser != null) {
+            ioHandler.saveData(rewardUser);
+        }
     }
 
-    public boolean isRewardUserLoaded(UUID uuid) {
-        return uuidToRewardUser.containsKey(uuid);
+    public void saveCachedRewardUsers() {
+        rewardUsersCache.values().forEach(this::saveRewardUser);
     }
 
-    public IOHandler<RewardUser, UUID> getIoHandler() {
-        return ioHandler;
+    public void loadModuleUserData(UUID uuid) {
+        LushRewards.getInstance().getRewardModules().forEach(module -> {
+            if (module instanceof UserDataModule<?> userDataModule) {
+                LushRewards.getInstance().getStorageManager().loadData(uuid.toString(), userDataModule.getStorageProviderName(), userDataModule.getUserDataClass()).thenAccept(userData -> {
+                    userDataModule.cacheUserData(uuid, userData != null ? userData : userDataModule.getDefaultData(uuid));
+                });
+            }
+        });
+    }
+
+    public void unloadModuleUserData(UUID uuid) {
+        LushRewards.getInstance().getRewardModules().forEach(module -> {
+            if (module instanceof UserDataModule<?> userDataModule) {
+                userDataModule.uncacheUserData(uuid);
+            }
+        });
+    }
+
+    public void saveModuleUserData(UUID uuid, String moduleId) {
+        LushRewards.getInstance().getModule(moduleId).ifPresent(module -> {
+            if (module instanceof UserDataModule<?> userDataModule) {
+                StorageManager storageManager = LushRewards.getInstance().getStorageManager();
+                storageManager.getStorageProvider(userDataModule.getStorageProviderName()).getOrLoadObject(uuid.toString()).thenAccept(storageManager::saveData);
+            }
+        });
+    }
+
+    public void saveModuleUserData(UUID uuid) {
+        LushRewards.getInstance().getRewardModules().forEach(module -> {
+            if (module instanceof UserDataModule<?> userDataModule) {
+                StorageManager storageManager = LushRewards.getInstance().getStorageManager();
+                storageManager.getStorageProvider(userDataModule.getStorageProviderName()).getOrLoadObject(uuid.toString()).thenAccept(storageManager::saveData);
+            }
+        });
     }
 
     private boolean isOutdated() {

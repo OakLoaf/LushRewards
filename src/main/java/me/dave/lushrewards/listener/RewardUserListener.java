@@ -40,14 +40,16 @@ public class RewardUserListener implements EventListener {
         Player player = event.getPlayer();
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
-        LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
-            PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(player.getUniqueId());
-            if (playtimeTracker != null) {
-                rewardUser.setMinutesPlayed(playtimeTracker.getGlobalPlaytime());
-            }
-        });
+        if (rewardUser != null) {
+            LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
+                PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(player.getUniqueId());
+                if (playtimeTracker != null) {
+                    rewardUser.setMinutesPlayed(playtimeTracker.getGlobalPlaytime());
+                }
+            });
 
-        LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
-        LushRewards.getInstance().getDataManager().unloadRewarderUser(player.getUniqueId());
+            LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
+            LushRewards.getInstance().getDataManager().unloadRewarderUser(player.getUniqueId());
+        }
     }
 }

@@ -9,6 +9,7 @@ import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
 import me.dave.lushrewards.rewards.RewardTypeManager;
 import me.dave.lushrewards.utils.LocalPlaceholders;
+import me.dave.lushrewards.storage.StorageManager;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
@@ -26,6 +27,7 @@ public final class LushRewards extends SpigotPlugin {
 
     private ConfigManager configManager;
     private DataManager dataManager;
+    private StorageManager storageManager;
     private NotificationHandler notificationHandler;
     private LocalPlaceholders localPlaceholders;
     private Updater updater;
@@ -45,10 +47,17 @@ public final class LushRewards extends SpigotPlugin {
 
         updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
 
+        storageManager = new StorageManager();
+        storageManager.enable();
+
         notificationHandler = new NotificationHandler();
+
         configManager = new ConfigManager();
         configManager.reloadConfig();
+
         dataManager = new DataManager();
+        dataManager.enable();
+
         localPlaceholders = new LocalPlaceholders();
 
         addHook("floodgate", () -> registerHook(new FloodgateHook()));
@@ -84,8 +93,7 @@ public final class LushRewards extends SpigotPlugin {
         }
 
         if (dataManager != null) {
-            dataManager.saveAll();
-            dataManager.getIoHandler().disableIOHandler();
+            dataManager.disable();
             dataManager = null;
         }
 
@@ -103,6 +111,10 @@ public final class LushRewards extends SpigotPlugin {
         return dataManager;
     }
 
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
     public NotificationHandler getNotificationHandler() {
         return notificationHandler;
     }
@@ -117,7 +129,7 @@ public final class LushRewards extends SpigotPlugin {
 
     public List<? extends RewardModule> getRewardModules() {
         return modules.values().stream()
-            .filter(module -> module instanceof RewardModule)
+            .filter(module -> module instanceof RewardModule && module.isEnabled())
             .map(module -> (RewardModule) module)
             .toList();
     }

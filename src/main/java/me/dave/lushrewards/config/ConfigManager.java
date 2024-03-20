@@ -99,7 +99,7 @@ public class ConfigManager {
             e.printStackTrace();
         }
 
-        if (plugin.getModules().stream().anyMatch(module -> module instanceof RewardModule rewardModule && rewardModule.requiresPlaytimeTracker())) {
+        if (plugin.getRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
             plugin.registerModule(new PlaytimeTrackerModule());
         }
 

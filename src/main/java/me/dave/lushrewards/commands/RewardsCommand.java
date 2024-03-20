@@ -483,9 +483,7 @@ public class RewardsCommand extends Command {
         }
 
         if (player != null) {
-            boolean loaded = LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid);
-
-            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept(rewardUser -> {
+            LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> {
                 LushRewards.getInstance().getRewardModules().forEach(module -> {
                     if (module instanceof DailyRewardsModule dailyRewardsModule) {
                         DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
@@ -496,15 +494,7 @@ public class RewardsCommand extends Command {
                     }
                 });
 
-                LushRewards.getInstance().getDataManager().saveRewardUser(player);
-
-                if (!loaded) {
-                    LushRewards.getInstance().getRewardModules().forEach(module -> {
-                        if (module instanceof DailyRewardsModule dailyRewardsModule) {
-                            dailyRewardsModule.unloadUserData(uuid);
-                        }
-                    });
-                }
+                LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
             });
         }
         return true;
@@ -527,9 +517,7 @@ public class RewardsCommand extends Command {
         }
 
         if (player != null) {
-            boolean loaded = LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid);
-
-            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept(rewardUser -> {
+            LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> {
                 LushRewards.getInstance().getRewardModules().forEach(module -> {
                     if (module instanceof DailyRewardsModule dailyRewardsModule) {
                         DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
@@ -539,15 +527,7 @@ public class RewardsCommand extends Command {
                     }
                 });
 
-                LushRewards.getInstance().getDataManager().saveRewardUser(player);
-
-                if (!loaded) {
-                    LushRewards.getInstance().getRewardModules().forEach(module -> {
-                        if (module instanceof DailyRewardsModule dailyRewardsModule) {
-                            dailyRewardsModule.unloadUserData(uuid);
-                        }
-                    });
-                }
+                LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
             });
         }
 
@@ -570,9 +550,7 @@ public class RewardsCommand extends Command {
         }
 
         if (player != null) {
-            boolean loaded = LushRewards.getInstance().getDataManager().isRewardUserLoaded(uuid);
-
-            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept(rewardUser -> {
+            LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> {
                 LushRewards.getInstance().getRewardModules().forEach(module -> {
                     if (module instanceof DailyRewardsModule dailyRewardsModule) {
                         DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
@@ -583,15 +561,7 @@ public class RewardsCommand extends Command {
                     }
                 });
 
-                LushRewards.getInstance().getDataManager().saveRewardUser(player);
-
-                if (!loaded) {
-                    LushRewards.getInstance().getRewardModules().forEach(module -> {
-                        if (module instanceof DailyRewardsModule dailyRewardsModule) {
-                            dailyRewardsModule.unloadUserData(uuid);
-                        }
-                    });
-                }
+                LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
             });
         }
 

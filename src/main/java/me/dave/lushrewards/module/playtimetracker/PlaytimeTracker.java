@@ -1,6 +1,7 @@
 package me.dave.lushrewards.module.playtimetracker;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
 import me.dave.platyutils.module.Module;
@@ -19,11 +20,16 @@ public class PlaytimeTracker {
     private int globalTime;
 
     public PlaytimeTracker(Player player) {
+        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+        if (rewardUser == null) {
+            throw new IllegalStateException("Failed to find reward user for user: " + player.getName() + "(" + player.getUniqueId() + ")");
+        }
+
         this.player = player;
         this.afk = false;
         this.sessionTime = 0;
         this.idleTime = 0;
-        this.globalTime = LushRewards.getInstance().getDataManager().getRewardUser(player).getMinutesPlayed();
+        this.globalTime = rewardUser.getMinutesPlayed();
         updateLocation();
     }
 
@@ -71,7 +77,7 @@ public class PlaytimeTracker {
     }
 
     public void saveData() {
-        LushRewards.getInstance().getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
+        LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> rewardUser.setMinutesPlayed(globalTime));
     }
 
     private void incrementSessionTime() {
@@ -96,7 +102,15 @@ public class PlaytimeTracker {
         }
 
         if (globalTime % 5 == 0) {
-            LushRewards.getInstance().getDataManager().getRewardUser(player).setMinutesPlayed(globalTime);
+            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+            if (rewardUser != null) {
+                rewardUser.setMinutesPlayed(globalTime);
+            } else {
+                Optional<Module> optionalModule = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
+                if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
+                    playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
+                }
+            }
         }
     }
 
