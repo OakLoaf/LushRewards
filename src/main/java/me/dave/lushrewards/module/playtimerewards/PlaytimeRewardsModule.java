@@ -1,4 +1,4 @@
-package me.dave.lushrewards.module.playtimegoals;
+package me.dave.lushrewards.module.playtimerewards;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 // TODO: Combine playtime modules into one playtime module
-public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<PlaytimeGoalsModule.UserData> {
+public class PlaytimeRewardsModule extends RewardModule implements UserDataModule<PlaytimeRewardsModule.UserData> {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
     private Placeholder placeholder;
@@ -32,7 +32,7 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
 
-    public PlaytimeGoalsModule(String id, File moduleFile) {
+    public PlaytimeRewardsModule(String id, File moduleFile) {
         super(id, moduleFile, true);
     }
 
@@ -320,8 +320,8 @@ public class PlaytimeGoalsModule extends RewardModule implements UserDataModule<
                 }
 
                 Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
-                if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeGoalsModule module) {
-                    PlaytimeGoalsModule.UserData userData = module.getUserData(player.getUniqueId());
+                if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeRewardsModule module) {
+                    PlaytimeRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
                     return String.valueOf(rewardUser.getMinutesPlayed() - userData.getLastCollectedPlaytime());
                 } else {
                     return null;

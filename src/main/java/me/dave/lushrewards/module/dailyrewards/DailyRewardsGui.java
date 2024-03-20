@@ -3,7 +3,7 @@ package me.dave.lushrewards.module.dailyrewards;
 import com.google.common.collect.TreeMultimap;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.gui.GuiFormat;
-import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
+import me.dave.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;
@@ -201,7 +201,7 @@ public class DailyRewardsGui extends Gui {
                                 dailyRewardsModule.claimRewards(player);
 
                                 LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
-                                    if (module instanceof PlaytimeGoalsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
+                                    if (module instanceof PlaytimeRewardsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
                                         playtimeModule.claimRewards(player);
                                     }
                                 });

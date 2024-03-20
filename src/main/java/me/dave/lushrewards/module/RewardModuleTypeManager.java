@@ -1,7 +1,7 @@
 package me.dave.lushrewards.module;
 
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
-import me.dave.lushrewards.module.playtimegoals.PlaytimeGoalsModule;
+import me.dave.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import me.dave.platyutils.manager.Manager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +18,7 @@ public class RewardModuleTypeManager extends Manager {
 
         register(RewardModule.Type.DAILY_REWARDS, DailyRewardsModule::new);
 //        register(ModuleType.ONE_TIME_REWARDS, OneTimeRewardsModule::new);
-        register(RewardModule.Type.PLAYTIME_REWARDS, PlaytimeGoalsModule::new);
+        register(RewardModule.Type.PLAYTIME_REWARDS, PlaytimeRewardsModule::new);
     }
 
     @Override
