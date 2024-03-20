@@ -110,13 +110,10 @@ public class RewardsCommand extends Command {
             }
 
             AtomicInteger rewardsGiven = new AtomicInteger();
-            LushRewards.getInstance().getModules().forEach(module -> {
-                if (module instanceof RewardModule rewardModule) {
-                    rewardModule.claimRewards(player);
-                    rewardsGiven.getAndIncrement();
-                }
+            LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+                module.claimRewards(player);
+                rewardsGiven.getAndIncrement();
             });
-
 
             if (rewardsGiven.get() == 0) {
                 ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("no-rewards-available"));
