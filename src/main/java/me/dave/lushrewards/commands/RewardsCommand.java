@@ -68,7 +68,6 @@ public class RewardsCommand extends Command {
         return true;
     }
 
-    // TODO: Test
     private static class AboutSubCommand extends SubCommand {
         private static final String[] ABOUT_MESSAGES = new String[]{
             "&#A5B8FE&lLushRewards &#C4B6FE(v" + LushRewards.getInstance().getDescription().getVersion() + ")",
@@ -178,7 +177,6 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
     private static class MessagesSubCommand extends SubCommand {
 
         public MessagesSubCommand() {
@@ -193,7 +191,6 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
     private static class ReloadSubCommand extends SubCommand {
 
         public ReloadSubCommand() {
@@ -209,7 +206,7 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
+    // TODO: Add module argument ('*' for all)
     private static class ResetSubCommand extends SubCommand {
 
         public ResetSubCommand() {
@@ -249,7 +246,7 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
+    // TODO: Add module argument ('*' for all)
     private static class ResetDaysSubCommand extends SubCommand {
 
         public ResetDaysSubCommand() {
@@ -290,7 +287,7 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
+    // TODO: Add module argument ('*' for all)
     private static class SetDaysSubCommand extends SubCommand {
 
         public SetDaysSubCommand() {
@@ -336,7 +333,7 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
+    // TODO: Add module argument ('*' for all)
     private static class ResetStreakSubCommand extends SubCommand {
 
         public ResetStreakSubCommand() {
@@ -376,7 +373,7 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
+    // TODO: Add module argument ('*' for all)
     private static class SetStreakSubCommand extends SubCommand {
 
         public SetStreakSubCommand() {
@@ -422,7 +419,6 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
     private static class UpdateSubCommand extends SubCommand {
 
         public UpdateSubCommand() {
@@ -451,7 +447,6 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
     private static class VersionSubCommand extends SubCommand {
 
         public VersionSubCommand() {
