@@ -1,4 +1,4 @@
-# Daily Playtime Goals: Hourly playtime goals that reset daily
+# Daily Playtime Rewards: Hourly playtime goals that reset daily
 type: playtime-rewards
 
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)

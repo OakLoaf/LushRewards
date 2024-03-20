@@ -40,8 +40,8 @@ public class ConfigManager {
     public ConfigManager() {
         if (!new File(PlatyUtils.getPlugin().getDataFolder(), "config.yml").exists()) {
             LushRewards.getInstance().saveDefaultResource("modules/daily-rewards.yml");
-            LushRewards.getInstance().saveDefaultResource("modules/daily-playtime-goals.yml");
-            LushRewards.getInstance().saveDefaultResource("modules/global-playtime-goals.yml");
+            LushRewards.getInstance().saveDefaultResource("modules/daily-playtime-rewards.yml");
+            LushRewards.getInstance().saveDefaultResource("modules/global-playtime-rewards.yml");
         }
 
         LushRewards.getInstance().saveDefaultConfig();

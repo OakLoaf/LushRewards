@@ -3,8 +3,8 @@
 # Enable or disable specific LushRewards modules
 modules:
   daily-rewards: true
-  daily-playtime-goals: true
-  global-playtime-goals: true
+  daily-playtime-rewards: true
+  global-playtime-rewards: true
 
 # If false then playtime will include afk/idle time
 playtime-ignore-afk: true

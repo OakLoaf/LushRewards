@@ -45,6 +45,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             return;
         }
 
+        // TODO: Change to "goals" (accept "daily-goals" and "global-goals")
         if (!config.contains("daily-goals")) {
             LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-goals' section in '" + moduleFile.getName() + "'");
             this.disable();

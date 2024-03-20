@@ -1,4 +1,4 @@
-# Global Playtime Goals: playtime goals that do not reset
+# Global Playtime Rewards: playtime goals that do not reset
 type: playtime-rewards
 
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)

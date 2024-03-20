@@ -43,9 +43,9 @@ For further information on using setting-up and using this plugin check out the 
 
 [daily-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-rewards#daily-rewards.yml)
 
-[daily-playtime-goals.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-playtime-goals#daily-playtime-goals.yml)
+[daily-playtime-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-playtime-rewards#daily-playtime-rewards.yml)
 
-[global-playtime-goals.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/global-playtime-goals#global-playtime-goals.yml)
+[global-playtime-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/global-playtime-rewards#global-playtime-rewards.yml)
 
 </details>
 
