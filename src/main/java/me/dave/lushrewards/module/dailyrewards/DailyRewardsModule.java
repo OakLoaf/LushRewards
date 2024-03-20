@@ -205,7 +205,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = userDataCache.get(player.getUniqueId());
-        if (rewardUser == null || userData == null || userData.hasCollectedToday()) {
+        if (rewardUser == null || userData == null) {
+            ChatColorHandler.sendMessage(player, "&#ff6969Failed to collect your reward user data, try relogging. If this continues inform an administrator");
+            return false;
+        } else if (userData.hasCollectedToday()) {
             return false;
         }
 
