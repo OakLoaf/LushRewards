@@ -461,7 +461,7 @@ public class RewardsCommand extends Command {
 
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            ChatColorHandler.sendMessage(sender, "&#a8e1ffYou are currently running LushRewards version &#58b1e0" + LushRewards.getInstance().getDescription().getVersion());
+            ChatColorHandler.sendMessage(sender, "&#a8e1ffYou are currently running &#58b1e0LushRewards &#a8e1ffversion &#58b1e0" + LushRewards.getInstance().getDescription().getVersion());
             return true;
         }
     }
