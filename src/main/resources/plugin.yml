@@ -8,6 +8,8 @@ commands:
   rewards:
     description: Opens Rewards GUI
     usage: /rewards
+    aliases:
+    - lushrewards
 permissions:
   lushrewards.use:
     description: Allows you to use the LushRewards plugin
