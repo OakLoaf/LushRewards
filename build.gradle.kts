@@ -25,7 +25,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     implementation(files("libs/EnchantedStorage-3.0.0.jar"))
-    implementation("me.dave:PlatyUtils:0.1.0.54")
+    implementation("me.dave:PlatyUtils:0.1.0.55")
 }
 
 java {
