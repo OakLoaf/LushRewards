@@ -115,8 +115,17 @@ public class ConfigManager {
         }
 
         plugin.getRewardModules().forEach(Module::reload);
+
         if (plugin.getRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
-            plugin.registerModule(new PlaytimeTrackerModule());
+            Optional<Module> playtimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
+            playtimeTracker.ifPresentOrElse(
+                Module::reload,
+                () -> {
+                    PlaytimeTrackerModule playtimeTrackerModule = new PlaytimeTrackerModule();
+                    plugin.registerModule(playtimeTrackerModule);
+                    playtimeTrackerModule.enable();
+                }
+            );
         }
     }
 
