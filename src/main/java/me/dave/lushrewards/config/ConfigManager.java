@@ -99,10 +99,6 @@ public class ConfigManager {
             e.printStackTrace();
         }
 
-        if (plugin.getModules().stream().anyMatch(module -> module instanceof RewardModule rewardModule && rewardModule.requiresPlaytimeTracker())) {
-            plugin.registerModule(new PlaytimeTrackerModule());
-        }
-
         boolean enableUpdater = config.getBoolean("enable-updater", true);
         plugin.getUpdater().setEnabled(enableUpdater);
         if (enableUpdater) {
@@ -118,7 +114,10 @@ public class ConfigManager {
             plugin.getDataManager().reloadRewardUsers();
         }
 
-        plugin.getModules().forEach(Module::reload);
+        plugin.getRewardModules().forEach(Module::reload);
+        if (plugin.getRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
+            plugin.registerModule(new PlaytimeTrackerModule());
+        }
     }
 
     public String getMessage(String messageName) {
