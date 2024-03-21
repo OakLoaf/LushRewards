@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: Combine playtime modules into one playtime module
 public class PlaytimeRewardsModule extends RewardModule implements UserDataModule<PlaytimeRewardsModule.UserData> {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
