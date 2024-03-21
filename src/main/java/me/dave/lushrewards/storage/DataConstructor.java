@@ -46,6 +46,7 @@ public class DataConstructor {
         public static final Function<Boolean, Boolean> BOOLEAN = (obj) -> obj;
         public static final Function<Double, Double> DOUBLE = (obj) -> obj;
         public static final Function<Long, Long> LONG = (obj) -> obj;
+        // TODO: Verify formatting is correct
         public static final Function<List<String>, String> LIST_STRING = (list) -> '"' + String.join("\",\"", list != null ? list : new ArrayList<>()) + '"';
         public static final Function<LocalDate, String> DATE = (date) -> date != null ? date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) : "";
     }
