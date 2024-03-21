@@ -1,4 +1,4 @@
-package me.dave.lushrewards.commands;
+package me.dave.lushrewards.command;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.importer.ConfigImporter;

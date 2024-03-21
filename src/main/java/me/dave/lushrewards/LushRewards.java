@@ -1,6 +1,6 @@
 package me.dave.lushrewards;
 
-import me.dave.lushrewards.commands.RewardsCommand;
+import me.dave.lushrewards.command.RewardsCommand;
 import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.PlaceholderAPIHook;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
