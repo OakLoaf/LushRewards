@@ -50,13 +50,13 @@ public final class LushRewards extends SpigotPlugin {
         storageManager = new StorageManager();
         storageManager.enable();
 
+        dataManager = new DataManager();
+        dataManager.enable();
+
         notificationHandler = new NotificationHandler();
 
         configManager = new ConfigManager();
         configManager.reloadConfig();
-
-        dataManager = new DataManager();
-        dataManager.enable();
 
         localPlaceholders = new LocalPlaceholders();
 
