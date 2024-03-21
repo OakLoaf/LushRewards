@@ -220,30 +220,8 @@ public class RewardsCommand extends Command {
 
         @Override
         public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
-//            switch (args.length) {
-//                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit <module-id>"));
-//                default -> {
-//                    List<RewardModule> rewardModules = new ArrayList<>();
-//
-//                    if (args[0].equals("*")) {
-//                        rewardModules.addAll(LushRewards.getInstance().getEnabledRewardModules());
-//                        return true;
-//                    }
-//
-//                    LushRewards.getInstance().getModule(args[0].toLowerCase()).ifPresent(module -> {
-//                        if (module instanceof RewardModule rewardModule) {
-//                           rewardModules.add(rewardModule);
-//                        }
-//                    });
-//                }
-//            }
             ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit <module-id>"));
             return true;
-        }
-
-        @Override
-        public @Nullable List<String> tabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
-            return null;
         }
 
         // TODO: Add module argument ('*' for all)
