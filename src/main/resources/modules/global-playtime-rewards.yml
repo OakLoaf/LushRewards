@@ -6,7 +6,7 @@ refresh-time: 30
 # Whether rewards should be given when claiming daily rewards
 give-with-daily-rewards: false
 
-global-goals:
+goals:
   - category: small
     play-minutes: 600 # 10 Hours
     display-item:

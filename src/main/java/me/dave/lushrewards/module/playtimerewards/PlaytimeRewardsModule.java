@@ -45,9 +45,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             return;
         }
 
-        // TODO: Change to "goals" (accept "daily-goals" and "global-goals")
-        if (!config.contains("daily-goals")) {
-            LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-goals' section in '" + moduleFile.getName() + "'");
+        // Finds relevant goals section - provides backwards compatibility
+        String goalsSection = config.contains("goals") ? "goals" : config.contains("daily-goals") ? "daily-goals" : config.contains("global-goals") ? "global-goals" : null;
+        if (goalsSection == null) {
+            LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'goals' section in '" + moduleFile.getName() + "'");
             this.disable();
             return;
         }
@@ -98,7 +99,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         this.minutesToReward = new ConcurrentHashMap<>();
-        for (Map<?, ?> rewardMap : config.getMapList("daily-goals")) {
+        for (Map<?, ?> rewardMap : config.getMapList(goalsSection)) {
             PlaytimeRewardCollection rewardCollection;
             try {
                 rewardCollection = PlaytimeRewardCollection.from(rewardMap);
@@ -114,7 +115,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         placeholder = new Placeholder(id);
         placeholder.register();
 
-        LushRewards.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'daily-goals'");
+        LushRewards.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'goals'");
     }
 
     @Override
