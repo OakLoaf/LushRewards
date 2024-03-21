@@ -87,7 +87,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
                     storageObject.getInteger("highest_streak", 0),
                     storageObject.getObject("start_date", LocalDate.class, LocalDate.now()),
                     storageObject.getObject("last_collected_date", LocalDate.class),
-                    new HashSet<>() // TODO
+                    new HashSet<String>(storageObject.getObject("collected_dates", List.class))
                 );
             })
             .addInteger(
@@ -105,12 +105,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
                 UserData::getLastCollectedDate,
                 DataConstructor.Loadable.DATE,
                 DataConstructor.Savable.DATE)
-            // TODO: Add list storing
-//            .addObject("collected_dates",
-//                List.class,
-//                (userData) -> userData.getCollectedDates().stream().toList(),
-//                DataConstructor.Loadable.LIST_STRING,
-//                DataConstructor.Savable.LIST_STRING)
+            .addObject("collected_dates",
+                (userData) -> userData.getCollectedDates().stream().toList(),
+                DataConstructor.Loadable.LIST_STRING,
+                DataConstructor.Savable.LIST_STRING)
             .build());
 
         this.resetDaysAt = config.getInt("reset-days-at", -1);

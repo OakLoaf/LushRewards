@@ -21,6 +21,10 @@ public class DataConstructor {
         public static final Function<Double, Double> DOUBLE = (obj) -> obj;
         public static final Function<Long, Long> LONG = (obj) -> obj;
         public static final Function<String, List<String>> LIST_STRING = (listRaw) -> {
+            if (listRaw == null) {
+                return Collections.emptyList();
+            }
+
             Matcher matcher = LIST_PATTERN.matcher(listRaw);
 
             ArrayList<String> matches = new ArrayList<>();
