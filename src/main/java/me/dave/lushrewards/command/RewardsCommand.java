@@ -9,6 +9,7 @@ import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.platyutils.command.Command;
 import me.dave.platyutils.command.SubCommand;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
+import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -30,14 +32,10 @@ public class RewardsCommand extends Command {
         super("rewards");
         addSubCommand(new AboutSubCommand());
         addSubCommand(new ClaimSubCommand());
+        addSubCommand(new EditSubCommand());
         addSubCommand(new ImportSubCommand());
         addSubCommand(new MessagesSubCommand());
         addSubCommand(new ReloadSubCommand());
-        addSubCommand(new ResetSubCommand());
-        addSubCommand(new ResetDaysSubCommand());
-        addSubCommand(new SetDaysSubCommand());
-        addSubCommand(new ResetStreakSubCommand());
-        addSubCommand(new SetStreakSubCommand());
         addSubCommand(new UpdateSubCommand());
         addSubCommand(new VersionSubCommand());
     }
@@ -202,215 +200,262 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Add module argument ('*' for all)
-    private static class ResetSubCommand extends SubCommand {
+    // TODO: Create
+    private static class EditSubCommand extends SubCommand {
 
-        public ResetSubCommand() {
-            super("reset");
-            addRequiredPermission("lushrewards.reset");
+        public EditSubCommand() {
+            super("edit");
+            addRequiredArgs(0, () -> {
+                List<String> modules = new ArrayList<>(LushRewards.getInstance().getEnabledRewardModules().stream().map(Module::getId).toList());
+                modules.add("*");
+                return modules;
+            });
+            addSubCommand(new ResetSubCommand());
+            addSubCommand(new ResetDaysSubCommand());
+            addSubCommand(new SetDaysSubCommand());
+            addSubCommand(new ResetStreakSubCommand());
+            addSubCommand(new SetStreakSubCommand());
+            addRequiredPermission("lushrewards.edit");
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            switch (args.length) {
-                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset").replaceAll("%target%", args[0]));
-                case 2 -> {
-                    if (!args[1].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset <player> confirm"));
-                        return true;
-                    }
-
-                    if (!setDay(sender, args[0], 1) || !setStreak(sender, args[0], 1) || !removeCollectedDays(sender, args[0])) {
-                        return true;
-                    }
-
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", "1"));
-                }
-            }
-
+        public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+//            switch (args.length) {
+//                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit <module-id>"));
+//                default -> {
+//                    List<RewardModule> rewardModules = new ArrayList<>();
+//
+//                    if (args[0].equals("*")) {
+//                        rewardModules.addAll(LushRewards.getInstance().getEnabledRewardModules());
+//                        return true;
+//                    }
+//
+//                    LushRewards.getInstance().getModule(args[0].toLowerCase()).ifPresent(module -> {
+//                        if (module instanceof RewardModule rewardModule) {
+//                           rewardModules.add(rewardModule);
+//                        }
+//                    });
+//                }
+//            }
+            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit <module-id>"));
             return true;
         }
 
         @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            if (args.length == 1) {
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-            } else {
-                return null;
+        public @Nullable List<String> tabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+            return null;
+        }
+
+        // TODO: Add module argument ('*' for all)
+        private static class ResetSubCommand extends SubCommand {
+
+            public ResetSubCommand() {
+                super("reset");
+                addRequiredPermission("lushrewards.reset");
             }
-        }
-    }
 
-    // TODO: Add module argument ('*' for all)
-    private static class ResetDaysSubCommand extends SubCommand {
+            @Override
+            public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                switch (args.length) {
+                    case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit <module-id> reset <player>"));
+                    case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset").replaceAll("%target%", args[0]));
+                    case 2 -> {
+                        if (!args[1].equalsIgnoreCase("confirm")) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit <module-id> reset <player> confirm"));
+                            return true;
+                        }
 
-        public ResetDaysSubCommand() {
-            super("reset-days");
-            addRequiredPermission("lushrewards.resetdays");
-        }
+                        if (!setDay(sender, args[0], 1) || !setStreak(sender, args[0], 1) || !removeCollectedDays(sender, args[0])) {
+                            return true;
+                        }
 
-        @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            switch (args.length) {
-                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-days").replaceAll("%target%", args[0]));
-                case 2 -> {
-                    if (!args[1].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player> confirm"));
-                        return true;
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", "1"));
                     }
+                }
 
-                    if (!setDay(sender, args[0], 1)) {
-                        return true;
-                    }
+                return true;
+            }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", "1"));
-                    return true;
+            @Override
+            public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                if (args.length == 1) {
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+                } else {
+                    return null;
                 }
             }
-
-            return true;
         }
 
-        @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            if (args.length == 1) {
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-            } else {
-                return null;
+        // TODO: Add module argument ('*' for all)
+        private static class ResetDaysSubCommand extends SubCommand {
+
+            public ResetDaysSubCommand() {
+                super("reset-days");
+                addRequiredPermission("lushrewards.resetdays");
             }
-        }
-    }
 
-    // TODO: Add module argument ('*' for all)
-    private static class SetDaysSubCommand extends SubCommand {
+            @Override
+            public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                switch (args.length) {
+                    case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player>"));
+                    case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-days").replaceAll("%target%", args[0]));
+                    case 2 -> {
+                        if (!args[1].equalsIgnoreCase("confirm")) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-days <player> confirm"));
+                            return true;
+                        }
 
-        public SetDaysSubCommand() {
-            super("set-days");
-            addRequiredPermission("lushrewards.setdays");
-        }
+                        if (!setDay(sender, args[0], 1)) {
+                            return true;
+                        }
 
-        @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            switch (args.length) {
-                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
-                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days").replaceAll("%target%", args[0]).replaceAll("%day%", args[1]));
-                case 3 -> {
-                    if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", "1"));
                         return true;
                     }
+                }
 
-                    int dayNum;
-                    try {
-                        dayNum = Integer.parseInt(args[1]);
-                    } catch (NumberFormatException e) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
-                        return true;
-                    }
+                return true;
+            }
 
-                    if (!setDay(sender, args[0], dayNum)) return true;
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", String.valueOf(dayNum)));
-                    return true;
+            @Override
+            public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                if (args.length == 1) {
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+                } else {
+                    return null;
                 }
             }
-
-            return true;
         }
 
-        @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            if (args.length == 1) {
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-            } else {
-                return null;
+        // TODO: Add module argument ('*' for all)
+        private static class SetDaysSubCommand extends SubCommand {
+
+            public SetDaysSubCommand() {
+                super("set-days");
+                addRequiredPermission("lushrewards.setdays");
             }
-        }
-    }
 
-    // TODO: Add module argument ('*' for all)
-    private static class ResetStreakSubCommand extends SubCommand {
+            @Override
+            public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                switch (args.length) {
+                    case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num>"));
+                    case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days").replaceAll("%target%", args[0]).replaceAll("%day%", args[1]));
+                    case 3 -> {
+                        if (!args[2].equalsIgnoreCase("confirm")) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                            return true;
+                        }
 
-        public ResetStreakSubCommand() {
-            super("reset-streak");
-            addRequiredPermission("lushrewards.resetstreak");
-        }
+                        int dayNum;
+                        try {
+                            dayNum = Integer.parseInt(args[1]);
+                        } catch (NumberFormatException e) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-days <player> <day-num> confirm"));
+                            return true;
+                        }
 
-        @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            switch (args.length) {
-                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-streak").replaceAll("%target%", args[0]));
-                case 2 -> {
-                    if (!args[1].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player> confirm"));
+                        if (!setDay(sender, args[0], dayNum)) return true;
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", String.valueOf(dayNum)));
                         return true;
                     }
+                }
 
-                    if (!setStreak(sender, args[0], 1)) {
-                        return true;
-                    }
+                return true;
+            }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", "1"));
-                    return true;
+            @Override
+            public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                if (args.length == 1) {
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+                } else {
+                    return null;
                 }
             }
-            return true;
         }
 
-        @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            if (args.length == 1) {
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-            } else {
-                return null;
+        // TODO: Add module argument ('*' for all)
+        private static class ResetStreakSubCommand extends SubCommand {
+
+            public ResetStreakSubCommand() {
+                super("reset-streak");
+                addRequiredPermission("lushrewards.resetstreak");
             }
-        }
-    }
 
-    // TODO: Add module argument ('*' for all)
-    private static class SetStreakSubCommand extends SubCommand {
+            @Override
+            public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                switch (args.length) {
+                    case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player>"));
+                    case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-streak").replaceAll("%target%", args[0]));
+                    case 2 -> {
+                        if (!args[1].equalsIgnoreCase("confirm")) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards reset-streak <player> confirm"));
+                            return true;
+                        }
 
-        public SetStreakSubCommand() {
-            super("set-streak");
-            addRequiredPermission("lushrewards.setstreak");
-        }
+                        if (!setStreak(sender, args[0], 1)) {
+                            return true;
+                        }
 
-        @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            switch (args.length) {
-                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
-                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak").replaceAll("%target%", args[0]).replaceAll("%streak%", args[1]));
-                case 3 -> {
-                    if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", "1"));
                         return true;
                     }
+                }
+                return true;
+            }
 
-                    int streak;
-                    try {
-                        streak = Integer.parseInt(args[1]);
-                    } catch (NumberFormatException e) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
-                        return true;
-                    }
-
-                    if (!setStreak(sender, args[0], streak)) return true;
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", String.valueOf(streak)));
-                    return true;
+            @Override
+            public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                if (args.length == 1) {
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+                } else {
+                    return null;
                 }
             }
-
-            return true;
         }
 
-        @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
-            if (args.length == 1) {
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-            } else {
-                return null;
+        // TODO: Add module argument ('*' for all)
+        private static class SetStreakSubCommand extends SubCommand {
+
+            public SetStreakSubCommand() {
+                super("set-streak");
+                addRequiredPermission("lushrewards.setstreak");
+            }
+
+            @Override
+            public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                switch (args.length) {
+                    case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak>"));
+                    case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak").replaceAll("%target%", args[0]).replaceAll("%streak%", args[1]));
+                    case 3 -> {
+                        if (!args[2].equalsIgnoreCase("confirm")) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
+                            return true;
+                        }
+
+                        int streak;
+                        try {
+                            streak = Integer.parseInt(args[1]);
+                        } catch (NumberFormatException e) {
+                            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards set-streak <player> <streak> confirm"));
+                            return true;
+                        }
+
+                        if (!setStreak(sender, args[0], streak)) return true;
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", String.valueOf(streak)));
+                        return true;
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+                if (args.length == 1) {
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+                } else {
+                    return null;
+                }
             }
         }
     }
