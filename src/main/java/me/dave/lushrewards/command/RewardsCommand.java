@@ -91,7 +91,6 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Test
     private static class ClaimSubCommand extends SubCommand {
 
         public ClaimSubCommand() {
@@ -200,7 +199,6 @@ public class RewardsCommand extends Command {
         }
     }
 
-    // TODO: Create
     private static class EditUserSubCommand extends SubCommand {
 
         public EditUserSubCommand() {
@@ -224,7 +222,7 @@ public class RewardsCommand extends Command {
             return true;
         }
 
-        // TODO: Add module argument ('*' for all)
+        // TODO: Implement module argument
         private static class ResetSubCommand extends SubCommand {
 
             public ResetSubCommand() {
@@ -264,7 +262,7 @@ public class RewardsCommand extends Command {
             }
         }
 
-        // TODO: Add module argument ('*' for all)
+        // TODO: Implement module argument
         private static class ResetDaysSubCommand extends SubCommand {
 
             public ResetDaysSubCommand() {
@@ -305,7 +303,7 @@ public class RewardsCommand extends Command {
             }
         }
 
-        // TODO: Add module argument ('*' for all)
+        // TODO: Implement module argument
         private static class SetDaysSubCommand extends SubCommand {
 
             public SetDaysSubCommand() {
@@ -351,7 +349,7 @@ public class RewardsCommand extends Command {
             }
         }
 
-        // TODO: Add module argument ('*' for all)
+        // TODO: Implement module argument
         private static class ResetStreakSubCommand extends SubCommand {
 
             public ResetStreakSubCommand() {
@@ -391,7 +389,7 @@ public class RewardsCommand extends Command {
             }
         }
 
-        // TODO: Add module argument ('*' for all)
+        // TODO: Implement module argument
         private static class SetStreakSubCommand extends SubCommand {
 
             public SetStreakSubCommand() {
