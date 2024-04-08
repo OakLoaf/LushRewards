@@ -19,13 +19,17 @@ public class YmlStorage implements Storage<StorageObject, StorageManager.Provide
     @Override
     public StorageObject load(StorageManager.ProviderId providerId) {
         String key = providerId.key();
-        String providerName = providerId.providerName();
-
         YamlConfiguration configurationSection = loadOrCreateFile(key);
+
+        String providerName = providerId.providerName();
         StorageObject storageObject = new StorageObject(key, providerName);
         StorageProvider<?> storageProvider = LushRewards.getInstance().getStorageManager().getStorageProvider(providerName);
         if (storageProvider != null) {
-            storageProvider.getMethodHolders().forEach((id, methodHolder) -> storageObject.set(id, configurationSection.get(providerName + "." + id), methodHolder.getConvertToLocalMethod()));
+            if (providerName != null) {
+                storageProvider.getMethodHolders().forEach((id, methodHolder) -> storageObject.set(id, configurationSection.get(providerName + "." + id), methodHolder.getConvertToLocalMethod()));
+            } else {
+                storageProvider.getMethodHolders().forEach((id, methodHolder) -> storageObject.set(id, configurationSection.get(id), methodHolder.getConvertToLocalMethod()));
+            }
         }
 
         return storageObject;
@@ -42,6 +46,7 @@ public class YmlStorage implements Storage<StorageObject, StorageManager.Provide
         } else {
             storageObject.getValues().forEach((id, value) -> configurationSection.set(id, value.remoteValue()));
         }
+
 
         File file = new File(dataFolder, key);
         try {
