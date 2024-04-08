@@ -25,6 +25,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     implementation("org.enchantedskies:EnchantedStorage:3.0.0")
+    implementation("com.mysql:mysql-connector-j:8.3.0")
     implementation("me.dave:PlatyUtils:0.1.0.69")
 }
 

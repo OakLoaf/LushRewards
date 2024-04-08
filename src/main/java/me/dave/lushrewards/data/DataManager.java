@@ -1,6 +1,7 @@
 package me.dave.lushrewards.data;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.storage.StorageManager;
 import me.dave.platyutils.manager.Manager;
@@ -17,18 +18,24 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class DataManager extends Manager {
-    private final IOHandler<RewardUser, UUID> ioHandler = new IOHandler<>(new YmlStorage());
+    private IOHandler<RewardUser, UUID> ioHandler;
     private final ConcurrentHashMap<UUID, RewardUser> rewardUsersCache = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
+        ConfigManager configManager = LushRewards.getInstance().getConfigManager();
+        ioHandler = new IOHandler<>(configManager.getStorage());
+
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
 
     @Override
     public void onDisable() {
-        saveCachedRewardUsers();
-        ioHandler.disableIOHandler();
+        if (ioHandler != null) {
+            saveCachedRewardUsers();
+            ioHandler.disableIOHandler();
+            ioHandler = null;
+        }
     }
 
     @Nullable

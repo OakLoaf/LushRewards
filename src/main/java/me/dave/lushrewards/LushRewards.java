@@ -45,6 +45,9 @@ public final class LushRewards extends SpigotPlugin {
             new RewardTypeManager()
         );
 
+        configManager = new ConfigManager();
+        configManager.reloadConfig();
+
         updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
 
         storageManager = new StorageManager();
@@ -54,9 +57,6 @@ public final class LushRewards extends SpigotPlugin {
         dataManager.enable();
 
         notificationHandler = new NotificationHandler();
-
-        configManager = new ConfigManager();
-        configManager.reloadConfig();
 
         localPlaceholders = new LocalPlaceholders();
 

@@ -19,9 +19,9 @@ public class YmlStorage implements Storage<StorageObject, StorageManager.Provide
     @Override
     public StorageObject load(StorageManager.ProviderId providerId) {
         String key = providerId.key();
+        String providerName = providerId.providerName();
         YamlConfiguration configurationSection = loadOrCreateFile(key);
 
-        String providerName = providerId.providerName();
         StorageObject storageObject = new StorageObject(key, providerName);
         StorageProvider<?> storageProvider = LushRewards.getInstance().getStorageManager().getStorageProvider(providerName);
         if (storageProvider != null) {
@@ -38,15 +38,14 @@ public class YmlStorage implements Storage<StorageObject, StorageManager.Provide
     @Override
     public void save(StorageObject storageObject) {
         String key = storageObject.getKey();
+        String providerName = storageObject.getProviderName();
         YamlConfiguration configurationSection = loadOrCreateFile(key);
 
-        String providerName = storageObject.getProviderName();
         if (providerName != null) {
             storageObject.getValues().forEach((id, value) -> configurationSection.set(providerName + "." + id, value.remoteValue()));
         } else {
             storageObject.getValues().forEach((id, value) -> configurationSection.set(id, value.remoteValue()));
         }
-
 
         File file = new File(dataFolder, key);
         try {

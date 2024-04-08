@@ -1,0 +1,9 @@
+# Where user data will be stored (Options: yaml, sqlite, mysql)
+type: yaml
+
+mysql:
+  host: localhost
+  port: 3306
+  name: dbName
+  user: user
+  password: pass

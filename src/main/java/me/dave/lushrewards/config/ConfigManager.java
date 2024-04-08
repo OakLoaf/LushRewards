@@ -1,9 +1,14 @@
 package me.dave.lushrewards.config;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.data.MySqlStorage;
+import me.dave.lushrewards.data.RewardUser;
+import me.dave.lushrewards.data.YmlStorage;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import me.dave.lushrewards.storage.StorageManager;
+import me.dave.lushrewards.storage.StorageObject;
 import me.dave.lushrewards.utils.Debugger;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.manager.GuiManager;
@@ -15,6 +20,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.enchantedskies.EnchantedStorage.Storage;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +37,8 @@ public class ConfigManager {
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
+    private Storage<RewardUser, UUID> storage;
+    private Storage<StorageObject, StorageManager.ProviderId> moduleStorage;
     private boolean performanceMode;
 
     private boolean playtimeIgnoreAfk;
@@ -45,6 +53,7 @@ public class ConfigManager {
         }
 
         LushRewards.getInstance().saveDefaultConfig();
+        LushRewards.getInstance().saveDefaultResource("storage.yml");
     }
 
     public void reloadConfig() {
@@ -127,6 +136,19 @@ public class ConfigManager {
                 }
             );
         }
+
+        YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
+        String storageType = storageConfig.getString("type", "yaml");
+        switch (storageType) {
+            case "mysql" -> {
+                storage = new MySqlStorage();
+                moduleStorage = new me.dave.lushrewards.storage.type.MySqlStorage();
+            }
+            case "yaml" -> {
+                storage = new YmlStorage();
+                moduleStorage = new me.dave.lushrewards.storage.type.YmlStorage();
+            }
+        }
     }
 
     public String getMessage(String messageName) {
@@ -165,6 +187,14 @@ public class ConfigManager {
         }
 
         return itemTemplate.clone();
+    }
+
+    public Storage<RewardUser, UUID> getStorage() {
+        return storage;
+    }
+
+    public Storage<StorageObject, StorageManager.ProviderId> getModuleStorage() {
+        return moduleStorage;
     }
 
     public boolean isPerformanceModeEnabled() {

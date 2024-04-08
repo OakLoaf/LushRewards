@@ -79,32 +79,32 @@ public class StorageProvider<T extends Keyed> {
         }
 
         public Builder<T> addString(String id, Function<T, String> getValueMethod) {
-            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.STRING, DataConstructor.Savable.STRING));
+            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.STRING, DataConstructor.Savable.STRING, String.class));
             return this;
         }
 
         public Builder<T> addInteger(String id, Function<T, Integer> getValueMethod) {
-            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.INTEGER, DataConstructor.Savable.INTEGER));
+            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.INTEGER, DataConstructor.Savable.INTEGER, Integer.class));
             return this;
         }
 
         public Builder<T> addBoolean(String id, Function<T, Boolean> getValueMethod) {
-            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.BOOLEAN, DataConstructor.Savable.BOOLEAN));
+            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.BOOLEAN, DataConstructor.Savable.BOOLEAN, Boolean.class));
             return this;
         }
 
         public Builder<T> addDouble(String id, Function<T, Double> getValueMethod) {
-            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.DOUBLE, DataConstructor.Savable.DOUBLE));
+            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.DOUBLE, DataConstructor.Savable.DOUBLE, Double.class));
             return this;
         }
 
         public Builder<T> addLong(String id, Function<T, Long> getValueMethod) {
-            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.LONG, DataConstructor.Savable.LONG));
+            methodHolders.put(id, new MethodHolder<>(getValueMethod, DataConstructor.Loadable.LONG, DataConstructor.Savable.LONG, Long.class));
             return this;
         }
 
         public <S> Builder<T> addObject(String id, Function<T, S> getValueMethod, Function<String, S> loadMethod, Function<S, String> saveMethod) {
-            methodHolders.put(id, new MethodHolder<>(getValueMethod, loadMethod, saveMethod));
+            methodHolders.put(id, new MethodHolder<>(getValueMethod, loadMethod, saveMethod, String.class));
             return this;
         }
 
@@ -139,16 +139,18 @@ public class StorageProvider<T extends Keyed> {
         private final Function<T, L> getValueMethod;
         private final Function<S, L> convertToLocalMethod;
         private final Function<L, S> convertToRemoteMethod;
+        private final Class<S> storageType;
 
         /**
          * @param getValueMethod Method to get local value
          * @param localTypeConverter Method to convert storage type to local type
          * @param storageTypeConverter Method to convert local type to storage type
          */
-        public MethodHolder(Function<T, L> getValueMethod, Function<S, L> localTypeConverter, Function<L, S> storageTypeConverter) {
+        public MethodHolder(Function<T, L> getValueMethod, Function<S, L> localTypeConverter, Function<L, S> storageTypeConverter, Class<S> storageType) {
             this.getValueMethod = getValueMethod;
             this.convertToLocalMethod = localTypeConverter;
             this.convertToRemoteMethod = storageTypeConverter;
+            this.storageType = storageType;
         }
 
         @Nullable
@@ -164,6 +166,10 @@ public class StorageProvider<T extends Keyed> {
 
         public Function<S, L> getConvertToLocalMethod() {
             return convertToLocalMethod;
+        }
+
+        public Class<S> getStorageType() {
+            return storageType;
         }
     }
 }

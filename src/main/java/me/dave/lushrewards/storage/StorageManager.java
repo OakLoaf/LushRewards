@@ -1,8 +1,8 @@
 package me.dave.lushrewards.storage;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.utils.Keyed;
-import me.dave.lushrewards.storage.type.YmlStorage;
 import me.dave.platyutils.manager.Manager;
 import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.Nullable;
@@ -13,11 +13,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class StorageManager extends Manager {
-    private final IOHandler<StorageObject, ProviderId> ioHandler = new IOHandler<>(new YmlStorage());
+    private IOHandler<StorageObject, ProviderId> ioHandler;
     private HashMap<String, StorageProvider<?>> storageProviders;
 
     @Override
     public void onEnable() {
+        ConfigManager configManager = LushRewards.getInstance().getConfigManager();
+        ioHandler = new IOHandler<>(configManager.getModuleStorage());
+
         storageProviders = new HashMap<>();
     }
 

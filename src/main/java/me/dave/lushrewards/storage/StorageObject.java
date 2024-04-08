@@ -67,12 +67,77 @@ public class StorageObject {
         return getObject(id, Long.class, def);
     }
 
+    public Object getObject(String id) {
+        return values.get(id).localValue();
+    }
+
+    public Object getObject(String id, Object def) {
+        return values.containsKey(id) ? values.get(id).localValue() : def;
+    }
+
     public <T> T getObject(String id, Class<T> clazz) {
-        return values.containsKey(id) ? clazz.cast(values.get(id).loadValue()) : null;
+        return values.containsKey(id) ? clazz.cast(values.get(id).localValue()) : null;
     }
 
     public <T> T getObject(String id, Class<T> clazz, T def) {
-        Object value = values.get(id).loadValue();
+        Object value = values.get(id).localValue();
+        return clazz.isInstance(value) ? clazz.cast(value) : def;
+    }
+
+    public String getRemoteString(String id) {
+        return getRemoteObject(id, String.class);
+    }
+
+    public String getRemoteString(String id, String def) {
+        return getRemoteObject(id, String.class, def);
+    }
+
+    public Integer getRemoteInteger(String id) {
+        return getRemoteObject(id, Integer.class);
+    }
+
+    public Integer getRemoteInteger(String id, int def) {
+        return getRemoteObject(id, Integer.class, def);
+    }
+
+    public Boolean getRemoteBoolean(String id) {
+        return getRemoteObject(id, Boolean.class);
+    }
+
+    public Boolean getRemoteBoolean(String id, boolean def) {
+        return getRemoteObject(id, Boolean.class, def);
+    }
+
+    public Double getRemoteDouble(String id) {
+        return getRemoteObject(id, Double.class);
+    }
+
+    public Double getRemoteDouble(String id, double def) {
+        return getRemoteObject(id, Double.class, def);
+    }
+
+    public Long getRemoteLong(String id) {
+        return getRemoteObject(id, Long.class);
+    }
+
+    public Long getRemoteLong(String id, long def) {
+        return getRemoteObject(id, Long.class, def);
+    }
+
+    public Object getRemoteObject(String id) {
+        return values.get(id).remoteValue();
+    }
+
+    public Object getRemoteObject(String id, Object def) {
+        return values.containsKey(id) ? values.get(id).remoteValue() : def;
+    }
+
+    public <T> T getRemoteObject(String id, Class<T> clazz) {
+        return values.containsKey(id) ? clazz.cast(values.get(id).remoteValue()) : null;
+    }
+
+    public <T> T getRemoteObject(String id, Class<T> clazz, T def) {
+        Object value = values.get(id).remoteValue();
         return clazz.isInstance(value) ? clazz.cast(value) : def;
     }
 
@@ -106,7 +171,7 @@ public class StorageObject {
     }
 
     public record StorageValue<T, S>(S remoteValue, Function<S, T> loadMethod) {
-        public T loadValue() {
+        public T localValue() {
             return loadMethod.apply(remoteValue);
         }
     }
