@@ -162,4 +162,27 @@ public class MySqlStorage implements Storage<StorageObject, StorageManager.Provi
             e.printStackTrace();
         }
     }
+
+    private void loadOrCreateTable(StorageProvider<?> storageProvider) {
+        String table = "lushrewards_" + storageProvider.getName();
+
+        List<String> columns = new ArrayList<>();
+        columns.add("uniqueId CHAR(36) NOT NULL");
+        storageProvider.getMethodHolders().forEach((id, methodHolder) -> {
+            if (methodHolder.getStorageType().equals(String.class)) {
+                columns.add(id + "TEXT");
+            } else if (methodHolder.getStorageType().equals(Integer.class)) {
+                columns.add(id + "INT");
+            } else if (methodHolder.getStorageType().equals(Boolean.class)) {
+                columns.add(id + "BOOL");
+            } else if (methodHolder.getStorageType().equals(Double.class)) {
+                columns.add(id + "DOUBLE");
+            } else if (methodHolder.getStorageType().equals(Long.class)) {
+                columns.add(id + "BIGINT");
+            }
+        });
+        String columnsFinal = String.join(", ", columns);
+
+        String query = "CREATE TABLE IF NOT EXISTS " + table + "(" + columnsFinal + ", PRIMARY KEY (uniqueId));";
+    }
 }
