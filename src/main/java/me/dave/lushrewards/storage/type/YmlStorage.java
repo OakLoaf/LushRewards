@@ -37,7 +37,11 @@ public class YmlStorage implements Storage<StorageObject, StorageManager.Provide
         YamlConfiguration configurationSection = loadOrCreateFile(key);
 
         String providerName = storageObject.getProviderName();
-        storageObject.getValues().forEach((id, value) -> configurationSection.set(providerName + "." + id, value.remoteValue()));
+        if (providerName != null) {
+            storageObject.getValues().forEach((id, value) -> configurationSection.set(providerName + "." + id, value.remoteValue()));
+        } else {
+            storageObject.getValues().forEach((id, value) -> configurationSection.set(id, value.remoteValue()));
+        }
 
         File file = new File(dataFolder, key);
         try {

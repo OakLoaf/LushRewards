@@ -1,6 +1,7 @@
 package me.dave.lushrewards.storage;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.function.Function;
@@ -11,7 +12,7 @@ public class StorageObject {
     private final String providerName;
     private final HashMap<String, StorageValue<?, ?>> values = new HashMap<>();
 
-    public StorageObject(String key, String providerName) {
+    public StorageObject(String key, @Nullable String providerName) {
         this.key = key;
         this.providerName = providerName;
     }
@@ -21,6 +22,7 @@ public class StorageObject {
         return key;
     }
 
+    @Nullable
     public String getProviderName() {
         return providerName;
     }
