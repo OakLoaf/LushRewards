@@ -7,9 +7,8 @@ import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
-import me.dave.lushrewards.rewards.RewardTypeManager;
+import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.LocalPlaceholders;
-import me.dave.lushrewards.storage.StorageManager;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
@@ -27,7 +26,6 @@ public final class LushRewards extends SpigotPlugin {
 
     private ConfigManager configManager;
     private DataManager dataManager;
-    private StorageManager storageManager;
     private NotificationHandler notificationHandler;
     private LocalPlaceholders localPlaceholders;
     private Updater updater;
@@ -42,16 +40,13 @@ public final class LushRewards extends SpigotPlugin {
     public void onEnable() {
         PlatyUtils.registerManager(
             new RewardModuleTypeManager(),
-            new RewardTypeManager()
+            new RewardManager()
         );
 
         configManager = new ConfigManager();
         configManager.reloadConfig();
 
         updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
-
-        storageManager = new StorageManager();
-        storageManager.enable();
 
         dataManager = new DataManager();
         dataManager.enable();
@@ -109,10 +104,6 @@ public final class LushRewards extends SpigotPlugin {
 
     public DataManager getDataManager() {
         return dataManager;
-    }
-
-    public StorageManager getStorageManager() {
-        return storageManager;
     }
 
     public NotificationHandler getNotificationHandler() {

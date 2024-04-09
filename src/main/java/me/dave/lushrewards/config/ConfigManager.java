@@ -1,14 +1,12 @@
 package me.dave.lushrewards.config;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.data.DataManager;
 import me.dave.lushrewards.data.MySqlStorage;
-import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.data.YmlStorage;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.lushrewards.storage.StorageManager;
-import me.dave.lushrewards.storage.StorageObject;
 import me.dave.lushrewards.utils.Debugger;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.manager.GuiManager;
@@ -37,8 +35,7 @@ public class ConfigManager {
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
-    private Storage<RewardUser, UUID> storage;
-    private Storage<StorageObject, StorageManager.ProviderId> moduleStorage;
+    private Storage<DataManager.StorageData, DataManager.StorageLocation> storage;
     private boolean performanceMode;
 
     private boolean playtimeIgnoreAfk;
@@ -95,7 +92,7 @@ public class ConfigManager {
                         }
                     }
 
-                    RewardModuleTypeManager rewardModuleTypes = PlatyUtils.getManager(RewardModuleTypeManager.class).orElse(null);
+                    RewardModuleTypeManager rewardModuleTypes = PlatyUtils.getManager(RewardModuleTypeManager.class).orElseThrow();
                     if (rewardsType != null && rewardModuleTypes.isRegistered(rewardsType)) {
                         plugin.registerModule(rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile));
                     } else {
@@ -140,14 +137,8 @@ public class ConfigManager {
         YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
         String storageType = storageConfig.getString("type", "yaml");
         switch (storageType) {
-            case "mysql" -> {
-                storage = new MySqlStorage();
-                moduleStorage = new me.dave.lushrewards.storage.type.MySqlStorage();
-            }
-            case "yaml" -> {
-                storage = new YmlStorage();
-                moduleStorage = new me.dave.lushrewards.storage.type.YmlStorage();
-            }
+            case "mysql" -> storage = new MySqlStorage();
+            case "yaml" -> storage = new YmlStorage();
         }
     }
 
@@ -189,12 +180,8 @@ public class ConfigManager {
         return itemTemplate.clone();
     }
 
-    public Storage<RewardUser, UUID> getStorage() {
+    public Storage<DataManager.StorageData, DataManager.StorageLocation> getStorage() {
         return storage;
-    }
-
-    public Storage<StorageObject, StorageManager.ProviderId> getModuleStorage() {
-        return moduleStorage;
     }
 
     public boolean isPerformanceModeEnabled() {

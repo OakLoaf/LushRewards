@@ -1,5 +1,7 @@
 package me.dave.lushrewards.module.playtimerewards;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
@@ -9,8 +11,6 @@ import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardCollection;
 import me.dave.lushrewards.utils.LocalPlaceholders;
-import me.dave.lushrewards.storage.DataConstructor;
-import me.dave.lushrewards.storage.StorageProvider;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import me.dave.platyutils.module.Module;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,43 +51,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             this.disable();
             return;
         }
-
-        LushRewards.getInstance().getStorageManager().registerStorageProvider(new StorageProvider.Builder<>(getStorageProviderName(), UserData.class)
-            .setCollector(key -> {
-                UUID uuid;
-                try {
-                    uuid = UUID.fromString(key);
-                } catch (IllegalArgumentException e) {
-                    return null;
-                }
-
-                return userDataCache.get(uuid);
-            })
-            .setLoader(storageObject -> {
-                UUID uuid;
-                try {
-                    uuid = UUID.fromString(storageObject.getKey());
-                } catch (IllegalArgumentException e) {
-                    return null;
-                }
-
-                return new UserData(
-                    uuid,
-                    id,
-                    storageObject.getInteger("last_collected_playtime", 0),
-                    storageObject.getObject("date", LocalDate.class, LocalDate.now()),
-                    storageObject.getInteger("previous_day_end_playtime", 0)
-                );
-            })
-            .addInteger("last_collected_playtime",
-                UserData::getLastCollectedPlaytime)
-            .addObject("date",
-                UserData::getDate,
-                DataConstructor.Loadable.DATE,
-                DataConstructor.Savable.DATE)
-            .addInteger("previous_day_end_playtime",
-                UserData::getLastCollectedPlaytime)
-            .build());
 
         refreshTime = config.getInt("refresh-time");
         receiveWithDailyRewards = config.getBoolean("give-with-daily-rewards");
@@ -130,7 +93,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         }
 
         userDataCache.clear();
-        LushRewards.getInstance().getStorageManager().unregisterStorageProvider(getStorageProviderName());
     }
 
     @Override
@@ -237,11 +199,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     }
 
     @Override
-    public Class<UserData> getUserDataClass() {
-        return UserData.class;
-    }
-
-    @Override
     public UserData getDefaultData(UUID uuid) {
         return new UserData(uuid, id, 0, LocalDate.now(), 0);
     }
@@ -264,8 +221,8 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     }
 
     @Override
-    public String getStorageProviderName() {
-        return id.toLowerCase() + "_userdata";
+    public Class<UserData> getUserDataClass() {
+        return UserData.class;
     }
 
     public static class UserData extends UserDataModule.UserData {
@@ -303,6 +260,11 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
         public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
             this.previousDayEndPlaytime = previousDayEndPlaytime;
+        }
+
+        @Override
+        public JsonElement asJson() {
+            return new Gson().toJsonTree(this);
         }
     }
 

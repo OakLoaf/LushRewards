@@ -45,4 +45,20 @@ public class RewardUser {
     public void save() {
         LushRewards.getInstance().getDataManager().saveRewardUser(this);
     }
+
+    public void loadModules() {
+        LushRewards.getInstance().getDataManager().loadModulesUserData(uuid);
+    }
+
+    public void unloadModules() {
+        LushRewards.getInstance().getDataManager().unloadModulesUserData(uuid);
+    }
+
+    public void saveModule(String moduleId) {
+        LushRewards.getInstance().getDataManager().saveModuleUserData(uuid, moduleId);
+    }
+
+    public void saveModules() {
+        LushRewards.getInstance().getDataManager().saveModulesUserData(uuid);
+    }
 }

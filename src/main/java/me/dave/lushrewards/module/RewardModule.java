@@ -36,8 +36,8 @@ public abstract class RewardModule extends Module {
     }
 
     @FunctionalInterface
-    public interface Constructor<V extends RewardModule> {
-        V build(String id, File file) ;
+    public interface Constructor<T extends RewardModule> {
+        T build(String id, File file) ;
     }
 
     public static class Type {

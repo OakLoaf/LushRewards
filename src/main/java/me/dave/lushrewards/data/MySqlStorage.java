@@ -1,5 +1,7 @@
 package me.dave.lushrewards.data;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import me.dave.lushrewards.LushRewards;
@@ -18,7 +20,9 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class MySqlStorage implements Storage<RewardUser, UUID> {
+public class MySqlStorage implements Storage<DataManager.StorageData, DataManager.StorageLocation> {
+    private static final String TABLE_NAME = "lushrewards_users";
+
     private MysqlDataSource dataSource;
 
     public void setup(String host, int port, String databaseName, String user, String password) {
@@ -49,19 +53,19 @@ public class MySqlStorage implements Storage<RewardUser, UUID> {
     }
 
     @Override
-    public RewardUser load(UUID uuid) {
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("SELECT * FROM lushrewards_data WHERE uniqueId = ?;")) {
+    public DataManager.StorageData load(DataManager.StorageLocation storageLocation) {
+        UUID uuid = storageLocation.uuid();
+        String module = storageLocation.moduleId();
+        String column = module != null ? module + "_data" : "root_data";
+
+        assertJsonColumn(TABLE_NAME, column);
+
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("SELECT " + column + " FROM " + TABLE_NAME + " WHERE uniqueId = ?;")) {
             stmt.setString(1, uuid.toString());
+
             ResultSet resultSet = stmt.executeQuery();
-            if (resultSet.next()) {
-                return new RewardUser(
-                    uuid,
-                    resultSet.getString("username"),
-                    resultSet.getInt("minutes-played")
-                );
-            } else {
-                return new RewardUser(uuid, null, 0);
-            }
+            JsonObject json = JsonParser.parseString(resultSet.getString(column)).getAsJsonObject();
+            return new DataManager.StorageData(uuid, module, json);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -70,12 +74,31 @@ public class MySqlStorage implements Storage<RewardUser, UUID> {
     }
 
     @Override
-    public void save(RewardUser rewardUser) {
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("REPLACE INTO lushrewards_data(uuid, username, minutes-played) VALUES(?, ?, ?);")) {
-            stmt.setString(1, rewardUser.getUniqueId().toString());
-            stmt.setString(2, rewardUser.getUsername());
-            stmt.setInt(3, rewardUser.getMinutesPlayed());
+    public void save(DataManager.StorageData storageData) {
+        UUID uuid = storageData.uuid();
+        String module = storageData.moduleId();
+        String column = module != null ? module + "_data" : "root_data";
+
+        assertJsonColumn(TABLE_NAME, column);
+
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("REPLACE INTO " + TABLE_NAME + "(uuid, " + column + ") VALUES(?, ?);")) {
+            stmt.setString(1, uuid.toString());
+            stmt.setString(2, storageData.json().toString());
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void assertJsonColumn(String table, String column) {
+        assertColumn(table, column, "JSON");
+    }
+
+    private void assertColumn(String table, String column, String type) {
+        String query = "ALTER TABLE " + table + " ADD COLUMN IF NOT EXISTS " + column + " " + type + ";";
+
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

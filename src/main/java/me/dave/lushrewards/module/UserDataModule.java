@@ -1,13 +1,11 @@
 package me.dave.lushrewards.module;
 
-import me.dave.lushrewards.utils.Keyed;
+import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public interface UserDataModule<T extends UserDataModule.UserData> {
-
-    Class<T> getUserDataClass();
 
     T getDefaultData(UUID uuid);
 
@@ -17,24 +15,25 @@ public interface UserDataModule<T extends UserDataModule.UserData> {
 
     void uncacheUserData(UUID uuid);
 
-    String getStorageProviderName();
+    Class<T> getUserDataClass();
 
-    abstract class UserData implements Keyed {
+    abstract class UserData {
         private final UUID uuid;
-        protected final String id;
+        private final String moduleId;
 
-        public UserData(UUID uuid, String id) {
+        public UserData(UUID uuid, String moduleId) {
             this.uuid = uuid;
-            this.id = id;
+            this.moduleId = moduleId;
         }
 
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public @NotNull String getKey() {
+        public @NotNull String getUniqueId() {
             return uuid.toString();
         }
+
+        public String getModuleId() {
+            return moduleId;
+        }
+
+        public abstract JsonElement asJson();
     }
 }
