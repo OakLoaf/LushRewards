@@ -6,20 +6,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RewardTypeManager extends Manager {
+public class RewardManager extends Manager {
     private ConcurrentHashMap<String, Reward.Constructor> rewardTypes;
 
     @Override
     public void onEnable() {
         rewardTypes = new ConcurrentHashMap<>();
 
-        register("broadcast", BroadcastReward::new);
-        register("command", ConsoleCommandReward::new);
-        register("item", ItemReward::new);
-        register("message", MessageReward::new);
-        register("permission", PermissionReward::new);
-        register("player-command", PlayerCommandReward::new);
-        register("random", RandomReward::new);
+        register(Type.BROADCAST, BroadcastReward::new);
+        register(Type.CONSOLE_COMMAND, ConsoleCommandReward::new);
+        register(Type.ITEM, ItemReward::new);
+        register(Type.MESSAGE, MessageReward::new);
+        register(Type.PERMISSION, PermissionReward::new);
+        register(Type.PLAYER_COMMAND, PlayerCommandReward::new);
+        register(Type.RANDOM, RandomReward::new);
     }
 
     @Override
@@ -45,5 +45,15 @@ public class RewardTypeManager extends Manager {
     @Nullable
     public Reward.Constructor getConstructor(String type) {
         return rewardTypes.get(type);
+    }
+
+    public static class Type {
+        public static final String BROADCAST = "broadcast";
+        public static final String CONSOLE_COMMAND = "command";
+        public static final String ITEM = "item";
+        public static final String MESSAGE = "message";
+        public static final String PERMISSION = "permission";
+        public static final String PLAYER_COMMAND = "player-command";
+        public static final String RANDOM = "random";
     }
 }

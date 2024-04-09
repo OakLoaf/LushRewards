@@ -2,7 +2,7 @@ package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
-import me.dave.lushrewards.rewards.RewardTypeManager;
+import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.SchedulerType;
 import me.dave.platyutils.PlatyUtils;
 import org.bukkit.entity.Player;
@@ -59,20 +59,20 @@ public abstract class Reward {
 
     @Nullable
     public static Reward loadReward(Map<?, ?> rewardMap, String path) {
-        Optional<RewardTypeManager> optionalManager = PlatyUtils.getManager(RewardTypeManager.class);
+        Optional<RewardManager> optionalManager = PlatyUtils.getManager(RewardManager.class);
         if (optionalManager.isEmpty()) {
             return null;
         }
-        RewardTypeManager rewardTypeManager = optionalManager.get();
+        RewardManager rewardManager = optionalManager.get();
 
         String rewardType = (String) rewardMap.get("type");
-        if (!rewardTypeManager.isRegistered(rewardType)) {
+        if (!rewardManager.isRegistered(rewardType)) {
             LushRewards.getInstance().getLogger().severe("Invalid reward type at '" + path + "'");
             return null;
         }
 
         try {
-            Constructor rewardConstructor = rewardTypeManager.getConstructor(rewardType);
+            Constructor rewardConstructor = rewardManager.getConstructor(rewardType);
             return rewardConstructor != null ? rewardConstructor.build(rewardMap) : null;
         } catch (InvalidRewardException e) {
             LushRewards.getInstance().getLogger().warning(e.getCause().getMessage());
