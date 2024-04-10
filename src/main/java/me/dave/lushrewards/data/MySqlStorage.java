@@ -4,67 +4,49 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 import com.mysql.cj.jdbc.MysqlDataSource;
-import me.dave.lushrewards.LushRewards;
 import org.enchantedskies.EnchantedStorage.Storage;
 
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class MySqlStorage implements Storage<DataManager.StorageData, DataManager.StorageLocation> {
     private static final String TABLE_NAME = "lushrewards_users";
+    private static final String MODULES_TABLE_NAME = "lushrewards_users_modules";
 
-    private MysqlDataSource dataSource;
+    private final MysqlDataSource dataSource;
 
-    public void setup(String host, int port, String databaseName, String user, String password) {
+    public MySqlStorage(String host, int port, String databaseName, String user, String password) {
         dataSource = initDataSource(host, port, databaseName, user, password);
-
-        String setup;
-        try (InputStream in = LushRewards.getInstance().getResource("dbsetup.sql")) {
-            setup = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
-        } catch (IOException e) {
-            LushRewards.getInstance().getLogger().log(Level.SEVERE, "Could not read db setup file.", e);
-            e.printStackTrace();
-            return;
-        }
-
-        String[] queries = setup.split(";");
-        for (String query : queries) {
-            if (query.isEmpty()) {
-                continue;
-            }
-
-            try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return;
-            }
-        }
     }
 
     @Override
     public DataManager.StorageData load(DataManager.StorageLocation storageLocation) {
         UUID uuid = storageLocation.uuid();
         String module = storageLocation.moduleId();
-        String column = module != null ? module + "_data" : "root_data";
 
-        assertJsonColumn(TABLE_NAME, column);
+        String table;
+        String column;
+        if (module != null) {
+            table = MODULES_TABLE_NAME;
+            column = module + "_data";
+        } else {
+            table = TABLE_NAME;
+            column = "data";
+        }
 
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("SELECT " + column + " FROM " + TABLE_NAME + " WHERE uniqueId = ?;")) {
+        assertJsonColumn(table, column);
+
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("SELECT " + column + " FROM " + table + " WHERE uniqueId = ?;")) {
             stmt.setString(1, uuid.toString());
 
             ResultSet resultSet = stmt.executeQuery();
-            JsonObject json = JsonParser.parseString(resultSet.getString(column)).getAsJsonObject();
+            String jsonRaw = resultSet.getString(column);
+            JsonObject json = jsonRaw != null ? JsonParser.parseString(jsonRaw).getAsJsonObject() : null;
+
             return new DataManager.StorageData(uuid, module, json);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -77,13 +59,26 @@ public class MySqlStorage implements Storage<DataManager.StorageData, DataManage
     public void save(DataManager.StorageData storageData) {
         UUID uuid = storageData.uuid();
         String module = storageData.moduleId();
-        String column = module != null ? module + "_data" : "root_data";
+        JsonObject json = storageData.json();
+        if (json == null) {
+            throw new NullPointerException("JsonObject cannot be null when saving");
+        }
 
-        assertJsonColumn(TABLE_NAME, column);
+        String table;
+        String column;
+        if (module != null) {
+            table = MODULES_TABLE_NAME;
+            column = module + "_data";
+        } else {
+            table = TABLE_NAME;
+            column = "root_data";
+        }
 
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("REPLACE INTO " + TABLE_NAME + "(uuid, " + column + ") VALUES(?, ?);")) {
+        assertJsonColumn(table, column);
+
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("REPLACE INTO " + table + "(uuid, " + column + ") VALUES(?, ?);")) {
             stmt.setString(1, uuid.toString());
-            stmt.setString(2, storageData.json().toString());
+            stmt.setString(2, json.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,8 +89,20 @@ public class MySqlStorage implements Storage<DataManager.StorageData, DataManage
         assertColumn(table, column, "JSON");
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void assertColumn(String table, String column, String type) {
+        assertTable(table);
         String query = "ALTER TABLE " + table + " ADD COLUMN IF NOT EXISTS " + column + " " + type + ";";
+
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void assertTable(String table) {
+        String query = "CREATE TABLE IF NOT EXISTS " + table + "(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));";
 
         try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.execute();

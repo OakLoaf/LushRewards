@@ -77,7 +77,7 @@ public class PlaytimeTracker {
     }
 
     public void saveData() {
-        LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> rewardUser.setMinutesPlayed(globalTime));
+        LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player.getUniqueId(), false).thenAccept(rewardUser -> rewardUser.setMinutesPlayed(globalTime));
     }
 
     private void incrementSessionTime() {

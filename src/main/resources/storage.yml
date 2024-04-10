@@ -1,5 +1,5 @@
-# Where user data will be stored (Options: yaml, sqlite, mysql)
-type: yaml
+# Where user data will be stored (Options: json, mysql)
+type: json
 
 mysql:
   host: localhost

@@ -22,7 +22,7 @@ public class RewardUserListener implements EventListener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player).thenAccept((rewardUser) -> {
+        LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player.getUniqueId()).thenAccept((rewardUser) -> {
             rewardUser.setUsername(player.getName());
             LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> ((PlaytimeTrackerModule) module).startPlaytimeTracker(player));
         });

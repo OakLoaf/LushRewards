@@ -1,25 +1,23 @@
 package me.dave.lushrewards.data;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.api.event.RewardUserPlaytimeChangeEvent;
+import me.dave.lushrewards.module.UserDataModule;
 import me.dave.platyutils.PlatyUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class RewardUser {
-    private final UUID uuid;
+public class RewardUser extends UserDataModule.UserData {
     private String username;
     private int minutesPlayed;
 
     public RewardUser(@NotNull UUID uuid, String username, int minutesPlayed) {
-        this.uuid = uuid;
+        super(uuid, null);
         this.username = username;
         this.minutesPlayed = minutesPlayed;
-    }
-
-    public UUID getUniqueId() {
-        return this.uuid;
     }
 
     public String getUsername() {
@@ -44,21 +42,5 @@ public class RewardUser {
 
     public void save() {
         LushRewards.getInstance().getDataManager().saveRewardUser(this);
-    }
-
-    public void loadModules() {
-        LushRewards.getInstance().getDataManager().loadModulesUserData(uuid);
-    }
-
-    public void unloadModules() {
-        LushRewards.getInstance().getDataManager().unloadModulesUserData(uuid);
-    }
-
-    public void saveModule(String moduleId) {
-        LushRewards.getInstance().getDataManager().saveModuleUserData(uuid, moduleId);
-    }
-
-    public void saveModules() {
-        LushRewards.getInstance().getDataManager().saveModulesUserData(uuid);
     }
 }

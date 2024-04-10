@@ -2,8 +2,8 @@ package me.dave.lushrewards.config;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.DataManager;
+import me.dave.lushrewards.data.JsonStorage;
 import me.dave.lushrewards.data.MySqlStorage;
-import me.dave.lushrewards.data.YmlStorage;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
@@ -117,7 +117,7 @@ public class ConfigManager {
         plugin.getNotificationHandler().reloadNotifications();
 
         if (plugin.getDataManager() != null) {
-            plugin.getDataManager().reloadRewardUsers();
+            plugin.getDataManager().reloadRewardUsers(true);
         }
 
         plugin.getRewardModules().forEach(Module::reload);
@@ -137,8 +137,15 @@ public class ConfigManager {
         YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
         String storageType = storageConfig.getString("type", "yaml");
         switch (storageType) {
-            case "mysql" -> storage = new MySqlStorage();
-            case "yaml" -> storage = new YmlStorage();
+            case "mysql" -> storage = new MySqlStorage(
+                storageConfig.getString("mysql.host"),
+                storageConfig.getInt("mysql.port"),
+                storageConfig.getString("mysql.name"),
+                storageConfig.getString("mysql.user"),
+                storageConfig.getString("mysql.password")
+            );
+            case "json" -> storage = new JsonStorage();
+            default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
         }
     }
 

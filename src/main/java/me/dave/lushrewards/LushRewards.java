@@ -43,17 +43,15 @@ public final class LushRewards extends SpigotPlugin {
             new RewardManager()
         );
 
+        updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
+        notificationHandler = new NotificationHandler();
+        localPlaceholders = new LocalPlaceholders();
+
         configManager = new ConfigManager();
         configManager.reloadConfig();
 
-        updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
-
         dataManager = new DataManager();
         dataManager.enable();
-
-        notificationHandler = new NotificationHandler();
-
-        localPlaceholders = new LocalPlaceholders();
 
         addHook("floodgate", () -> registerHook(new FloodgateHook()));
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
@@ -70,7 +68,10 @@ public final class LushRewards extends SpigotPlugin {
 
     @Override
     public void onDisable() {
-        updater.shutdown();
+        if (updater != null) {
+            updater.shutdown();
+            updater = null;
+        }
 
         if (notificationHandler != null) {
             notificationHandler.stopNotificationTask();

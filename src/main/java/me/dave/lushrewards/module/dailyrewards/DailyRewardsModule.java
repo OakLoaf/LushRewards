@@ -2,6 +2,7 @@ package me.dave.lushrewards.module.dailyrewards;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
@@ -315,11 +316,6 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             this.startDate = startDate;
             this.lastCollectedDate = lastCollectedDate;
             this.collectedDates = collectedDates;
-        }
-
-        @Override
-        public JsonElement asJson() {
-            return new Gson().toJsonTree(this);
         }
 
         public int getDayNum() {

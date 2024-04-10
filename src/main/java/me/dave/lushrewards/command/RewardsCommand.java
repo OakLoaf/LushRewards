@@ -495,7 +495,7 @@ public class RewardsCommand extends Command {
         }
 
         if (player != null) {
-            LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> {
+            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player.getUniqueId(), false).thenAccept(rewardUser -> {
                 LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
                     if (module instanceof DailyRewardsModule dailyRewardsModule) {
                         DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
@@ -529,7 +529,7 @@ public class RewardsCommand extends Command {
         }
 
         if (player != null) {
-            LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> {
+            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player.getUniqueId(), false).thenAccept(rewardUser -> {
                 LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
                     if (module instanceof DailyRewardsModule dailyRewardsModule) {
                         DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);
@@ -562,7 +562,7 @@ public class RewardsCommand extends Command {
         }
 
         if (player != null) {
-            LushRewards.getInstance().getDataManager().getOrTempLoadRewardUser(player).thenAccept(rewardUser -> {
+            LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player.getUniqueId(), false).thenAccept(rewardUser -> {
                 LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
                     if (module instanceof DailyRewardsModule dailyRewardsModule) {
                         DailyRewardsModule.UserData userData = dailyRewardsModule.getUserData(uuid);

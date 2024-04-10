@@ -261,11 +261,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
             this.previousDayEndPlaytime = previousDayEndPlaytime;
         }
-
-        @Override
-        public JsonElement asJson() {
-            return new Gson().toJsonTree(this);
-        }
     }
 
     public static class Placeholder {
