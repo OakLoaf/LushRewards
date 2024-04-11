@@ -1,8 +1,5 @@
 package me.dave.lushrewards.module.dailyrewards;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
@@ -159,26 +156,32 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             return false;
         }
 
-        RewardDay rewardDay = getRewardDay(LocalDate.now(), userData.getDayNum());
-        DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
-
-        Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-
-        if (shouldStackRewards()) {
-            rewardDay.giveAllRewards(player);
-        } else {
-            priorityReward.giveAll(player);
-        }
-
-        Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
-        ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("daily-reward-given"));
-
-        player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
         userData.incrementStreakLength();
         userData.setLastCollectedDate(LocalDate.now());
         userData.addCollectedDate(LocalDate.now());
-        // TODO: Make changes before giving rewards (Potentially add preClaimChecks)
-        LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
+        this.saveUserData(player.getUniqueId(), userData)
+            .thenAccept(success -> {
+                if (!success) {
+                    LushRewards.getInstance().getLogger().severe("Something went wrong when saving data for '" + player.getName() + "' (" + player.getUniqueId() + ")");
+                    return;
+                }
+
+                RewardDay rewardDay = getRewardDay(LocalDate.now(), userData.getDayNum());
+                DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
+
+                Debugger.sendDebugMessage("Attempting to send daily rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+
+                if (shouldStackRewards()) {
+                    rewardDay.giveAllRewards(player);
+                } else {
+                    priorityReward.giveAll(player);
+                }
+
+                Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
+                ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("daily-reward-given"));
+
+                player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
+            });
 
         return true;
     }
@@ -405,10 +408,15 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
                 if (player == null) {
                     return null;
                 }
+                UUID uuid = player.getUniqueId();
 
                 Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
                 if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule module) {
-                    DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
+                    DailyRewardsModule.UserData userData = module.getUserData(uuid);
+                    if (userData == null) {
+                        return null;
+                    }
+
                     RewardDay rewardDay = module.getRewardDay(LocalDate.now(), userData.getStreakLength());
                     return String.valueOf(rewardDay.getHighestPriorityRewardCollection().getCategory());
                 } else {

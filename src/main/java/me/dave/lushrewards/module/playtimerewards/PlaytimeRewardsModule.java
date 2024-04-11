@@ -1,7 +1,5 @@
 package me.dave.lushrewards.module.playtimerewards;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;

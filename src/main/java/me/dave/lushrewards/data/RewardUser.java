@@ -1,7 +1,5 @@
 package me.dave.lushrewards.data;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.api.event.RewardUserPlaytimeChangeEvent;
 import me.dave.lushrewards.module.UserDataModule;

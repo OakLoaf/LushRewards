@@ -1,6 +1,5 @@
 package me.dave.lushrewards.data;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -36,23 +35,23 @@ public class JsonStorage implements Storage<DataManager.StorageData, DataManager
 
         JsonObject json = loadFile(uuid);
         json.add(module != null ? module : "main", moduleJson);
-
-        File file = new File(dataFolder, uuid.toString());
-
         try {
-            new Gson().toJson(storageData.json(), new FileWriter(file));
+            LushRewards.getInstance().getGson().toJson(json, new FileWriter(getUserFile(uuid)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private JsonObject loadFile(UUID uuid) {
-        File file = new File(dataFolder, uuid.toString());
-
         try {
-            return JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+            JsonElement json = JsonParser.parseReader(new FileReader(getUserFile(uuid)));
+            return json.isJsonObject() ? json.getAsJsonObject() : new JsonObject();
         } catch (FileNotFoundException e) {
             return new JsonObject();
         }
+    }
+
+    private File getUserFile(UUID uuid) {
+        return new File(dataFolder, uuid + ".json");
     }
 }

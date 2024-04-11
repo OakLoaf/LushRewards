@@ -1,5 +1,7 @@
 package me.dave.lushrewards;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import me.dave.lushrewards.command.RewardsCommand;
 import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.PlaceholderAPIHook;
@@ -9,6 +11,7 @@ import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.notifications.NotificationHandler;
 import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.LocalPlaceholders;
+import me.dave.lushrewards.utils.gson.LocalDateTypeAdapter;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
@@ -18,10 +21,12 @@ import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.data.DataManager;
 import me.dave.lushrewards.listener.RewardUserListener;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public final class LushRewards extends SpigotPlugin {
+    private static final Gson GSON;
     private static LushRewards plugin;
 
     private ConfigManager configManager;
@@ -29,6 +34,13 @@ public final class LushRewards extends SpigotPlugin {
     private NotificationHandler notificationHandler;
     private LocalPlaceholders localPlaceholders;
     private Updater updater;
+
+    static {
+        GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+            .create();
+    }
 
     @Override
     public void onLoad() {
@@ -83,14 +95,14 @@ public final class LushRewards extends SpigotPlugin {
             hooks = null;
         }
 
-        if (modules != null) {
-            unregisterAllModules();
-            modules = null;
-        }
-
         if (dataManager != null) {
             dataManager.disable();
             dataManager = null;
+        }
+
+        if (modules != null) {
+            unregisterAllModules();
+            modules = null;
         }
 
         configManager = null;
@@ -117,6 +129,10 @@ public final class LushRewards extends SpigotPlugin {
 
     public Updater getUpdater() {
         return updater;
+    }
+
+    public Gson getGson() {
+        return GSON;
     }
 
     public List<? extends RewardModule> getRewardModules() {

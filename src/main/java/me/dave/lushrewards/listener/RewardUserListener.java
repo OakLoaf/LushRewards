@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 public class RewardUserListener implements EventListener {
 
@@ -38,18 +39,22 @@ public class RewardUserListener implements EventListener {
     @EventHandler
     public void onPlayerDisconnect(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
         if (rewardUser != null) {
             LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
-                PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(player.getUniqueId());
+                PlaytimeTracker playtimeTracker = ((PlaytimeTrackerModule) module).stopPlaytimeTracker(uuid);
                 if (playtimeTracker != null) {
                     rewardUser.setMinutesPlayed(playtimeTracker.getGlobalPlaytime());
                 }
             });
 
             LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
-            LushRewards.getInstance().getDataManager().unloadRewarderUser(player.getUniqueId());
+            LushRewards.getInstance().getDataManager().unloadRewarderUser(uuid);
         }
+
+        LushRewards.getInstance().getDataManager().saveModulesUserData(uuid);
+        LushRewards.getInstance().getDataManager().unloadModulesUserData(uuid);
     }
 }

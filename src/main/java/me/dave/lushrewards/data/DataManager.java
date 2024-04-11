@@ -1,12 +1,10 @@
 package me.dave.lushrewards.data;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.platyutils.manager.Manager;
-import me.dave.platyutils.module.Module;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -15,9 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class DataManager extends Manager {
     private IOHandler<StorageData, StorageLocation> ioHandler;
@@ -43,10 +43,6 @@ public class DataManager extends Manager {
     @Nullable
     public RewardUser getRewardUser(@NotNull Player player) {
         return rewardUsersCache.get(player.getUniqueId());
-    }
-
-    public boolean isRewardUserLoaded(UUID uuid) {
-        return rewardUsersCache.containsKey(uuid);
     }
 
     public CompletableFuture<RewardUser> getOrLoadRewardUser(UUID uuid) {
@@ -80,6 +76,7 @@ public class DataManager extends Manager {
 
     /**
      * Reload all cached RewardUsers
+     *
      * @param save Whether cached RewardUsers should be saved before reloading
      */
     public void reloadRewardUsers(boolean save) {
@@ -104,35 +101,90 @@ public class DataManager extends Manager {
         rewardUsersCache.values().forEach(this::saveRewardUser);
     }
 
-    public void saveRewardUser(RewardUser rewardUser) {
-        saveUserData(rewardUser);
-        saveModulesUserData(rewardUser.getUniqueId());
+    public CompletableFuture<Boolean> saveRewardUser(RewardUser rewardUser) {
+        // TODO: Move this call to only be in specific places (outside of this method)
+        //saveModulesUserData(rewardUser.getUniqueId());
+
+        return saveUserData(rewardUser.getUniqueId(), rewardUser);
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, String module, Class<T> dataClass) {
-        return getOrLoadUserData(uuid, module, dataClass, true);
+    public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, UserDataModule<T> module) {
+        return getOrLoadUserData(uuid, module, true);
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, String moduleId, UserDataModule<T> module, Class<T> dataClass, boolean cacheUser) {
-        // TODO: Make this actually compile and work
+    public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, UserDataModule<T> module, boolean cacheUser) {
         T userData = module.getUserData(uuid);
         if (userData != null) {
             return CompletableFuture.completedFuture(userData);
         } else {
-            loadUserData(uuid, userData.getModuleId(), dataClass);
-            userDataModule.cacheUserData(uuid, userData);
-            return
+            return loadUserData(uuid, module, cacheUser);
         }
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, String module, Class<T> dataClass) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-        ioHandler.loadData(new StorageLocation(uuid, module)).thenAccept(storageData -> future.complete(new Gson().fromJson(storageData.json(), dataClass)));
+    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, UserDataModule<T> module) {
+        return loadUserData(uuid, module, true);
+    }
+
+    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, UserDataModule<T> module, boolean cacheUser) {
+        CompletableFuture<T> future = loadUserData(uuid, module.getId(), module.getUserDataClass());
+        future.thenAccept(userData -> {
+            if (userData == null) {
+                userData = module.getDefaultData(uuid);
+            }
+
+            if (cacheUser) {
+                module.cacheUserData(uuid, userData);
+            }
+        });
+
         return future;
     }
 
-    public <T extends UserDataModule.UserData> void saveUserData(T userData) {
-        ioHandler.saveData(new StorageData(userData.getUniqueId(), userData.getModuleId(), userData.asJson()));
+    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, String moduleId, Class<T> dataClass) {
+        CompletableFuture<T> future = new CompletableFuture<>();
+        ioHandler.loadData(new StorageLocation(uuid, moduleId))
+            .completeOnTimeout(null, 15, TimeUnit.SECONDS)
+            .thenAccept(storageData -> {
+                if (storageData == null) {
+                    future.complete(null);
+                    return;
+                }
+
+                try {
+                    T userData = LushRewards.getInstance().getGson().fromJson(storageData.json(), dataClass);
+                    if (userData == null) {
+                        if (moduleId != null) {
+                            UserDataModule<?> module = (UserDataModule<?>) LushRewards.getInstance().getModule(moduleId).orElse(null);
+                            if (module != null) {
+                                userData = dataClass.cast(module.getDefaultData(uuid));
+                            }
+                        } else if (dataClass.isAssignableFrom(RewardUser.class)) {
+                            userData = dataClass.cast(new RewardUser(uuid, null, 0));
+                        }
+                    }
+
+                    future.complete(userData);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    future.completeExceptionally(e);
+                }
+            })
+            .exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            });
+
+        return future;
+    }
+
+    public <T extends UserDataModule.UserData> CompletableFuture<Boolean> saveUserData(UUID uuid, T userData) {
+        return ioHandler.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson()))
+            .completeOnTimeout(null, 30, TimeUnit.SECONDS)
+            .exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            })
+            .thenApply(Objects::nonNull);
     }
 
     public void loadModulesUserData(UUID uuid) {
@@ -168,10 +220,12 @@ public class DataManager extends Manager {
         });
     }
 
-    public void saveModuleUserData(UUID uuid, UserDataModule<?> userDataModule) {
+    public CompletableFuture<Boolean> saveModuleUserData(UUID uuid, UserDataModule<?> userDataModule) {
         UserDataModule.UserData userData = userDataModule.getUserData(uuid);
         if (userData != null) {
-            saveUserData(userData);
+            return saveUserData(uuid, userData);
+        } else {
+            return CompletableFuture.completedFuture(true);
         }
     }
 
@@ -191,6 +245,9 @@ public class DataManager extends Manager {
         return false;
     }
 
-    public record StorageLocation(@NotNull UUID uuid, @Nullable String moduleId) {}
-    public record StorageData(@NotNull UUID uuid, @Nullable String moduleId, @Nullable JsonObject json) {}
+    public record StorageLocation(@NotNull UUID uuid, @Nullable String moduleId) {
+    }
+
+    public record StorageData(@NotNull UUID uuid, @Nullable String moduleId, @Nullable JsonObject json) {
+    }
 }

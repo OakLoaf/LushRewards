@@ -1,15 +1,30 @@
 package me.dave.lushrewards.module;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
+import me.dave.lushrewards.LushRewards;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface UserDataModule<T extends UserDataModule.UserData> {
 
+    String getId();
+
     T getUserData(UUID uuid);
+
+    default CompletableFuture<T> getOrLoadUserData(UUID uuid, boolean cacheUser) {
+        return LushRewards.getInstance().getDataManager().getOrLoadUserData(uuid, this, cacheUser);
+    }
+
+    default CompletableFuture<T> loadUserData(UUID uuid, boolean cacheUser) {
+        return LushRewards.getInstance().getDataManager().loadUserData(uuid, this, cacheUser);
+    }
+
+    default CompletableFuture<Boolean> saveUserData(UUID uuid, T userData) {
+        return LushRewards.getInstance().getDataManager().saveUserData(uuid, userData);
+    }
 
     void cacheUserData(UUID uuid, UserData userData);
 
@@ -39,7 +54,7 @@ public interface UserDataModule<T extends UserDataModule.UserData> {
         }
 
         public JsonObject asJson() {
-            return new Gson().toJsonTree(this).getAsJsonObject();
+            return LushRewards.getInstance().getGson().toJsonTree(this).getAsJsonObject();
         }
     }
 }
