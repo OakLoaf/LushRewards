@@ -95,14 +95,14 @@ public final class LushRewards extends SpigotPlugin {
             hooks = null;
         }
 
-        if (dataManager != null) {
-            dataManager.disable();
-            dataManager = null;
-        }
-
         if (modules != null) {
             unregisterAllModules();
             modules = null;
+        }
+
+        if (dataManager != null) {
+            dataManager.disable();
+            dataManager = null;
         }
 
         configManager = null;
