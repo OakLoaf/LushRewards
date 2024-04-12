@@ -27,13 +27,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DailyRewardsGui extends Gui {
-    private final DailyRewardsModule dailyRewardsModule;
+    private final DailyRewardsModule module;
     private final GuiFormat.GuiTemplate guiTemplate;
 
-    public DailyRewardsGui(DailyRewardsModule dailyRewardsModule, Player player) {
-        super(dailyRewardsModule.getGuiFormat().getTemplate().getRowCount() * 9, ChatColorHandler.translate(dailyRewardsModule.getGuiFormat().getTitle()), player);
-        this.guiTemplate = dailyRewardsModule.getGuiFormat().getTemplate();
-        this.dailyRewardsModule = dailyRewardsModule;
+    public DailyRewardsGui(DailyRewardsModule module, Player player) {
+        super(module.getGuiFormat().getTemplate().getRowCount() * 9, ChatColorHandler.translate(module.getGuiFormat().getTitle()), player);
+        this.guiTemplate = module.getGuiFormat().getTemplate();
+        this.module = module;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class DailyRewardsGui extends Gui {
         inventory.clear();
         clearButtons();
 
-        dailyRewardsModule.getOrLoadUserData(player.getUniqueId(), true)
+        module.getOrLoadUserData(player.getUniqueId(), true)
             .completeOnTimeout(null, 15, TimeUnit.SECONDS)
             .thenAccept(userData -> Bukkit.getScheduler().runTask(LushRewards.getInstance(), () -> {
                 if (userData == null) {
@@ -56,7 +56,7 @@ public class DailyRewardsGui extends Gui {
                 }
 
                 // Checks if the streak mode config option is enabled
-                if (dailyRewardsModule.isStreakModeEnabled()) {
+                if (module.isStreakModeEnabled()) {
                     // Resets RewardUser to Day 1 if a day has been missed
                     LocalDate lastCollectedDate = userData.getLastCollectedDate();
                     if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
@@ -73,7 +73,7 @@ public class DailyRewardsGui extends Gui {
                 // First reward day shown
                 AtomicInteger dayIndex = new AtomicInteger();
                 final LocalDate[] dateIndex = new LocalDate[1];
-                switch (dailyRewardsModule.getScrollType()) {
+                switch (module.getScrollType()) {
                     case GRID -> {
                         int rewardDisplaySize = guiTemplate.countChar('R');
 
@@ -111,7 +111,7 @@ public class DailyRewardsGui extends Gui {
                     switch (character) {
                         case 'R' -> slotMap.get(character).forEach(slot -> {
                             ItemStack itemStack;
-                            if (dailyRewardsModule.getScrollType().equals(ScrollType.MONTH) && dateIndex[0].getMonthValue() != LocalDate.now().getMonthValue()) {
+                            if (module.getScrollType().equals(ScrollType.MONTH) && dateIndex[0].getMonthValue() != LocalDate.now().getMonthValue()) {
                                 SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf('#'));
 
                                 if (!simpleItemStack.hasType()) {
@@ -123,7 +123,7 @@ public class DailyRewardsGui extends Gui {
                                 itemStack = simpleItemStack.asItemStack(player);
                             } else {
                                 // Get the day's reward for the current slot
-                                RewardDay rewardDay = dailyRewardsModule.getRewardDay(dateIndex[0], dayIndex.get());
+                                RewardDay rewardDay = module.getRewardDay(dateIndex[0], dayIndex.get());
                                 DailyRewardCollection priorityReward = rewardDay.getHighestPriorityRewardCollection();
 
                                 String itemTemplate;
@@ -202,7 +202,7 @@ public class DailyRewardsGui extends Gui {
 
                                         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
-                                        dailyRewardsModule.claimRewards(player);
+                                        module.claimRewards(player);
 
                                         LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
                                             if (module instanceof PlaytimeRewardsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
@@ -213,7 +213,7 @@ public class DailyRewardsGui extends Gui {
                                 }
 
                                 // Sets the size of the stack to the same amount as the current date
-                                if (dailyRewardsModule.showDateAsAmount()) {
+                                if (module.showDateAsAmount()) {
                                     itemStack.setAmount(dateIndex[0].getDayOfMonth());
                                 }
                             }
@@ -224,8 +224,8 @@ public class DailyRewardsGui extends Gui {
                             dateIndex[0] = dateIndex[0].plusDays(1);
                         });
                         case 'U', 'N' -> {
-                            String upcomingCategory = dailyRewardsModule.getUpcomingCategory();
-                            Optional<DailyRewardCollection> upcomingReward = dailyRewardsModule.findNextRewardFromCategory(dayIndex.get(), dateIndex[0], upcomingCategory);
+                            String upcomingCategory = module.getUpcomingCategory();
+                            Optional<DailyRewardCollection> upcomingReward = module.findNextRewardFromCategory(dayIndex.get(), dateIndex[0], upcomingCategory);
 
                             // Adds the upcoming reward to the GUI if it exists
                             if (upcomingReward.isPresent()) {
