@@ -36,7 +36,9 @@ public class JsonStorage implements Storage<DataManager.StorageData, DataManager
         JsonObject json = loadFile(uuid);
         json.add(module != null ? module : "main", moduleJson);
         try {
-            LushRewards.getInstance().getGson().toJson(json, new FileWriter(getUserFile(uuid)));
+            FileWriter writer = new FileWriter(getUserFile(uuid));
+            LushRewards.getInstance().getGson().toJson(json, writer);
+            writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
