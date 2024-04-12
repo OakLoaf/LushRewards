@@ -8,9 +8,7 @@ import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardCollection;
-import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
-import me.dave.platyutils.module.Module;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlaytimeRewardsModule extends RewardModule implements UserDataModule<PlaytimeRewardsModule.UserData> {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
-    private Placeholder placeholder;
+    private PlaytimeRewardsPlaceholder placeholder;
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
@@ -72,7 +70,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             minutesToReward.put(minutes, rewardCollection);
         }
 
-        placeholder = new Placeholder(id);
+        placeholder = new PlaytimeRewardsPlaceholder(id);
         placeholder.register();
 
         LushRewards.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'goals'");
@@ -258,46 +256,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
         public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
             this.previousDayEndPlaytime = previousDayEndPlaytime;
-        }
-    }
-
-    public static class Placeholder {
-        private static final HashSet<LocalPlaceholders.Placeholder> placeholderCache = new HashSet<>();
-
-        static {
-            placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("playtime_since_last_collected", (params, player) -> {
-                if (player == null || LushRewards.getInstance().getModule(params[0]).isEmpty()) {
-                    return null;
-                }
-
-                RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-                if (rewardUser == null) {
-                    return null;
-                }
-
-                Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
-                if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeRewardsModule module) {
-                    PlaytimeRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
-                    return String.valueOf(rewardUser.getMinutesPlayed() - userData.getLastCollectedPlaytime());
-                } else {
-                    return null;
-                }
-            }));
-        }
-
-        private final String id;
-
-        public Placeholder(String id) {
-            this.id = id;
-        }
-
-        public void register() {
-            LocalPlaceholders.SimplePlaceholder modulePlaceholder = new LocalPlaceholders.SimplePlaceholder(id, (params, player) -> null);
-            placeholderCache.forEach(modulePlaceholder::addChild);
-        }
-
-        public void unregister() {
-            LushRewards.getInstance().getLocalPlaceholders().unregisterPlaceholder(id);
         }
     }
 }
