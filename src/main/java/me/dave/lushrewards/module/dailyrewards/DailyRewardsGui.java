@@ -98,14 +98,7 @@ public class DailyRewardsGui extends Gui {
                     }
                 }
 
-                TreeMultimap<Character, Integer> slotMap = TreeMultimap.create();
-                for (int slot = 0; slot < inventory.getSize(); slot++) {
-                    char character = guiTemplate.getCharAt(slot);
-                    if (character == 'N') character = 'U';
-
-                    slotMap.put(character, slot);
-                }
-
+                TreeMultimap<Character, Integer> slotMap = guiTemplate.getSlotMap();
                 HashSet<String> collectedDates = userData.getCollectedDates();
                 for (Character character : slotMap.keySet()) {
                     switch (character) {
