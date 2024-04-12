@@ -255,7 +255,7 @@ public class DailyRewardsGui extends Gui {
                             SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character));
 
                             if (!simpleItemStack.hasType()) {
-                                simpleItemStack.setType(Material.STONE);
+                                simpleItemStack.setType(Material.RED_STAINED_GLASS_PANE);
                                 LushRewards.getInstance().getLogger().severe("Failed to display custom item-template '" + character + "' as it does not specify a valid material");
                             }
                             simpleItemStack.parseColors(player);
