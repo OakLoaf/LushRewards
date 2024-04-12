@@ -151,7 +151,13 @@ public class DataManager extends Manager {
                 }
 
                 try {
-                    T userData = LushRewards.getInstance().getGson().fromJson(storageData.json(), dataClass);
+                    JsonObject json = storageData.json();
+                    if (json != null) {
+                        json.addProperty("uuid", uuid.toString());
+                        json.addProperty("moduleId", moduleId);
+                    }
+
+                    T userData = LushRewards.getInstance().getGson().fromJson(json, dataClass);
                     if (userData == null) {
                         if (moduleId != null) {
                             UserDataModule<?> module = (UserDataModule<?>) LushRewards.getInstance().getModule(moduleId).orElse(null);

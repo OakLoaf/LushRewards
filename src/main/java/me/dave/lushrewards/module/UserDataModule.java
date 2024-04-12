@@ -1,7 +1,6 @@
 package me.dave.lushrewards.module;
 
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.Expose;
 import me.dave.lushrewards.LushRewards;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,9 +34,7 @@ public interface UserDataModule<T extends UserDataModule.UserData> {
     Class<T> getUserDataClass();
 
     abstract class UserData {
-        @Expose(serialize = false, deserialize = false)
         private final UUID uuid;
-        @Expose(serialize = false, deserialize = false)
         private final String moduleId;
 
         public UserData(UUID uuid, String moduleId) {
