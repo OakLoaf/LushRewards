@@ -14,6 +14,7 @@ import me.dave.lushrewards.notifications.NotificationHandler;
 import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.lushrewards.utils.gson.LocalDateTypeAdapter;
+import me.dave.lushrewards.utils.gson.UserDataExclusionStrategy;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
@@ -41,17 +42,7 @@ public final class LushRewards extends SpigotPlugin {
         GSON = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-            .addSerializationExclusionStrategy(new ExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes field) {
-                    return field.getName().equals("uuid") || field.getName().equals("moduleId");
-                }
-
-                @Override
-                public boolean shouldSkipClass(Class<?> clazz) {
-                    return false;
-                }
-            })
+            .addSerializationExclusionStrategy(new UserDataExclusionStrategy())
             .create();
     }
 
