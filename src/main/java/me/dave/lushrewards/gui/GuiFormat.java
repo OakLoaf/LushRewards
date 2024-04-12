@@ -1,5 +1,6 @@
 package me.dave.lushrewards.gui;
 
+import com.google.common.collect.TreeMultimap;
 import me.dave.lushrewards.LushRewards;
 
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ public class GuiFormat {
     public GuiTemplate getTemplate() {
         return template;
     }
-
 
     public static class GuiTemplate {
         private final List<String> rows;
@@ -76,6 +76,16 @@ public class GuiFormat {
 
         public int getRowCount() {
             return rows.size();
+        }
+
+        public TreeMultimap<Character, Integer> getSlotMap() {
+            TreeMultimap<Character, Integer> slotMap = TreeMultimap.create();
+            for (int slot = 0; slot < getRowCount() * 9; slot++) {
+                char character = getCharAt(slot);
+                slotMap.put(character, slot);
+            }
+
+            return slotMap;
         }
 
         public char getCharAt(int slot) {
