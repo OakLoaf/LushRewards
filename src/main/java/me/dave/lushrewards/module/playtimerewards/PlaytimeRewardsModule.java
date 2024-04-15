@@ -94,19 +94,18 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     @Override
     public boolean hasClaimableRewards(Player player) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-        UserData userData = userDataCache.get(player.getUniqueId());
+        UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
             return false;
         }
 
-        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
-
-        if (!userData.getDate().isEqual(LocalDate.now())) {
-            userData.setDate(LocalDate.now());
+        if (resetPlaytimeAt > 0 && userData.getStartDate().isEqual(LocalDate.now().minusDays(resetPlaytimeAt))) {
+            userData.setStartDate(LocalDate.now());
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
-            rewardUser.save();
+            saveUserData(userData.getUniqueId(), userData);
         }
 
+        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
         return !getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd).isEmpty();
     }
@@ -114,27 +113,25 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     @Override
     public boolean claimRewards(Player player) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-        UserData userData = userDataCache.get(player.getUniqueId());
+        UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
             ChatColorHandler.sendMessage(player, "&#ff6969Failed to collect your reward user data, try relogging. If this continues inform an administrator");
             return false;
         }
 
-        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
-
-        boolean saveRewardUser = false;
-        // TODO: Make configurable (by days - allow daily and global)
-        if (!userData.getDate().isEqual(LocalDate.now())) {
-            userData.setDate(LocalDate.now());
+        boolean saveUserData = false;
+        if (resetPlaytimeAt > 0 && userData.getStartDate().isEqual(LocalDate.now().minusDays(resetPlaytimeAt))) {
+            userData.setStartDate(LocalDate.now());
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
-            saveRewardUser = true;
+            saveUserData = true;
         }
 
+        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
         HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd);
         if (rewards.isEmpty()) {
-            if (saveRewardUser) {
-                LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
+            if (saveUserData) {
+                saveUserData(userData.getUniqueId(), userData);
             }
             return false;
         }
@@ -223,13 +220,13 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
     public static class UserData extends UserDataModule.UserData {
         private int lastCollectedPlaytime;
-        private LocalDate date;
+        private LocalDate startDate;
         private int previousDayEndPlaytime;
 
-        public UserData(UUID uuid, String id, int lastCollectedPlaytime, @NotNull LocalDate date, int previousDayEndPlaytime) {
+        public UserData(UUID uuid, String id, int lastCollectedPlaytime, @NotNull LocalDate startDate, int previousDayEndPlaytime) {
             super(uuid, id);
             this.lastCollectedPlaytime = lastCollectedPlaytime;
-            this.date = date;
+            this.startDate = startDate;
             this.previousDayEndPlaytime = previousDayEndPlaytime;
         }
 
@@ -242,12 +239,12 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         }
 
         @NotNull
-        public LocalDate getDate() {
-            return date;
+        public LocalDate getStartDate() {
+            return startDate;
         }
 
-        public void setDate(@NotNull LocalDate date) {
-            this.date = date;
+        public void setStartDate(@NotNull LocalDate startDate) {
+            this.startDate = startDate;
         }
 
         public int getPreviousDayEndPlaytime() {

@@ -27,6 +27,7 @@ public class RewardUserListener implements EventListener {
             rewardUser.setUsername(player.getName());
             LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> ((PlaytimeTrackerModule) module).startPlaytimeTracker(player));
         });
+        LushRewards.getInstance().getDataManager().loadModulesUserData(player.getUniqueId());
 
         if (player.hasPermission("lushrewards.update")) {
             Updater updater = LushRewards.getInstance().getUpdater();

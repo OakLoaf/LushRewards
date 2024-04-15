@@ -21,7 +21,7 @@ public interface UserDataModule<T extends UserDataModule.UserData> {
         return LushRewards.getInstance().getDataManager().loadUserData(uuid, this, cacheUser);
     }
 
-    default CompletableFuture<Boolean> saveUserData(UUID uuid, T userData) {
+    default CompletableFuture<Boolean> saveUserData(@NotNull UUID uuid, T userData) {
         return LushRewards.getInstance().getDataManager().saveUserData(uuid, userData);
     }
 

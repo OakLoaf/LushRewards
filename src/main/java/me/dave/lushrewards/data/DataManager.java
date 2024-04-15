@@ -57,11 +57,11 @@ public class DataManager extends Manager {
         }
     }
 
-    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
+    public CompletableFuture<RewardUser> loadRewardUser(@NotNull UUID uuid) {
         return loadRewardUser(uuid, true);
     }
 
-    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid, boolean cacheUser) {
+    public CompletableFuture<RewardUser> loadRewardUser(@NotNull UUID uuid, boolean cacheUser) {
         CompletableFuture<RewardUser> future = loadUserData(uuid, null, RewardUser.class);
         if (cacheUser) {
             future.thenAccept(rewardUser -> rewardUsersCache.put(uuid, rewardUser));
@@ -71,7 +71,6 @@ public class DataManager extends Manager {
 
     public void unloadRewarderUser(UUID uuid) {
         rewardUsersCache.remove(uuid);
-        unloadModulesUserData(uuid);
     }
 
     /**
@@ -140,7 +139,7 @@ public class DataManager extends Manager {
         return future;
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, String moduleId, Class<T> dataClass) {
+    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(@NotNull UUID uuid, String moduleId, Class<T> dataClass) {
         CompletableFuture<T> future = new CompletableFuture<>();
         ioHandler.loadData(new StorageLocation(uuid, moduleId))
             .completeOnTimeout(null, 15, TimeUnit.SECONDS)
@@ -183,7 +182,7 @@ public class DataManager extends Manager {
         return future;
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<Boolean> saveUserData(UUID uuid, T userData) {
+    public <T extends UserDataModule.UserData> CompletableFuture<Boolean> saveUserData(@NotNull UUID uuid, T userData) {
         return ioHandler.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson()))
             .completeOnTimeout(null, 30, TimeUnit.SECONDS)
             .exceptionally(throwable -> {
@@ -196,8 +195,7 @@ public class DataManager extends Manager {
     public void loadModulesUserData(UUID uuid) {
         LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
             if (module instanceof UserDataModule<?> userDataModule) {
-                UserDataModule.UserData userData = userDataModule.getUserData(uuid);
-                userDataModule.cacheUserData(uuid, userData != null ? userData : userDataModule.getDefaultData(uuid));
+                userDataModule.getOrLoadUserData(uuid, true);
             }
         });
     }

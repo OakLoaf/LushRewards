@@ -14,7 +14,6 @@ import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.lushrewards.utils.gson.LocalDateTypeAdapter;
 import me.dave.lushrewards.utils.gson.UserDataExclusionStrategy;
 import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.module.Module;
 import me.dave.platyutils.plugin.SpigotPlugin;
 import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
@@ -24,7 +23,6 @@ import me.dave.lushrewards.listener.RewardUserListener;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public final class LushRewards extends SpigotPlugin {
     private static final Gson GSON;
@@ -74,10 +72,11 @@ public final class LushRewards extends SpigotPlugin {
 
         registerCommand(new RewardsCommand());
 
-        Optional<Module> playtimeTracker = getModule(RewardModule.Type.PLAYTIME_TRACKER);
-        if (playtimeTracker.isPresent() && playtimeTracker.get() instanceof PlaytimeTrackerModule module) {
-            Bukkit.getOnlinePlayers().forEach(module::startPlaytimeTracker);
-        }
+        getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
+            if (module instanceof PlaytimeTrackerModule playtimeTracker) {
+                Bukkit.getOnlinePlayers().forEach(playtimeTracker::startPlaytimeTracker);
+            }
+        });
     }
 
     @Override
