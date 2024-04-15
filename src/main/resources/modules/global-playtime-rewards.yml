@@ -1,6 +1,8 @@
 # Global Playtime Rewards: playtime goals that do not reset
 type: playtime-rewards
 
+# How often (in days) to reset (0 to disable)
+reset-playtime-at: 0
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)
 refresh-time: 30
 # Whether rewards should be given when claiming daily rewards

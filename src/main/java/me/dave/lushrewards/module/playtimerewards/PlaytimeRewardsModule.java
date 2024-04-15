@@ -23,6 +23,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
     private PlaytimeRewardsPlaceholder placeholder;
+    private int resetPlaytimeAt;
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
@@ -46,6 +47,14 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'goals' section in '" + moduleFile.getName() + "'");
             this.disable();
             return;
+        }
+
+        if (config.contains("reset-playtime-at")) {
+            resetPlaytimeAt = config.getInt("reset-playtime-at");
+        } else if (id.contains("daily")) {
+            resetPlaytimeAt = 1;
+        } else if (id.contains("weekly")) {
+            resetPlaytimeAt = 7;
         }
 
         refreshTime = config.getInt("refresh-time");

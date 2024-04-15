@@ -65,7 +65,9 @@ public class PlaytimeRewardsGui extends Gui {
                                 }
                             });
                         });
-                        case 'R' -> {}
+                        case 'R' -> slotMap.get(character).forEach(slot -> {
+                            // TODO
+                        });
                         case ' ' -> slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                         default -> slotMap.get(character).forEach(slot -> {
                             SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character));
