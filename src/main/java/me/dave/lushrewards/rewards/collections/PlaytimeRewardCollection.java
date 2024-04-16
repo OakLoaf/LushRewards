@@ -17,12 +17,14 @@ public class PlaytimeRewardCollection extends RewardCollection {
     private final int minutes;
     private final Integer repeatFrequency;
     private final Integer repeatsUntil;
+    private final boolean showInGui;
 
-    public PlaytimeRewardCollection(int minutes, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound) {
+    public PlaytimeRewardCollection(int minutes, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean showInGui) {
         super(rewards, priority, category, displayItem, sound);
         this.minutes = minutes;
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntil != null ? 1 : 0);
         this.repeatsUntil = repeatsUntil;
+        this.showInGui = showInGui;
     }
 
     public int isAvailableAt(int totalMinutes) {
@@ -45,6 +47,10 @@ public class PlaytimeRewardCollection extends RewardCollection {
         int validMinutesSinceCollected = Math.min(totalMinutes, repeatsUntil) - lastCollected;
 
         return (amount + validMinutesSinceCollected) / repeatFrequency;
+    }
+
+    public boolean shouldShowInGui() {
+        return showInGui;
     }
 
     @NotNull
@@ -71,13 +77,14 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "none"), Sound.class).orElse(null);
+        boolean showInGui = rewardCollectionSection.getBoolean("show-in-gui");
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
 
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound);
+        return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound, showInGui);
     }
 
     @NotNull
@@ -105,6 +112,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? StringUtils.getEnum((String) rewardCollectionMap.get("redeem-sound"), Sound.class).orElse(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+        boolean showsInGui = !rewardCollectionMap.containsKey("show-in-gui") || (boolean) rewardCollectionMap.get("show-in-gui");
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = (List<Map<?, ?>>) rewardCollectionMap.get("rewards");
@@ -112,10 +120,10 @@ public class PlaytimeRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionMap.toString()) : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionMap + "'", debugMode);
 
-        return rewardList != null ? new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound) : PlaytimeRewardCollection.empty();
+        return rewardList != null ? new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound, showsInGui) : PlaytimeRewardCollection.empty();
     }
 
     public static PlaytimeRewardCollection empty() {
-        return new PlaytimeRewardCollection(0, null, null, null, 0, null, null, null);
+        return new PlaytimeRewardCollection(0, null, null, null, 0, null, null, null, true);
     }
 }
