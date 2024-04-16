@@ -3,12 +3,14 @@ package me.dave.lushrewards.module.dailyrewards;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
+import me.dave.lushrewards.gui.GuiDisplayer;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;
+import me.dave.platyutils.gui.inventory.Gui;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.StringUtils;
@@ -25,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DailyRewardsModule extends RewardModule implements UserDataModule<DailyRewardsModule.UserData> {
+public class DailyRewardsModule extends RewardModule implements UserDataModule<DailyRewardsModule.UserData>, GuiDisplayer {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private HashSet<DailyRewardCollection> rewards;
     private DailyRewardsPlaceholder placeholder;
@@ -277,6 +279,12 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     public GuiFormat getGuiFormat() {
         return guiFormat;
     }
+
+    @Override
+    public Gui getGui(Player player) {
+        return new DailyRewardsGui(this, player);
+    }
+
 
     @Override
     public UserData getDefaultData(UUID uuid) {

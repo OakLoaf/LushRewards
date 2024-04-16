@@ -3,11 +3,13 @@ package me.dave.lushrewards.module.playtimerewards;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
+import me.dave.lushrewards.gui.GuiDisplayer;
 import me.dave.lushrewards.gui.GuiFormat;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardCollection;
+import me.dave.platyutils.gui.inventory.Gui;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -19,7 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlaytimeRewardsModule extends RewardModule implements UserDataModule<PlaytimeRewardsModule.UserData> {
+public class PlaytimeRewardsModule extends RewardModule implements UserDataModule<PlaytimeRewardsModule.UserData>, GuiDisplayer {
     private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
     private PlaytimeRewardsPlaceholder placeholder;
@@ -195,9 +197,13 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
     }
 
-    // TODO: Add Gui
     public GuiFormat getGuiFormat() {
         return guiFormat;
+    }
+
+    @Override
+    public Gui getGui(Player player) {
+        return new PlaytimeRewardsGui(this, player);
     }
 
     @Override

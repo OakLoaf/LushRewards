@@ -1,6 +1,7 @@
 package me.dave.lushrewards.command;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.gui.GuiDisplayer;
 import me.dave.lushrewards.importer.ConfigImporter;
 import me.dave.lushrewards.importer.DailyRewardsPlusImporter;
 import me.dave.lushrewards.importer.NDailyRewardsImporter;
@@ -33,6 +34,7 @@ public class RewardsCommand extends Command {
         super("rewards");
         addSubCommand(new AboutSubCommand());
         addSubCommand(new ClaimSubCommand());
+        addSubCommand(new GuiSubCommand());
         addSubCommand(new EditUserSubCommand());
         addSubCommand(new ImportSubCommand());
         addSubCommand(new MessagesSubCommand());
@@ -439,6 +441,40 @@ public class RewardsCommand extends Command {
                     return null;
                 }
             }
+        }
+    }
+
+    private static class GuiSubCommand extends SubCommand {
+
+        public GuiSubCommand() {
+            super("gui");
+        }
+
+        @Override
+        public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage("This command must be ran by a player");
+                return true;
+            }
+
+            if (args.length < 1) {
+                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage", "&#ff6969Incorrect usage try &#d13636%command-usage%").replace("%command-usage%", "/rewards gui <module>"));
+            } else {
+                String moduleId = args[0];
+
+                LushRewards.getInstance().getModule(moduleId).ifPresent(module -> {
+                    if (module instanceof GuiDisplayer guiDisplayer) {
+                        guiDisplayer.displayGui(player);
+                    }
+                });
+            }
+
+            return true;
+        }
+
+        @Override
+        public @Nullable List<String> tabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+            return LushRewards.getInstance().getEnabledRewardModules().stream().map(Module::getId).toList();
         }
     }
 
