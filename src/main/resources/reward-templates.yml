@@ -1,0 +1,5 @@
+rewards:
+  iron_ingots:
+    type: item
+    material: iron_ingot
+    amount: 10

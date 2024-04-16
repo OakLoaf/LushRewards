@@ -5,6 +5,7 @@ import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.SchedulerType;
 import me.dave.platyutils.PlatyUtils;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class Reward {
+public abstract class Reward implements Cloneable {
     protected abstract void giveTo(Player player);
 
     protected abstract SchedulerType getSchedulerType();
@@ -57,6 +58,10 @@ public abstract class Reward {
         }
     }
 
+    public static Reward loadReward(ConfigurationSection configurationSection) {
+        return loadReward(configurationSection.getValues(false), configurationSection.getCurrentPath());
+    }
+
     @Nullable
     public static Reward loadReward(Map<?, ?> rewardMap, String path) {
         Optional<RewardManager> optionalManager = PlatyUtils.getManager(RewardManager.class);
@@ -66,6 +71,11 @@ public abstract class Reward {
         RewardManager rewardManager = optionalManager.get();
 
         String rewardType = (String) rewardMap.get("type");
+        if (rewardType.equalsIgnoreCase("template")) {
+            String template = (String) rewardMap.get("template");
+            return LushRewards.getInstance().getConfigManager().getRewardTemplate(template);
+        }
+
         if (!rewardManager.isRegistered(rewardType)) {
             LushRewards.getInstance().getLogger().severe("Invalid reward type at '" + path + "'");
             return null;
@@ -92,6 +102,15 @@ public abstract class Reward {
         });
 
         return !rewardList.isEmpty() ? rewardList : null;
+    }
+
+    @Override
+    public Reward clone() {
+        try {
+            return (Reward) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     @FunctionalInterface

@@ -7,6 +7,7 @@ import me.dave.lushrewards.data.MySqlStorage;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import me.dave.lushrewards.rewards.custom.Reward;
 import me.dave.lushrewards.utils.Debugger;
 import me.dave.platyutils.PlatyUtils;
 import me.dave.platyutils.manager.GuiManager;
@@ -34,6 +35,7 @@ public class ConfigManager {
 
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Reward> rewardTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
     private Storage<DataManager.StorageData, DataManager.StorageLocation> storage;
     private boolean performanceMode;
@@ -43,14 +45,16 @@ public class ConfigManager {
     private Sound reminderSound;
 
     public ConfigManager() {
-        if (!new File(PlatyUtils.getPlugin().getDataFolder(), "config.yml").exists()) {
-            LushRewards.getInstance().saveDefaultResource("modules/daily-rewards.yml");
-            LushRewards.getInstance().saveDefaultResource("modules/daily-playtime-rewards.yml");
-            LushRewards.getInstance().saveDefaultResource("modules/global-playtime-rewards.yml");
+        LushRewards plugin = LushRewards.getInstance();
+        if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
+            plugin.saveDefaultResource("reward-templates.yml");
+            plugin.saveDefaultResource("modules/daily-rewards.yml");
+            plugin.saveDefaultResource("modules/daily-playtime-rewards.yml");
+            plugin.saveDefaultResource("modules/global-playtime-rewards.yml");
         }
 
-        LushRewards.getInstance().saveDefaultConfig();
-        LushRewards.getInstance().saveDefaultResource("storage.yml");
+        plugin.saveDefaultConfig();
+        plugin.saveDefaultResource("storage.yml");
     }
 
     public void reloadConfig() {
@@ -113,6 +117,7 @@ public class ConfigManager {
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
+        reloadRewardTemplates();
         reloadMessages(config.getConfigurationSection("messages"));
         plugin.getNotificationHandler().reloadNotifications();
 
@@ -187,6 +192,10 @@ public class ConfigManager {
         return itemTemplate.clone();
     }
 
+    public Reward getRewardTemplate(String name) {
+        return rewardTemplates.get(name).clone();
+    }
+
     public Storage<DataManager.StorageData, DataManager.StorageLocation> getStorage() {
         return storage;
     }
@@ -246,6 +255,20 @@ public class ConfigManager {
                 LushRewards.getInstance().getLogger().info("Loaded item-template: " + categorySection.getName());
             }
         });
+    }
+
+    private void reloadRewardTemplates() {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "reward-templates.yml"));
+
+        ConfigurationSection rewardsSection = config.getConfigurationSection("rewards");
+        if (rewardsSection != null) {
+            rewardsSection.getValues(false).forEach((key, value) -> {
+                if (value instanceof ConfigurationSection rewardSection) {
+                    rewardTemplates.put(rewardSection.getName(), Reward.loadReward(rewardSection));
+                    LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());
+                }
+            });
+        }
     }
 
     private void reloadMessages(ConfigurationSection messagesSection) {
