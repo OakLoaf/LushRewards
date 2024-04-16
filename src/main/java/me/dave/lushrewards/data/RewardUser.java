@@ -37,8 +37,4 @@ public class RewardUser extends UserDataModule.UserData {
         this.minutesPlayed = minutesPlayed;
         LushRewards.getInstance().getDataManager().saveRewardUser(this);
     }
-
-    public void save() {
-        LushRewards.getInstance().getDataManager().saveRewardUser(this);
-    }
 }
