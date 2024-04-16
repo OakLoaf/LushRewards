@@ -258,7 +258,13 @@ public class ConfigManager {
     }
 
     private void reloadRewardTemplates() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "reward-templates.yml"));
+        YamlConfiguration config;
+        try {
+            config = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "reward-templates.yml"));
+        } catch (IllegalArgumentException ignored) {
+            return;
+        }
+
 
         ConfigurationSection rewardsSection = config.getConfigurationSection("rewards");
         if (rewardsSection != null) {
