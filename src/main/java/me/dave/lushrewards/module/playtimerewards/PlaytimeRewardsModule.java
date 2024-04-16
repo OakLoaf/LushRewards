@@ -158,7 +158,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             .replaceAll("%hours%", String.valueOf((int) Math.floor(rewardUser.getMinutesPlayed() / 60D))));
 
         userData.setLastCollectedPlaytime(totalMinutesPlayed);
-        rewardUser.save();
+        saveUserData(userData.getUniqueId(), userData);
         return true;
     }
 
