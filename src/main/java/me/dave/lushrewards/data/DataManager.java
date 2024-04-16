@@ -101,9 +101,6 @@ public class DataManager extends Manager {
     }
 
     public CompletableFuture<Boolean> saveRewardUser(RewardUser rewardUser) {
-        // TODO: Move this call to only be in specific places (outside of this method)
-        //saveModulesUserData(rewardUser.getUniqueId());
-
         return saveUserData(rewardUser.getUniqueId(), rewardUser);
     }
 
