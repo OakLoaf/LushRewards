@@ -61,7 +61,7 @@ public class DailyRewardsGui extends Gui {
                     LocalDate lastCollectedDate = userData.getLastCollectedDate();
                     if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
                         userData.restartStreak();
-                        LushRewards.getInstance().getDataManager().saveRewardUser(player);
+                        module.saveUserData(userData.getUniqueId(), userData);
                     }
                 }
 
