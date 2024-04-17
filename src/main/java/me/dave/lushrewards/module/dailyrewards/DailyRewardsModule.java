@@ -12,7 +12,6 @@ import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.Debugger;
 import me.dave.platyutils.gui.inventory.Gui;
 import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
-import me.dave.platyutils.module.Module;
 import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -32,7 +31,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     private HashSet<DailyRewardCollection> rewards;
     private DailyRewardsPlaceholder placeholder;
     private int resetDaysAt;
-    private boolean streakMode;
+    private RewardMode rewardMode;
     private boolean allowRewardsStacking;
     private Sound defaultRedeemSound;
     private String upcomingCategory;
@@ -61,7 +60,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         this.resetDaysAt = config.getInt("reset-days-at", -1);
-        this.streakMode = config.getBoolean("streak-mode", false);
+        this.rewardMode = StringUtils.getEnum(config.getString("reward-mode", config.getBoolean("streak-mode") ? "streak" : "default"), RewardMode.class).orElse(RewardMode.DEFAULT);
         this.allowRewardsStacking = config.getBoolean("allow-reward-stacking", true);
         this.defaultRedeemSound = StringUtils.getEnum(config.getString("default-redeem-sound", "none"), Sound.class).orElse(null);
         this.upcomingCategory = config.getString("upcoming-category");
@@ -158,7 +157,13 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             return false;
         }
 
-        userData.incrementStreakLength();
+        LocalDate lastCollectedDate = userData.getLastCollectedDate();
+        if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
+            userData.setStreak(1);
+        } else {
+            userData.incrementStreak();
+        }
+
         userData.setLastCollectedDate(LocalDate.now());
         userData.addCollectedDate(LocalDate.now());
         this.saveUserData(player.getUniqueId(), userData)
@@ -186,6 +191,47 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             });
 
         return true;
+    }
+
+    public void checkRewardDay(Player player) {
+        getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> {
+            LocalDate lastJoinDate = userData.getLastJoinDate();
+            if (lastJoinDate == null) {
+                userData.setLastJoinDate(LocalDate.now());
+                saveUserData(userData.getUniqueId(), userData);
+                return;
+            } else if (lastJoinDate.isEqual(LocalDate.now())) {
+                return;
+            }
+
+            switch (getRewardMode()) {
+                case STREAK -> {
+                    // Resets RewardUser to Day 1 if a day has been missed
+                    LocalDate lastCollectedDate = userData.getLastCollectedDate();
+                    if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
+                        userData.setDayNum(1);
+                        userData.setStreak(1);
+                        userData.clearCollectedDates();
+                    } else {
+                        userData.incrementDayNum();
+                    }
+                }
+                case ONLINE_ONLY -> {
+                    if (lastJoinDate.isBefore(LocalDate.now())) {
+                        userData.incrementDayNum();
+                    }
+                }
+                case DEFAULT -> userData.setDayNum((int) (LocalDate.now().toEpochDay() - userData.getStartDate().toEpochDay()) + 1);
+            }
+
+            int resetDay = getResetDay();
+            if (resetDay > 0 && userData.getDayNum() > resetDay) {
+                userData.setDayNum(1);
+            }
+
+            userData.setLastJoinDate(LocalDate.now());
+            saveUserData(userData.getUniqueId(), userData);
+        });
     }
 
     @NotNull
@@ -252,8 +298,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         return resetDaysAt;
     }
 
-    public boolean isStreakModeEnabled() {
-        return streakMode;
+    public RewardMode getRewardMode() {
+        return rewardMode;
     }
 
     public boolean shouldStackRewards() {
@@ -285,10 +331,9 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         return new DailyRewardsGui(this, player);
     }
 
-
     @Override
     public UserData getDefaultData(UUID uuid) {
-        return new UserData(uuid, id, 0, 0, LocalDate.now(), null, new HashSet<>());
+        return new UserData(uuid, id, null, 1, 0, 0, LocalDate.now(), null, new HashSet<>());
     }
 
     @Override
@@ -314,59 +359,57 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     }
 
     public static class UserData extends UserDataModule.UserData {
-        private int streakLength;
-        private int highestStreak;
-        private LocalDate startDate;
+        private final LocalDate startDate;
+        private LocalDate lastJoinDate;
         private LocalDate lastCollectedDate;
         private final HashSet<String> collectedDates;
+        private int dayNum;
+        private int streak;
+        private int highestStreak;
 
-        public UserData(UUID uuid, String moduleId, int streakLength, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
+        public UserData(UUID uuid, String moduleId, LocalDate lastJoinDate, int dayNum, int streak, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
             super(uuid, moduleId);
-            this.streakLength = streakLength;
+            this.lastJoinDate = lastJoinDate;
+            this.dayNum = dayNum;
+            this.streak = streak;
             this.highestStreak = highestStreak;
             this.startDate = startDate;
             this.lastCollectedDate = lastCollectedDate;
             this.collectedDates = collectedDates;
         }
 
+        public LocalDate getLastJoinDate() {
+            return lastJoinDate;
+        }
+
+        public void setLastJoinDate(LocalDate lastJoinDate) {
+            this.lastJoinDate = lastJoinDate;
+        }
+
         public int getDayNum() {
-            int dayNum = (int) (LocalDate.now().toEpochDay() - startDate.toEpochDay()) + 1;
-
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(this.getModuleId());
-            if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule dailyRewardsModule) {
-                int resetDay = dailyRewardsModule.getResetDay();
-
-                if (resetDay > 0 && dayNum > resetDay) {
-                    setDayNum(1);
-                    dayNum = 1;
-                }
-            }
-
             return dayNum;
         }
 
         public void setDayNum(int dayNum) {
-            startDate = LocalDate.now().minusDays(dayNum - 1);
+            this.dayNum = dayNum;
         }
 
-        public int getStreakLength() {
-            return streakLength;
+        public void incrementDayNum() {
+            this.dayNum++;
         }
 
-        public void setStreakLength(int streakLength) {
-            this.streakLength = streakLength;
+        public int getStreak() {
+            return streak;
         }
 
-        public void restartStreak() {
-            setDayNum(1);
-            setStreakLength(1);
-            clearCollectedDates();
+        public void setStreak(int streak) {
+            this.streak = streak;
         }
 
-        public void incrementStreakLength() {
-            this.streakLength += 1;
-            if (streakLength > highestStreak) {
-                highestStreak = streakLength;
+        public void incrementStreak() {
+            this.streak += 1;
+            if (streak > highestStreak) {
+                highestStreak = streak;
             }
         }
 
@@ -374,8 +417,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             return highestStreak;
         }
 
-        public LocalDate getDateAtStreakLength(int streakLength) {
-            return LocalDate.now().plusDays(streakLength - getDayNum());
+        public LocalDate getExpectedDateOnDayNum(int dayNum) {
+            return LocalDate.now().plusDays(dayNum - getDayNum());
         }
 
         public LocalDate getStartDate() {
@@ -406,5 +449,11 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         public void clearCollectedDates() {
             collectedDates.clear();
         }
+    }
+
+    public enum RewardMode {
+        DEFAULT,
+        STREAK,
+        ONLINE_ONLY
     }
 }

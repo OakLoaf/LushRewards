@@ -28,7 +28,7 @@ public class DailyRewardsPlaceholder {
                     return null;
                 }
 
-                RewardDay rewardDay = module.getRewardDay(LocalDate.now(), userData.getStreakLength());
+                RewardDay rewardDay = module.getRewardDay(LocalDate.now(), userData.getStreak());
                 return String.valueOf(rewardDay.getHighestPriorityRewardCollection().getCategory());
             } else {
                 return null;
@@ -81,7 +81,7 @@ public class DailyRewardsPlaceholder {
             Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
             if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule module) {
                 DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
-                return String.valueOf(userData.getStreakLength());
+                return String.valueOf(userData.getStreak());
             } else {
                 return null;
             }
@@ -94,7 +94,7 @@ public class DailyRewardsPlaceholder {
             Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
             if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule module) {
                 DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
-                RewardDay rewardDay = module.getRewardDay(LocalDate.now(), userData.getStreakLength());
+                RewardDay rewardDay = module.getRewardDay(LocalDate.now(), userData.getStreak());
                 return String.valueOf(rewardDay.getRewardCount());
             } else {
                 return null;
@@ -106,7 +106,7 @@ public class DailyRewardsPlaceholder {
                 DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
 
                 int dayNum = Integer.parseInt(params[2]);
-                LocalDate date = userData.getDateAtStreakLength(dayNum);
+                LocalDate date = userData.getExpectedDateOnDayNum(dayNum);
                 RewardDay rewardDay = module.getRewardDay(date, dayNum);
                 DailyRewardCollection dailyRewardCollection = rewardDay.getHighestPriorityRewardCollection();
 

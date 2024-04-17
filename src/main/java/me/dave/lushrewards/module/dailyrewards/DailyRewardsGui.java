@@ -51,23 +51,12 @@ public class DailyRewardsGui extends Gui {
                     errorItem.parseColors(player);
 
                     inventory.setItem(4, errorItem.asItemStack());
-
                     return;
                 }
 
-                // Checks if the streak mode config option is enabled
-                if (module.isStreakModeEnabled()) {
-                    // Resets RewardUser to Day 1 if a day has been missed
-                    LocalDate lastCollectedDate = userData.getLastCollectedDate();
-                    if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
-                        userData.restartStreak();
-                        module.saveUserData(userData.getUniqueId(), userData);
-                    }
-                }
+                module.checkRewardDay(player);
 
-                // Checks if the reward has been collected today
                 boolean collectedToday = userData.hasCollectedToday();
-                // The current day number being shown to the user
                 int currDayNum = userData.getDayNum();
 
                 // First reward day shown

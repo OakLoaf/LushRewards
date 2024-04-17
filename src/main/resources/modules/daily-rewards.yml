@@ -1,10 +1,13 @@
 # Daily Rewards: Rewards that are given daily
 type: daily-rewards
 
+# Reward mode changes the way that reward days are increased
+# - default: Increases every day
+# - streak: Resets if a day is missed
+# - online_only: Increases every day that the player is online
+reward-mode: streak
 # Resets player back to day 1, this does not affect streaks (Set to -1 to disable)
 reset-days-at: -1
-# Whether a player will reset to day 1 if they miss a day
-streak-mode: true
 # Whether players will receive all rewards on a day or just the one with the highest priority
 allow-reward-stacking: false
 
