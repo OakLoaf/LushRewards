@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -166,7 +165,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         userData.setLastCollectedDate(LocalDate.now());
-        userData.addCollectedDate(LocalDate.now());
+        userData.addCollectedDay(userData.getDayNum());
         this.saveUserData(player.getUniqueId(), userData)
             .thenAccept(success -> {
                 if (!success) {
@@ -211,16 +210,17 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
                 if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
                     userData.setDayNum(1);
                     userData.setStreak(1);
-                    userData.clearCollectedDates();
+                    userData.clearCollectedDays();
                 } else {
                     userData.incrementDayNum();
                 }
             }
-            case ONLINE_ONLY -> {
-                if (lastJoinDate.isBefore(LocalDate.now())) {
+            case ON_CLAIM_ONLY -> {
+                if (userData.hasCollectedDay(userData.getDayNum()) && !userData.hasCollectedToday()) {
                     userData.incrementDayNum();
                 }
             }
+            case ONLINE_ONLY -> userData.incrementDayNum();
             case DEFAULT -> userData.setDayNum((int) (LocalDate.now().toEpochDay() - userData.getStartDate().toEpochDay()) + 1);
         }
 
@@ -381,20 +381,20 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         private final LocalDate startDate;
         private LocalDate lastJoinDate;
         private LocalDate lastCollectedDate;
-        private final HashSet<String> collectedDates;
+        private final HashSet<Integer> collectedDays;
         private int dayNum;
         private int streak;
         private int highestStreak;
 
-        public UserData(UUID uuid, String moduleId, LocalDate lastJoinDate, int dayNum, int streak, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<String> collectedDates) {
+        public UserData(UUID uuid, String moduleId, LocalDate lastJoinDate, int dayNum, int streak, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<Integer> collectedDays) {
             super(uuid, moduleId);
+            this.startDate = startDate;
             this.lastJoinDate = lastJoinDate;
+            this.lastCollectedDate = lastCollectedDate;
+            this.collectedDays = collectedDays;
             this.dayNum = dayNum;
             this.streak = streak;
             this.highestStreak = highestStreak;
-            this.startDate = startDate;
-            this.lastCollectedDate = lastCollectedDate;
-            this.collectedDates = collectedDates;
         }
 
         public LocalDate getLastJoinDate() {
@@ -423,13 +423,13 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         public void setStreak(int streak) {
             this.streak = streak;
-        }
-
-        public void incrementStreak() {
-            this.streak += 1;
             if (streak > highestStreak) {
                 highestStreak = streak;
             }
+        }
+
+        public void incrementStreak() {
+            setStreak(this.streak + 1);
         }
 
         public int getHighestStreak() {
@@ -453,26 +453,31 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             this.lastCollectedDate = date;
         }
 
-        public HashSet<String> getCollectedDates() {
-            return collectedDates;
-        }
-
         public boolean hasCollectedToday() {
             return lastCollectedDate != null && lastCollectedDate.isEqual(LocalDate.now());
         }
 
-        public void addCollectedDate(LocalDate date) {
-            collectedDates.add(date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        public HashSet<Integer> getCollectedDays() {
+            return collectedDays;
         }
 
-        public void clearCollectedDates() {
-            collectedDates.clear();
+        public boolean hasCollectedDay(int dayNum) {
+            return collectedDays.contains(dayNum);
+        }
+
+        public void addCollectedDay(int dayNum) {
+            collectedDays.add(dayNum);
+        }
+
+        public void clearCollectedDays() {
+            collectedDays.clear();
         }
     }
 
     public enum RewardMode {
         DEFAULT,
         STREAK,
+        ON_CLAIM_ONLY,
         ONLINE_ONLY
     }
 }

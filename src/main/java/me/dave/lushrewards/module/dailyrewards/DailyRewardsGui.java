@@ -88,7 +88,7 @@ public class DailyRewardsGui extends Gui {
                 }
 
                 TreeMultimap<Character, Integer> slotMap = guiTemplate.getSlotMap();
-                HashSet<String> collectedDates = userData.getCollectedDates();
+                HashSet<Integer> collectedDays = userData.getCollectedDays();
                 for (Character character : slotMap.keySet()) {
                     switch (character) {
                         case 'R' -> slotMap.get(character).forEach(slot -> {
@@ -110,7 +110,7 @@ public class DailyRewardsGui extends Gui {
 
                                 String itemTemplate;
                                 if (dayIndex.get() < currDayNum) {
-                                    itemTemplate = (collectedDates.contains(dateIndex[0].format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) ? "collected-reward" : "missed-reward";
+                                    itemTemplate = (collectedDays.contains(dayIndex.get())) ? "collected-reward" : "missed-reward";
                                 } else if (dayIndex.get() == currDayNum) {
                                     itemTemplate = collectedToday ? "collected-reward" : "redeemable-reward";
                                 } else {

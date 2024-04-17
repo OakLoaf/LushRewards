@@ -601,8 +601,9 @@ public class RewardsCommand extends Command {
             LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
                 if (module instanceof DailyRewardsModule dailyRewardsModule) {
                     dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
-                        userData.clearCollectedDates();
+                        userData.clearCollectedDays();
                         userData.setLastCollectedDate(null);
+
                         dailyRewardsModule.saveUserData(uuid, userData);
                     });
                 }
