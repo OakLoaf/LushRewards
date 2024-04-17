@@ -54,7 +54,7 @@ public class DailyRewardsGui extends Gui {
                     return;
                 }
 
-                module.checkRewardDay(player);
+                module.checkRewardDay(userData);
 
                 boolean collectedToday = userData.hasCollectedToday();
                 int currDayNum = userData.getDayNum();

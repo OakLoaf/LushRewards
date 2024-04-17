@@ -24,6 +24,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DailyRewardsModule extends RewardModule implements UserDataModule<DailyRewardsModule.UserData>, GuiDisplayer {
@@ -193,45 +194,43 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         return true;
     }
 
-    public void checkRewardDay(Player player) {
-        getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> {
-            LocalDate lastJoinDate = userData.getLastJoinDate();
-            if (lastJoinDate == null) {
-                userData.setLastJoinDate(LocalDate.now());
-                saveUserData(userData.getUniqueId(), userData);
-                return;
-            } else if (lastJoinDate.isEqual(LocalDate.now())) {
-                return;
-            }
-
-            switch (getRewardMode()) {
-                case STREAK -> {
-                    // Resets RewardUser to Day 1 if a day has been missed
-                    LocalDate lastCollectedDate = userData.getLastCollectedDate();
-                    if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
-                        userData.setDayNum(1);
-                        userData.setStreak(1);
-                        userData.clearCollectedDates();
-                    } else {
-                        userData.incrementDayNum();
-                    }
-                }
-                case ONLINE_ONLY -> {
-                    if (lastJoinDate.isBefore(LocalDate.now())) {
-                        userData.incrementDayNum();
-                    }
-                }
-                case DEFAULT -> userData.setDayNum((int) (LocalDate.now().toEpochDay() - userData.getStartDate().toEpochDay()) + 1);
-            }
-
-            int resetDay = getResetDay();
-            if (resetDay > 0 && userData.getDayNum() > resetDay) {
-                userData.setDayNum(1);
-            }
-
+    public void checkRewardDay(UserData userData) {
+        LocalDate lastJoinDate = userData.getLastJoinDate();
+        if (lastJoinDate == null) {
             userData.setLastJoinDate(LocalDate.now());
             saveUserData(userData.getUniqueId(), userData);
-        });
+            return;
+        } else if (lastJoinDate.isEqual(LocalDate.now())) {
+            return;
+        }
+
+        switch (getRewardMode()) {
+            case STREAK -> {
+                // Resets RewardUser to Day 1 if a day has been missed
+                LocalDate lastCollectedDate = userData.getLastCollectedDate();
+                if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
+                    userData.setDayNum(1);
+                    userData.setStreak(1);
+                    userData.clearCollectedDates();
+                } else {
+                    userData.incrementDayNum();
+                }
+            }
+            case ONLINE_ONLY -> {
+                if (lastJoinDate.isBefore(LocalDate.now())) {
+                    userData.incrementDayNum();
+                }
+            }
+            case DEFAULT -> userData.setDayNum((int) (LocalDate.now().toEpochDay() - userData.getStartDate().toEpochDay()) + 1);
+        }
+
+        int resetDay = getResetDay();
+        if (resetDay > 0 && userData.getDayNum() > resetDay) {
+            userData.setDayNum(1);
+        }
+
+        userData.setLastJoinDate(LocalDate.now());
+        saveUserData(userData.getUniqueId(), userData);
     }
 
     @NotNull
@@ -339,6 +338,26 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     @Override
     public UserData getUserData(UUID uuid) {
         return userDataCache.get(uuid);
+    }
+
+    @Override
+    public CompletableFuture<UserData> getOrLoadUserData(UUID uuid, boolean cacheUser) {
+        CompletableFuture<UserData> future = LushRewards.getInstance().getDataManager().getOrLoadUserData(uuid, this, cacheUser);
+        if (cacheUser) {
+            future.thenAccept(this::checkRewardDay);
+        }
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<UserData> loadUserData(UUID uuid, boolean cacheUser) {
+        CompletableFuture<UserData> future = LushRewards.getInstance().getDataManager().loadUserData(uuid, this, cacheUser);
+        if (cacheUser) {
+            future.thenAccept(this::checkRewardDay);
+        }
+
+        return future;
     }
 
     @Override
