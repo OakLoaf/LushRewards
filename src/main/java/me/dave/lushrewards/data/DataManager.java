@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.module.UserDataModule;
-import me.dave.platyutils.manager.Manager;
+import org.lushplugins.lushlib.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;

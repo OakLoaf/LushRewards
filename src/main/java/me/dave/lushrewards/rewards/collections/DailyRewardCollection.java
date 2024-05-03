@@ -4,8 +4,8 @@ import me.dave.lushrewards.exceptions.InvalidRewardException;
 
 import me.dave.lushrewards.rewards.custom.Reward;
 import me.dave.lushrewards.utils.Debugger;
-import me.dave.platyutils.utils.SimpleItemStack;
-import me.dave.platyutils.utils.StringUtils;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;

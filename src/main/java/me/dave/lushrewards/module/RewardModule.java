@@ -1,6 +1,6 @@
 package me.dave.lushrewards.module;
 
-import me.dave.platyutils.module.Module;
+import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
 
 import java.io.File;

@@ -2,10 +2,9 @@ package me.dave.lushrewards.notifications;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModule;
-import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
-import me.dave.platyutils.libraries.paperlib.morepaperlib.scheduling.ScheduledTask;
+import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.Bukkit;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -24,7 +23,7 @@ public class NotificationHandler {
             notificationTask.cancel();
         }
 
-        this.notificationTask = PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
+        this.notificationTask = LushRewards.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
             for (RewardModule module : LushRewards.getInstance().getEnabledRewardModules()) {
                 // TODO: Add config option to modules to enable notifications for modules (Default true for DailyRewards and false for others)
                 if (module.hasClaimableRewards(player)) {

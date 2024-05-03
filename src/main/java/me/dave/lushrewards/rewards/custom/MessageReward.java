@@ -1,7 +1,7 @@
 package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.utils.SchedulerType;
-import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
+import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

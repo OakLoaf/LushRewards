@@ -4,7 +4,7 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardDay;
 import me.dave.lushrewards.utils.LocalPlaceholders;
-import me.dave.platyutils.module.Module;
+import org.lushplugins.lushlib.module.Module;
 
 import java.time.LocalDate;
 import java.util.HashSet;

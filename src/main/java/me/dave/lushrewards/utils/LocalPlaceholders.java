@@ -3,7 +3,7 @@ package me.dave.lushrewards.utils;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.platyutils.module.Module;
+import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

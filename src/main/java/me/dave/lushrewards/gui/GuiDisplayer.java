@@ -1,6 +1,6 @@
 package me.dave.lushrewards.gui;
 
-import me.dave.platyutils.gui.inventory.Gui;
+import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.bukkit.entity.Player;
 
 public interface GuiDisplayer {

@@ -13,13 +13,14 @@ import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.LocalPlaceholders;
 import me.dave.lushrewards.utils.gson.LocalDateTypeAdapter;
 import me.dave.lushrewards.utils.gson.UserDataExclusionStrategy;
-import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.plugin.SpigotPlugin;
-import me.dave.platyutils.utils.Updater;
 import org.bukkit.Bukkit;
 import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.data.DataManager;
 import me.dave.lushrewards.listener.RewardUserListener;
+import org.lushplugins.lushlib.LushLib;
+import org.lushplugins.lushlib.plugin.SpigotPlugin;
+import org.lushplugins.lushlib.utils.Updater;
+import space.arim.morepaperlib.MorePaperLib;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 public final class LushRewards extends SpigotPlugin {
     private static final Gson GSON;
     private static LushRewards plugin;
+    private static MorePaperLib morePaperLib;
 
     private ConfigManager configManager;
     private DataManager dataManager;
@@ -45,12 +47,14 @@ public final class LushRewards extends SpigotPlugin {
     @Override
     public void onLoad() {
         plugin = this;
-        PlatyUtils.enable(this);
+        morePaperLib = new MorePaperLib(plugin);
+
+        LushLib.getInstance().enable(this);
     }
 
     @Override
     public void onEnable() {
-        PlatyUtils.registerManager(
+        registerManager(
             new RewardModuleTypeManager(),
             new RewardManager()
         );
@@ -109,7 +113,8 @@ public final class LushRewards extends SpigotPlugin {
         configManager = null;
         localPlaceholders = null;
 
-        PlatyUtils.disable();
+        morePaperLib.scheduling().cancelGlobalTasks();
+        LushLib.getInstance().disable();
     }
 
     public ConfigManager getConfigManager() {
@@ -152,5 +157,9 @@ public final class LushRewards extends SpigotPlugin {
 
     public static LushRewards getInstance() {
         return plugin;
+    }
+
+    public static MorePaperLib getMorePaperLib() {
+        return morePaperLib;
     }
 }

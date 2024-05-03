@@ -1,7 +1,7 @@
 package me.dave.lushrewards.hook;
 
-import me.dave.platyutils.hook.Hook;
 import org.geysermc.floodgate.api.FloodgateApi;
+import org.lushplugins.lushlib.hook.Hook;
 
 import java.util.UUID;
 

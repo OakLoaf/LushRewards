@@ -2,10 +2,9 @@ package me.dave.lushrewards.module.playtimetracker;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModule;
-import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.libraries.paperlib.morepaperlib.scheduling.ScheduledTask;
-import me.dave.platyutils.module.Module;
+import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -24,7 +23,7 @@ public class PlaytimeTrackerModule extends Module {
     public void onEnable() {
         playtimeTrackers = new ConcurrentHashMap<>();
 
-        heartbeat = PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
+        heartbeat = LushRewards.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
                 if (LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).isEmpty()) {
                     heartbeat.cancel();

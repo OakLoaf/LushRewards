@@ -4,7 +4,6 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.SchedulerType;
-import me.dave.platyutils.PlatyUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +22,7 @@ public abstract class Reward implements Cloneable {
 
     public void giveReward(Player player) {
         switch (this.getSchedulerType()) {
-            case ASYNC -> PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+            case ASYNC -> LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -31,7 +30,7 @@ public abstract class Reward implements Cloneable {
                     e.printStackTrace();
                 }
             });
-            case PLAYER -> PlatyUtils.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
+            case PLAYER -> LushRewards.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -39,7 +38,7 @@ public abstract class Reward implements Cloneable {
                     e.printStackTrace();
                 }
             }, () -> {});
-            case GLOBAL -> PlatyUtils.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
+            case GLOBAL -> LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -47,7 +46,7 @@ public abstract class Reward implements Cloneable {
                     e.printStackTrace();
                 }
             });
-            case REGION -> PlatyUtils.getMorePaperLib().scheduling().regionSpecificScheduler(player.getLocation()).run(() -> {
+            case REGION -> LushRewards.getMorePaperLib().scheduling().regionSpecificScheduler(player.getLocation()).run(() -> {
                 try {
                     this.giveTo(player);
                 } catch (Exception e) {
@@ -64,7 +63,7 @@ public abstract class Reward implements Cloneable {
 
     @Nullable
     public static Reward loadReward(Map<?, ?> rewardMap, String path) {
-        Optional<RewardManager> optionalManager = PlatyUtils.getManager(RewardManager.class);
+        Optional<RewardManager> optionalManager = LushRewards.getInstance().getManager(RewardManager.class);
         if (optionalManager.isEmpty()) {
             return null;
         }

@@ -4,8 +4,8 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
-import me.dave.platyutils.module.Module;
-import me.dave.platyutils.utils.SimpleLocation;
+import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushlib.utils.SimpleLocation;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;

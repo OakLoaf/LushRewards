@@ -1,8 +1,8 @@
 package me.dave.lushrewards.rewards;
 
 import me.dave.lushrewards.rewards.custom.*;
-import me.dave.platyutils.manager.Manager;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.lushlib.manager.Manager;
 
 import java.util.concurrent.ConcurrentHashMap;
 

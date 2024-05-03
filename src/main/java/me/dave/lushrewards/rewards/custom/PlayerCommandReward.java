@@ -4,9 +4,9 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.HookId;
 import me.dave.lushrewards.utils.SchedulerType;
-import me.dave.platyutils.hook.Hook;
-import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
-import me.dave.platyutils.libraries.chatcolor.parsers.custom.PlaceholderAPIParser;
+import org.lushplugins.lushlib.hook.Hook;
+import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
+import org.lushplugins.lushlib.libraries.chatcolor.parsers.custom.PlaceholderAPIParser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

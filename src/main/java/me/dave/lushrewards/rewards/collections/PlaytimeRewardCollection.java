@@ -2,8 +2,8 @@ package me.dave.lushrewards.rewards.collections;
 
 import me.dave.lushrewards.rewards.custom.Reward;
 import me.dave.lushrewards.utils.Debugger;
-import me.dave.platyutils.utils.SimpleItemStack;
-import me.dave.platyutils.utils.StringUtils;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +50,10 @@ public class PlaytimeRewardCollection extends RewardCollection {
         int playtimeSinceStart = endMinute - startMinute;
         int result = (playtimeSinceStart / repeatFrequency) + 1; // We add 1 to include the startMinute
         return Math.max(result, 0); // Ensure that the value is not less than 0
+    }
+
+    public int getStartMinute() {
+        return startMinute;
     }
 
     public Integer getRepeatFrequency() {

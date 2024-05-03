@@ -1,8 +1,7 @@
 package me.dave.lushrewards.hook;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.utils.LocalPlaceholders;
-import me.dave.platyutils.hook.Hook;
+import org.lushplugins.lushlib.hook.Hook;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

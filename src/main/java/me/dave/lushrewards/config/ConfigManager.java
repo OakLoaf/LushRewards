@@ -9,11 +9,10 @@ import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.rewards.custom.Reward;
 import me.dave.lushrewards.utils.Debugger;
-import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.manager.GuiManager;
-import me.dave.platyutils.module.Module;
-import me.dave.platyutils.utils.SimpleItemStack;
-import me.dave.platyutils.utils.StringUtils;
+import org.lushplugins.lushlib.manager.GuiManager;
+import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.StringUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -59,7 +58,7 @@ public class ConfigManager {
 
     public void reloadConfig() {
         LushRewards plugin = LushRewards.getInstance();
-        PlatyUtils.getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
+        LushRewards.getInstance().getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
 
         plugin.unregisterAllModules();
         plugin.reloadConfig();
@@ -96,7 +95,7 @@ public class ConfigManager {
                         }
                     }
 
-                    RewardModuleTypeManager rewardModuleTypes = PlatyUtils.getManager(RewardModuleTypeManager.class).orElseThrow();
+                    RewardModuleTypeManager rewardModuleTypes = LushRewards.getInstance().getManager(RewardModuleTypeManager.class).orElseThrow();
                     if (rewardsType != null && rewardModuleTypes.isRegistered(rewardsType)) {
                         plugin.registerModule(rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile));
                     } else {

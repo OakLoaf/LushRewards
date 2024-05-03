@@ -1,6 +1,6 @@
 package me.dave.lushrewards.importer;
 
-import me.dave.platyutils.PlatyUtils;
+import me.dave.lushrewards.LushRewards;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class NDailyRewardsImporter extends ConfigImporter {
     public CompletableFuture<Boolean> startImport() {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+        LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
             YamlConfiguration mainConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "config.yml"));
 
             completableFuture.complete(true);

@@ -2,7 +2,7 @@ package me.dave.lushrewards.module;
 
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import me.dave.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
-import me.dave.platyutils.manager.Manager;
+import org.lushplugins.lushlib.manager.Manager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

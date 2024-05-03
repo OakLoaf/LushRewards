@@ -5,13 +5,12 @@ import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.custom.ConsoleCommandReward;
 import me.dave.lushrewards.rewards.custom.MessageReward;
 import me.dave.lushrewards.rewards.custom.Reward;
-import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.utils.SimpleItemStack;
-import me.dave.platyutils.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +36,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
     public CompletableFuture<Boolean> startImport() {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+        LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
             YamlConfiguration drpConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Config.yml"));
             YamlConfiguration drpRewardsConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "Rewards.yml"));
 
@@ -112,7 +111,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     if (displayMaterialRaw != null && !displayMaterialRaw.isBlank()) {
                         displayItem = new SimpleItemStack(StringUtils.getEnum(displayMaterialRaw, Material.class).orElse(null));
                         if (rewardSection.getBoolean("Extras.Enchanted")) {
-                            displayItem.setEnchanted(true);
+                            displayItem.setEnchantGlow(true);
                         }
                     }
 

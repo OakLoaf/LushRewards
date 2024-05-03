@@ -3,7 +3,7 @@ package me.dave.lushrewards.module.playtimerewards;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.utils.LocalPlaceholders;
-import me.dave.platyutils.module.Module;
+import org.lushplugins.lushlib.module.Module;
 
 import java.util.HashSet;
 import java.util.Optional;

@@ -2,7 +2,7 @@ package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.exceptions.InvalidRewardException;
 import me.dave.lushrewards.utils.SchedulerType;
-import me.dave.platyutils.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

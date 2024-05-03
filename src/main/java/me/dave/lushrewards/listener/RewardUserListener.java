@@ -5,10 +5,9 @@ import me.dave.lushrewards.data.RewardUser;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTracker;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.platyutils.PlatyUtils;
-import me.dave.platyutils.libraries.chatcolor.ChatColorHandler;
-import me.dave.platyutils.listener.EventListener;
-import me.dave.platyutils.utils.Updater;
+import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
+import org.lushplugins.lushlib.listener.EventListener;
+import org.lushplugins.lushlib.utils.Updater;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -32,7 +31,7 @@ public class RewardUserListener implements EventListener {
         if (player.hasPermission("lushrewards.update")) {
             Updater updater = LushRewards.getInstance().getUpdater();
             if (updater.isUpdateAvailable() && !updater.isAlreadyDownloaded()) {
-                PlatyUtils.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> ChatColorHandler.sendMessage(player, "&#ffe27aA new &#e0c01bLushRewards &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!"), Duration.of(2, ChronoUnit.SECONDS));
+                LushRewards.getMorePaperLib().scheduling().asyncScheduler().runDelayed(() -> ChatColorHandler.sendMessage(player, "&#ffe27aA new &#e0c01bLushRewards &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!"), Duration.of(2, ChronoUnit.SECONDS));
             }
         }
     }

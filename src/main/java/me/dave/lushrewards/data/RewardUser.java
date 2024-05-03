@@ -3,7 +3,6 @@ package me.dave.lushrewards.data;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.api.event.RewardUserPlaytimeChangeEvent;
 import me.dave.lushrewards.module.UserDataModule;
-import me.dave.platyutils.PlatyUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -32,7 +31,7 @@ public class RewardUser extends UserDataModule.UserData {
     }
 
     public void setMinutesPlayed(int minutesPlayed) {
-        PlatyUtils.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> LushRewards.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
+        LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> LushRewards.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
 
         this.minutesPlayed = minutesPlayed;
         LushRewards.getInstance().getDataManager().saveRewardUser(this);
