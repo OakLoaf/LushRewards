@@ -179,7 +179,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     public HashMap<PlaytimeRewardCollection, Integer> getRewardCollectionsInRange(int lower, int upper) {
         HashMap<PlaytimeRewardCollection, Integer> output = new HashMap<>();
         minutesToReward.values().forEach(rewardCollection -> {
-            int amount = rewardCollection.isAvailableAt(lower, upper);
+            int amount = rewardCollection.amountAvailableAt(lower, upper);
             if (amount > 0) {
                 output.put(rewardCollection, amount);
             }
