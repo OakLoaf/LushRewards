@@ -15,15 +15,15 @@ import java.util.Map;
 
 public class PlaytimeRewardCollection extends RewardCollection {
     private final int startMinute;
-    private final Integer repeatFrequency;
-    private final Integer repeatsUntil;
+    private final int repeatFrequency;
+    private final int repeatsUntil;
     private final boolean hideFromGui;
 
     public PlaytimeRewardCollection(int startMinute, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean hideFromGui) {
         super(rewards, priority, category, displayItem, sound);
         this.startMinute = startMinute;
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntil != null ? 1 : 0);
-        this.repeatsUntil = repeatsUntil;
+        this.repeatsUntil = repeatsUntil != null ? repeatsUntil : Integer.MAX_VALUE;;
         this.hideFromGui = hideFromGui;
     }
 
@@ -40,8 +40,6 @@ public class PlaytimeRewardCollection extends RewardCollection {
     }
 
     public int amountAvailableAt(int playtime) {
-        int repeatsUntil = this.repeatsUntil != null ? this.repeatsUntil : Integer.MAX_VALUE;
-
         if (playtime < startMinute) {
             return 0;
         }
@@ -127,7 +125,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? StringUtils.getEnum((String) rewardCollectionMap.get("redeem-sound"), Sound.class).orElse(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-        boolean showsInGui = !rewardCollectionMap.containsKey("show-in-gui") || (boolean) rewardCollectionMap.get("show-in-gui");
+        boolean showsInGui = rewardCollectionMap.containsKey("hide-from-gui") && (boolean) rewardCollectionMap.get("hide-from-gui");
 
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = (List<Map<?, ?>>) rewardCollectionMap.get("rewards");
