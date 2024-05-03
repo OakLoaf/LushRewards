@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 public class PlaytimeRewardCollection extends RewardCollection {
-    private final int minutes;
+    private final int startMinute;
     private final Integer repeatFrequency;
     private final Integer repeatsUntil;
     private final boolean showInGui;
 
-    public PlaytimeRewardCollection(int minutes, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean showInGui) {
+    public PlaytimeRewardCollection(int startMinute, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean showInGui) {
         super(rewards, priority, category, displayItem, sound);
-        this.minutes = minutes;
+        this.startMinute = startMinute;
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntil != null ? 1 : 0);
         this.repeatsUntil = repeatsUntil;
         this.showInGui = showInGui;
@@ -35,11 +35,11 @@ public class PlaytimeRewardCollection extends RewardCollection {
         int amount = 0;
         int repeatsUntil = this.repeatsUntil != null ? this.repeatsUntil : Integer.MAX_VALUE;
 
-        if (minutes > lastCollected && minutes <= totalMinutes) {
+        if (startMinute > lastCollected && startMinute <= totalMinutes) {
             amount++;
         }
 
-        if (repeatFrequency <= 0 || totalMinutes < minutes || lastCollected > repeatsUntil) {
+        if (repeatFrequency <= 0 || totalMinutes < startMinute || lastCollected > repeatsUntil) {
             return amount;
         }
 
