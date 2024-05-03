@@ -33,6 +33,7 @@ public class ConfigManager {
     private static LocalDate currentDate;
 
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
+    // TODO: Create local item-templates in RewardModule
     private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Reward> rewardTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
