@@ -17,14 +17,14 @@ public class PlaytimeRewardCollection extends RewardCollection {
     private final int startMinute;
     private final Integer repeatFrequency;
     private final Integer repeatsUntil;
-    private final boolean showInGui;
+    private final boolean hideFromGui;
 
-    public PlaytimeRewardCollection(int startMinute, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean showInGui) {
+    public PlaytimeRewardCollection(int startMinute, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean hideFromGui) {
         super(rewards, priority, category, displayItem, sound);
         this.startMinute = startMinute;
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntil != null ? 1 : 0);
         this.repeatsUntil = repeatsUntil;
-        this.showInGui = showInGui;
+        this.hideFromGui = hideFromGui;
     }
 
     public boolean isAvailableAt(int playtime) {
@@ -60,8 +60,8 @@ public class PlaytimeRewardCollection extends RewardCollection {
         return repeatsUntil;
     }
 
-    public boolean shouldShowInGui() {
-        return showInGui;
+    public boolean shouldHideFromGui() {
+        return hideFromGui;
     }
 
     @NotNull
@@ -88,14 +88,14 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "none"), Sound.class).orElse(null);
-        boolean showInGui = rewardCollectionSection.getBoolean("show-in-gui");
+        boolean hideFromGui = rewardCollectionSection.getBoolean("hide-from-gui");
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
 
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound, showInGui);
+        return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound, hideFromGui);
     }
 
     @NotNull
