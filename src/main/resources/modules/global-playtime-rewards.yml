@@ -28,7 +28,6 @@ goals:
         material: diamond
         amount: 3
 
-# The gui is not currently available for this module
 gui:
   title: "   &#529bf2&lGlobal Playtime Rewards"
   # Available templates: DEFAULT, COMPACT
