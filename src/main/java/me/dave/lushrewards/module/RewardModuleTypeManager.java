@@ -17,7 +17,6 @@ public class RewardModuleTypeManager extends Manager {
         rewardModuleTypes = new ConcurrentHashMap<>();
 
         register(RewardModule.Type.DAILY_REWARDS, DailyRewardsModule::new);
-//        register(ModuleType.ONE_TIME_REWARDS, OneTimeRewardsModule::new);
         register(RewardModule.Type.PLAYTIME_REWARDS, PlaytimeRewardsModule::new);
     }
 
