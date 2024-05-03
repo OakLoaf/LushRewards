@@ -170,6 +170,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         return receiveWithDailyRewards;
     }
 
+    public Collection<PlaytimeRewardCollection> getRewards() {
+        return minutesToReward.values();
+    }
+
     @Nullable
     public RewardCollection getRewardCollection(int minutes) {
         return minutesToReward.get(minutes);
