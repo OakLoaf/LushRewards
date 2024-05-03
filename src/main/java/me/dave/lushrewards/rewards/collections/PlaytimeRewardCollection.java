@@ -27,26 +27,37 @@ public class PlaytimeRewardCollection extends RewardCollection {
         this.showInGui = showInGui;
     }
 
-    public int isAvailableAt(int totalMinutes) {
-        return isAvailableAt(0, totalMinutes);
+    public boolean isAvailableAt(int playtime) {
+        return amountAvailableAt(playtime) > 0;
     }
 
-    public int isAvailableAt(int lastCollected, int totalMinutes) {
-        int amount = 0;
+    public boolean isAvailableAt(int prevPlaytime, int playtime) {
+        return amountAvailableAt(prevPlaytime, playtime) > 0;
+    }
+
+    public int amountAvailableAt(int prevPlaytime, int playtime) {
+        return amountAvailableAt(playtime) - amountAvailableAt(prevPlaytime);
+    }
+
+    public int amountAvailableAt(int playtime) {
         int repeatsUntil = this.repeatsUntil != null ? this.repeatsUntil : Integer.MAX_VALUE;
 
-        if (startMinute > lastCollected && startMinute <= totalMinutes) {
-            amount++;
+        if (playtime < startMinute) {
+            return 0;
         }
 
-        if (repeatFrequency <= 0 || totalMinutes < startMinute || lastCollected > repeatsUntil) {
-            return amount;
-        }
+        int endMinute = Math.min(playtime, repeatsUntil);
+        int playtimeSinceStart = endMinute - startMinute;
+        int result = (playtimeSinceStart / repeatFrequency) + 1; // We add 1 to include the startMinute
+        return Math.max(result, 0); // Ensure that the value is not less than 0
+    }
 
-        // TODO: Change calculation to be based off of all-time time instead of difference between collections
-        int validMinutesSinceCollected = Math.min(totalMinutes, repeatsUntil) - lastCollected;
+    public Integer getRepeatFrequency() {
+        return repeatFrequency;
+    }
 
-        return (amount + validMinutesSinceCollected) / repeatFrequency;
+    public Integer getRepeatsUntil() {
+        return repeatsUntil;
     }
 
     public boolean shouldShowInGui() {
