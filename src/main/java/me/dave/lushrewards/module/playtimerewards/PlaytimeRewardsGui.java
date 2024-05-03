@@ -50,7 +50,7 @@ public class PlaytimeRewardsGui extends Gui {
                             // TODO: Replace with category
                             SimpleItemStack simpleItemStack = new SimpleItemStack(Material.STONE);
                             if (module.hasClaimableRewards(player)) {
-                                simpleItemStack.setEnchanted(true);
+                                simpleItemStack.setEnchantGlow(true);
                             }
                             simpleItemStack.parseColors(player);
 
