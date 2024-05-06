@@ -9,6 +9,7 @@ import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.utils.Debugger;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -59,11 +60,12 @@ public class PlaytimeRewardsGui extends Gui {
 
                     int playtime = playtimeTracker.getGlobalPlaytime();
                     int startPlaytime = (int) ((playtime - module.getShortestRepeatFrequency(playtime)) * Math.floor(guiTemplate.countChar('R') / 2D));
-                    // TODO: Finalise implementation
-
                     module.getRewards().forEach(reward -> {
                         if (!reward.shouldHideFromGui()) {
-                            rewardQueue.add(new Pair<>(reward, reward.getStartMinute()));
+                            Integer minutes = findFirstNumInSequence(reward.getStartMinute(), reward.getRepeatFrequency(), startPlaytime);
+                            if (minutes != null) {
+                                rewardQueue.add(new Pair<>(reward, minutes));
+                            }
                         }
                     });
 
@@ -123,31 +125,33 @@ public class PlaytimeRewardsGui extends Gui {
 
                                 displayItem.parseColors(player);
 
-                                addButton(slot, (event) -> {
-                                    // Gets clicked item and checks if it exists
-                                    ItemStack currItem = event.getCurrentItem();
-                                    if (currItem == null) {
-                                        return;
-                                    }
+                                if (module.hasClaimableRewards(player)) {
+                                    addButton(slot, (event) -> {
+                                        // Gets clicked item and checks if it exists
+                                        ItemStack currItem = event.getCurrentItem();
+                                        if (currItem == null) {
+                                            return;
+                                        }
 
-                                    removeButton(slot);
+                                        removeButton(slot);
 
-                                    SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward"));
-                                    if (collectedItem.getDisplayName() != null) {
-                                        collectedItem.setDisplayName(collectedItem.getDisplayName()
-                                            .replaceAll("%minutes%", String.valueOf(minutes)));
-                                    }
-                                    collectedItem.parseColors(player);
+                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward"));
+                                        if (collectedItem.getDisplayName() != null) {
+                                            collectedItem.setDisplayName(collectedItem.getDisplayName()
+                                                .replaceAll("%minutes%", String.valueOf(minutes)));
+                                        }
+                                        collectedItem.parseColors(player);
 
-                                    inventory.setItem(slot, collectedItem.asItemStack());
+                                        inventory.setItem(slot, collectedItem.asItemStack());
 
-                                    Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
+                                        Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 
-                                    // TODO: Make give only clicked (and previous) rewards
-                                    if (module.hasClaimableRewards(player)) {
-                                        module.claimRewards(player);
-                                    }
-                                });
+                                        // TODO: Make give only clicked (and previous) rewards
+                                        if (module.hasClaimableRewards(player)) {
+                                            module.claimRewards(player);
+                                        }
+                                    });
+                                }
 
                                 inventory.setItem(slot, displayItem.asItemStack());
                             });
@@ -179,5 +183,14 @@ public class PlaytimeRewardsGui extends Gui {
     public void onClose(InventoryCloseEvent event) {
         super.onClose(event);
         rewardQueue.clear();
+    }
+
+    @Nullable
+    private Integer findFirstNumInSequence(int start, int increment, int lowerBound) {
+        if (increment <= 0) {
+            return start > lowerBound ? start : null;
+        }
+
+        return (int) (start + increment * Math.ceil((lowerBound - start) / increment));
     }
 }
