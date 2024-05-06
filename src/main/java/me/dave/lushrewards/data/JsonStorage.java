@@ -26,6 +26,10 @@ public class JsonStorage implements Storage<DataManager.StorageData, DataManager
 
     @Override
     public void save(DataManager.StorageData storageData) {
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir();
+        }
+
         UUID uuid = storageData.uuid();
         String module = storageData.moduleId();
         JsonObject moduleJson = storageData.json();
@@ -45,6 +49,10 @@ public class JsonStorage implements Storage<DataManager.StorageData, DataManager
     }
 
     private JsonObject loadFile(UUID uuid) {
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir();
+        }
+
         try {
             JsonElement json = JsonParser.parseReader(new FileReader(getUserFile(uuid)));
             return json.isJsonObject() ? json.getAsJsonObject() : new JsonObject();

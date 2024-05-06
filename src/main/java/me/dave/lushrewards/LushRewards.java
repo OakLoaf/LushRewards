@@ -17,11 +17,13 @@ import org.bukkit.Bukkit;
 import me.dave.lushrewards.config.ConfigManager;
 import me.dave.lushrewards.data.DataManager;
 import me.dave.lushrewards.listener.RewardUserListener;
+import org.bukkit.util.FileUtil;
 import org.lushplugins.lushlib.LushLib;
 import org.lushplugins.lushlib.plugin.SpigotPlugin;
 import org.lushplugins.lushlib.utils.Updater;
 import space.arim.morepaperlib.MorePaperLib;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,6 +56,16 @@ public final class LushRewards extends SpigotPlugin {
 
     @Override
     public void onEnable() {
+        File oldDataFolder = new File(getDataFolder().getParentFile(), "ActivityRewarder");
+        if (!getDataFolder().exists() && oldDataFolder.exists()) {
+            if (FileUtil.copy(oldDataFolder, getDataFolder())) {
+                File dataFolder = new File(getDataFolder(), "data");
+                for (File file : dataFolder.listFiles()) {
+                    file.delete();
+                }
+            }
+        }
+
         registerManager(
             new RewardModuleTypeManager(),
             new RewardManager()
