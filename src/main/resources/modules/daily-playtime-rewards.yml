@@ -5,8 +5,8 @@ type: playtime-rewards
 reset-playtime-at: 1
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)
 refresh-time: 30
-# Whether rewards should be given when claiming daily rewards
-give-with-daily-rewards: false
+# Whether notifications should be sent when rewards are claimable
+enable-notifications: true
 
 goals:
   - category: small

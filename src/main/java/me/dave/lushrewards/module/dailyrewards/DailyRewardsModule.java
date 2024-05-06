@@ -63,6 +63,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         this.rewardMode = StringUtils.getEnum(config.getString("reward-mode", config.getBoolean("streak-mode") ? "streak" : "default"), RewardMode.class).orElse(RewardMode.DEFAULT);
         this.allowRewardsStacking = config.getBoolean("allow-reward-stacking", true);
         this.defaultRedeemSound = StringUtils.getEnum(config.getString("default-redeem-sound", "none"), Sound.class).orElse(null);
+        setShouldNotify(config.getBoolean("enable-notifications", true));
         this.upcomingCategory = config.getString("upcoming-category");
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");

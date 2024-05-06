@@ -62,6 +62,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
         refreshTime = config.getInt("refresh-time");
         receiveWithDailyRewards = config.getBoolean("give-with-daily-rewards");
+        setShouldNotify(config.getBoolean("enable-notifications", false));
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();

@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class RewardModule extends Module {
     protected final File moduleFile;
     private final boolean requiresTimeTracker;
+    private boolean shouldNotify = false;
     private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
 
     public RewardModule(String id, File moduleFile) {
@@ -38,6 +39,14 @@ public abstract class RewardModule extends Module {
 
     public boolean requiresPlaytimeTracker() {
         return requiresTimeTracker;
+    }
+
+    public boolean shouldNotify() {
+        return shouldNotify;
+    }
+
+    public void setShouldNotify(boolean shouldNotify) {
+        this.shouldNotify = shouldNotify;
     }
 
     public SimpleItemStack getItemTemplate(String key) {

@@ -24,13 +24,9 @@ public class NotificationHandler {
         }
 
         this.notificationTask = LushRewards.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
-            for (RewardModule module : LushRewards.getInstance().getEnabledRewardModules()) {
-                // TODO: Add config option to modules to enable notifications for modules (Default true for DailyRewards and false for others)
-                if (module.hasClaimableRewards(player)) {
-                    ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("reminder"));
-                    player.playSound(player.getLocation(), LushRewards.getInstance().getConfigManager().getReminderSound(), 1f, 1.5f);
-                    return;
-                }
+            if (LushRewards.getInstance().getEnabledRewardModules().stream().anyMatch(rewardModule -> rewardModule.shouldNotify() && rewardModule.hasClaimableRewards(player))) {
+                ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("reminder"));
+                player.playSound(player.getLocation(), LushRewards.getInstance().getConfigManager().getReminderSound(), 1f, 1.5f);
             }
         }), Duration.of(Math.round((double) reminderPeriodMs / 3), ChronoUnit.MILLIS), Duration.of(reminderPeriodMs, ChronoUnit.MILLIS));
     }

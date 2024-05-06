@@ -14,6 +14,8 @@ allow-reward-stacking: false
 
 # The redeem sound to play if unspecified
 default-redeem-sound: ENTITY_PLAYER_LEVELUP
+# Whether notifications should be sent when rewards are claimable
+enable-notifications: true
 
 # Upcoming category to display
 upcoming-category: large
