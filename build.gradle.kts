@@ -28,6 +28,7 @@ dependencies {
     implementation("org.enchantedskies:EnchantedStorage:3.0.0")
     implementation("org.lushplugins:LushLib:0.1.7.6")
     implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
+    // TODO: Replace with HikariCP
     implementation("com.mysql:mysql-connector-j:8.3.0")
 }
 
