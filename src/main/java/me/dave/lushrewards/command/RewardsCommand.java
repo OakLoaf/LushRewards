@@ -54,36 +54,4 @@ public class RewardsCommand extends Command {
 
         return true;
     }
-
-    private List<RewardModule> getModules(String moduleNames) {
-        List<RewardModule> modules = new ArrayList<>();
-
-        for (String name : moduleNames.split(",")) {
-            if (name.equals("*")) {
-                return LushRewards.getInstance().getEnabledRewardModules();
-            }
-
-            LushRewards.getInstance().getModule(name).ifPresent(module -> {
-                if (module instanceof RewardModule rewardModule) {
-                    modules.add(rewardModule);
-                }
-            });
-        }
-
-        return modules;
-    }
-
-    private List<String> getRemainingModules(String arg, Class<? extends RewardModule> moduleClass) {
-        List<String> possibleModules = new ArrayList<>(LushRewards.getInstance().getEnabledRewardModules().stream()
-            .filter(moduleClass::isInstance)
-            .map(Module::getId)
-            .toList()
-        );
-
-        for (String moduleName : arg.split(",")) {
-            possibleModules.remove(moduleName);
-        }
-
-        return possibleModules;
-    }
 }

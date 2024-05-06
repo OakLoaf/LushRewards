@@ -1,6 +1,8 @@
 package me.dave.lushrewards.command.subcommand;
 
+import joptsimple.internal.Strings;
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.dailyrewards.DailyRewardsModule;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -57,11 +59,15 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    if (!setDay(sender, args[0], 1) || !setStreak(sender, args[0], 1) || !removeCollectedDays(sender, args[0])) {
+                    List<RewardModule> modules = getModules(fullArgs[1]);
+                    if (!setDay(sender, args[0], modules, 1) || !setStreak(sender, args[0], modules, 1) || !removeCollectedDays(sender, args[0], modules)) {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", "1"));
+                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm")
+                        .replace("%target%", args[0])
+                        .replace("%day%", "1")
+                        .replace("%module%", Strings.join(modules.stream().map(Module::getId).toList(), ", ")));
                 }
             }
 
@@ -97,7 +103,8 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    if (!setDay(sender, args[0], 1)) {
+                    List<RewardModule> modules = getModules(fullArgs[1]);
+                    if (!setDay(sender, args[0], modules, 1)) {
                         return true;
                     }
 
@@ -146,7 +153,8 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    if (!setDay(sender, args[0], dayNum)) {
+                    List<RewardModule> modules = getModules(fullArgs[1]);
+                    if (!setDay(sender, args[0], modules, dayNum)) {
                         return true;
                     }
 
@@ -187,7 +195,8 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    if (!setStreak(sender, args[0], 1)) {
+                    List<RewardModule> modules = getModules(fullArgs[1]);
+                    if (!setStreak(sender, args[0], modules, 1)) {
                         return true;
                     }
 
@@ -235,7 +244,11 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    if (!setStreak(sender, args[0], streak)) return true;
+                    List<RewardModule> modules = getModules(fullArgs[1]);
+                    if (!setStreak(sender, args[0], modules, streak)) {
+                        return true;
+                    }
+
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", String.valueOf(streak)));
                     return true;
                 }
@@ -254,9 +267,8 @@ public class EditUserSubCommand extends SubCommand {
         }
     }
 
-    // TODO: Add module id (accept '*' for all modules)
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean setDay(CommandSender sender, String nameOrUuid, int dayNum) {
+    private static boolean setDay(CommandSender sender, String nameOrUuid, List<RewardModule> modules, int dayNum) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
         if (player != null) {
@@ -270,7 +282,7 @@ public class EditUserSubCommand extends SubCommand {
             }
         }
 
-        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+        modules.forEach(module -> {
             if (module instanceof DailyRewardsModule dailyRewardsModule) {
                 dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                     if (userData != null) {
@@ -287,7 +299,7 @@ public class EditUserSubCommand extends SubCommand {
 
     // TODO: Add module id (accept '*' for all modules)
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean setStreak(CommandSender sender, String nameOrUuid, int streak) {
+    private static boolean setStreak(CommandSender sender, String nameOrUuid, List<RewardModule> modules, int streak) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
         if (player != null) {
@@ -301,7 +313,7 @@ public class EditUserSubCommand extends SubCommand {
             }
         }
 
-        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+        modules.forEach(module -> {
             if (module instanceof DailyRewardsModule dailyRewardsModule) {
                 dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                     userData.setStreak(streak);
@@ -314,7 +326,7 @@ public class EditUserSubCommand extends SubCommand {
     }
 
     // TODO: Add module id (accept '*' for all modules)
-    private static boolean removeCollectedDays(CommandSender sender, String nameOrUuid) {
+    private static boolean removeCollectedDays(CommandSender sender, String nameOrUuid, List<RewardModule> modules) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
         if (player != null) {
@@ -329,7 +341,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         if (player != null) {
-            LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+            modules.forEach(module -> {
                 if (module instanceof DailyRewardsModule dailyRewardsModule) {
                     dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                         userData.clearCollectedDays();
@@ -342,5 +354,36 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         return true;
+    }
+
+    private static List<RewardModule> getModules(String moduleNames) {
+        List<RewardModule> modules = new ArrayList<>();
+
+        if (moduleNames.equals("*")) {
+            return LushRewards.getInstance().getEnabledRewardModules();
+        }
+
+        for (String name : moduleNames.split(",")) {
+            LushRewards.getInstance().getModule(name).ifPresent(module -> {
+                if (module instanceof RewardModule rewardModule) {
+                    modules.add(rewardModule);
+                }
+            });
+        }
+
+        return modules;
+    }
+
+    private List<String> getRemainingModules(String arg) {
+        List<String> possibleModules = new ArrayList<>(LushRewards.getInstance().getEnabledRewardModules().stream()
+            .map(Module::getId)
+            .toList()
+        );
+
+        for (String moduleName : arg.split(",")) {
+            possibleModules.remove(moduleName);
+        }
+
+        return possibleModules;
     }
 }
