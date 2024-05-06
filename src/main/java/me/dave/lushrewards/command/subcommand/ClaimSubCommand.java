@@ -1,6 +1,7 @@
 package me.dave.lushrewards.command.subcommand;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,8 +33,9 @@ public class ClaimSubCommand extends SubCommand {
             return true;
         }
 
+        List<RewardModule> modules = args.length >= 1 ? getModules(args[0]) : getModules("*");
         AtomicInteger rewardsGiven = new AtomicInteger();
-        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+        modules.forEach(module -> {
             if (module instanceof UserDataModule<?> userDataModule) {
                 userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player));
                 rewardsGiven.getAndIncrement();
@@ -48,5 +50,23 @@ public class ClaimSubCommand extends SubCommand {
         }
 
         return true;
+    }
+
+    private List<RewardModule> getModules(String moduleNames) {
+        List<RewardModule> modules = new ArrayList<>();
+
+        if (moduleNames.equals("*")) {
+            return LushRewards.getInstance().getEnabledRewardModules();
+        }
+
+        for (String name : moduleNames.split(",")) {
+            LushRewards.getInstance().getModule(name).ifPresent(module -> {
+                if (module instanceof RewardModule rewardModule) {
+                    modules.add(rewardModule);
+                }
+            });
+        }
+
+        return modules;
     }
 }
