@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-// TODO: Test
 public class ImportSubCommand extends SubCommand {
 
     public ImportSubCommand() {

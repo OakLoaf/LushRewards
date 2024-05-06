@@ -7,7 +7,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.lushplugins.lushlib.command.SubCommand;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
+import org.lushplugins.lushlib.module.Module;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClaimSubCommand extends SubCommand {
@@ -15,6 +18,11 @@ public class ClaimSubCommand extends SubCommand {
     public ClaimSubCommand() {
         super("claim");
         addRequiredPermission("lushrewards.use");
+        addRequiredArgs(0, () -> {
+            List<String> modules = new ArrayList<>(LushRewards.getInstance().getEnabledRewardModules().stream().map(Module::getId).toList());
+            modules.add("*");
+            return modules;
+        });
     }
 
     @Override

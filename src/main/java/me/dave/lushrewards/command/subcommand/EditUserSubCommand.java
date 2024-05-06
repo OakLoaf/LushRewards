@@ -21,6 +21,7 @@ public class EditUserSubCommand extends SubCommand {
 
     public EditUserSubCommand() {
         super("edit-user");
+        addRequiredPermission("lushrewards.edituser");
         addRequiredArgs(0, () -> {
             List<String> modules = new ArrayList<>(LushRewards.getInstance().getEnabledRewardModules().stream().map(Module::getId).toList());
             modules.add("*");
@@ -31,7 +32,6 @@ public class EditUserSubCommand extends SubCommand {
         addSubCommand(new SetDaysSubCommand());
         addSubCommand(new ResetStreakSubCommand());
         addSubCommand(new SetStreakSubCommand());
-        addRequiredPermission("lushrewards.edituser");
     }
 
     @Override

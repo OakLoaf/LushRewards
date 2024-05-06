@@ -16,6 +16,7 @@ public class GuiSubCommand extends SubCommand {
 
     public GuiSubCommand() {
         super("gui");
+        addRequiredPermission("lushrewards.use");
     }
 
     @Override
