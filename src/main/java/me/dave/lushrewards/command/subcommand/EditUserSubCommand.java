@@ -115,7 +115,8 @@ public class EditUserSubCommand extends SubCommand {
 
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm")
                         .replace("%target%", args[0])
-                        .replace("%day%", "1"));
+                        .replace("%day%", "1")
+                        .replace("%module%", Strings.join(modules.stream().map(Module::getId).toList(), ", ")));
                     return true;
                 }
             }
@@ -171,7 +172,8 @@ public class EditUserSubCommand extends SubCommand {
 
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm")
                         .replace("%target%", args[0])
-                        .replace("%day%", String.valueOf(dayNum)));
+                        .replace("%day%", String.valueOf(dayNum))
+                        .replace("%module%", Strings.join(modules.stream().map(Module::getId).toList(), ", ")));
                     return true;
                 }
             }
@@ -217,7 +219,8 @@ public class EditUserSubCommand extends SubCommand {
 
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm")
                         .replace("%target%", args[0])
-                        .replace("%streak%", "1"));
+                        .replace("%streak%", "1")
+                        .replace("%module%", Strings.join(modules.stream().map(Module::getId).toList(), ", ")));
                     return true;
                 }
             }
@@ -272,7 +275,8 @@ public class EditUserSubCommand extends SubCommand {
 
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm")
                         .replace("%target%", args[0])
-                        .replace("%streak%", String.valueOf(streak)));
+                        .replace("%streak%", String.valueOf(streak))
+                        .replace("%module%", Strings.join(modules.stream().map(Module::getId).toList(), ", ")));
                     return true;
                 }
             }
