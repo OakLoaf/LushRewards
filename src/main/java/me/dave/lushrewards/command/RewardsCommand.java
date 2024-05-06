@@ -31,7 +31,7 @@ public class RewardsCommand extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         LushRewards.getInstance().getConfigManager().checkRefresh();
 
         if (!(sender instanceof Player player)) {

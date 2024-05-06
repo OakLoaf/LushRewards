@@ -14,7 +14,7 @@ public class ReloadSubCommand extends SubCommand {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         LushRewards.getInstance().getConfigManager().reloadConfig();
         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reload"));
         return true;

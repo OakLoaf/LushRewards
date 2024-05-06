@@ -33,7 +33,7 @@ public class EditUserSubCommand extends SubCommand {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id>"));
         return true;
     }
@@ -47,7 +47,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
                 case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset <player>"));
                 case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset").replaceAll("%target%", args[0]));
@@ -69,7 +69,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             if (args.length == 1) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             } else {
@@ -87,7 +87,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
                 case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset-days <player>"));
                 case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-days").replaceAll("%target%", args[0]));
@@ -110,7 +110,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             if (args.length == 1) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             } else {
@@ -128,7 +128,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
                 case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num>"));
                 case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days").replaceAll("%target%", args[0]).replaceAll("%day%", args[1]));
@@ -159,7 +159,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             if (args.length == 1) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             } else {
@@ -177,7 +177,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
                 case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset-streak <player>"));
                 case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-streak").replaceAll("%target%", args[0]));
@@ -199,7 +199,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             if (args.length == 1) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             } else {
@@ -217,7 +217,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
                 case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak>"));
                 case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak").replaceAll("%target%", args[0]).replaceAll("%streak%", args[1]));
@@ -245,7 +245,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         @Override
-        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             if (args.length == 1) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             } else {

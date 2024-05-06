@@ -19,7 +19,7 @@ public class GuiSubCommand extends SubCommand {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("This command must be ran by a player");
             return true;
@@ -41,7 +41,7 @@ public class GuiSubCommand extends SubCommand {
     }
 
     @Override
-    public @Nullable List<String> tabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> tabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         return LushRewards.getInstance().getEnabledRewardModules().stream().map(Module::getId).toList();
     }
 }

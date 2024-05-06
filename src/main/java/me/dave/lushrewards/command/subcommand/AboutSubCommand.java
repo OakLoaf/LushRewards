@@ -24,7 +24,7 @@ public class AboutSubCommand extends SubCommand {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         for (String aboutMessage : ABOUT_MESSAGES) {
             ChatColorHandler.sendMessage(sender, aboutMessage);
         }

@@ -15,7 +15,7 @@ public class UpdateSubCommand extends SubCommand {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         Updater updater = LushRewards.getInstance().getUpdater();
 
         if (updater.isAlreadyDownloaded() || !updater.isUpdateAvailable()) {
