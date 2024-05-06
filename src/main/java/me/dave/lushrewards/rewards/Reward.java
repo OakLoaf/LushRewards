@@ -76,10 +76,10 @@ public abstract class Reward implements Cloneable {
 
         LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
             if (message != null) {
-                ChatColorHandler.sendMessage(player, message);
+                ChatColorHandler.sendMessage(player, message.replaceAll("%player%", player.getDisplayName()));
             }
             if (broadcast != null) {
-                ChatColorHandler.broadcastMessage(message);
+                ChatColorHandler.broadcastMessage(broadcast.replaceAll("%player%", player.getDisplayName()));
             }
         });
     }
