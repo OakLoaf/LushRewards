@@ -62,10 +62,15 @@ public class DataManager extends Manager {
     }
 
     public CompletableFuture<RewardUser> loadRewardUser(@NotNull UUID uuid, boolean cacheUser) {
-        CompletableFuture<RewardUser> future = loadUserData(uuid, null, RewardUser.class);
-        if (cacheUser) {
-            future.thenAccept(rewardUser -> rewardUsersCache.put(uuid, rewardUser));
-        }
+        CompletableFuture<RewardUser> future = new CompletableFuture<>();
+
+        loadUserData(uuid, null, RewardUser.class).thenAccept(rewardUser -> {
+            if (cacheUser) {
+                rewardUsersCache.put(uuid, rewardUser);
+            }
+            future.complete(rewardUser);
+        });
+
         return future;
     }
 
