@@ -3,7 +3,6 @@ package me.dave.lushrewards.importer;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.custom.ConsoleCommandReward;
-import me.dave.lushrewards.rewards.custom.MessageReward;
 import me.dave.lushrewards.rewards.Reward;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -101,10 +100,11 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     }
 
                     Collection<Reward> rewards = new ArrayList<>();
-                    rewards.add(new ConsoleCommandReward(rewardSection.getStringList("RewardCommands")));
+                    Reward reward = new ConsoleCommandReward(rewardSection.getStringList("RewardCommands"));
                     if (rewardSection.contains("RewardMessage")) {
-                        rewards.add(new MessageReward(rewardSection.getString("RewardMessage")));
+                        reward.setMessage(rewardSection.getString("RewardMessage"));
                     }
+                    rewards.add(reward);
 
                     String displayMaterialRaw = rewardSection.getString("RewardIcon");
                     SimpleItemStack displayItem = new SimpleItemStack();
@@ -127,7 +127,7 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                     arRewardsConfig.set("reset-days-at", highestDayNum.get());
                 }
 
-                arRewardsConfig.set("streak-mode", !drpConfig.getBoolean("PauseStreakWhenMissed", false));
+                arRewardsConfig.set("reward-mode", drpConfig.getBoolean("PauseStreakWhenMissed", false) ? "default" : "streak");
 
                 arRewardsConfig.set("default-redeem-sound", drpConfig.getString("SoundEffect", "ENTITY_PLAYER_LEVELUP"));
 
