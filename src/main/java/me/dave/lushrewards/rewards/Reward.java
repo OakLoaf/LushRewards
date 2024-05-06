@@ -14,13 +14,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public abstract class Reward implements Cloneable {
-    private final String message;
-    private final String broadcast;
+    private String message = null;
+    private String broadcast = null;
 
-    public Reward() {
-        this.message = null;
-        this.broadcast = null;
-    }
+    public Reward() {}
 
     public Reward(@Nullable String message, @Nullable String broadcast) {
         this.message = message;
@@ -28,8 +25,12 @@ public abstract class Reward implements Cloneable {
     }
 
     public Reward(Map<?, ?> map) {
-        this.message = map.containsKey("message") ? (String) map.get("message") : null;
-        this.broadcast = map.containsKey("broadcast") ? (String) map.get("broadcast") : null;
+        if (map.containsKey("message")) {
+            this.message = (String) map.get("message");
+        }
+        if (map.containsKey("broadcast")) {
+            this.broadcast = (String) map.get("broadcast");
+        }
     }
 
     protected abstract void giveTo(Player player);
@@ -82,6 +83,14 @@ public abstract class Reward implements Cloneable {
                 ChatColorHandler.broadcastMessage(broadcast.replace("%player%", player.getDisplayName()));
             }
         });
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setBroadcast(String broadcast) {
+        this.broadcast = broadcast;
     }
 
     public static Reward loadReward(ConfigurationSection configurationSection) {
