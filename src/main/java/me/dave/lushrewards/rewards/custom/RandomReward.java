@@ -18,6 +18,7 @@ public class RandomReward extends Reward {
 
     @SuppressWarnings("unchecked")
     public RandomReward(Map<?, ?> map) {
+        super(map);
         List<Map<?, ?>> rewardMaps;
         try {
             rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());

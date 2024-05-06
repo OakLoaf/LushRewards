@@ -27,6 +27,7 @@ public class ConsoleCommandReward extends Reward {
 
     @SuppressWarnings("unchecked")
     public ConsoleCommandReward(Map<?, ?> map) {
+        super(map);
         this.commands = (List<String>) map.get("commands");
     }
 

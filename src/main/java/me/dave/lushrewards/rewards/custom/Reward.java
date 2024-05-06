@@ -7,6 +7,7 @@ import me.dave.lushrewards.utils.SchedulerType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,24 @@ import java.util.Map;
 import java.util.Optional;
 
 public abstract class Reward implements Cloneable {
+    private final String message;
+    private final String broadcast;
+
+    public Reward() {
+        this.message = null;
+        this.broadcast = null;
+    }
+
+    public Reward(@Nullable String message, @Nullable String broadcast) {
+        this.message = message;
+        this.broadcast = broadcast;
+    }
+
+    public Reward(Map<?, ?> map) {
+        this.message = map.containsKey("message") ? (String) map.get("message") : null;
+        this.broadcast = map.containsKey("broadcast") ? (String) map.get("broadcast") : null;
+    }
+
     protected abstract void giveTo(Player player);
 
     protected abstract SchedulerType getSchedulerType();
@@ -55,6 +74,15 @@ public abstract class Reward implements Cloneable {
                 }
             });
         }
+
+        LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+            if (message != null) {
+                ChatColorHandler.sendMessage(player, message);
+            }
+            if (broadcast != null) {
+                ChatColorHandler.broadcastMessage(message);
+            }
+        });
     }
 
     public static Reward loadReward(ConfigurationSection configurationSection) {

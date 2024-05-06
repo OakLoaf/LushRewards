@@ -1,7 +1,6 @@
-package me.dave.lushrewards.rewards;
+package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.exceptions.InvalidRewardException;
-import me.dave.lushrewards.rewards.custom.Reward;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +15,7 @@ public abstract class WrapperReward extends Reward {
 
     @SuppressWarnings("unchecked")
     public WrapperReward(Map<?, ?> map) {
+        super(map);
         List<Map<?, ?>> rewardMaps;
         try {
             rewardMaps = map.containsKey("rewards") ? (List<Map<?, ?>>) map.get("rewards") : List.of(Collections.emptyMap());

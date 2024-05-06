@@ -25,6 +25,7 @@ public class PlayerCommandReward extends Reward {
 
     @SuppressWarnings("unchecked")
     public PlayerCommandReward(Map<?, ?> map) {
+        super(map);
         this.commands = (List<String>) map.get("commands");
     }
 

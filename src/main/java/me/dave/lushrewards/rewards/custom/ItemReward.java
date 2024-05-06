@@ -19,6 +19,7 @@ public class ItemReward extends Reward {
     }
 
     public ItemReward(@NotNull Map<?, ?> map) {
+        super(map);
         SimpleItemStack itemStack = SimpleItemStack.from(map);
 
         if (itemStack.getType() != null) {
