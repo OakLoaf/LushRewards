@@ -26,7 +26,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
 
     implementation("org.enchantedskies:EnchantedStorage:3.0.0")
-    implementation("org.lushplugins:LushLib:0.1.7")
+    implementation("org.lushplugins:LushLib:0.1.7.2")
     implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
     implementation("com.mysql:mysql-connector-j:8.3.0")
 }
