@@ -36,12 +36,14 @@ public class ClaimSubCommand extends SubCommand {
         List<RewardModule> modules = args.length >= 1 ? getModules(args[0]) : getModules("*");
         AtomicInteger rewardsGiven = new AtomicInteger();
         modules.forEach(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
-                userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player));
-                rewardsGiven.getAndIncrement();
-            } else {
-                module.claimRewards(player);
-                rewardsGiven.getAndIncrement();
+            if (module.hasClaimableRewards(player)) {
+                if (module instanceof UserDataModule<?> userDataModule) {
+                    userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player));
+                    rewardsGiven.getAndIncrement();
+                } else {
+                    module.claimRewards(player);
+                    rewardsGiven.getAndIncrement();
+                }
             }
         });
 
