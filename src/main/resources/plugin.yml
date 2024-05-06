@@ -8,7 +8,7 @@ softdepend:
 - MythicDungeons # Fixes incompatibility
 - PlaceholderAPI
 folia-supported: true
-modrinth-project-slug: lush-rewards
+modrinth-project-id: djC8I9ui
 commands:
   rewards:
     description: Opens Rewards GUI
