@@ -3,7 +3,6 @@ package me.dave.lushrewards.command.subcommand;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.importer.ConfigImporter;
 import me.dave.lushrewards.importer.DailyRewardsPlusImporter;
-import me.dave.lushrewards.importer.NDailyRewardsImporter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,9 +30,8 @@ public class ImportSubCommand extends SubCommand {
 
         ConfigImporter configImporter = null;
         try {
-            switch (args[1].toLowerCase()) {
-                case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
-                case "ndailyrewards" -> configImporter = new NDailyRewardsImporter();
+            if (args[1].equalsIgnoreCase("dailyrewardsplus")) {
+                configImporter = new DailyRewardsPlusImporter();
             }
         } catch (FileNotFoundException e) {
             ChatColorHandler.sendMessage(sender, "&#ff6969Could not find files when attempting to import from &#d13636'" + args[1] + "'");
