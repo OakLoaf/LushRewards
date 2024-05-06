@@ -7,7 +7,7 @@ import me.dave.lushrewards.data.MySqlStorage;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import me.dave.lushrewards.rewards.custom.Reward;
+import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.manager.GuiManager;
 import org.lushplugins.lushlib.module.Module;

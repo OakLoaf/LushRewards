@@ -1,6 +1,7 @@
 package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.exceptions.InvalidRewardException;
+import me.dave.lushrewards.rewards.Reward;
 
 import java.util.Collections;
 import java.util.List;

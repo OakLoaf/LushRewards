@@ -1,6 +1,7 @@
 package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.exceptions.InvalidRewardException;
+import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.bukkit.entity.Player;

@@ -1,6 +1,7 @@
 package me.dave.lushrewards.rewards.custom;
 
 import me.dave.lushrewards.LushRewards;
+import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.bukkit.entity.Player;
 

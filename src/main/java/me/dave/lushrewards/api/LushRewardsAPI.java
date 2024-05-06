@@ -4,7 +4,7 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.module.RewardModuleTypeManager;
 import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.rewards.RewardManager;
-import me.dave.lushrewards.rewards.custom.Reward;
+import me.dave.lushrewards.rewards.Reward;
 
 @SuppressWarnings("unused")
 public class LushRewardsAPI {

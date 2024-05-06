@@ -1,8 +1,7 @@
-package me.dave.lushrewards.rewards.custom;
+package me.dave.lushrewards.rewards;
 
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.exceptions.InvalidRewardException;
-import me.dave.lushrewards.rewards.RewardManager;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

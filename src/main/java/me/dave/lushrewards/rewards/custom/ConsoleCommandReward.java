@@ -3,6 +3,7 @@ package me.dave.lushrewards.rewards.custom;
 import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.hook.FloodgateHook;
 import me.dave.lushrewards.hook.HookId;
+import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;

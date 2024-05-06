@@ -1,7 +1,7 @@
 package me.dave.lushrewards.rewards.collections;
 
 import me.dave.lushrewards.LushRewards;
-import me.dave.lushrewards.rewards.custom.Reward;
+import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;

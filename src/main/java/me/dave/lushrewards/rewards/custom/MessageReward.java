@@ -1,5 +1,6 @@
 package me.dave.lushrewards.rewards.custom;
 
+import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.entity.Player;

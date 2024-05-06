@@ -4,7 +4,7 @@ import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.rewards.collections.DailyRewardCollection;
 import me.dave.lushrewards.rewards.custom.ConsoleCommandReward;
 import me.dave.lushrewards.rewards.custom.MessageReward;
-import me.dave.lushrewards.rewards.custom.Reward;
+import me.dave.lushrewards.rewards.Reward;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
