@@ -8,6 +8,7 @@ import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated(since = "3.0.0")
 @SuppressWarnings("unused")
 public class BroadcastReward extends Reward {
     private final String message;

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated(since = "3.0.0")
 @SuppressWarnings("unused")
 public class MessageReward extends Reward {
     private final String message;
