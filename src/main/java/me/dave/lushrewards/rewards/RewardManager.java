@@ -15,6 +15,7 @@ public class RewardManager extends Manager {
 
         register(Type.BROADCAST, BroadcastReward::new);
         register(Type.CONSOLE_COMMAND, ConsoleCommandReward::new);
+        register(Type.EMPTY, EmptyReward::new);
         register(Type.ITEM, ItemReward::new);
         register(Type.MESSAGE, MessageReward::new);
         register(Type.PERMISSION, PermissionReward::new);
@@ -50,6 +51,7 @@ public class RewardManager extends Manager {
     public static class Type {
         public static final String BROADCAST = "broadcast";
         public static final String CONSOLE_COMMAND = "command";
+        public static final String EMPTY = "empty";
         public static final String ITEM = "item";
         public static final String MESSAGE = "message";
         public static final String PERMISSION = "permission";
