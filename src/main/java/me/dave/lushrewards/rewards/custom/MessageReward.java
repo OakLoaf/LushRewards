@@ -36,6 +36,6 @@ public class MessageReward extends Reward {
 
     @Override
     public SchedulerType getSchedulerType() {
-        return SchedulerType.PLAYER;
+        return SchedulerType.ASYNC;
     }
 }
