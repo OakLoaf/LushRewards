@@ -59,7 +59,7 @@ public final class LushRewards extends SpigotPlugin {
             new RewardManager()
         );
 
-        updater = new Updater(this, "lush-rewards", "lushrewards.update", "rewards update");
+        updater = new Updater(this, "djC8I9ui", "lushrewards.update", "rewards update");
         notificationHandler = new NotificationHandler();
         localPlaceholders = new LocalPlaceholders();
 
