@@ -1,8 +1,8 @@
 package me.dave.lushrewards.importer;
 
 import me.dave.lushrewards.LushRewards;
-import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.lushlib.utils.FilenameUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
