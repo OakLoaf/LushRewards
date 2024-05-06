@@ -35,7 +35,9 @@ public class ConsoleCommandReward extends Reward {
     @Override
     protected void giveTo(Player player) {
         commands.forEach(commandRaw -> {
-            commandRaw = commandRaw.replaceAll("%user%", player.getName()).replaceAll("%player%", player.getName());
+            commandRaw = commandRaw
+                .replace("%user%", player.getName())
+                .replace("%player%", player.getName());
             String command = ChatColorHandler.translate(commandRaw, player, List.of(PlaceholderAPIParser.class));
 
             boolean dispatchCommand = true;

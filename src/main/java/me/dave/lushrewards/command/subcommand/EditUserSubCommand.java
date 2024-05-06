@@ -36,7 +36,8 @@ public class EditUserSubCommand extends SubCommand {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
-        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id>"));
+        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+            .replace("%command-usage%", "/rewards edit-user <module-id>"));
         return true;
     }
 
@@ -50,11 +51,14 @@ public class EditUserSubCommand extends SubCommand {
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
-                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset").replaceAll("%target%", args[0]));
+                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                    .replace("%command-usage%", "/rewards edit-user <module-id> reset <player>"));
+                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset")
+                    .replace("%target%", args[0]));
                 case 2 -> {
                     if (!args[1].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset <player> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> reset <player> confirm"));
                         return true;
                     }
 
@@ -93,11 +97,14 @@ public class EditUserSubCommand extends SubCommand {
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
-                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset-days <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-days").replaceAll("%target%", args[0]));
+                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                    .replace("%command-usage%", "/rewards edit-user <module-id> reset-days <player>"));
+                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-days")
+                    .replace("%target%", args[0]));
                 case 2 -> {
                     if (!args[1].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset-days <player> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> reset-days <player> confirm"));
                         return true;
                     }
 
@@ -106,7 +113,9 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", "1"));
+                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm")
+                        .replace("%target%", args[0])
+                        .replace("%day%", "1"));
                     return true;
                 }
             }
@@ -134,11 +143,15 @@ public class EditUserSubCommand extends SubCommand {
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
-                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num>"));
-                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days").replaceAll("%target%", args[0]).replaceAll("%day%", args[1]));
+                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                    .replace("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num>"));
+                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days")
+                    .replace("%target%", args[0])
+                    .replace("%day%", args[1]));
                 case 3 -> {
                     if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num> confirm"));
                         return true;
                     }
 
@@ -146,7 +159,8 @@ public class EditUserSubCommand extends SubCommand {
                     try {
                         dayNum = Integer.parseInt(args[1]);
                     } catch (NumberFormatException e) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num> confirm"));
                         return true;
                     }
 
@@ -155,7 +169,9 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm").replaceAll("%target%", args[0]).replaceAll("%day%", String.valueOf(dayNum)));
+                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days-confirm")
+                        .replace("%target%", args[0])
+                        .replace("%day%", String.valueOf(dayNum)));
                     return true;
                 }
             }
@@ -183,11 +199,14 @@ public class EditUserSubCommand extends SubCommand {
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
-                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset-streak <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-streak").replaceAll("%target%", args[0]));
+                case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                    .replace("%command-usage%", "/rewards edit-user <module-id> reset-streak <player>"));
+                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-streak")
+                    .replace("%target%", args[0]));
                 case 2 -> {
                     if (!args[1].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> reset-streak <player> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> reset-streak <player> confirm"));
                         return true;
                     }
 
@@ -196,7 +215,9 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", "1"));
+                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm")
+                        .replace("%target%", args[0])
+                        .replace("%streak%", "1"));
                     return true;
                 }
             }
@@ -223,11 +244,15 @@ public class EditUserSubCommand extends SubCommand {
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
             switch (args.length) {
-                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak>"));
-                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak").replaceAll("%target%", args[0]).replaceAll("%streak%", args[1]));
+                case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                    .replace("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak>"));
+                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak")
+                    .replace("%target%", args[0])
+                    .replace("%streak%", args[1]));
                 case 3 -> {
                     if (!args[2].equalsIgnoreCase("confirm")) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak> confirm"));
                         return true;
                     }
 
@@ -235,7 +260,8 @@ public class EditUserSubCommand extends SubCommand {
                     try {
                         streak = Integer.parseInt(args[1]);
                     } catch (NumberFormatException e) {
-                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak> confirm"));
+                        ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                            .replace("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak> confirm"));
                         return true;
                     }
 
@@ -244,7 +270,9 @@ public class EditUserSubCommand extends SubCommand {
                         return true;
                     }
 
-                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm").replaceAll("%target%", args[0]).replaceAll("%streak%", String.valueOf(streak)));
+                    ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak-confirm")
+                        .replace("%target%", args[0])
+                        .replace("%streak%", String.valueOf(streak)));
                     return true;
                 }
             }
@@ -272,7 +300,8 @@ public class EditUserSubCommand extends SubCommand {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
+                    .replace("%player%", nameOrUuid));
                 return false;
             }
         }
@@ -302,7 +331,8 @@ public class EditUserSubCommand extends SubCommand {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
+                    .replace("%player%", nameOrUuid));
                 return false;
             }
         }
@@ -328,7 +358,8 @@ public class EditUserSubCommand extends SubCommand {
             try {
                 uuid = UUID.fromString(nameOrUuid);
             } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player").replaceAll("%player%", nameOrUuid));
+                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
+                    .replace("%player%", nameOrUuid));
                 return false;
             }
         }

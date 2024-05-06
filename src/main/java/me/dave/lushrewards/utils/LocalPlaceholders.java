@@ -114,7 +114,7 @@ public class LocalPlaceholders {
             if (parsed == null) {
                 continue;
             }
-            string = string.replaceAll(match, parsed);
+            string = string.replace(match, parsed);
         }
 
         return string;

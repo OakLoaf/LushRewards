@@ -161,7 +161,7 @@ public class ConfigManager {
         String output = messages.getOrDefault(messageName, def);
 
         if (messages.containsKey("prefix")) {
-            return output.replaceAll("%prefix%", messages.get("prefix"));
+            return output.replace("%prefix%", messages.get("prefix"));
         } else {
             return output;
         }

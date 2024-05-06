@@ -114,12 +114,12 @@ public class PlaytimeRewardsGui extends Gui {
                                 SimpleItemStack displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(reward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate, module), reward.getDisplayItem());
                                 if (displayItem.getDisplayName() != null) {
                                     displayItem.setDisplayName(displayItem.getDisplayName()
-                                        .replaceAll("%minutes%", String.valueOf(minutes)));
+                                        .replace("%minutes%", String.valueOf(minutes)));
                                 }
 
                                 if (displayItem.getLore() != null) {
                                     displayItem.setLore(displayItem.getLore().stream().map(line ->
-                                        line.replaceAll("%minutes%", String.valueOf(minutes))
+                                        line.replace("%minutes%", String.valueOf(minutes))
                                     ).toList());
                                 }
 
@@ -138,7 +138,7 @@ public class PlaytimeRewardsGui extends Gui {
                                         SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
                                         if (collectedItem.getDisplayName() != null) {
                                             collectedItem.setDisplayName(collectedItem.getDisplayName()
-                                                .replaceAll("%minutes%", String.valueOf(minutes)));
+                                                .replace("%minutes%", String.valueOf(minutes)));
                                         }
                                         collectedItem.parseColors(player);
 

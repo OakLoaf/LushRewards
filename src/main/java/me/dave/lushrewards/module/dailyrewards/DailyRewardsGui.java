@@ -123,24 +123,24 @@ public class DailyRewardsGui extends Gui {
 
                                     if (displayItem.getDisplayName() != null) {
                                         displayItem.setDisplayName(displayItem.getDisplayName()
-                                            .replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                            .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
-                                            .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
-                                            .replaceAll("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
-                                            .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
-                                            .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                                            .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
+                                            .replace("%day%", String.valueOf(dayIndex.get()))
+                                            .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                            .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                            .replace("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
+                                            .replace("%year%", String.valueOf(dateIndex[0].getYear()))
+                                            .replace("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                            .replace("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
                                     }
 
                                     if (displayItem.getLore() != null) {
                                         displayItem.setLore(displayItem.getLore().stream().map(line ->
-                                            line.replaceAll("%day%", String.valueOf(dayIndex.get()))
-                                                .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
-                                                .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
-                                                .replaceAll("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
-                                                .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
-                                                .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                                                .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy")))
+                                            line.replace("%day%", String.valueOf(dayIndex.get()))
+                                                .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                                .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                                .replace("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
+                                                .replace("%year%", String.valueOf(dateIndex[0].getYear()))
+                                                .replace("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                                .replace("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy")))
                                         ).toList());
                                     }
 
@@ -170,13 +170,13 @@ public class DailyRewardsGui extends Gui {
                                         SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
                                         if (collectedItem.getDisplayName() != null) {
                                             collectedItem.setDisplayName(collectedItem.getDisplayName()
-                                                .replaceAll("%day%", String.valueOf(currDayNum))
-                                                .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
-                                                .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
-                                                .replaceAll("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
-                                                .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
-                                                .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                                                .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
+                                                .replace("%day%", String.valueOf(currDayNum))
+                                                .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                                .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                                .replace("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
+                                                .replace("%year%", String.valueOf(dateIndex[0].getYear()))
+                                                .replace("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                                .replace("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
                                         }
                                         collectedItem.parseColors(player);
 
@@ -220,13 +220,13 @@ public class DailyRewardsGui extends Gui {
                                 if (simpleItemStack.getDisplayName() != null) {
                                     simpleItemStack.setDisplayName(ChatColorHandler.translate(simpleItemStack
                                             .getDisplayName()
-                                            .replaceAll("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum()))
-                                            .replaceAll("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
-                                            .replaceAll("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
-                                            .replaceAll("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
-                                            .replaceAll("%year%", String.valueOf(dateIndex[0].getYear()))
-                                            .replaceAll("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                                            .replaceAll("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))),
+                                            .replace("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum()))
+                                            .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
+                                            .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
+                                            .replace("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
+                                            .replace("%year%", String.valueOf(dateIndex[0].getYear()))
+                                            .replace("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                            .replace("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))),
                                         player));
                                 }
 

@@ -25,7 +25,7 @@ public class BroadcastReward extends Reward {
 
     @Override
     protected void giveTo(Player player) {
-        ChatColorHandler.broadcastMessage(message.replaceAll("%player%", player.getDisplayName()));
+        ChatColorHandler.broadcastMessage(message.replace("%player%", player.getDisplayName()));
     }
 
     @Override

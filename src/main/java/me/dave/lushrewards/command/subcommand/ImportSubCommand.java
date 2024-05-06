@@ -26,7 +26,8 @@ public class ImportSubCommand extends SubCommand {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         if (args.length == 0) {
-            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage").replaceAll("%command-usage%", "/rewards import <plugin>"));
+            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
+                .replace("%command-usage%", "/rewards import <plugin>"));
         }
 
         ConfigImporter configImporter = null;
