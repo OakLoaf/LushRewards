@@ -40,7 +40,6 @@ public class EditUserSubCommand extends SubCommand {
         return true;
     }
 
-    // TODO: Implement module argument
     private static class ResetSubCommand extends SubCommand {
 
         public ResetSubCommand() {
@@ -84,7 +83,6 @@ public class EditUserSubCommand extends SubCommand {
         }
     }
 
-    // TODO: Implement module argument
     private static class ResetDaysSubCommand extends SubCommand {
 
         public ResetDaysSubCommand() {
@@ -126,7 +124,6 @@ public class EditUserSubCommand extends SubCommand {
         }
     }
 
-    // TODO: Implement module argument
     private static class SetDaysSubCommand extends SubCommand {
 
         public SetDaysSubCommand() {
@@ -176,7 +173,6 @@ public class EditUserSubCommand extends SubCommand {
         }
     }
 
-    // TODO: Implement module argument
     private static class ResetStreakSubCommand extends SubCommand {
 
         public ResetStreakSubCommand() {
@@ -217,7 +213,6 @@ public class EditUserSubCommand extends SubCommand {
         }
     }
 
-    // TODO: Implement module argument
     private static class SetStreakSubCommand extends SubCommand {
 
         public SetStreakSubCommand() {
@@ -297,7 +292,6 @@ public class EditUserSubCommand extends SubCommand {
         return true;
     }
 
-    // TODO: Add module id (accept '*' for all modules)
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean setStreak(CommandSender sender, String nameOrUuid, List<RewardModule> modules, int streak) {
         Player player = Bukkit.getPlayer(nameOrUuid);
@@ -325,7 +319,6 @@ public class EditUserSubCommand extends SubCommand {
         return true;
     }
 
-    // TODO: Add module id (accept '*' for all modules)
     private static boolean removeCollectedDays(CommandSender sender, String nameOrUuid, List<RewardModule> modules) {
         Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
