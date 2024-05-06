@@ -1,5 +1,6 @@
 package me.dave.lushrewards.rewards.custom;
 
+import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ public class BroadcastReward extends Reward {
 
     public BroadcastReward(Map<?, ?> map) {
         this.message = (String) map.get("message");
+        LushRewards.getInstance().getLogger().warning("Deprecated: Reward type 'broadcast' is scheduled for removal, use the new 'broadcast' option in any reward type");
     }
 
     @Override

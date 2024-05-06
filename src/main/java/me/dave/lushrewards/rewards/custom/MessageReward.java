@@ -1,5 +1,6 @@
 package me.dave.lushrewards.rewards.custom;
 
+import me.dave.lushrewards.LushRewards;
 import me.dave.lushrewards.rewards.Reward;
 import me.dave.lushrewards.utils.SchedulerType;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
@@ -19,6 +20,7 @@ public class MessageReward extends Reward {
 
     public MessageReward(Map<?, ?> map) {
         this.message = (String) map.get("message");
+        LushRewards.getInstance().getLogger().warning("Deprecated: Reward type 'message' is scheduled for removal, use the new 'message' option in any reward type");
     }
 
     @Override
