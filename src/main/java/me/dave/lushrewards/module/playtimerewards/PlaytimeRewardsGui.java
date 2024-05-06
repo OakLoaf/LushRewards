@@ -73,7 +73,7 @@ public class PlaytimeRewardsGui extends Gui {
                     for (Character character : slotMap.keySet()) {
                         switch (character) {
                             case 'A' -> slotMap.get(character).forEach(slot -> {
-                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate("claim-all");
+                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate("claim-all", module);
                                 if (module.hasClaimableRewards(player)) {
                                     simpleItemStack.setEnchantGlow(true);
                                 }
@@ -111,7 +111,7 @@ public class PlaytimeRewardsGui extends Gui {
                                     itemTemplate = "default-reward";
                                 }
 
-                                SimpleItemStack displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(reward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate), reward.getDisplayItem());
+                                SimpleItemStack displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(reward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate, module), reward.getDisplayItem());
                                 if (displayItem.getDisplayName() != null) {
                                     displayItem.setDisplayName(displayItem.getDisplayName()
                                         .replaceAll("%minutes%", String.valueOf(minutes)));
@@ -135,7 +135,7 @@ public class PlaytimeRewardsGui extends Gui {
 
                                         removeButton(slot);
 
-                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward"));
+                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
                                         if (collectedItem.getDisplayName() != null) {
                                             collectedItem.setDisplayName(collectedItem.getDisplayName()
                                                 .replaceAll("%minutes%", String.valueOf(minutes)));
@@ -158,7 +158,7 @@ public class PlaytimeRewardsGui extends Gui {
                             case ' ' ->
                                 slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                             default -> slotMap.get(character).forEach(slot -> {
-                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character));
+                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character), module);
 
                                 if (!simpleItemStack.hasType()) {
                                     simpleItemStack.setType(Material.RED_STAINED_GLASS_PANE);

@@ -72,6 +72,11 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
+        ConfigurationSection itemTemplatesSection = config.getConfigurationSection("gui.item-templates");
+        if (itemTemplatesSection != null) {
+            reloadItemTemplates(itemTemplatesSection);
+        }
+
         this.rewards = new HashSet<>();
 
         LocalDate today = LocalDate.now();

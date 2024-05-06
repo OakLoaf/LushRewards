@@ -182,6 +182,11 @@ public class ConfigManager {
         return itemTemplate.clone();
     }
 
+    public SimpleItemStack getItemTemplate(String key, RewardModule module) {
+        SimpleItemStack itemTemplate = module.getItemTemplate(key);
+        return itemTemplate.isBlank() ? getItemTemplate(key) : itemTemplate;
+    }
+
     public SimpleItemStack getItemTemplate(String key) {
         SimpleItemStack itemTemplate = globalItemTemplates.get(key);
         if (itemTemplate == null) {

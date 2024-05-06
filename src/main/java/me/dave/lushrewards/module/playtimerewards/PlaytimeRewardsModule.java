@@ -9,6 +9,7 @@ import me.dave.lushrewards.module.RewardModule;
 import me.dave.lushrewards.module.UserDataModule;
 import me.dave.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import me.dave.lushrewards.rewards.collections.RewardCollection;
+import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -66,6 +67,11 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
+
+        ConfigurationSection itemTemplatesSection = config.getConfigurationSection("gui.item-templates");
+        if (itemTemplatesSection != null) {
+            reloadItemTemplates(itemTemplatesSection);
+        }
 
         this.minutesToReward = new ConcurrentHashMap<>();
         for (Map<?, ?> rewardMap : config.getMapList(goalsSection)) {

@@ -94,7 +94,7 @@ public class DailyRewardsGui extends Gui {
                         case 'R' -> slotMap.get(character).forEach(slot -> {
                             ItemStack itemStack;
                             if (module.getScrollType().equals(ScrollType.MONTH) && dateIndex[0].getMonthValue() != LocalDate.now().getMonthValue()) {
-                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf('#'));
+                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf('#'), module);
 
                                 if (!simpleItemStack.hasType()) {
                                     simpleItemStack.setType(Material.STONE);
@@ -119,7 +119,7 @@ public class DailyRewardsGui extends Gui {
 
                                 SimpleItemStack displayItem;
                                 if (!rewardDay.isEmpty()) {
-                                    displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(priorityReward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate), priorityReward.getDisplayItem());
+                                    displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(priorityReward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate, module), priorityReward.getDisplayItem());
 
                                     if (displayItem.getDisplayName() != null) {
                                         displayItem.setDisplayName(displayItem.getDisplayName()
@@ -167,7 +167,7 @@ public class DailyRewardsGui extends Gui {
 
                                         removeButton(slot);
 
-                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward"));
+                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
                                         if (collectedItem.getDisplayName() != null) {
                                             collectedItem.setDisplayName(collectedItem.getDisplayName()
                                                 .replaceAll("%day%", String.valueOf(currDayNum))
@@ -215,7 +215,7 @@ public class DailyRewardsGui extends Gui {
                                 SimpleItemStack categoryItem = LushRewards.getInstance().getConfigManager().getCategoryTemplate(upcomingCategory);
 
                                 // Get the day's reward for the current slot
-                                SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, LushRewards.getInstance().getConfigManager().getItemTemplate("upcoming-reward"), upcomingRewardCollection.getDisplayItem());
+                                SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, LushRewards.getInstance().getConfigManager().getItemTemplate("upcoming-reward", module), upcomingRewardCollection.getDisplayItem());
 
                                 if (simpleItemStack.getDisplayName() != null) {
                                     simpleItemStack.setDisplayName(ChatColorHandler.translate(simpleItemStack
@@ -241,7 +241,7 @@ public class DailyRewardsGui extends Gui {
                         case ' ' ->
                             slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                         default -> slotMap.get(character).forEach(slot -> {
-                            SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character));
+                            SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character), module);
 
                             if (!simpleItemStack.hasType()) {
                                 simpleItemStack.setType(Material.RED_STAINED_GLASS_PANE);
