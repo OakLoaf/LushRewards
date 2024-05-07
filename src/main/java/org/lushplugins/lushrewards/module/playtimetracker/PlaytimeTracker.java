@@ -137,4 +137,8 @@ public class PlaytimeTracker {
     public int getGlobalPlaytime() {
         return globalTime;
     }
+
+    public void setGlobalPlaytime(int globalPlaytime) {
+        globalTime = globalPlaytime;
+    }
 }
