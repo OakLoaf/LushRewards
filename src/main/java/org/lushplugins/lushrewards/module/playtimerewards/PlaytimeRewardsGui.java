@@ -60,10 +60,15 @@ public class PlaytimeRewardsGui extends Gui {
                     int playtime = playtimeTracker.getGlobalPlaytime();
                     Integer shortestFrequency = module.getShortestRepeatFrequency(playtime);
                     int startPlaytime;
-                    if (shortestFrequency != null) {
-                        startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), userData.getLastCollectedPlaytime());
-                    } else {
-                        startPlaytime = userData.getLastCollectedPlaytime();
+                    switch (module.getScrollType()) {
+                        case SCROLL -> {
+                            if (shortestFrequency != null) {
+                                startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), userData.getLastCollectedPlaytime());
+                            } else {
+                                startPlaytime = userData.getLastCollectedPlaytime();
+                            }
+                        }
+                        default -> startPlaytime = 0;
                     }
 
                     module.getRewards().forEach(reward -> {
@@ -198,5 +203,10 @@ public class PlaytimeRewardsGui extends Gui {
         }
 
         return (int) (start + increment * Math.ceil((lowerBound - start) / increment));
+    }
+
+    public enum ScrollType {
+        FIXED,
+        SCROLL
     }
 }

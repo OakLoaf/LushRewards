@@ -29,6 +29,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     private int refreshTime;
     private boolean receiveWithDailyRewards;
     private GuiFormat guiFormat;
+    private PlaytimeRewardsGui.ScrollType scrollType;
 
     public PlaytimeRewardsModule(String id, File moduleFile) {
         super(id, moduleFile, true);
@@ -67,6 +68,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
+        this.scrollType = PlaytimeRewardsGui.ScrollType.valueOf(config.getString("gui.scroll-type", "FIXED").toUpperCase());
 
         ConfigurationSection itemTemplatesSection = config.getConfigurationSection("gui.item-templates");
         if (itemTemplatesSection != null) {
@@ -249,6 +251,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     @Override
     public Gui getGui(Player player) {
         return new PlaytimeRewardsGui(this, player);
+    }
+
+    public PlaytimeRewardsGui.ScrollType getScrollType() {
+        return scrollType;
     }
 
     @Override
