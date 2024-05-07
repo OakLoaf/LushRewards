@@ -21,14 +21,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.2")
+    compileOnly("org.spigotmc:spigot-api:${findProperty("minecraftVersion")}-R0.1-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:${findProperty("floodgateVersion")}-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:${findProperty("placeholderapiVersion")}")
 
-    implementation("org.enchantedskies:EnchantedStorage:3.0.0")
-    implementation("org.lushplugins:LushLib:0.1.7.6")
-    implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
-    implementation("com.mysql:mysql-connector-j:8.3.0")
+    implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
+    implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
+    implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
+    implementation("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
 }
 
 java {
