@@ -99,7 +99,7 @@ public class PlaytimeRewardsGui extends Gui {
                                 int minutes = rewardPair.second();
                                 int nextMinute = minutes + reward.getRepeatFrequency();
 
-                                if (nextMinute <= reward.getRepeatsUntil()) {
+                                if (reward.getRepeatFrequency() > 0 && nextMinute <= reward.getRepeatsUntil()) {
                                     rewardQueue.add(new Pair<>(reward, nextMinute));
                                 }
 
