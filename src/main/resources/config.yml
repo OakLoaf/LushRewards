@@ -51,6 +51,8 @@ messages:
   reset-streak: "&#ffe27aAre you sure you want to reset &#e0c01b%target%'s &#ffe27astreak? Type &#e0c01b'/rewards reset-streak %target% confirm' &#ffe27ato confirm"
   set-streak: "&#ffe27aAre you sure you want to set &#e0c01b%target%'s &#ffe27astreak? Type &#e0c01b'/rewards set-streak %target% %streak% confirm' &#ffe27ato confirm"
   set-streak-confirm: "&#66b04f%target%'s &#b7faa2streak has been set to &#66b04f%streak% &#b7faa2in &#66b04f%module%"
+  set-playtime: "&#ffe27aAre you sure you want to set &#e0c01b%target%'s &#ffe27aplaytime? Type &#e0c01b'/rewards set-playtime %target% %playtime% confirm' &#ffe27ato confirm"
+  set-playtime-confirm: "&#66b04f%target%'s &#b7faa2playtime has been set to &#66b04f%playtime% &#b7faa2in &#66b04f%module%"
   unknown-player: "&#ff6969Could not find &#d13636%player%"
   no-permissions: "&#ff6969Insufficient permissions"
   incorrect-usage: "&#ff6969Incorrect usage try &#d13636%command-usage%"
