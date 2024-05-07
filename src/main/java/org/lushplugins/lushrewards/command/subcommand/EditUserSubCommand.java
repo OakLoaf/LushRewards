@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: Add playtime reward sub-commands
 public class EditUserSubCommand extends SubCommand {
 
     public EditUserSubCommand() {
