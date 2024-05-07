@@ -42,7 +42,12 @@ public class DataManager extends Manager {
 
     @Nullable
     public RewardUser getRewardUser(@NotNull Player player) {
-        return rewardUsersCache.get(player.getUniqueId());
+        return getRewardUser(player.getUniqueId());
+    }
+
+    @Nullable
+    public RewardUser getRewardUser(@NotNull UUID uuid) {
+        return rewardUsersCache.get(uuid);
     }
 
     public CompletableFuture<RewardUser> getOrLoadRewardUser(UUID uuid) {
