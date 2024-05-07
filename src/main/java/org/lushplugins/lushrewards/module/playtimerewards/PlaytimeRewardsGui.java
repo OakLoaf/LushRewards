@@ -131,7 +131,7 @@ public class PlaytimeRewardsGui extends Gui {
 
                                 displayItem.parseColors(player);
 
-                                if (module.hasClaimableRewards(player, minutes)) {
+                                if (module.hasClaimableRewards(player, playtime)) {
                                     addButton(slot, (event) -> {
                                         // Gets clicked item and checks if it exists
                                         ItemStack currItem = event.getCurrentItem();
@@ -151,8 +151,8 @@ public class PlaytimeRewardsGui extends Gui {
                                         inventory.setItem(slot, collectedItem.asItemStack());
 
                                         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
-                                        if (module.hasClaimableRewards(player, minutes)) {
-                                            module.claimRewards(player, minutes);
+                                        if (module.hasClaimableRewards(player, playtime)) {
+                                            module.claimRewards(player, playtime);
                                         }
                                     });
                                 }
