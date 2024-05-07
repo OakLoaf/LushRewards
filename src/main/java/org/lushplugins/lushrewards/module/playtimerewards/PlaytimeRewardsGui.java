@@ -6,7 +6,6 @@ import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTracker;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.Nullable;

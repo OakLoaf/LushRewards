@@ -2,6 +2,7 @@ package org.lushplugins.lushrewards.rewards.collections;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;

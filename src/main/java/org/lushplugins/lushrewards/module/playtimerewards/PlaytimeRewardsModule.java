@@ -7,7 +7,6 @@ import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.UserDataModule;
-import org.lushplugins.lushrewards.rewards.collections.PlaytimeRewardCollection;
 import org.lushplugins.lushrewards.rewards.collections.RewardCollection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushlib.gui.inventory.Gui;

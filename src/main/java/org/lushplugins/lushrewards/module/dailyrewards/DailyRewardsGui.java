@@ -4,7 +4,6 @@ import com.google.common.collect.TreeMultimap;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
-import org.lushplugins.lushrewards.rewards.collections.DailyRewardCollection;
 import org.lushplugins.lushrewards.rewards.collections.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;

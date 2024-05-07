@@ -1,6 +1,7 @@
-package org.lushplugins.lushrewards.rewards.collections;
+package org.lushplugins.lushrewards.module.playtimerewards;
 
 import org.lushplugins.lushrewards.rewards.Reward;
+import org.lushplugins.lushrewards.rewards.collections.RewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;

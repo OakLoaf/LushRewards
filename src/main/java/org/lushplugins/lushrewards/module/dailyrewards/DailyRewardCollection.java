@@ -1,8 +1,9 @@
-package org.lushplugins.lushrewards.rewards.collections;
+package org.lushplugins.lushrewards.module.dailyrewards;
 
 import org.lushplugins.lushrewards.exceptions.InvalidRewardException;
 
 import org.lushplugins.lushrewards.rewards.Reward;
+import org.lushplugins.lushrewards.rewards.collections.RewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;

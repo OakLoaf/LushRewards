@@ -1,7 +1,7 @@
 package org.lushplugins.lushrewards.importer;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.rewards.collections.DailyRewardCollection;
+import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardCollection;
 import org.lushplugins.lushrewards.rewards.custom.ConsoleCommandReward;
 import org.lushplugins.lushrewards.rewards.Reward;
 import org.bukkit.Material;
