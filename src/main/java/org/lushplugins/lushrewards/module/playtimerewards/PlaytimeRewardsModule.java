@@ -168,8 +168,8 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         });
 
         ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("daily-playtime-reward-given")
-            .replace("%minutes%", String.valueOf(rewardUser.getMinutesPlayed()))
-            .replace("%hours%", String.valueOf((int) Math.floor(rewardUser.getMinutesPlayed() / 60D))));
+            .replace("%minutes%", String.valueOf(playtime))
+            .replace("%hours%", String.valueOf((int) Math.floor(playtime / 60D))));
 
         userData.setLastCollectedPlaytime(playtime);
         saveUserData(userData.getUniqueId(), userData);
