@@ -61,9 +61,9 @@ public class PlaytimeRewardsGui extends Gui {
                     Integer shortestFrequency = module.getShortestRepeatFrequency(playtime);
                     int startPlaytime;
                     if (shortestFrequency != null) {
-                        startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), 0);
+                        startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), userData.getLastCollectedPlaytime());
                     } else {
-                        startPlaytime = Math.max(playtime - 100, 0);
+                        startPlaytime = userData.getLastCollectedPlaytime();
                     }
 
                     module.getRewards().forEach(reward -> {
