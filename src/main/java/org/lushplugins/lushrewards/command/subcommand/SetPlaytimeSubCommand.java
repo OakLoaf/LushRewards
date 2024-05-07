@@ -9,6 +9,7 @@ import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.RewardModule;
+import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 
 import java.util.List;
@@ -87,6 +88,16 @@ public class SetPlaytimeSubCommand extends SubCommand {
         if (rewardUser != null) {
             LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> ((PlaytimeTrackerModule) module).getPlaytimeTracker(uuid).setGlobalPlaytime(playtime));
             rewardUser.setMinutesPlayed(playtime);
+
+            LushRewards.getInstance().getRewardModules().forEach(module -> {
+                if (module instanceof PlaytimeRewardsModule playtimeRewardsModule) {
+                    PlaytimeRewardsModule.UserData userData = playtimeRewardsModule.getUserData(uuid);
+                    if (userData.getLastCollectedPlaytime() > playtime) {
+                        userData.setLastCollectedPlaytime(playtime);
+                    }
+                }
+            });
+
             return true;
         } else {
             return false;
