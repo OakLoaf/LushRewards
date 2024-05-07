@@ -9,8 +9,7 @@ refresh-time: 30
 enable-notifications: true
 
 goals:
-  - category: small
-    play-minutes: 600 # 10 Hours
+  - play-minutes: 600 # 10 Hours
     display-item:
       material: clock
       amount: 1
@@ -18,8 +17,7 @@ goals:
       - type: item
         material: iron_ingot
         amount: 1
-  - category: small
-    play-minutes: 1440 # 24 Hours
+  - play-minutes: 1440 # 24 Hours
     display-item:
       material: clock
       amount: 1
@@ -38,3 +36,13 @@ gui:
     - "#########"
     - "#RRRRRRR#"
     - "#########"
+  item-templates:
+    default-reward:
+      material: clock
+      display-name: "&#f5e389%minutes% Minutes"
+    redeemable-reward:
+      material: clock
+      display-name: "&#f5e389%minutes% Minutes - Redeemable"
+    collected-reward:
+      material: clock
+      display-name: "&#f5e389%minutes% Minutes - Collected"

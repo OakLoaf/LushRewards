@@ -243,3 +243,33 @@ gui:
   # Read https://dave-12.gitbook.io/lush-rewards/configuring/gui-templates#custom-templates for more info on
   # creating and using templates
   template: "DEFAULT"
+  item-templates:
+    # Template for default rewards
+    default-reward:
+      display-name: "&#A5B8FEDay %day%"
+    # Template for collectable rewards
+    redeemable-reward:
+      material: player_head
+      skull-texture: e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmI1N2Y0ODVlOWVjY2E1MzIzNDQ4NTBjNTFhYjQ0ZGQ2YWE1ZDQ1MTRiMzFjNmRmOWZjMjBlMzZiM2E4OWQ4YyJ9fX0=
+      display-name: "&#f5e389Day %day% - Redeemable"
+      enchanted: true
+    # Template for collected rewards
+    collected-reward:
+      material: player_head
+      skull-texture: e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWZkNTEyY2NlNGU3OTUyOGI2MGIzNWRmZTZmN2JmYzg0M2IyOTY4NDIxMDViMWNkMjY4MjdiNTkwOGIxMzU0ZCJ9fX0=
+      display-name: "&#f5e389Day %day% - Collected"
+      enchanted: false
+    # Template for missed rewards
+    missed-reward:
+      material: player_head
+      skull-texture: e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGRkMzBhYWMyYTFmMmQxOGM3NzU1Y2ZjYTJiYzYwOWZjMzkxZjQxOTg5YjA2NmNlOTMxNjA3NzY5MDZiZTg1YSJ9fX0=
+      display-name: "&7Day %day% &8(Missed)"
+    'P':
+      material: player_head
+      display-name: "&#A5B8FE&lProfile:"
+      skull-texture: mirror
+      lore:
+        - "&#c4f8ffDay Number: &f%rewarder_day_num%"
+        - "&#c4f8ffCollected: &f%rewarder_collected%"
+        - "&#c4f8ffCurrent Streak: &f%rewarder_streak%"
+        - "&#c4f8ffHighest Streak: &f%rewarder_highest_streak%"

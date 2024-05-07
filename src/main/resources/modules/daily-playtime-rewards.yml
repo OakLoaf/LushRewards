@@ -9,54 +9,47 @@ refresh-time: 30
 enable-notifications: true
 
 goals:
-  - category: small
-    play-minutes: 60 # 1 Hour
+  - play-minutes: 60 # 1 Hour
     rewards:
       - type: item
         material: iron_ingot
         amount: 1
-  - category: small
-    play-minutes: 120 # 2 Hours
+  - play-minutes: 120 # 2 Hours
     display-item:
       amount: 2
     rewards:
       - type: item
         material: diamond
         amount: 3
-  - category: small
-    play-minutes: 180 # 3 Hours
+  - play-minutes: 180 # 3 Hours
     display-item:
       amount: 3
     rewards:
       - type: item
         material: diamond
         amount: 3
-  - category: small
-    play-minutes: 240 # 4 Hours
+  - play-minutes: 240 # 4 Hours
     display-item:
       amount: 4
     rewards:
       - type: item
         material: diamond
         amount: 3
-  - category: small
-    play-minutes: 360 # 6 Hours
+  - play-minutes: 360 # 6 Hours
     display-item:
       amount: 6
     rewards:
       - type: item
         material: diamond
         amount: 3
-  - category: medium
-    play-minutes: 480 # 8 Hours
+  - play-minutes: 480 # 8 Hours
     display-item:
       amount: 8
     rewards:
       - type: item
         material: diamond
         amount: 3
-  - category: large
-    play-minutes: 600 # 10 Hours
+  - play-minutes: 600 # 10 Hours
     display-item:
       amount: 10
     rewards:
@@ -74,3 +67,13 @@ gui:
     - "#########"
     - "#RRRRRRR#"
     - "#########"
+  item-templates:
+    default-reward:
+      material: clock
+      display-name: "&#f5e389%minutes% Minutes"
+    redeemable-reward:
+      material: clock
+      display-name: "&#f5e389%minutes% Minutes - Redeemable"
+    collected-reward:
+      material: clock
+      display-name: "&#f5e389%minutes% Minutes - Collected"
