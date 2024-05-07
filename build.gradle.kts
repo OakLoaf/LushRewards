@@ -8,8 +8,8 @@ group = "org.lushplugins"
 version = "3.0.0.3-BETA"
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") } // Spigot
     maven { url = uri("https://repo.opencollab.dev/main/") } // Floodgate
