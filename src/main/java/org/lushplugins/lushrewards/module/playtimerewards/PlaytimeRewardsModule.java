@@ -215,7 +215,8 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         return minutesToReward.keySet().stream().filter(key -> key > lower && key <= upper).toList();
     }
 
-    public int getShortestRepeatFrequency() {
+    @Nullable
+    public Integer getShortestRepeatFrequency() {
         return getShortestRepeatFrequency(-1);
     }
 
@@ -223,8 +224,9 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
      * @param playtime Playtime to check for (-1 to ignore)
      * @return Shortest repeat frequency
      */
-    public int getShortestRepeatFrequency(int playtime) {
-        int shortestFrequency = Integer.MAX_VALUE;
+    @Nullable
+    public Integer getShortestRepeatFrequency(int playtime) {
+        Integer shortestFrequency = null;
 
         for (PlaytimeRewardCollection reward : minutesToReward.values()) {
             if (playtime >= 0 && reward.getRepeatsUntil() < playtime) {
@@ -232,7 +234,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             }
 
             int frequency = reward.getRepeatFrequency();
-            if (frequency < shortestFrequency) {
+            if (frequency > 0 && (shortestFrequency == null || frequency < shortestFrequency)) {
                 shortestFrequency = frequency;
             }
         }

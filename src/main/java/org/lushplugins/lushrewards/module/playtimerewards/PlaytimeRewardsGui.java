@@ -58,7 +58,14 @@ public class PlaytimeRewardsGui extends Gui {
                     }
 
                     int playtime = playtimeTracker.getGlobalPlaytime();
-                    int startPlaytime = (int) ((playtime - module.getShortestRepeatFrequency(playtime)) * Math.floor(guiTemplate.countChar('R') / 2D));
+                    Integer shortestFrequency = module.getShortestRepeatFrequency(playtime);
+                    int startPlaytime;
+                    if (shortestFrequency != null) {
+                        startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), 0);
+                    } else {
+                        startPlaytime = Math.max(playtime - 100, 0);
+                    }
+
                     module.getRewards().forEach(reward -> {
                         if (!reward.shouldHideFromGui()) {
                             Integer minutes = findFirstNumInSequence(reward.getStartMinute(), reward.getRepeatFrequency(), startPlaytime);
