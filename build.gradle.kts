@@ -4,7 +4,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version("8.1.1")
 }
 
-group = "me.dave"
+group = "org.lushplugins"
 version = "3.0.0.2-BETA"
 
 repositories {
@@ -41,10 +41,10 @@ tasks {
     }
 
     shadowJar {
-        relocate("org.enchantedskies", "me.dave.lushrewards.libraries.enchantedskies")
-        relocate("org.lushplugins.lushlib", "me.dave.lushrewards.libraries.lushlib")
-        relocate("space.arim.morepaperlib", "me.dave.lushrewards.libraries.morepaperlib")
-        relocate("com.mysql", "me.dave.lushrewards.libraries.mysql")
+        relocate("org.enchantedskies", "org.lushplugins.lushrewards.libraries.enchantedskies")
+        relocate("org.lushplugins.lushlib", "org.lushplugins.lushrewards.libraries.lushlib")
+        relocate("space.arim.morepaperlib", "org.lushplugins.lushrewards.libraries.morepaperlib")
+        relocate("com.mysql", "org.lushplugins.lushrewards.libraries.mysql")
 
         minimize()
 

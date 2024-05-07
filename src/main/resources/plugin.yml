@@ -1,6 +1,6 @@
 name: LushRewards
 version: ${project.version}
-main: me.dave.lushrewards.LushRewards
+main: org.lushplugins.lushrewards.LushRewards
 api-version: 1.16
 softdepend:
 - floodgate
