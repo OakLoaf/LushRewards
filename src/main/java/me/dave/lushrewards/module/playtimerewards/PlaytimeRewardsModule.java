@@ -111,6 +111,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
     @Override
     public boolean hasClaimableRewards(Player player) {
+        return hasClaimableRewards(player, null);
+    }
+
+    public boolean hasClaimableRewards(Player player, Integer playtime) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
@@ -123,13 +127,17 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             saveUserData(userData.getUniqueId(), userData);
         }
 
-        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
+        playtime = playtime != null ? playtime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
-        return !getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd).isEmpty();
+        return !getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, playtime - previousDayEnd).isEmpty();
     }
 
     @Override
     public boolean claimRewards(Player player) {
+        return claimRewards(player, null);
+    }
+
+    public boolean claimRewards(Player player, Integer playtime) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
@@ -144,9 +152,9 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             saveUserData = true;
         }
 
-        int totalMinutesPlayed = rewardUser.getMinutesPlayed();
+        playtime = playtime != null ? playtime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
-        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, totalMinutesPlayed - previousDayEnd);
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, playtime - previousDayEnd);
         if (rewards.isEmpty()) {
             if (saveUserData) {
                 saveUserData(userData.getUniqueId(), userData);
@@ -164,7 +172,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             .replace("%minutes%", String.valueOf(rewardUser.getMinutesPlayed()))
             .replace("%hours%", String.valueOf((int) Math.floor(rewardUser.getMinutesPlayed() / 60D))));
 
-        userData.setLastCollectedPlaytime(totalMinutesPlayed);
+        userData.setLastCollectedPlaytime(playtime);
         saveUserData(userData.getUniqueId(), userData);
         return true;
     }
