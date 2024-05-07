@@ -58,9 +58,9 @@ public class ConfigManager {
 
     public void reloadConfig() {
         LushRewards plugin = LushRewards.getInstance();
-        LushRewards.getInstance().getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
+        plugin.getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
+        plugin.getRewardModules().forEach(module -> plugin.unregisterModule(module.getId()));
 
-        plugin.unregisterAllModules();
         plugin.reloadConfig();
         FileConfiguration config = plugin.getConfig();
 
@@ -127,15 +127,13 @@ public class ConfigManager {
         plugin.getRewardModules().forEach(Module::reload);
 
         if (plugin.getEnabledRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
-            Optional<Module> playtimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
-            playtimeTracker.ifPresentOrElse(
-                Module::reload,
-                () -> {
-                    PlaytimeTrackerModule playtimeTrackerModule = new PlaytimeTrackerModule();
-                    plugin.registerModule(playtimeTrackerModule);
-                    playtimeTrackerModule.enable();
-                }
-            );
+            if (LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).isEmpty()) {
+                PlaytimeTrackerModule playtimeTrackerModule = new PlaytimeTrackerModule();
+                plugin.registerModule(playtimeTrackerModule);
+                playtimeTrackerModule.enable();
+            }
+        } else {
+            plugin.unregisterModule(RewardModule.Type.PLAYTIME_TRACKER);
         }
 
         YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
