@@ -154,6 +154,8 @@ public class PlaytimeRewardsGui extends Gui {
                                         if (module.hasClaimableRewards(player, playtime)) {
                                             module.claimRewards(player, playtime);
                                         }
+
+                                        recalculateContents();
                                     });
                                 }
 
