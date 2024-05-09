@@ -14,6 +14,7 @@ import org.lushplugins.lushrewards.rewards.custom.PlayerCommandReward;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -101,7 +102,14 @@ public class NDailyRewardsImporter extends ConfigImporter {
             localRewardsConfig.set("gui.format", GuiFormat.GuiTemplate.NDAILY_REWARDS.getRows());
         }
 
-        return false;
+        try {
+            localRewardsConfig.save(newRewardsFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     private SimpleItemStack importingTemplateToSimpleItemStack(ConfigurationSection configurationSection) {
