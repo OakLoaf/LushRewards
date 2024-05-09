@@ -41,9 +41,14 @@ public abstract class ConfigImporter {
     @Nullable
     protected static File prepareForImport(File oldFile, boolean createNew) {
         File parent = oldFile.getParentFile();
+        File backupsDir = new File(parent, "backups");
         String name = oldFile.getName();
 
-        if (!oldFile.renameTo(new File(parent, FilenameUtils.removeExtension(name) + "-old-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy--HH-mm-ss")) + ".yml"))) {
+        if (!backupsDir.exists()) {
+            backupsDir.mkdir();
+        }
+
+        if (!oldFile.renameTo(new File(backupsDir, FilenameUtils.removeExtension(name) + "-old-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy--HH-mm-ss")) + ".yml"))) {
             LushRewards.getInstance().getLogger().severe("Failed to rename file");
             return null;
         }
