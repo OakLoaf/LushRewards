@@ -28,15 +28,16 @@ public class ImportSubCommand extends SubCommand {
                 .replace("%command-usage%", "/rewards import <plugin>"));
         }
 
+        String name = args[0];
         ConfigImporter configImporter;
         try {
-            switch (args[0].toLowerCase()) {
+            switch (name.toLowerCase()) {
                 case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
                 case "ndailyrewards" -> configImporter = new NDailyRewardsImporter();
                 default -> configImporter = null;
             }
         } catch (FileNotFoundException e) {
-            ChatColorHandler.sendMessage(sender, "&#ff6969Could not find files when attempting to import from &#d13636'" + args[1] + "'");
+            ChatColorHandler.sendMessage(sender, "&#ff6969Could not find files when attempting to import from &#d13636'" + name + "'");
             return true;
         }
 
@@ -45,19 +46,19 @@ public class ImportSubCommand extends SubCommand {
             LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
                 try {
                     if (configImporter.startImport()) {
-                        ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully imported configuration from &#66b04f'" + args[1] + "' &#b7faa2in &#66b04f" + (Instant.now().toEpochMilli() - startMs) + "ms");
+                        ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully imported configuration from &#66b04f'" + name + "' &#b7faa2in &#66b04f" + (Instant.now().toEpochMilli() - startMs) + "ms");
                         LushRewards.getInstance().getConfigManager().reloadConfig();
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reload"));
                     } else {
-                        ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
+                        ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + name + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
+                    ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + name + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
                 }
             });
         } else {
-            ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "'");
+            ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + name + "'");
         }
 
         return true;
