@@ -127,14 +127,8 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
         localRewardsConfig.set("gui.template", "DAILY_REWARDS_PLUS");
 
         try {
-            localRewardsConfig.save(newRewardsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        try {
             localConfig.save(newConfigFile);
+            localRewardsConfig.save(newRewardsFile);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
