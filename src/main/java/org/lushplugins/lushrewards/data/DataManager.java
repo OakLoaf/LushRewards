@@ -35,7 +35,7 @@ public class DataManager extends Manager {
     public void onDisable() {
         if (ioHandler != null) {
             saveCachedRewardUsers();
-            ioHandler.disableIOHandler();
+            ioHandler.disable();
             ioHandler = null;
         }
     }
