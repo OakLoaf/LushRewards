@@ -10,7 +10,6 @@ import org.lushplugins.lushrewards.utils.Debugger;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.gui.inventory.Gui;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -45,7 +44,7 @@ public class PlaytimeRewardsGui extends Gui {
 
             module.getOrLoadUserData(player.getUniqueId(), true)
                 .completeOnTimeout(null, 15, TimeUnit.SECONDS)
-                .thenAccept(userData -> Bukkit.getScheduler().runTask(LushRewards.getInstance(), () -> {
+                .thenAccept(userData -> LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                     if (userData == null) {
                         SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
                         errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
