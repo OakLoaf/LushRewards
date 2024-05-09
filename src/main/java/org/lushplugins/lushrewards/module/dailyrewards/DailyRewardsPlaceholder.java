@@ -132,6 +132,7 @@ public class DailyRewardsPlaceholder {
     public void register() {
         LocalPlaceholders.SimplePlaceholder modulePlaceholder = new LocalPlaceholders.SimplePlaceholder(id, (params, player) -> null);
         placeholderCache.forEach(modulePlaceholder::addChild);
+        LushRewards.getInstance().getLocalPlaceholders().registerPlaceholder(modulePlaceholder);
     }
 
     public void unregister() {

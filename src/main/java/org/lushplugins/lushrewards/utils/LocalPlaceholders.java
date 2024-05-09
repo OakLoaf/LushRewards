@@ -129,7 +129,7 @@ public class LocalPlaceholders {
             boolean found = false;
 
             for (Placeholder subPlaceholder : currentPlaceholder != null ? currentPlaceholder.getChildren() : placeholders.values()) {
-                if (subPlaceholder.matches(params)) {
+                if (subPlaceholder.matches(currParams)) {
                     currentPlaceholder = subPlaceholder;
                     currParams = currParams.replace(subPlaceholder.getContent() + "_", "");
 
