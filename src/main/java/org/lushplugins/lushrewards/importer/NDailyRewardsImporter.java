@@ -115,7 +115,12 @@ public class NDailyRewardsImporter extends ConfigImporter {
     private SimpleItemStack importingTemplateToSimpleItemStack(ConfigurationSection configurationSection) {
         SimpleItemStack simpleItemStack = new SimpleItemStack();
 
-        String materialRaw = configurationSection.getString("material", "stone");
+        String[] itemDataRaw = configurationSection.getString("material", "stone").split(":");
+        String materialRaw = itemDataRaw[0];
+        if (itemDataRaw.length >= 3) {
+            simpleItemStack.setAmount(Integer.parseInt(itemDataRaw[2]));
+        }
+
         simpleItemStack.setType(StringUtils.getEnum(materialRaw, Material.class).orElse(null));
         simpleItemStack.setDisplayName(configurationSection.getString("name"));
         simpleItemStack.setLore(configurationSection.getStringList("lore"));
