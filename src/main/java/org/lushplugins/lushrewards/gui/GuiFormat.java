@@ -58,6 +58,10 @@ public class GuiFormat {
             this.rows = rows;
         }
 
+        public List<String> getRows() {
+            return rows;
+        }
+
         public void setRow(int row, String format) {
             if (format.length() != 9) {
                 LushRewards.getInstance().getLogger().warning("Failed to load row format, lines must be 9 characters long.");
@@ -109,82 +113,79 @@ public class GuiFormat {
             return count;
         }
 
-        public static class DefaultTemplate {
+        public static final GuiTemplate DEFAULT = new GuiTemplate(new String[]{
+            "RRRRRRRRR",
+            "RRRRRRRRR",
+            "RRRRRRRRR",
+            "RRRR#####",
+            "#########",
+            "####P####"
+        });
 
-            private static final String[] DEFAULT = new String[]{
-                "RRRRRRRRR",
-                "RRRRRRRRR",
-                "RRRRRRRRR",
-                "RRRR#####",
-                "#########",
-                "####P####"
-            };
+        public static final GuiTemplate COMPACT = new GuiTemplate(new String[]{
+            "RRRRRRR N"
+        });
 
-            private static final String[] COMPACT = new String[]{
-                "RRRRRRR N"
-            };
+        public static final GuiTemplate COMPACT_PROFILE = new GuiTemplate(new String[]{
+            "RRRRRRR P"
+        });
 
-            private static final String[] COMPACT_PROFILE = new String[]{
-                "RRRRRRR P"
-            };
+        public static final GuiTemplate BORDERED = new GuiTemplate(new String[]{
+            "#########",
+            "RRRRRRR#N",
+            "#########"
+        });
 
-            private static final String[] BORDERED = new String[]{
-                "#########",
-                "RRRRRRR#N",
-                "#########"
-            };
+        public static final GuiTemplate BORDERED_LARGE = new GuiTemplate(new String[]{
+            "#########",
+            "#RRRRRRR#",
+            "#RRRRRRR#",
+            "#RRRRRRR#",
+            "#RRRRRRR#",
+            "####P####"
+        });
 
-            private static final String[] BORDERED_LARGE = new String[]{
-                "#########",
-                "#RRRRRRR#",
-                "#RRRRRRR#",
-                "#RRRRRRR#",
-                "#RRRRRRR#",
-                "####P####"
-            };
+        public static final GuiTemplate DAILY_REWARDS_PLUS = new GuiTemplate(new String[]{
+            "RRRRRRRRR",
+            "RRRRRRRRR",
+            "#RRRRRRR#",
+            "##RRRRR##",
+            "#########",
+            "####P####"
+        });
 
-            private static final String[] DAILY_REWARDS_PLUS = new String[]{
-                "RRRRRRRRR",
-                "RRRRRRRRR",
-                "#RRRRRRR#",
-                "##RRRRR##",
-                "#########",
-                "####P####"
-            };
+        public static final GuiTemplate NDAILY_REWARDS = new GuiTemplate(new String[]{
+            "#########",
+            "#RRRRRRR#",
+            "#########"
+        });
 
-            private static final String[] NDAILY_REWARDS = new String[]{
-                "#########",
-                "#RRRRRRR#",
-                "#########"
-            };
-
-            public static GuiTemplate valueOf(String string) {
-                switch (string.toUpperCase()) {
-                    case "DEFAULT" -> {
-                        return new GuiTemplate(DEFAULT);
-                    }
-                    case "COMPACT" -> {
-                        return new GuiTemplate(COMPACT);
-                    }
-                    case "COMPACT_PROFILE" -> {
-                        return new GuiTemplate(COMPACT_PROFILE);
-                    }
-                    case "BORDERED" -> {
-                        return new GuiTemplate(BORDERED);
-                    }
-                    case "BORDERED_LARGE" -> {
-                        return new GuiTemplate(BORDERED_LARGE);
-                    }
-                    case "DAILY_REWARDS_PLUS" -> {
-                        return new GuiTemplate(DAILY_REWARDS_PLUS);
-                    }
-                    case "NDAILY_REWARDS" -> {
-                        return new GuiTemplate(NDAILY_REWARDS);
-                    }
-                    default -> {
-                        LushRewards.getInstance().getLogger().warning("Invalid template type, setting to default.");
-                        return new GuiTemplate(DEFAULT);
-                    }
+        public static GuiTemplate valueOf(String string) {
+            switch (string.toUpperCase()) {
+                case "DEFAULT" -> {
+                    return DEFAULT;
+                }
+                case "COMPACT" -> {
+                    return COMPACT;
+                }
+                case "COMPACT_PROFILE" -> {
+                    return COMPACT_PROFILE;
+                }
+                case "BORDERED" -> {
+                    return BORDERED;
+                }
+                case "BORDERED_LARGE" -> {
+                    return BORDERED_LARGE;
+                }
+                case "DAILY_REWARDS_PLUS" -> {
+                    return DAILY_REWARDS_PLUS;
+                }
+                case "NDAILY_REWARDS" -> {
+                    return NDAILY_REWARDS;
+                }
+                default -> {
+                    LushRewards.getInstance().getLogger().warning("Invalid template type, setting to default.");
+                    return DEFAULT;
                 }
             }
         }

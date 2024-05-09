@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.command.SubCommand;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
+import org.lushplugins.lushrewards.importer.NDailyRewardsImporter;
 
 import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class ImportSubCommand extends SubCommand {
 
@@ -28,10 +28,12 @@ public class ImportSubCommand extends SubCommand {
                 .replace("%command-usage%", "/rewards import <plugin>"));
         }
 
-        ConfigImporter configImporter = null;
+        ConfigImporter configImporter;
         try {
-            if (args[1].equalsIgnoreCase("dailyrewardsplus")) {
-                configImporter = new DailyRewardsPlusImporter();
+            switch (args[0].toLowerCase()) {
+                case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
+                case "ndailyrewards" -> configImporter = new NDailyRewardsImporter();
+                default -> configImporter = null;
             }
         } catch (FileNotFoundException e) {
             ChatColorHandler.sendMessage(sender, "&#ff6969Could not find files when attempting to import from &#d13636'" + args[1] + "'");
@@ -40,17 +42,20 @@ public class ImportSubCommand extends SubCommand {
 
         if (configImporter != null) {
             long startMs = Instant.now().toEpochMilli();
-            configImporter.startImport()
-                .completeOnTimeout(false, 10, TimeUnit.SECONDS)
-                .thenAccept(success -> {
-                    if (success) {
+            LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
+                try {
+                    if (configImporter.startImport()) {
                         ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully imported configuration from &#66b04f'" + args[1] + "' &#b7faa2in &#66b04f" + (Instant.now().toEpochMilli() - startMs) + "ms");
                         LushRewards.getInstance().getConfigManager().reloadConfig();
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reload"));
                     } else {
                         ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
                     }
-                });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "' &#ff6969in &#d13636" + (Instant.now().toEpochMilli() - startMs) + "ms");
+                }
+            });
         } else {
             ChatColorHandler.sendMessage(sender, "&#ff6969Failed to import configuration from &#d13636'" + args[1] + "'");
         }
@@ -60,6 +65,6 @@ public class ImportSubCommand extends SubCommand {
 
     @Override
     public @Nullable List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
-        return List.of("DailyRewardsPlus");
+        return List.of("DailyRewardsPlus", "NDailyRewards");
     }
 }

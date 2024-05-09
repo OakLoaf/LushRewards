@@ -9,22 +9,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class ConfigImporter {
-    protected final File dataFolder;
+    private final String pluginName;
+    private final File dataFolder;
 
-    public ConfigImporter() throws FileNotFoundException {
-        dataFolder = new File(LushRewards.getInstance().getDataFolder().getParentFile(), getPluginName());
+    public ConfigImporter(String pluginName) throws FileNotFoundException {
+        this.pluginName = pluginName;
+        this.dataFolder = new File(LushRewards.getInstance().getDataFolder().getParentFile(), pluginName);
 
         if (!dataFolder.exists()) {
             throw new FileNotFoundException();
         }
     }
 
-    protected abstract String getPluginName();
+    public String getPluginName() {
+        return pluginName;
+    }
 
-    public abstract CompletableFuture<Boolean> startImport();
+    public File getDataFolder() {
+        return dataFolder;
+    }
+
+    public abstract boolean startImport();
 
     @Nullable
     protected static File prepareForImport(File oldFile) {

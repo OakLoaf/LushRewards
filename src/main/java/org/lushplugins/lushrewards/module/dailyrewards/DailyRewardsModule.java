@@ -69,7 +69,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         this.dateAsAmount = config.getBoolean("gui.date-as-amount", false);
         this.scrollType = DailyRewardsGui.ScrollType.valueOf(config.getString("gui.scroll-type", "MONTH").toUpperCase());
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
-        GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
+        GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
 
         ConfigurationSection itemTemplatesSection = config.getConfigurationSection("gui.item-templates");

@@ -66,7 +66,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
-        GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.DefaultTemplate.valueOf(templateType);
+        GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
         this.scrollType = PlaytimeRewardsGui.ScrollType.valueOf(config.getString("gui.scroll-type", "FIXED").toUpperCase());
 
