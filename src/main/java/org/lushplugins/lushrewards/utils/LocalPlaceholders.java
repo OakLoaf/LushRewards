@@ -5,8 +5,6 @@ import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -14,11 +12,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LocalPlaceholders {
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%rewarder_([a-zA-Z0-9_ ]+)%");
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
     private final ConcurrentHashMap<String, Placeholder> placeholders = new ConcurrentHashMap<>();
@@ -79,45 +74,6 @@ public class LocalPlaceholders {
                 return null;
             }
         }));
-    }
-
-    public ItemStack parseItemStack(Player player, ItemStack itemStack) {
-        ItemStack item = itemStack.clone();
-        ItemMeta itemMeta = item.getItemMeta();
-
-        if (itemMeta != null) {
-            itemMeta.setDisplayName(parseString(itemMeta.getDisplayName(), player));
-
-            List<String> lore = itemMeta.getLore();
-            if (lore != null) {
-                List<String> newLore = new ArrayList<>();
-                for (String loreLine : lore) {
-                    newLore.add(parseString(loreLine, player));
-                }
-                itemMeta.setLore(newLore);
-            }
-            item.setItemMeta(itemMeta);
-        }
-
-        return item;
-    }
-
-    public String parseString(String string, Player player) {
-        Matcher matcher = PLACEHOLDER_PATTERN.matcher(string);
-        Set<String> matches = new HashSet<>();
-        while (matcher.find()) {
-            matches.add(matcher.group());
-        }
-
-        for (String match : matches) {
-            String parsed = parsePlaceholder(match, player);
-            if (parsed == null) {
-                continue;
-            }
-            string = string.replace(match, parsed);
-        }
-
-        return string;
     }
 
     public String parsePlaceholder(String params, Player player) {

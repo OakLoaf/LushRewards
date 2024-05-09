@@ -164,8 +164,8 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
     private String translatePlaceholders(@NotNull String string) {
         return string
             .replace("<dayNum>", "%day%")
-            .replace("<timeUntilNextReward>", "%rewarder_countdown%")
+            .replace("<timeUntilNextReward>", "%lushrewards_countdown%")
             .replace("<playerName>", "%player_name%")
-            .replace("<playerStreak>", "%rewarder_streak%");
+            .replace("<playerStreak>", "%lushrewards_daily-rewards_streak%");
     }
 }

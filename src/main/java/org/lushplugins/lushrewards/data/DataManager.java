@@ -79,7 +79,7 @@ public class DataManager extends Manager {
         return future;
     }
 
-    public void unloadRewarderUser(UUID uuid) {
+    public void unloadRewardUser(UUID uuid) {
         rewardUsersCache.remove(uuid);
     }
 
@@ -94,7 +94,7 @@ public class DataManager extends Manager {
                 saveRewardUser(rewardUser);
             }
 
-            unloadRewarderUser(uuid);
+            unloadRewardUser(uuid);
             loadRewardUser(uuid);
         });
     }

@@ -51,7 +51,7 @@ public class RewardUserListener implements EventListener {
             });
 
             LushRewards.getInstance().getDataManager().saveRewardUser(rewardUser);
-            LushRewards.getInstance().getDataManager().unloadRewarderUser(uuid);
+            LushRewards.getInstance().getDataManager().unloadRewardUser(uuid);
         }
 
         LushRewards.getInstance().getDataManager().saveModulesUserData(uuid);

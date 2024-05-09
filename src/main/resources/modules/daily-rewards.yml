@@ -269,7 +269,7 @@ gui:
       display-name: "&#A5B8FE&lProfile:"
       skull-texture: mirror
       lore:
-        - "&#c4f8ffDay Number: &f%rewarder_day_num%"
-        - "&#c4f8ffCollected: &f%rewarder_collected%"
-        - "&#c4f8ffCurrent Streak: &f%rewarder_streak%"
-        - "&#c4f8ffHighest Streak: &f%rewarder_highest_streak%"
+        - "&#c4f8ffDay Number: &f%lushrewards_daily-rewards_day_num%"
+        - "&#c4f8ffCollected: &f%lushrewards_daily-rewards_collected%"
+        - "&#c4f8ffCurrent Streak: &f%lushrewards_daily-rewards_streak%"
+        - "&#c4f8ffHighest Streak: &f%lushrewards_daily-rewards_highest_streak%"
