@@ -27,6 +27,7 @@ public class DataManager extends Manager {
     public void onEnable() {
         ConfigManager configManager = LushRewards.getInstance().getConfigManager();
         ioHandler = new IOHandler<>(configManager.getStorage());
+        ioHandler.enable();
 
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player.getUniqueId()).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
