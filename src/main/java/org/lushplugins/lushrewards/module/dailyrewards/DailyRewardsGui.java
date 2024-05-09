@@ -48,7 +48,7 @@ public class DailyRewardsGui extends Gui {
                     errorItem.setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"));
                     errorItem.parseColors(player);
 
-                    inventory.setItem(4, errorItem.asItemStack());
+                    inventory.setItem(4, errorItem.asItemStack(player, true));
                     return;
                 }
 
@@ -178,7 +178,7 @@ public class DailyRewardsGui extends Gui {
                                         }
                                         collectedItem.parseColors(player);
 
-                                        inventory.setItem(slot, collectedItem.asItemStack());
+                                        inventory.setItem(slot, collectedItem.asItemStack(player, true));
 
                                         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
 

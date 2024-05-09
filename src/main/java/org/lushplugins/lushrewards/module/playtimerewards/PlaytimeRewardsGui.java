@@ -51,7 +51,7 @@ public class PlaytimeRewardsGui extends Gui {
                         errorItem.setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"));
                         errorItem.parseColors(player);
 
-                        inventory.setItem(4, errorItem.asItemStack());
+                        inventory.setItem(4, errorItem.asItemStack(player, true));
 
                         return;
                     }
@@ -152,7 +152,7 @@ public class PlaytimeRewardsGui extends Gui {
                                         }
                                         collectedItem.parseColors(player);
 
-                                        inventory.setItem(slot, collectedItem.asItemStack());
+                                        inventory.setItem(slot, collectedItem.asItemStack(player, true));
 
                                         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
                                         if (module.hasClaimableRewards(player, playtime)) {
@@ -163,7 +163,7 @@ public class PlaytimeRewardsGui extends Gui {
                                     });
                                 }
 
-                                inventory.setItem(slot, displayItem.asItemStack());
+                                inventory.setItem(slot, displayItem.asItemStack(player, true));
                             });
                             case ' ' ->
                                 slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
