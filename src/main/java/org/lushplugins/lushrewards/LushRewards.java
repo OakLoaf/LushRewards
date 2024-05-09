@@ -2,6 +2,7 @@ package org.lushplugins.lushrewards;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.command.RewardsCommand;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
@@ -83,6 +84,7 @@ public final class LushRewards extends SpigotPlugin {
 
         addHook("floodgate", () -> registerHook(new FloodgateHook()));
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
+        getHooks().forEach(Module::enable);
 
         new RewardUserListener().registerListeners();
 
