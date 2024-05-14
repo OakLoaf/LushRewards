@@ -27,7 +27,7 @@ public class NDailyRewardsImporter extends ConfigImporter {
 
     @Override
     public boolean startImport() {
-        YamlConfiguration importingConfig = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "Config.yml"));
+        YamlConfiguration importingConfig = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
 
         File newRewardsFile = prepareForImport(new File(LushRewards.getInstance().getDataFolder(), "modules/daily-rewards.yml"), false);
         if (newRewardsFile == null) {
