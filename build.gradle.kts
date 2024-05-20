@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.lushplugins"
-version = "3.0.0.5-BETA"
+version = "3.0.0.6-BETA"
 
 repositories {
     mavenLocal()
