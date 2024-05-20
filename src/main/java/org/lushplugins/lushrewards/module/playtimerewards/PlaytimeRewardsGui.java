@@ -56,7 +56,7 @@ public class PlaytimeRewardsGui extends Gui {
                         return;
                     }
 
-                    int playtime = playtimeTracker.getGlobalPlaytime();
+                    int playtime = playtimeTracker.getGlobalPlaytime() - userData.getPreviousDayEndPlaytime();
                     Integer shortestFrequency = module.getShortestRepeatFrequency(playtime);
                     int startPlaytime;
                     switch (module.getScrollType()) {
@@ -115,7 +115,7 @@ public class PlaytimeRewardsGui extends Gui {
                                 String itemTemplate;
                                 if (minutes < userData.getLastCollectedPlaytime()) {
                                     itemTemplate = "collected-reward";
-                                } else if (playtimeTracker.getGlobalPlaytime() > minutes) {
+                                } else if (playtimeTracker.getGlobalPlaytime() - userData.getPreviousDayEndPlaytime() > minutes) {
                                     itemTemplate = "redeemable-reward";
                                 } else {
                                     itemTemplate = "default-reward";
