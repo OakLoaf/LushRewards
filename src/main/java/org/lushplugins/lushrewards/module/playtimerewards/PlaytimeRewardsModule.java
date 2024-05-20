@@ -115,22 +115,22 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         return hasClaimableRewards(player, null);
     }
 
-    public boolean hasClaimableRewards(Player player, Integer playtime) {
+    public boolean hasClaimableRewards(Player player, Integer globalPlaytime) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
             return false;
         }
 
-        if (resetPlaytimeAt > 0 && userData.getStartDate().isEqual(LocalDate.now().minusDays(resetPlaytimeAt))) {
+        if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
             userData.setStartDate(LocalDate.now());
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
             saveUserData(userData.getUniqueId(), userData);
         }
 
-        playtime = playtime != null ? playtime : rewardUser.getMinutesPlayed();
+        globalPlaytime = globalPlaytime != null ? globalPlaytime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
-        return !getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, playtime - previousDayEnd).isEmpty();
+        return !getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, globalPlaytime - previousDayEnd).isEmpty();
     }
 
     @Override
@@ -138,7 +138,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         return claimRewards(player, null);
     }
 
-    public boolean claimRewards(Player player, Integer playtime) {
+    public boolean claimRewards(Player player, Integer globalPlaytime) {
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
         UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
@@ -153,9 +153,11 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             saveUserData = true;
         }
 
-        playtime = playtime != null ? playtime : rewardUser.getMinutesPlayed();
+        globalPlaytime = globalPlaytime != null ? globalPlaytime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
-        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(userData.getLastCollectedPlaytime() - previousDayEnd, playtime - previousDayEnd);
+        int playtime = globalPlaytime - previousDayEnd;
+        int lastCollectedPlaytime = userData.getLastCollectedPlaytime() - previousDayEnd;
+        HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(lastCollectedPlaytime, playtime);
         if (rewards.isEmpty()) {
             if (saveUserData) {
                 saveUserData(userData.getUniqueId(), userData);
@@ -173,9 +175,13 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             .replace("%minutes%", String.valueOf(playtime))
             .replace("%hours%", String.valueOf((int) Math.floor(playtime / 60D))));
 
-        userData.setLastCollectedPlaytime(playtime);
+        userData.setLastCollectedPlaytime(globalPlaytime);
         saveUserData(userData.getUniqueId(), userData);
         return true;
+    }
+
+    public int getResetPlaytimeAt() {
+        return resetPlaytimeAt;
     }
 
     public int getRefreshTime() {

@@ -11,8 +11,10 @@ import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
@@ -173,6 +175,18 @@ public class DataManager extends Manager {
                             }
                         } else if (dataClass.isAssignableFrom(RewardUser.class)) {
                             userData = dataClass.cast(new RewardUser(uuid, null, 0));
+                        }
+                    }
+
+                    if (userData instanceof PlaytimeRewardsModule.UserData playtimeUserData) {
+                        PlaytimeRewardsModule module = (PlaytimeRewardsModule) LushRewards.getInstance().getModule(moduleId).orElse(null);
+                        if (module != null) {
+                            int resetPlaytimeAt = module.getResetPlaytimeAt();
+                            if (resetPlaytimeAt > 0 && !playtimeUserData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
+                                playtimeUserData.setStartDate(LocalDate.now());
+                                playtimeUserData.setPreviousDayEndPlaytime(playtimeUserData.getLastCollectedPlaytime());
+                                saveUserData(userData.getUniqueId(), userData);
+                            }
                         }
                     }
 

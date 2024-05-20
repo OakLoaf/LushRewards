@@ -57,14 +57,15 @@ public class PlaytimeRewardsGui extends Gui {
                     }
 
                     int playtime = playtimeTracker.getGlobalPlaytime() - userData.getPreviousDayEndPlaytime();
+                    int lastCollectedPlaytime = userData.getLastCollectedPlaytime() - userData.getPreviousDayEndPlaytime();
                     Integer shortestFrequency = module.getShortestRepeatFrequency(playtime);
                     int startPlaytime;
                     switch (module.getScrollType()) {
                         case SCROLL -> {
                             if (shortestFrequency != null) {
-                                startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), userData.getLastCollectedPlaytime());
+                                startPlaytime = Math.max((int) (playtime - (shortestFrequency * Math.floor(guiTemplate.countChar('R') / 2D))), lastCollectedPlaytime);
                             } else {
-                                startPlaytime = userData.getLastCollectedPlaytime();
+                                startPlaytime = lastCollectedPlaytime;
                             }
                         }
                         default -> startPlaytime = 0;
@@ -113,9 +114,9 @@ public class PlaytimeRewardsGui extends Gui {
                                 }
 
                                 String itemTemplate;
-                                if (minutes < userData.getLastCollectedPlaytime()) {
+                                if (minutes < lastCollectedPlaytime) {
                                     itemTemplate = "collected-reward";
-                                } else if (playtimeTracker.getGlobalPlaytime() - userData.getPreviousDayEndPlaytime() > minutes) {
+                                } else if (playtime > minutes) {
                                     itemTemplate = "redeemable-reward";
                                 } else {
                                     itemTemplate = "default-reward";
@@ -135,7 +136,7 @@ public class PlaytimeRewardsGui extends Gui {
 
                                 displayItem.parseColors(player);
 
-                                if (module.hasClaimableRewards(player, playtime)) {
+                                if (module.hasClaimableRewards(player, playtimeTracker.getGlobalPlaytime())) {
                                     addButton(slot, (event) -> {
                                         // Gets clicked item and checks if it exists
                                         ItemStack currItem = event.getCurrentItem();
@@ -155,8 +156,8 @@ public class PlaytimeRewardsGui extends Gui {
                                         inventory.setItem(slot, collectedItem.asItemStack(player, true));
 
                                         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
-                                        if (module.hasClaimableRewards(player, playtime)) {
-                                            module.claimRewards(player, playtime);
+                                        if (module.hasClaimableRewards(player, playtimeTracker.getGlobalPlaytime())) {
+                                            module.claimRewards(player, playtimeTracker.getGlobalPlaytime());
                                         }
 
                                         recalculateContents();
