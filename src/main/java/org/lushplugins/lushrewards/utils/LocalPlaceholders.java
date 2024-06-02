@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO: Either make shadeable Placeholder library or just add parseString method to parse messages/gui through
 public class LocalPlaceholders {
     private static LocalDateTime nextDay = LocalDate.now().plusDays(1).atStartOfDay();
 
