@@ -2,6 +2,7 @@ package org.lushplugins.lushrewards;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.bstats.bukkit.Metrics;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.command.RewardsCommand;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
@@ -95,6 +96,8 @@ public final class LushRewards extends SpigotPlugin {
                 Bukkit.getOnlinePlayers().forEach(playtimeTracker::startPlaytimeTracker);
             }
         });
+
+        new Metrics(this, 22119);
     }
 
     @Override

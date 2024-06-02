@@ -25,6 +25,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:${findProperty("floodgateVersion")}-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:${findProperty("placeholderapiVersion")}")
 
+    implementation("org.bstats:bstats-bukkit:${findProperty("bStatsVersion")}")
     implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
     implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
