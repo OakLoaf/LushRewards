@@ -7,6 +7,7 @@ import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.command.RewardsCommand;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
+import org.lushplugins.lushrewards.importer.Version3DataMigrator;
 import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
@@ -26,6 +27,8 @@ import org.lushplugins.lushlib.utils.Updater;
 import space.arim.morepaperlib.MorePaperLib;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -66,6 +69,15 @@ public final class LushRewards extends SpigotPlugin {
                     file.delete();
                 }
             }
+
+            getLogger().info("Importing data from 'ActivityRewarder', this could take a moment");
+            long start = Instant.now().toEpochMilli();
+            try {
+                new Version3DataMigrator().startImport();
+            } catch (FileNotFoundException e) {
+                getLogger().severe("Failed to import data");
+            }
+            getLogger().info("Finished importing data (took " + (Instant.now().toEpochMilli() - start) + "ms)");
         }
 
         registerManager(

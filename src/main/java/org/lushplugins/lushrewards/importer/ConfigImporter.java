@@ -23,6 +23,15 @@ public abstract class ConfigImporter {
         }
     }
 
+    public ConfigImporter(String name, File dataFolder) throws FileNotFoundException {
+        this.pluginName = name;
+        this.dataFolder = dataFolder;
+
+        if (!dataFolder.exists()) {
+            throw new FileNotFoundException();
+        }
+    }
+
     public String getPluginName() {
         return pluginName;
     }

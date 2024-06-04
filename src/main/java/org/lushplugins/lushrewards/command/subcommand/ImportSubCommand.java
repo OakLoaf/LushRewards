@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.command.SubCommand;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.importer.NDailyRewardsImporter;
+import org.lushplugins.lushrewards.importer.Version3DataMigrator;
 
 import java.io.FileNotFoundException;
 import java.time.Instant;
@@ -34,6 +35,7 @@ public class ImportSubCommand extends SubCommand {
             switch (name.toLowerCase()) {
                 case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
                 case "ndailyrewards" -> configImporter = new NDailyRewardsImporter();
+                case "version2" -> configImporter = new Version3DataMigrator();
                 default -> configImporter = null;
             }
         } catch (FileNotFoundException e) {
@@ -66,6 +68,6 @@ public class ImportSubCommand extends SubCommand {
 
     @Override
     public @Nullable List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
-        return List.of("DailyRewardsPlus", "NDailyRewards");
+        return List.of("DailyRewardsPlus", "NDailyRewards", "Version2");
     }
 }
