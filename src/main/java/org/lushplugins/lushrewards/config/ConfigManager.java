@@ -78,7 +78,7 @@ public class ConfigManager {
             Files.newDirectoryStream(MODULES_FOLDER.toPath(), "*.yml").forEach(entry -> {
                 File moduleFile = entry.toFile();
                 YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
-                if (moduleConfig.getBoolean("enabled", true)) {
+                if (moduleConfig.getBoolean("enabled", true) && config.getBoolean("modules." + moduleFile.getName(), true)) {
                     String moduleId = FilenameUtils.removeExtension(moduleFile.getName());
                     if (plugin.getModule(moduleId).isPresent()) {
                         plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
