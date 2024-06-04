@@ -7,7 +7,7 @@ import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.command.RewardsCommand;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
-import org.lushplugins.lushrewards.importer.Version3DataMigrator;
+import org.lushplugins.lushrewards.data.converter.Version3DataMigrator;
 import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;

@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.importer;
+package org.lushplugins.lushrewards.data.converter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
