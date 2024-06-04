@@ -35,7 +35,7 @@ public class ImportSubCommand extends SubCommand {
             switch (name.toLowerCase()) {
                 case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
                 case "ndailyrewards" -> configImporter = new NDailyRewardsImporter();
-                case "version2" -> configImporter = new Version3DataMigrator();
+                case "version2to3" -> configImporter = new Version3DataMigrator();
                 default -> configImporter = null;
             }
         } catch (FileNotFoundException e) {
@@ -68,6 +68,6 @@ public class ImportSubCommand extends SubCommand {
 
     @Override
     public @Nullable List<String> tabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
-        return List.of("DailyRewardsPlus", "NDailyRewards", "Version2");
+        return List.of("DailyRewardsPlus", "NDailyRewards", "Version2to3");
     }
 }
