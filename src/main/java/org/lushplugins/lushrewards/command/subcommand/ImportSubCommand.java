@@ -1,7 +1,7 @@
 package org.lushplugins.lushrewards.command.subcommand;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.importer.ConfigImporter;
+import org.lushplugins.lushrewards.data.converter.Converter;
 import org.lushplugins.lushrewards.importer.DailyRewardsPlusImporter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class ImportSubCommand extends SubCommand {
         }
 
         String name = args[0];
-        ConfigImporter configImporter;
+        Converter configImporter;
         try {
             switch (name.toLowerCase()) {
                 case "dailyrewardsplus" -> configImporter = new DailyRewardsPlusImporter();
@@ -47,7 +47,7 @@ public class ImportSubCommand extends SubCommand {
             long startMs = Instant.now().toEpochMilli();
             LushRewards.getMorePaperLib().scheduling().asyncScheduler().run(() -> {
                 try {
-                    if (configImporter.startImport()) {
+                    if (configImporter.convert()) {
                         ChatColorHandler.sendMessage(sender, "&#b7faa2Successfully imported configuration from &#66b04f'" + name + "' &#b7faa2in &#66b04f" + (Instant.now().toEpochMilli() - startMs) + "ms");
                         LushRewards.getInstance().getConfigManager().reloadConfig();
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reload"));

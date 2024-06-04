@@ -3,6 +3,7 @@ package org.lushplugins.lushrewards.importer;
 import org.lushplugins.lushrewards.LushRewards;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.utils.FilenameUtils;
+import org.lushplugins.lushrewards.data.converter.Converter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,12 +11,11 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public abstract class ConfigImporter {
-    private final String pluginName;
+public abstract class ConfigImporter extends Converter {
     private final File dataFolder;
 
     public ConfigImporter(String pluginName) throws FileNotFoundException {
-        this.pluginName = pluginName;
+        super(pluginName);
         this.dataFolder = new File(LushRewards.getInstance().getDataFolder().getParentFile(), pluginName);
 
         if (!dataFolder.exists()) {
@@ -24,7 +24,7 @@ public abstract class ConfigImporter {
     }
 
     public ConfigImporter(String name, File dataFolder) throws FileNotFoundException {
-        this.pluginName = name;
+        super(name);
         this.dataFolder = dataFolder;
 
         if (!dataFolder.exists()) {
@@ -32,12 +32,13 @@ public abstract class ConfigImporter {
         }
     }
 
-    public String getPluginName() {
-        return pluginName;
-    }
-
     public File getDataFolder() {
         return dataFolder;
+    }
+
+    @Override
+    public boolean convert() {
+        return startImport();
     }
 
     public abstract boolean startImport();

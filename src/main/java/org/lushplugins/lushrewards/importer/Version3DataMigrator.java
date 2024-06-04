@@ -6,6 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lushplugins.lushlib.utils.FilenameUtils;
 import org.lushplugins.lushrewards.LushRewards;
+import org.lushplugins.lushrewards.data.converter.Converter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,22 +20,24 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public class Version3DataMigrator extends ConfigImporter {
-    private static final File LUSH_DATA_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "data");
+public class Version3DataMigrator extends Converter {
+    private final File version2DataFolder;
+    private final File lushDataFolder;
 
     public Version3DataMigrator() throws FileNotFoundException {
-        super("Version3Migrator", new File(LushRewards.getInstance().getDataFolder().getParentFile(), "ActivityRewarder/data"));
+        super("Version3Migrator");
+        version2DataFolder = new File(LushRewards.getInstance().getDataFolder().getParentFile(), "ActivityRewarder/data");
+        lushDataFolder = new File(LushRewards.getInstance().getDataFolder(), "data");
     }
 
     @Override
-    public boolean startImport() {
-        File version2DataFolder = getDataFolder();
+    public boolean convert() {
         if (!version2DataFolder.exists()) {
             return false;
         }
 
-        if (!LUSH_DATA_FOLDER.exists()) {
-            LUSH_DATA_FOLDER.mkdirs();
+        if (!lushDataFolder.exists()) {
+            lushDataFolder.mkdirs();
         }
 
         AtomicInteger count = new AtomicInteger(0);
@@ -122,7 +125,7 @@ public class Version3DataMigrator extends ConfigImporter {
             json.add("global-playtime-rewards", module);
         }
 
-        FileWriter writer = new FileWriter(new File(LUSH_DATA_FOLDER, uuid + ".json"));
+        FileWriter writer = new FileWriter(new File(lushDataFolder, uuid + ".json"));
         LushRewards.getInstance().getGson().toJson(json, writer);
         writer.flush();
     }

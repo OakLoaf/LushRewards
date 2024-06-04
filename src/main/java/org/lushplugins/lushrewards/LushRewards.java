@@ -73,7 +73,7 @@ public final class LushRewards extends SpigotPlugin {
             getLogger().info("Importing data from 'ActivityRewarder', this could take a moment");
             long start = Instant.now().toEpochMilli();
             try {
-                new Version3DataMigrator().startImport();
+                new Version3DataMigrator().convert();
             } catch (FileNotFoundException e) {
                 getLogger().severe("Failed to import data");
             }
