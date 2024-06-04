@@ -77,9 +77,9 @@ public class ConfigManager {
         try {
             Files.newDirectoryStream(MODULES_FOLDER.toPath(), "*.yml").forEach(entry -> {
                 File moduleFile = entry.toFile();
+                String moduleId = FilenameUtils.removeExtension(moduleFile.getName());
                 YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
-                if (moduleConfig.getBoolean("enabled", true) && config.getBoolean("modules." + moduleFile.getName(), true)) {
-                    String moduleId = FilenameUtils.removeExtension(moduleFile.getName());
+                if (moduleConfig.getBoolean("enabled", true) && config.getBoolean("modules." + moduleId, true)) {
                     if (plugin.getModule(moduleId).isPresent()) {
                         plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
                         return;
@@ -254,7 +254,7 @@ public class ConfigManager {
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
                 globalItemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
-                LushRewards.getInstance().getLogger().info("Loaded item-template: " + categorySection.getName());
+                LushRewards.getInstance().getLogger().info("Loaded global item-template: " + categorySection.getName());
             }
         });
     }
