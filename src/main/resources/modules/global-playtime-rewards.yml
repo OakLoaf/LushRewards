@@ -1,5 +1,6 @@
 # Global Playtime Rewards: playtime goals that do not reset
 type: playtime-rewards
+enabled: true
 
 # How often (in days) to reset (0 to disable)
 reset-playtime-at: 0

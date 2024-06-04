@@ -1,11 +1,5 @@
 # For more details on configuring LushRewards check out the documentation at https://dave-12.gitbook.io/lush-rewards
 
-# Enable or disable specific LushRewards modules
-modules:
-  daily-rewards: true
-  daily-playtime-rewards: true
-  global-playtime-rewards: true
-
 # If false then playtime will include afk/idle time
 playtime-ignore-afk: true
 # The length in seconds between reminders being sent (Set to -1 to disable)

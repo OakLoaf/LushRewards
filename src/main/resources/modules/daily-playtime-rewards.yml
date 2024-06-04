@@ -1,5 +1,6 @@
 # Daily Playtime Rewards: Hourly playtime goals that reset daily
 type: playtime-rewards
+enabled: true
 
 # How often (in days) to reset (0 to disable)
 reset-playtime-at: 1

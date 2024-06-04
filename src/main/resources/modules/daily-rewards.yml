@@ -1,5 +1,6 @@
 # Daily Rewards: Rewards that are given daily
 type: daily-rewards
+enabled: true
 
 # Reward mode changes the way that reward days are increased
 # - default: Increases every day
