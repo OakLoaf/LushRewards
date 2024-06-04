@@ -42,6 +42,7 @@ tasks {
     }
 
     shadowJar {
+        relocate("org.bstats", "org.lushplugins.lushrewards.libraries.bstats")
         relocate("org.enchantedskies", "org.lushplugins.lushrewards.libraries.enchantedskies")
         relocate("org.lushplugins.lushlib", "org.lushplugins.lushrewards.libraries.lushlib")
         relocate("space.arim.morepaperlib", "org.lushplugins.lushrewards.libraries.morepaperlib")
