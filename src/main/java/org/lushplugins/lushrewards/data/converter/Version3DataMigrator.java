@@ -86,7 +86,7 @@ public class Version3DataMigrator extends Converter {
                 module.addProperty("startDate", startDateFormatted);
             }
             module.addProperty("lastJoinDate", LocalDate.now().minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
-            module.addProperty("lastCollectedDate", dailyRewardsData.getString("last-collected-date"));
+            module.addProperty("lastCollectedDate", LocalDate.parse(dailyRewardsData.getString("last-collected-date"), DateTimeFormatter.ofPattern("dd-MM-yyyy")).format(DateTimeFormatter.ISO_LOCAL_DATE));
 
             JsonArray collectedDays = new JsonArray();
             if (startDate != null) {
