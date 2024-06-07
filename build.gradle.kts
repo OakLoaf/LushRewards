@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.lushplugins"
-version = "3.1.1"
+version = "3.1.2"
 
 repositories {
     mavenLocal()
@@ -48,7 +48,9 @@ tasks {
         relocate("space.arim.morepaperlib", "org.lushplugins.lushrewards.libraries.morepaperlib")
         relocate("com.mysql", "org.lushplugins.lushrewards.libraries.mysql")
 
-        minimize()
+        minimize {
+            exclude(dependency("com.mysql:.*:.*"))
+        }
 
         val folder = System.getenv("pluginFolder_1-20")
         if (folder != null) destinationDirectory.set(file(folder))
