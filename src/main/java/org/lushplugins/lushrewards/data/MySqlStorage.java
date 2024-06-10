@@ -40,12 +40,17 @@ public class MySqlStorage implements Storage<DataManager.StorageData, DataManage
 
         assertJsonColumn(table, column);
 
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("SELECT " + column + " FROM " + table + " WHERE uniqueId = ?;")) {
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("SELECT `" + column + "` FROM `" + table + "` WHERE uuid = ?;")) {
             stmt.setString(1, uuid.toString());
 
             ResultSet resultSet = stmt.executeQuery();
-            String jsonRaw = resultSet.getString(column);
-            JsonObject json = jsonRaw != null ? JsonParser.parseString(jsonRaw).getAsJsonObject() : null;
+            JsonObject json;
+            if (resultSet.next()) {
+                String jsonRaw = resultSet.getString(column);
+                json = jsonRaw != null ? JsonParser.parseString(jsonRaw).getAsJsonObject() : null;
+            } else {
+                json = null;
+            }
 
             return new DataManager.StorageData(uuid, module, json);
         } catch (SQLException e) {
@@ -76,7 +81,7 @@ public class MySqlStorage implements Storage<DataManager.StorageData, DataManage
 
         assertJsonColumn(table, column);
 
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("REPLACE INTO " + table + "(uuid, " + column + ") VALUES(?, ?);")) {
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement("REPLACE INTO `" + table + "`(uuid, `" + column + "`) VALUES(?, ?);")) {
             stmt.setString(1, uuid.toString());
             stmt.setString(2, json.toString());
             stmt.executeUpdate();
@@ -92,19 +97,27 @@ public class MySqlStorage implements Storage<DataManager.StorageData, DataManage
     @SuppressWarnings("SameParameterValue")
     private void assertColumn(String table, String column, String type) {
         assertTable(table);
-        String query = "ALTER TABLE " + table + " ADD COLUMN IF NOT EXISTS " + column + " " + type + ";";
 
+        String query = "SELECT `" + column + "` FROM `" + table + "`";
         try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.execute();
+            stmt.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (e.getErrorCode() == 1054) {
+                String statement = "ALTER TABLE `" + table + "` ADD COLUMN `" + column + "` " + type + ";";
+                try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(statement)) {
+                    stmt.execute();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
     private void assertTable(String table) {
-        String query = "CREATE TABLE IF NOT EXISTS " + table + "(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));";
-
-        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(query)) {
+        String statement = "CREATE TABLE IF NOT EXISTS `" + table + "`(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));";
+        try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(statement)) {
             stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,8 +127,8 @@ public class MySqlStorage implements Storage<DataManager.StorageData, DataManage
     public Connection conn() {
         try {
             return dataSource.getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
