@@ -26,10 +26,18 @@ public abstract class Reward implements Cloneable {
 
     public Reward(Map<?, ?> map) {
         if (map.containsKey("message")) {
-            this.message = (String) map.get("message");
+            if (map.get("message") instanceof List) {
+                this.message = String.join("\n", ((List<String>) map.get("message")));
+            } else {
+                this.message = (String) map.get("message");
+            }
         }
         if (map.containsKey("broadcast")) {
-            this.broadcast = (String) map.get("broadcast");
+            if (map.get("broadcast") instanceof List) {
+                this.broadcast = String.join("\n", ((List<String>) map.get("broadcast")));
+            } else {
+                this.broadcast = (String) map.get("broadcast");
+            }
         }
     }
 
