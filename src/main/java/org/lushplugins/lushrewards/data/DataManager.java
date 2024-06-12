@@ -258,22 +258,6 @@ public class DataManager extends Manager {
         }
     }
 
-    private boolean isOutdated() {
-        File playerDataFile = new File(LushRewards.getInstance().getDataFolder(), "data");
-        if (playerDataFile.exists()) {
-            File[] dataFiles = playerDataFile.listFiles();
-
-            if (dataFiles != null && dataFiles.length > 0) {
-                File dataFile = dataFiles[0];
-                YamlConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
-
-                return data.contains("dailyrewards.day-num", true);
-            }
-        }
-
-        return false;
-    }
-
     public record StorageLocation(@NotNull UUID uuid, @Nullable String moduleId) {
     }
 
