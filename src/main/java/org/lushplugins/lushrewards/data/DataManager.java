@@ -153,6 +153,10 @@ public class DataManager extends Manager {
         CompletableFuture<T> future = new CompletableFuture<>();
         ioHandler.loadData(new StorageLocation(uuid, moduleId))
             .completeOnTimeout(null, 15, TimeUnit.SECONDS)
+            .exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            })
             .thenAccept(storageData -> {
                 if (storageData == null) {
                     future.complete(null);
@@ -192,7 +196,6 @@ public class DataManager extends Manager {
 
                     future.complete(userData);
                 } catch (Throwable e) {
-                    e.printStackTrace();
                     future.completeExceptionally(e);
                 }
             })
