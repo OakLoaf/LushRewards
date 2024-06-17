@@ -5,51 +5,44 @@ For further information on using setting-up and using this plugin check out the 
 
 
 ### Features
-- Reward players with items, commands, messages, permission based rewards and more!
+- Reward players with items, commands, permission based rewards and more!
 - Daily Rewards
 - Playtime Rewards (Daily and Global)
 - Create different reward categories
-- Reward players for streaks or alternatively reward them every day that they login
+- Create infinite reward days or setup a loop
+- Create calender/date based rewards to celebrate special occasions
+- Reward players for streaks or alternatively reward them every day they login
 - Show off your next big reward to motivate players to login every single day!
 - Completely configure your guis
+- Sync rewards across networks with databases
 
 
 ### Commands
 - /rewards - Open the rewards menu
-- /rewards about - Displays LushRewards plugin information
 - /rewards claim - Claims available rewards
 - /rewards import <plugin> - Import configurations from other plugins
 - /rewards reload - Reload the plugin
 - Find more commands and permissions at https://dave-12.gitbook.io/lush-rewards/commands-and-permissions
 
 
-### Permissions
-- lushrewards.use - Allow user to collect rewards (Given by default)
-- lushrewards.bonus.groupName - Give user bonuses for playtime, groupNames need to be defined in the config.yml
-- lushrewards.reload - Allow user to reload the plugin
-
-
 ### Hooks
 - PlaceholderAPI
-  - Find the list of placeholders at https://dave-12.gitbook.io/lush-rewards/placeholders
+  - Find a list of available placeholders at https://dave-12.gitbook.io/lush-rewards/placeholders
 
 
 ### Configs
 
 <details>
-<summary>Default Config</summary>
+<summary>Default Configs</summary>
 
-[config.yml](https://dave-12.gitbook.io/lush-rewards/configuring/main-config#config.yml)
-
-[daily-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-rewards#daily-rewards.yml)
-
-[daily-playtime-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-playtime-rewards#daily-playtime-rewards.yml)
-
-[global-playtime-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/global-playtime-rewards#global-playtime-rewards.yml)
+- [config.yml](https://dave-12.gitbook.io/lush-rewards/configuring/main-config#config.yml)
+- [daily-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-rewards#daily-rewards.yml)
+- [daily-playtime-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/daily-playtime-rewards#daily-playtime-rewards.yml)
+- [global-playtime-rewards.yml](https://dave-12.gitbook.io/lush-rewards/configuring/modules/global-playtime-rewards#global-playtime-rewards.yml)
 
 </details>
 
 
-If you have a bug to report or need help setting up your plugin join the [Discord Support Server](https://discord.gg/p3duRZsZ2f)
+If you have a bug to report or need help setting up your plugin join our [Discord Support Server](https://discord.gg/p3duRZsZ2f)
 
 Have a wonderful day :)
