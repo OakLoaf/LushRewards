@@ -5,7 +5,7 @@ For further information on using setting-up and using this plugin check out the 
 
 
 ### Features
-- Reward players with items, commands, permission based rewards and more!
+- Reward players with items, commands, permission based rewards and [more](https://dave-12.gitbook.io/lush-rewards/configuring/reward-configuration#reward-types)!
 - Daily Rewards
 - Playtime Rewards (Daily and Global)
 - Create different reward categories
