@@ -92,13 +92,13 @@ public class PlaytimeTracker {
         globalTime++;
 
         if (player.hasPermission("lushrewards.use")) {
-            LushRewards.getInstance().getModules().forEach(module -> {
+            for (Module module : LushRewards.getInstance().getModules()) {
                 if (module instanceof PlaytimeRewardsModule playtimeRewardsModule) {
                     if (playtimeRewardsModule.getRefreshTime() > 0 && globalTime % playtimeRewardsModule.getRefreshTime() == 0) {
                         playtimeRewardsModule.claimRewards(player);
                     }
                 }
-            });
+            }
         }
 
         if (globalTime % 5 == 0) {

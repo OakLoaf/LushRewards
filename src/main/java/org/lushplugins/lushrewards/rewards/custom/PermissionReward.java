@@ -26,14 +26,14 @@ public class PermissionReward extends WrapperReward {
     @Override
     protected void giveTo(Player player) {
         if (player.hasPermission(permission)) {
-            rewards.forEach(reward -> {
+            for (Reward reward : rewards) {
                 try {
                     reward.giveReward(player);
                 } catch (Exception e) {
                     LushRewards.getInstance().getLogger().severe("Error occurred when giving reward (" +reward.toString() + ") to " + player.getName());
                     e.printStackTrace();
                 }
-            });
+            }
         }
     }
 

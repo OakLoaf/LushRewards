@@ -35,7 +35,7 @@ public class ClaimSubCommand extends SubCommand {
 
         List<RewardModule> modules = args.length >= 1 ? getModules(args[0]) : getModules("*");
         AtomicInteger rewardsGiven = new AtomicInteger();
-        modules.forEach(module -> {
+        for (RewardModule module : modules) {
             if (module.hasClaimableRewards(player)) {
                 if (module instanceof UserDataModule<?> userDataModule) {
                     userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player));
@@ -45,7 +45,7 @@ public class ClaimSubCommand extends SubCommand {
                     rewardsGiven.getAndIncrement();
                 }
             }
-        });
+        }
 
         if (rewardsGiven.get() == 0) {
             ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("no-rewards-available"));

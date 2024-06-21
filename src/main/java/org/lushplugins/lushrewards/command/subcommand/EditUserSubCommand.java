@@ -309,7 +309,7 @@ public class EditUserSubCommand extends SubCommand {
             }
         }
 
-        modules.forEach(module -> {
+        for (Module module : modules) {
             if (module instanceof DailyRewardsModule dailyRewardsModule) {
                 dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                     if (userData != null) {
@@ -319,7 +319,7 @@ public class EditUserSubCommand extends SubCommand {
                     }
                 });
             }
-        });
+        }
 
         return true;
     }
@@ -340,14 +340,14 @@ public class EditUserSubCommand extends SubCommand {
             }
         }
 
-        modules.forEach(module -> {
+        for (Module module : modules) {
             if (module instanceof DailyRewardsModule dailyRewardsModule) {
                 dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                     userData.setStreak(streak);
                     dailyRewardsModule.saveUserData(uuid, userData);
                 });
             }
-        });
+        }
 
         return true;
     }
@@ -368,7 +368,7 @@ public class EditUserSubCommand extends SubCommand {
         }
 
         if (player != null) {
-            modules.forEach(module -> {
+            for (Module module : modules) {
                 if (module instanceof DailyRewardsModule dailyRewardsModule) {
                     dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                         userData.clearCollectedDays();
@@ -377,7 +377,7 @@ public class EditUserSubCommand extends SubCommand {
                         dailyRewardsModule.saveUserData(uuid, userData);
                     });
                 }
-            });
+            }
         }
 
         return true;

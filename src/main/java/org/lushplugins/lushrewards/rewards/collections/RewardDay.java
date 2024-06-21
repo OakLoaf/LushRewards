@@ -17,7 +17,9 @@ public class RewardDay {
     }
 
     public void giveAllRewards(Player player) {
-        dailyRewardCollections.forEach(dailyRewardCollection -> dailyRewardCollection.giveAll(player));
+        for (DailyRewardCollection dailyRewardCollection : dailyRewardCollections) {
+            dailyRewardCollection.giveAll(player);
+        }
     }
 
     public void addCollection(DailyRewardCollection dailyRewardCollection) {
@@ -25,13 +27,16 @@ public class RewardDay {
     }
 
     public void addCollections(Collection<DailyRewardCollection> dailyRewardCollections) {
-        dailyRewardCollections.forEach(this::addCollection);
+        for (DailyRewardCollection dailyRewardCollection : dailyRewardCollections) {
+            addCollection(dailyRewardCollection);
+        }
     }
 
     public boolean containsRewardFromCategory(String category) {
         for (DailyRewardCollection dailyRewardCollection : dailyRewardCollections) {
             if (dailyRewardCollection.getCategory().equals(category)) return true;
         }
+
         return false;
     }
 

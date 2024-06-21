@@ -34,7 +34,7 @@ public class ConsoleCommandReward extends Reward {
 
     @Override
     protected void giveTo(Player player) {
-        commands.forEach(commandRaw -> {
+        for (String commandRaw : commands) {
             commandRaw = commandRaw
                 .replace("%user%", player.getName())
                 .replace("%player%", player.getName());
@@ -60,7 +60,7 @@ public class ConsoleCommandReward extends Reward {
             if (dispatchCommand) {
                 Bukkit.dispatchCommand(CONSOLE, command);
             }
-        });
+        }
     }
 
     @Override

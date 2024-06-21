@@ -29,13 +29,13 @@ public class RandomReward extends Reward {
 
         this.rewards = new RandomCollection<>();
 
-        rewardMaps.forEach((rewardMap) -> {
+        for (Map<?, ?> rewardMap : rewardMaps) {
             Reward reward = Reward.loadReward(rewardMap, rewardMap.toString());
             int weight = rewardMap.containsKey("weight") ? (int) rewardMap.get("weight") : 1;
             if (reward != null) {
                 rewards.add(reward, weight);
             }
-        });
+        }
     }
 
     @Override
@@ -56,12 +56,14 @@ public class RandomReward extends Reward {
     public Map<String, Object> asMap() {
         Map<String, Object> rewardMap = new HashMap<>();
         List<Map<String, Object>> rewardsMap = new ArrayList<>();
-        rewards.getMap().forEach((weight, reward) -> {
+        for (Map.Entry<Double, Reward> entry : rewards.getMap().entrySet()) {
+            double weight = entry.getKey();
+            Reward reward = entry.getValue();
             Map<String, Object> weightRewardMap = reward.asMap();
             weightRewardMap.put("weight", weight);
 
             rewardsMap.add(weightRewardMap);
-        });
+        }
 
         rewardMap.put("type", "random");
         rewardMap.put("rewards", rewardsMap);

@@ -137,12 +137,12 @@ public abstract class Reward implements Cloneable {
     public static List<Reward> loadRewards(List<Map<?, ?>> maps, String path) {
         List<Reward> rewardList = new ArrayList<>();
 
-        maps.forEach((map) -> {
+        for (Map<?, ?> map : maps) {
             Reward reward = loadReward(map, path);
             if (reward != null) {
                 rewardList.add(reward);
             }
-        });
+        }
 
         return !rewardList.isEmpty() ? rewardList : null;
     }
