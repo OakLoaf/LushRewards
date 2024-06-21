@@ -128,7 +128,7 @@ public abstract class Reward implements Cloneable {
             Constructor rewardConstructor = rewardManager.getConstructor(rewardType);
             return rewardConstructor != null ? rewardConstructor.build(rewardMap) : null;
         } catch (InvalidRewardException e) {
-            LushRewards.getInstance().getLogger().warning(e.getCause().getMessage());
+            LushRewards.getInstance().getLogger().warning(e.getMessage());
             return null;
         }
     }
