@@ -156,7 +156,8 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         globalPlaytime = globalPlaytime != null ? globalPlaytime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
         int playtime = globalPlaytime - previousDayEnd;
-        int lastCollectedPlaytime = userData.getLastCollectedPlaytime() - previousDayEnd;
+        int lastCollectedPlaytime = Math.min(userData.getLastCollectedPlaytime() - previousDayEnd, 0);
+        int playtimeSinceLastCollected = playtime - lastCollectedPlaytime;
         HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(lastCollectedPlaytime, playtime);
         if (rewards.isEmpty()) {
             if (saveUserData) {
@@ -172,8 +173,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         });
 
         ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("daily-playtime-reward-given")
-            .replace("%minutes%", String.valueOf(playtime))
-            .replace("%hours%", String.valueOf((int) Math.floor(playtime / 60D))));
+            .replace("%minutes%", String.valueOf(playtimeSinceLastCollected))
+            .replace("%hours%", String.valueOf((int) Math.floor(playtimeSinceLastCollected / 60D)))
+            .replace("%total_minutes%", String.valueOf(playtime))
+            .replace("%total_hours%", String.valueOf((int) Math.floor(playtime / 60D))));
 
         userData.setLastCollectedPlaytime(globalPlaytime);
         saveUserData(userData.getUniqueId(), userData);
