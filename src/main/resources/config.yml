@@ -35,7 +35,7 @@ messages:
   reload: "&#b7faa2LushRewards has been reloaded &#66b04f🔃"
   reminder: "%prefix% &#ffe27aIt looks like you haven't collected all your rewards from &#ffc940/rewards claim"
   daily-reward-given: "&#b7faa2You have collected today's daily reward"
-  playtime-reward-given: "&#b7faa2You have collected your rewards for playing &#66b04f%minutes% &#b7faa2minutes"
+  playtime-reward-given: "&#b7faa2You have collected your rewards for playing &#66b04f%total_minutes% &#b7faa2minutes"
   no-rewards-available: "&#ff6969You have no rewards to collect"
   reset: "&#ffe27aAre you sure you want to reset &#e0c01b%target%'s &#ffe27adays? Type &#e0c01b'/rewards reset %target% confirm' &#ffe27ato confirm"
   reset-days: "&#ffe27aAre you sure you want to reset &#e0c01b%target%'s &#ffe27adays? Type &#e0c01b'/rewards reset-days %target% confirm' &#ffe27ato confirm"
