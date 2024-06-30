@@ -156,7 +156,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         globalPlaytime = globalPlaytime != null ? globalPlaytime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();
         int playtime = globalPlaytime - previousDayEnd;
-        int lastCollectedPlaytime = Math.min(userData.getLastCollectedPlaytime() - previousDayEnd, 0);
+        int lastCollectedPlaytime = Math.max(userData.getLastCollectedPlaytime() - previousDayEnd, 0);
         int playtimeSinceLastCollected = playtime - lastCollectedPlaytime;
         HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(lastCollectedPlaytime, playtime);
         if (rewards.isEmpty()) {
