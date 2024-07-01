@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.module.playtimetracker;
 
+import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.RewardModule;
@@ -93,6 +94,10 @@ public class PlaytimeTracker {
 
         if (player.hasPermission("lushrewards.use")) {
             for (Module module : LushRewards.getInstance().getModules()) {
+                if (!player.hasPermission("lushrewards.use." + module.getId())) {
+                    continue;
+                }
+
                 if (module instanceof PlaytimeRewardsModule playtimeRewardsModule) {
                     if (playtimeRewardsModule.getRefreshTime() > 0 && globalTime % playtimeRewardsModule.getRefreshTime() == 0) {
                         playtimeRewardsModule.claimRewards(player);

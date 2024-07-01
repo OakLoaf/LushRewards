@@ -27,9 +27,15 @@ public class GuiSubCommand extends SubCommand {
         }
 
         if (args.length < 1) {
-            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage", "&#ff6969Incorrect usage try &#d13636%command-usage%").replace("%command-usage%", "/rewards gui <module>"));
+            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage", "&#ff6969Incorrect usage try &#d13636%command-usage%")
+                    .replace("%command-usage%", "/rewards gui <module>"));
         } else {
             String moduleId = args[0];
+
+            if (!player.hasPermission("lushrewards.use." + moduleId)) {
+                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("no-permissions", "&#ff6969Insufficient permissions"));
+                return true;
+            }
 
             LushRewards.getInstance().getModule(moduleId).ifPresent(module -> {
                 if (module instanceof GuiDisplayer guiDisplayer) {

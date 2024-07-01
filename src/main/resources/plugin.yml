@@ -17,8 +17,11 @@ commands:
     - lushrewards
 permissions:
   lushrewards.use:
-    description: Allows you to use the LushRewards plugin
+    description: Allows player to use the LushRewards plugin
+    default: true
+  lushrewards.use.*:
+    description: Allows player to use a specific LushRewards module
     default: true
   lushrewards.reload:
-    description: Allows you to reload the LushRewards plugin
+    description: Allows player to reload the LushRewards plugin
     default: op

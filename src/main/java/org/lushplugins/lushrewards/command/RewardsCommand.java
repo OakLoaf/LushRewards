@@ -41,7 +41,7 @@ public class RewardsCommand extends Command {
         }
 
         LushRewards.getInstance().getModules().stream()
-            .filter(module -> module instanceof DailyRewardsModule)
+            .filter(module -> module instanceof DailyRewardsModule && player.hasPermission("lushrewards.use." + module.getId()))
             .findFirst()
             .ifPresentOrElse(
                 module -> new DailyRewardsGui((DailyRewardsModule) module, player).open(),
