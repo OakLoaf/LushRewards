@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.module.dailyrewards;
 
+import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.exceptions.InvalidRewardException;
@@ -7,6 +8,7 @@ import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.UserDataModule;
+import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.rewards.collections.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
@@ -37,6 +39,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     private boolean dateAsAmount;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
+    private Integer requiredPlaytime; // This is subject to change - TODO: Properly implement conditions
 
     public DailyRewardsModule(String id, File moduleFile) {
         super(id, moduleFile);
@@ -71,6 +74,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.valueOf(templateType);
         this.guiFormat = new GuiFormat(guiTitle, guiTemplate);
+        this.requiredPlaytime = config.contains("required-playtime") ? config.getInt("required-playtime") : null;
 
         ConfigurationSection itemTemplatesSection = config.getConfigurationSection("gui.item-templates");
         if (itemTemplatesSection != null) {
@@ -145,13 +149,31 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         userDataCache.clear();
     }
 
+    public boolean meetsRequiredPlaytime(Player player) {
+        if (requiredPlaytime == null) {
+            return true;
+        }
+
+        Optional<Module> optionalModule = LushRewards.getInstance().getModule(Type.PLAYTIME_TRACKER);
+        if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule module) {
+            return module.getPlaytimeTracker(player.getUniqueId()).getTotalSessionPlaytime() > requiredPlaytime;
+        }
+
+        return true;
+    }
+
     @Override
     public boolean hasClaimableRewards(Player player) {
-        return userDataCache.containsKey(player.getUniqueId()) && !this.getUserData(player.getUniqueId()).hasCollectedToday();
+        return userDataCache.containsKey(player.getUniqueId()) && !this.getUserData(player.getUniqueId()).hasCollectedToday() && meetsRequiredPlaytime(player);
     }
 
     @Override
     public boolean claimRewards(Player player) {
+        if (meetsRequiredPlaytime(player)) {
+            ChatColorHandler.sendMessage(player, "&#ff6969You must have been online for " + requiredPlaytime + " minutes to claim these rewards");
+            return false;
+        }
+
         RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
 
         UserData userData = this.getUserData(player.getUniqueId());
