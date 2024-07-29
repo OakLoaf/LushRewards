@@ -5,8 +5,9 @@ api-version: 1.16
 softdepend:
 - floodgate
 - MiniPlaceholders
-- MythicDungeons # Fixes incompatibility
+- MythicDungeons # Fixes incompatibility caused by this plugin
 - PlaceholderAPI
+- TimedRewards # Fixes incompatibility caused by this plugin
 folia-supported: true
 modrinth-project-id: djC8I9ui
 commands:
