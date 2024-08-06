@@ -10,14 +10,14 @@ version = "3.2.0-beta5"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
-    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") } // Spigot
-    maven { url = uri("https://repo.opencollab.dev/main/") } // Floodgate
-    maven { url = uri("https://repo.lushplugins.org/releases/") } // LushLib
-    maven { url = uri("https://repo.lushplugins.org/snapshots/") } // LushLib
-    maven { url = uri("https://repo.xemor.zip/releases/") } // EnchantedStorage
-    maven { url = uri("https://mvn-repo.arim.space/lesser-gpl3/") } // MorePaperLib
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")} // PlaceholderAPI
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
+    maven("https://repo.opencollab.dev/main/") // Floodgate
+    maven("https://repo.lushplugins.org/releases/") // LushLib
+    maven("https://repo.lushplugins.org/snapshots/") // LushLib
+    maven("https://repo.xemor.zip/releases/") // EnchantedStorage
+    maven("https://mvn-repo.arim.space/lesser-gpl3/") // MorePaperLib
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
 }
 
 dependencies {

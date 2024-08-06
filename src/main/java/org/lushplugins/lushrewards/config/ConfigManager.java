@@ -88,11 +88,10 @@ public class ConfigManager {
                     String rewardsType;
                     if (moduleConfig.contains("type")) {
                         rewardsType = moduleConfig.getString("type");
+                    } else if (moduleId.contains("playtime") {
+                        rewardsType = "playtime-rewards";
                     } else {
-                        switch(moduleId) {
-                            case "daily-playtime-goals", "global-playtime-goals" -> rewardsType = "playtime-rewards";
-                            default -> rewardsType = moduleId;
-                        }
+                        rewardsType = moduleId;
                     }
 
                     RewardModuleTypeManager rewardModuleTypes = LushRewards.getInstance().getManager(RewardModuleTypeManager.class).orElseThrow();
