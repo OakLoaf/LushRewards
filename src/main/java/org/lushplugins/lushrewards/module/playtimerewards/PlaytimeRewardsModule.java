@@ -143,6 +143,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         UserData userData = getUserData(player.getUniqueId());
         if (rewardUser == null || userData == null) {
             ChatColorHandler.sendMessage(player, "&#ff6969Failed to collect your reward user data, try relogging. If this continues inform an administrator");
+            LushRewards.getInstance().getLogger().warning("Failed to collect reward user data for '" + player.getName() + "', reward user was '" + (rewardUser != null ? "found" : "not found") + "', user data was '" + (userData != null ? "found" : "not found") + "'");
             return false;
         }
 
