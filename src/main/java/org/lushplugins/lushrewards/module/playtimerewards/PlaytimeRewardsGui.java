@@ -8,7 +8,6 @@ import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTracker;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushlib.utils.Pair;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushrewards.utils.MathUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -73,7 +73,7 @@ public class PlaytimeRewardsGui extends Gui {
 
                     module.getRewards().forEach(reward -> {
                         if (!reward.shouldHideFromGui()) {
-                            Integer minutes = findFirstNumInSequence(reward.getStartMinute(), reward.getRepeatFrequency(), startPlaytime);
+                            Integer minutes = MathUtils.findFirstNumInSequence(reward.getStartMinute(), reward.getRepeatFrequency(), startPlaytime);
                             if (minutes != null) {
                                 rewardQueue.add(new Pair<>(reward, minutes));
                             }
@@ -194,15 +194,6 @@ public class PlaytimeRewardsGui extends Gui {
     public void onClose(InventoryCloseEvent event) {
         super.onClose(event);
         rewardQueue.clear();
-    }
-
-    @Nullable
-    private Integer findFirstNumInSequence(int start, int increment, int lowerBound) {
-        if (increment <= 0) {
-            return start > lowerBound ? start : null;
-        }
-
-        return (int) (start + increment * Math.ceil((lowerBound - start) / increment));
     }
 
     public enum ScrollType {
