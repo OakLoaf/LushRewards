@@ -68,36 +68,6 @@ public class PlaytimeRewardsPlaceholder {
                 int resetPlaytimeAt = module.getResetPlaytimeAt();
                 if (resetPlaytimeAt > 0) {
                     PlaytimeRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
-                    long start = LocalDateTime.of(userData.getStartDate(), LocalTime.MIN).toEpochSecond(ZoneOffset.UTC);
-                    long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-                    return (int) (now - start);
-                }
-            }
-
-            return null;
-        }));
-
-        placeholderCache.add(new TimePlaceholder("time_since_reset", (params, player) -> {
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
-            if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeRewardsModule module) {
-                int resetPlaytimeAt = module.getResetPlaytimeAt();
-                if (resetPlaytimeAt > 0) {
-                    PlaytimeRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
-                    long start = LocalDateTime.of(userData.getStartDate(), LocalTime.MIN).toEpochSecond(ZoneOffset.UTC);
-                    long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-                    return (int) (now - start);
-                }
-            }
-
-            return null;
-        }));
-
-        placeholderCache.add(new TimePlaceholder("time_since_reset", (params, player) -> {
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
-            if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeRewardsModule module) {
-                int resetPlaytimeAt = module.getResetPlaytimeAt();
-                if (resetPlaytimeAt > 0) {
-                    PlaytimeRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
                     if (userData != null) {
                         long start = LocalDateTime.of(userData.getStartDate(), LocalTime.MIN).toEpochSecond(ZoneOffset.UTC);
                         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
