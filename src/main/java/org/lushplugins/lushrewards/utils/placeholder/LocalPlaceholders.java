@@ -5,7 +5,6 @@ import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -123,96 +122,5 @@ public class LocalPlaceholders {
     @FunctionalInterface
     public interface PlaceholderFunction {
         String apply(String[] params, Player player) ;
-    }
-
-    public static class SimplePlaceholder extends Placeholder {
-        private final PlaceholderFunction method;
-
-        public SimplePlaceholder(String content, PlaceholderFunction method) {
-            super(content);
-            this.method = method;
-        }
-
-        @Override
-        boolean matches(String string) {
-            return string.startsWith(content);
-        }
-
-        @Override
-        public String parse(String[] params, Player player) {
-            try {
-                return method.apply(params, player);
-            } catch(Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        public SimplePlaceholder addChild(Placeholder placeholder) {
-            super.addChild(placeholder);
-            return this;
-        }
-    }
-
-    public static class RegexPlaceholder extends Placeholder {
-        private final PlaceholderFunction method;
-
-        public RegexPlaceholder(String content, PlaceholderFunction method) {
-            super(content);
-            this.method = method;
-        }
-
-        @Override
-        boolean matches(String string) {
-            return string.matches(content);
-        }
-
-        @Override
-        public String parse(String[] params, Player player) {
-            try {
-                return method.apply(params, player);
-            } catch(Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        public RegexPlaceholder addChild(Placeholder placeholder) {
-            super.addChild(placeholder);
-            return this;
-        }
-    }
-
-    public static abstract class Placeholder {
-        protected final String content;
-        private Collection<Placeholder> children;
-
-        public Placeholder(String content) {
-            this.content = content;
-        }
-
-        abstract boolean matches(String string);
-
-        abstract String parse(String[] params, Player player);
-
-        public String getContent() {
-            return content;
-        }
-
-        @NotNull
-        public Collection<Placeholder> getChildren() {
-            return children != null ? children : Collections.emptyList();
-        }
-
-        public Placeholder addChild(Placeholder placeholder) {
-            if (children == null) {
-                children = new ArrayList<>();
-            }
-
-            children.add(placeholder);
-            return this;
-        }
     }
 }

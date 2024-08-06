@@ -2,8 +2,10 @@ package org.lushplugins.lushrewards.module.dailyrewards;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.rewards.collections.RewardDay;
-import org.lushplugins.lushrewards.utils.placeholder.LocalPlaceholders;
 import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushrewards.utils.placeholder.Placeholder;
+import org.lushplugins.lushrewards.utils.placeholder.RegexPlaceholder;
+import org.lushplugins.lushrewards.utils.placeholder.SimplePlaceholder;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -11,10 +13,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class DailyRewardsPlaceholder {
-    private static final HashSet<LocalPlaceholders.Placeholder> placeholderCache = new HashSet<>();
+    private static final HashSet<Placeholder> placeholderCache = new HashSet<>();
 
     static {
-        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("category", (params, player) -> {
+        placeholderCache.add(new SimplePlaceholder("category", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -33,7 +35,7 @@ public class DailyRewardsPlaceholder {
                 return null;
             }
         }));
-        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("collected", (params, player) -> {
+        placeholderCache.add(new SimplePlaceholder("collected", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -46,7 +48,7 @@ public class DailyRewardsPlaceholder {
                 return null;
             }
         }));
-        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("day_num", (params, player) -> {
+        placeholderCache.add(new SimplePlaceholder("day_num", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -59,7 +61,7 @@ public class DailyRewardsPlaceholder {
                 return null;
             }
         }));
-        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("highest_streak", (params, player) -> {
+        placeholderCache.add(new SimplePlaceholder("highest_streak", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -72,7 +74,7 @@ public class DailyRewardsPlaceholder {
                 return null;
             }
         }));
-        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("streak", (params, player) -> {
+        placeholderCache.add(new SimplePlaceholder("streak", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -85,7 +87,7 @@ public class DailyRewardsPlaceholder {
                 return null;
             }
         }));
-        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("total_rewards", (params, player) -> {
+        placeholderCache.add(new SimplePlaceholder("total_rewards", (params, player) -> {
             if (player == null) {
                 return null;
             }
@@ -99,7 +101,7 @@ public class DailyRewardsPlaceholder {
                 return null;
             }
         }));
-        placeholderCache.add(new LocalPlaceholders.RegexPlaceholder("day_[0-9]+.+", (params, player) -> {
+        placeholderCache.add(new RegexPlaceholder("day_[0-9]+.+", (params, player) -> {
             Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
             if (optionalModule.isPresent() && optionalModule.get() instanceof DailyRewardsModule module) {
                 DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
@@ -130,7 +132,7 @@ public class DailyRewardsPlaceholder {
     }
 
     public void register() {
-        LocalPlaceholders.SimplePlaceholder modulePlaceholder = new LocalPlaceholders.SimplePlaceholder(id, (params, player) -> null);
+        SimplePlaceholder modulePlaceholder = new SimplePlaceholder(id, (params, player) -> null);
         placeholderCache.forEach(modulePlaceholder::addChild);
         LushRewards.getInstance().getLocalPlaceholders().registerPlaceholder(modulePlaceholder);
     }
