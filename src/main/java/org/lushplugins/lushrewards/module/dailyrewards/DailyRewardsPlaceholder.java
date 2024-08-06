@@ -2,7 +2,7 @@ package org.lushplugins.lushrewards.module.dailyrewards;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.rewards.collections.RewardDay;
-import org.lushplugins.lushrewards.utils.LocalPlaceholders;
+import org.lushplugins.lushrewards.utils.placeholder.LocalPlaceholders;
 import org.lushplugins.lushlib.module.Module;
 
 import java.time.LocalDate;

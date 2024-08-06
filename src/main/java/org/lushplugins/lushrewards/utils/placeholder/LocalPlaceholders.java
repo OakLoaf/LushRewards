@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.utils;
+package org.lushplugins.lushrewards.utils.placeholder;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.module.RewardModule;

@@ -13,7 +13,7 @@ import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.notifications.NotificationHandler;
 import org.lushplugins.lushrewards.rewards.RewardManager;
-import org.lushplugins.lushrewards.utils.LocalPlaceholders;
+import org.lushplugins.lushrewards.utils.placeholder.LocalPlaceholders;
 import org.lushplugins.lushrewards.utils.gson.LocalDateTypeAdapter;
 import org.lushplugins.lushrewards.utils.gson.UserDataExclusionStrategy;
 import org.bukkit.Bukkit;
