@@ -71,7 +71,7 @@ public class Version3DataMigrator extends Converter {
         JsonObject json = new JsonObject();
 
         JsonObject main = new JsonObject();
-        main.addProperty("name", data.getString("name"));
+        main.addProperty("username", data.getString("name"));
         main.addProperty("minutesPlayed", data.getInt("minutes-played"));
         json.add("main", main);
 
