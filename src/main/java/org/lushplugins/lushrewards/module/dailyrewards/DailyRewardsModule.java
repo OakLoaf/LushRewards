@@ -169,7 +169,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
     @Override
     public boolean claimRewards(Player player) {
-        if (meetsRequiredPlaytime(player)) {
+        if (!meetsRequiredPlaytime(player)) {
             ChatColorHandler.sendMessage(player, "&#ff6969You must have been online for " + requiredPlaytime + " minutes to claim these rewards");
             return false;
         }
