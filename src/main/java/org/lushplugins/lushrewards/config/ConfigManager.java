@@ -88,7 +88,7 @@ public class ConfigManager {
                     String rewardsType;
                     if (moduleConfig.contains("type")) {
                         rewardsType = moduleConfig.getString("type");
-                    } else if (moduleId.contains("playtime") {
+                    } else if (moduleId.contains("playtime")) {
                         rewardsType = "playtime-rewards";
                     } else {
                         rewardsType = moduleId;
