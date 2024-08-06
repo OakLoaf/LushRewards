@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class DataManager extends Manager {
     private IOHandler<StorageData, StorageLocation> ioHandler;
@@ -154,7 +155,7 @@ public class DataManager extends Manager {
         ioHandler.loadData(new StorageLocation(uuid, moduleId))
             .completeOnTimeout(null, 15, TimeUnit.SECONDS)
             .exceptionally(throwable -> {
-                throwable.printStackTrace();
+                LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", throwable);
                 return null;
             })
             .thenAccept(storageData -> {
@@ -200,7 +201,7 @@ public class DataManager extends Manager {
                 }
             })
             .exceptionally(throwable -> {
-                throwable.printStackTrace();
+                LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", throwable);
                 return null;
             });
 
@@ -211,7 +212,7 @@ public class DataManager extends Manager {
         return ioHandler.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson()))
             .completeOnTimeout(null, 30, TimeUnit.SECONDS)
             .exceptionally(throwable -> {
-                throwable.printStackTrace();
+                LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", throwable);
                 return null;
             })
             .thenApply(Objects::nonNull);
