@@ -36,6 +36,30 @@ public class PlaytimeRewardsPlaceholder {
             }
         }));
 
+        placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("playtime_hours", (params, player) -> {
+            if (player == null || LushRewards.getInstance().getModule(params[0]).isEmpty()) {
+                return null;
+            }
+
+            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+            if (rewardUser == null) {
+                return null;
+            }
+
+            Optional<Module> optionalModule = LushRewards.getInstance().getModule(params[0]);
+            if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeRewardsModule module) {
+                int globalPlaytime = rewardUser.getMinutesPlayed();
+                if (module.getResetPlaytimeAt() <= 0) {
+                    return String.valueOf((int) Math.ceil(globalPlaytime / 60D));
+                } else {
+                    PlaytimeRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
+                    return String.valueOf((int) Math.ceil((globalPlaytime - userData.getPreviousDayEndPlaytime()) / 60D));
+                }
+            } else {
+                return null;
+            }
+        }));
+
         placeholderCache.add(new LocalPlaceholders.SimplePlaceholder("playtime_since_last_collected", (params, player) -> {
             if (player == null || LushRewards.getInstance().getModule(params[0]).isEmpty()) {
                 return null;
