@@ -6,16 +6,13 @@ import org.lushplugins.lushrewards.config.ConfigManager;
 import org.lushplugins.lushrewards.module.UserDataModule;
 import org.lushplugins.lushlib.manager.Manager;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 
-import java.io.File;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -152,14 +149,18 @@ public class DataManager extends Manager {
 
     public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(@NotNull UUID uuid, String moduleId, Class<T> dataClass) {
         CompletableFuture<T> future = new CompletableFuture<>();
+
         ioHandler.loadData(new StorageLocation(uuid, moduleId))
-            .completeOnTimeout(null, 15, TimeUnit.SECONDS)
-            .exceptionally(throwable -> {
-                LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", throwable);
-                return null;
-            })
-            .thenAccept(storageData -> {
+            .orTimeout(15, TimeUnit.SECONDS)
+            .whenComplete((storageData, exception) -> {
+                if (exception != null) {
+                    LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", exception);
+                    future.complete(null);
+                    return;
+                }
+
                 if (storageData == null) {
+                    LushRewards.getInstance().getLogger().info("No storage data found for " + uuid);
                     future.complete(null);
                     return;
                 }
@@ -197,25 +198,24 @@ public class DataManager extends Manager {
 
                     future.complete(userData);
                 } catch (Throwable e) {
-                    future.completeExceptionally(e);
+                    LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing user data:", e);
+                    future.complete(null);
                 }
-            })
-            .exceptionally(throwable -> {
-                LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", throwable);
-                return null;
             });
 
         return future;
     }
 
     public <T extends UserDataModule.UserData> CompletableFuture<Boolean> saveUserData(@NotNull UUID uuid, T userData) {
-        return ioHandler.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson()))
-            .completeOnTimeout(null, 30, TimeUnit.SECONDS)
-            .exceptionally(throwable -> {
-                LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", throwable);
-                return null;
-            })
-            .thenApply(Objects::nonNull);
+        return CompletableFuture.supplyAsync(() -> ioHandler.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson())))
+            .orTimeout(30, TimeUnit.SECONDS)
+            .handle((storageData, exception) -> {
+                if (exception != null) {
+                    LushRewards.getInstance().log(Level.WARNING, "Caught error when saving data:", exception);
+                    return false;
+                }
+                return storageData != null;
+            });
     }
 
     public void loadModulesUserData(UUID uuid) {
