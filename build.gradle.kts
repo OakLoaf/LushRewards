@@ -1,11 +1,11 @@
 plugins {
     java
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version("8.1.1")
+    id("com.gradleup.shadow") version("8.3.0")
 }
 
 group = "org.lushplugins"
-version = "3.3.0-beta1"
+version = "3.4.0-beta1"
 
 repositories {
     mavenLocal()
@@ -24,16 +24,17 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:${findProperty("minecraftVersion")}-R0.1-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:${findProperty("floodgateVersion")}-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:${findProperty("placeholderapiVersion")}")
+    compileOnly("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
+    compileOnly("org.postgresql:postgresql:${findProperty("postgresqlVersion")}")
 
     implementation("org.bstats:bstats-bukkit:${findProperty("bStatsVersion")}")
     implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
     implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
-    implementation("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {
@@ -46,10 +47,10 @@ tasks {
         relocate("org.enchantedskies", "org.lushplugins.lushrewards.libraries.enchantedskies")
         relocate("org.lushplugins.lushlib", "org.lushplugins.lushrewards.libraries.lushlib")
         relocate("space.arim.morepaperlib", "org.lushplugins.lushrewards.libraries.morepaperlib")
-        relocate("com.mysql", "org.lushplugins.lushrewards.libraries.mysql")
 
         minimize {
             exclude(dependency("com.mysql:.*:.*"))
+            exclude(dependency("org.postgresql:.*:.*"))
         }
 
         val folder = System.getenv("pluginFolder")
