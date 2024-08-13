@@ -1,35 +1,38 @@
 package org.lushplugins.lushrewards.config;
 
-import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.DataManager;
-import org.lushplugins.lushrewards.data.JsonStorage;
-import org.lushplugins.lushrewards.data.MySqlStorage;
-import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.rewards.Reward;
-import org.lushplugins.lushrewards.utils.Debugger;
-import org.lushplugins.lushlib.manager.GuiManager;
-import org.lushplugins.lushlib.module.Module;
-import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
-import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.enchantedskies.EnchantedStorage.Storage;
+import org.lushplugins.lushlib.manager.GuiManager;
+import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushlib.utils.FilenameUtils;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.StringUtils;
+import org.lushplugins.lushrewards.LushRewards;
+import org.lushplugins.lushrewards.data.DataManager;
+import org.lushplugins.lushrewards.data.JsonStorage;
+import org.lushplugins.lushrewards.data.MySqlStorage;
+import org.lushplugins.lushrewards.data.PostgreSqlStorage;
+import org.lushplugins.lushrewards.module.RewardModule;
+import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
+import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import org.lushplugins.lushrewards.rewards.Reward;
+import org.lushplugins.lushrewards.utils.Debugger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConfigManager {
     private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
+    private static final Logger log = LushRewards.getInstance().getLogger();
     private static LocalDate currentDate;
 
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
@@ -136,18 +139,30 @@ public class ConfigManager {
         }
 
         YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
-        String storageType = storageConfig.getString("type", "yaml");
-        switch (storageType) {
-            case "mysql" -> storage = new MySqlStorage(
-                storageConfig.getString("mysql.host"),
-                storageConfig.getInt("mysql.port"),
-                storageConfig.getString("mysql.name"),
-                storageConfig.getString("mysql.user"),
-                storageConfig.getString("mysql.password")
-            );
-            case "json" -> storage = new JsonStorage();
+        String storageType = storageConfig.getString("storage.type", "json");
+        String selectedType = switch (storageType) {
+            case "mysql", "postgres" -> {
+                String host = storageConfig.getString("storage.host");
+                int port = storageConfig.getInt("storage.port");
+                String databaseName = storageConfig.getString("storage.database");
+                String user = storageConfig.getString("storage.user");
+                String password = storageConfig.getString("storage.password");
+                String schema = storageConfig.getString("storage.schema");
+
+                if ("postgres".equals(storageType)) {
+                    storage = new PostgreSqlStorage(host, port, databaseName, user, password, schema);
+                } else {
+                    storage = new MySqlStorage(host, port, databaseName, user, password);
+                }
+                yield storageType;
+            }
+            case "json" -> {
+                storage = new JsonStorage();
+                yield storageType;
+            }
             default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
-        }
+        };
+        log.info(String.format("Using '%s' database", selectedType));
     }
 
     public String getMessage(String messageName) {
@@ -171,7 +186,7 @@ public class ConfigManager {
     public SimpleItemStack getCategoryTemplate(String category) {
         SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
         if (itemTemplate == null) {
-            LushRewards.getInstance().getLogger().severe("Could not find category '" + category + "'");
+            log.severe("Could not find category '" + category + "'");
             return new SimpleItemStack();
         }
 
@@ -186,7 +201,7 @@ public class ConfigManager {
     public SimpleItemStack getItemTemplate(String key) {
         SimpleItemStack itemTemplate = globalItemTemplates.get(key);
         if (itemTemplate == null) {
-            LushRewards.getInstance().getLogger().severe("Could not find item-template '" + key + "'");
+            log.severe("Could not find item-template '" + key + "'");
             return new SimpleItemStack();
         }
 
@@ -253,7 +268,7 @@ public class ConfigManager {
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
                 globalItemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
-                LushRewards.getInstance().getLogger().info("Loaded global item-template: " + categorySection.getName());
+                log.info("Loaded global item-template: " + categorySection.getName());
             }
         });
     }
@@ -272,7 +287,7 @@ public class ConfigManager {
             rewardsSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
                     rewardTemplates.put(rewardSection.getName(), Reward.loadReward(rewardSection));
-                    LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());
+                    log.info("Loaded reward-template: " + rewardSection.getName());
                 }
             });
         }

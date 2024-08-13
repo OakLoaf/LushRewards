@@ -1,33 +1,35 @@
 package org.lushplugins.lushrewards.data;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
 import org.lushplugins.lushrewards.LushRewards;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class MySqlStorage extends AbstractStorage {
+public class PostgreSqlStorage extends AbstractStorage {
     private static final Logger log = LushRewards.getInstance().getLogger();
 
-    public MySqlStorage(String host, int port, String databaseName, String user, String password) {
-        super(initDataSource(host, port, databaseName, user, password));
+    public PostgreSqlStorage(String host, int port, String databaseName, String user, String password, String schema) {
+        super(initDataSource(host, port, databaseName, user, password, schema));
     }
 
     @Override
     protected String getUpsertStatement(String table, String column) {
+        column = kebabCaseToSnakeCase(column);
         return MessageFormat.format(
-                "REPLACE INTO {0}(uuid, {1}) VALUES(?, ?);",
+                "INSERT INTO {0}(uuid, {1}) VALUES(?, ?) ON CONFLICT (uuid) DO UPDATE SET {1} = EXCLUDED.{1};",
                 table, column
         );
     }
 
     @Override
     protected void assertJsonColumn(String table, String column) {
-        assertColumn(table, column, "JSON");
+        assertColumn(table, column, "JSONB");
     }
 
     @Override
@@ -40,28 +42,29 @@ public class MySqlStorage extends AbstractStorage {
         ) {
             stmt.executeQuery();
         } catch (SQLException assertException) {
-            if (assertException.getErrorCode() == 1054) { // Undefined column error code in MySQL
+            if ("42703".equals(assertException.getSQLState())) { // Undefined column error code in PostgreSQL
                 String statement = MessageFormat.format("ALTER TABLE {0} ADD COLUMN {1} {2};", table, column, type);
                 try (Connection conn = conn();
                      PreparedStatement stmt = conn.prepareStatement(statement)
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {
-                    log.log(java.util.logging.Level.SEVERE, "Error while asserting column", alterException);
+                    log.log(Level.SEVERE, "Error while alter column", alterException);
                 }
             } else {
-                log.log(java.util.logging.Level.SEVERE, "Error while asserting column", assertException);
+                log.log(Level.SEVERE, "Error while asserting column", assertException);
             }
         }
     }
 
-    private static MysqlDataSource initDataSource(String host, int port, String dbName, String user, String password) {
-        MysqlDataSource dataSource = new MysqlDataSource();
-        dataSource.setServerName(host);
-        dataSource.setPortNumber(port);
+    private static PGSimpleDataSource initDataSource(String host, int port, String dbName, String user, String password, String schema) {
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setServerNames(new String[]{host});
+        dataSource.setPortNumbers(new int[]{port});
         dataSource.setDatabaseName(dbName);
         dataSource.setUser(user);
         dataSource.setPassword(password);
+        dataSource.setCurrentSchema(schema);
         return dataSource;
     }
 }
