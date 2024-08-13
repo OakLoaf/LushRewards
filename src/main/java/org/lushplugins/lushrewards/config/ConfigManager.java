@@ -149,7 +149,7 @@ public class ConfigManager {
                 String password = storageConfig.getString("storage.password");
                 String schema = storageConfig.getString("storage.schema");
 
-                if ("postgres".equals(storageType)) {
+                if (storageType.equals("postgres")) {
                     storage = new PostgreSqlStorage(host, port, databaseName, user, password, schema);
                 } else {
                     storage = new MySqlStorage(host, port, databaseName, user, password);
