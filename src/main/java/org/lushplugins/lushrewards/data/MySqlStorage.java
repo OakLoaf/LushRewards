@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -47,10 +48,10 @@ public class MySqlStorage extends AbstractStorage {
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {
-                    log.log(java.util.logging.Level.SEVERE, "Error while asserting column", alterException);
+                    log.log(Level.SEVERE, "Error while asserting column", alterException);
                 }
             } else {
-                log.log(java.util.logging.Level.SEVERE, "Error while asserting column", assertException);
+                log.log(Level.SEVERE, "Error while asserting column", assertException);
             }
         }
     }
