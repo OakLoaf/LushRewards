@@ -9,6 +9,9 @@ softdepend:
 - PlaceholderAPI
 - TimedRewards # Fixes incompatibility caused by this plugin
 folia-supported: true
+libraries:
+  - org.postgresql:postgresql:${postgresqlVersion}
+  - com.mysql:mysql-connector-j:${mysqlConnectorVersion}
 modrinth-project-id: djC8I9ui
 commands:
   rewards:
