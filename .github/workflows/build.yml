@@ -1,10 +1,10 @@
 name: Build plugin
 
 on:
+  push:
   pull_request:
     types:
       - opened
-      - edited
       - reopened
 
 jobs:
