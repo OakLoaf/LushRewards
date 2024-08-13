@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.enchantedskies.EnchantedStorage.Storage;
 import org.lushplugins.lushrewards.LushRewards;
-import org.postgresql.util.PGobject;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -13,18 +12,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public abstract class AbstractStorage implements Storage<DataManager.StorageData, DataManager.StorageLocation> {
+public abstract class AbstractSqlStorage implements Storage<DataManager.StorageData, DataManager.StorageLocation> {
     protected static final String TABLE_NAME = "lushrewards_users";
     protected static final String MODULES_TABLE_NAME = "lushrewards_users_modules";
-    private static final Logger log = LushRewards.getInstance().getLogger();
 
     protected final DataSource dataSource;
 
-    protected AbstractStorage(DataSource dataSource) {
+    protected AbstractSqlStorage(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+    protected abstract String getUpsertStatement(String table, String column);
+
+    protected abstract void assertJsonColumn(String table, String column);
+
+    protected abstract void assertColumn(String table, String column, String type);
+
+    protected abstract void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException;
+
+    protected abstract void setJsonToStatement(PreparedStatement stmt, int index, JsonObject jsonObject) throws SQLException;
 
     @Override
     public DataManager.StorageData load(DataManager.StorageLocation storageLocation) {
@@ -63,7 +70,7 @@ public abstract class AbstractStorage implements Storage<DataManager.StorageData
 
             return new DataManager.StorageData(uuid, module, json);
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "An error occurred while loading data for ", e);
+            LushRewards.getInstance().log(Level.SEVERE, "An error occurred while loading data for ", e);
         }
 
         return null;
@@ -101,15 +108,10 @@ public abstract class AbstractStorage implements Storage<DataManager.StorageData
             setJsonToStatement(stmt, 2, json);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "An error occurred while saving data for ", e);
+            LushRewards.getInstance().log(Level.SEVERE, "An error occurred while saving data for ", e);
         }
     }
 
-    protected abstract String getUpsertStatement(String table, String column);
-
-    protected abstract void assertJsonColumn(String table, String column);
-
-    protected abstract void assertColumn(String table, String column, String type);
 
     protected void assertTable(String table) {
         String statement = String.format("CREATE TABLE IF NOT EXISTS %s (uuid UUID NOT NULL, PRIMARY KEY (uuid));", table);
@@ -118,7 +120,7 @@ public abstract class AbstractStorage implements Storage<DataManager.StorageData
         ) {
             stmt.execute();
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "An error occurred while creating table ", e);
+            LushRewards.getInstance().log(Level.SEVERE, "An error occurred while creating table ", e);
         }
     }
 
@@ -126,7 +128,7 @@ public abstract class AbstractStorage implements Storage<DataManager.StorageData
         try {
             return dataSource.getConnection();
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "An error occurred while getting a connection ", e);
+            LushRewards.getInstance().log(Level.SEVERE, "An error occurred while getting a connection ", e);
             return null;
         }
     }
@@ -137,26 +139,7 @@ public abstract class AbstractStorage implements Storage<DataManager.StorageData
                 throw new SQLException("Could not establish database connection.");
             }
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "An error occurred while testing the data source ", e);
-        }
-    }
-
-    protected void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException {
-        if (this instanceof PostgreSqlStorage) {
-            stmt.setObject(index, uuid);
-        } else {
-            stmt.setString(index, uuid.toString());
-        }
-    }
-
-    protected void setJsonToStatement(PreparedStatement stmt, int index, JsonObject jsonObject) throws SQLException {
-        if (this instanceof PostgreSqlStorage) {
-            PGobject pgObject = new PGobject();
-            pgObject.setType("jsonb");
-            pgObject.setValue(jsonObject.toString());
-            stmt.setObject(index, pgObject);
-        } else {
-            stmt.setString(index, jsonObject.toString());
+            LushRewards.getInstance().log(Level.SEVERE, "An error occurred while testing the data source ", e);
         }
     }
 

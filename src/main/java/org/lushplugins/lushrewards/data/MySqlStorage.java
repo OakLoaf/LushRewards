@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.data;
 
+import com.google.gson.JsonObject;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.lushplugins.lushrewards.LushRewards;
 
@@ -7,12 +8,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
-public class MySqlStorage extends AbstractStorage {
-    private static final Logger log = LushRewards.getInstance().getLogger();
+public class MySqlStorage extends AbstractSqlStorage {
 
     public MySqlStorage(String host, int port, String databaseName, String user, String password) {
         super(initDataSource(host, port, databaseName, user, password));
@@ -48,12 +48,22 @@ public class MySqlStorage extends AbstractStorage {
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {
-                    log.log(Level.SEVERE, "Error while asserting column", alterException);
+                    LushRewards.getInstance().log(Level.SEVERE, "Error while asserting column", alterException);
                 }
             } else {
-                log.log(Level.SEVERE, "Error while asserting column", assertException);
+                LushRewards.getInstance().log(Level.SEVERE, "Error while asserting column", assertException);
             }
         }
+    }
+
+    @Override
+    protected void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException {
+        stmt.setString(index, uuid.toString());
+    }
+
+    @Override
+    protected void setJsonToStatement(PreparedStatement stmt, int index, JsonObject jsonObject) throws SQLException {
+        stmt.setString(index, jsonObject.toString());
     }
 
     private static MysqlDataSource initDataSource(String host, int port, String dbName, String user, String password) {

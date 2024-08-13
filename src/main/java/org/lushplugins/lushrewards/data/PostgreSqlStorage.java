@@ -1,18 +1,19 @@
 package org.lushplugins.lushrewards.data;
 
+import com.google.gson.JsonObject;
 import org.lushplugins.lushrewards.LushRewards;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.postgresql.util.PGobject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
-public class PostgreSqlStorage extends AbstractStorage {
-    private static final Logger log = LushRewards.getInstance().getLogger();
+public class PostgreSqlStorage extends AbstractSqlStorage {
 
     public PostgreSqlStorage(String host, int port, String databaseName, String user, String password, String schema) {
         super(initDataSource(host, port, databaseName, user, password, schema));
@@ -49,12 +50,25 @@ public class PostgreSqlStorage extends AbstractStorage {
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {
-                    log.log(Level.SEVERE, "Error while alter column", alterException);
+                    LushRewards.getInstance().log(Level.SEVERE, "Error while alter column", alterException);
                 }
             } else {
-                log.log(Level.SEVERE, "Error while asserting column", assertException);
+                LushRewards.getInstance().log(Level.SEVERE, "Error while asserting column", assertException);
             }
         }
+    }
+
+    @Override
+    protected void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException {
+        stmt.setObject(index, uuid);
+    }
+
+    @Override
+    protected void setJsonToStatement(PreparedStatement stmt, int index, JsonObject jsonObject) throws SQLException {
+        PGobject pgObject = new PGobject();
+        pgObject.setType("jsonb");
+        pgObject.setValue(jsonObject.toString());
+        stmt.setObject(index, pgObject);
     }
 
     private static PGSimpleDataSource initDataSource(String host, int port, String dbName, String user, String password, String schema) {

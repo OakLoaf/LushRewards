@@ -1,7 +1,7 @@
+# Where user data will be stored (Options: json, mysql, postgres)
+type: json
+
 storage:
-  # Where user data will be stored (Options: json, mysql, postgres)
-  type: json
-  # Only for mysql and postgres  
   host: localhost
   # Mysql default port: 3306
   # Postgres default port: 5432

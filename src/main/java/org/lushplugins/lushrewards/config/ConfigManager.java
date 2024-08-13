@@ -28,11 +28,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConfigManager {
     private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
-    private static final Logger log = LushRewards.getInstance().getLogger();
     private static LocalDate currentDate;
 
     private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
@@ -139,14 +137,18 @@ public class ConfigManager {
         }
 
         YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
-        String storageType = storageConfig.getString("storage.type", "json");
+        String storageType = storageConfig.getString("type", "json");
+
+        boolean isOldFormat = storageConfig.contains("mysql");
+        LushRewards.getInstance().getLogger().warning("Old storage format detected, please update your storage.yml file.");
+
         String selectedType = switch (storageType) {
             case "mysql", "postgres" -> {
-                String host = storageConfig.getString("storage.host");
-                int port = storageConfig.getInt("storage.port");
-                String databaseName = storageConfig.getString("storage.database");
-                String user = storageConfig.getString("storage.user");
-                String password = storageConfig.getString("storage.password");
+                String host = storageConfig.getString(isOldFormat ? "mysql.host" : "storage.host");
+                int port = storageConfig.getInt(isOldFormat ? "mysql.port" : "storage.port");
+                String databaseName = storageConfig.getString(isOldFormat ? "mysql.name" : "storage.database");
+                String user = storageConfig.getString(isOldFormat ? "mysql.user": "storage.user");
+                String password = storageConfig.getString(isOldFormat ? "mysql.password" : "storage.password");
                 String schema = storageConfig.getString("storage.schema");
 
                 if (storageType.equals("postgres")) {
@@ -162,8 +164,10 @@ public class ConfigManager {
             }
             default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
         };
-        log.info(String.format("Using '%s' database", selectedType));
+        LushRewards.getInstance().getLogger().info(String.format("Using '%s' database", selectedType));
     }
+
+
 
     public String getMessage(String messageName) {
         return getMessage(messageName, "");
@@ -186,7 +190,7 @@ public class ConfigManager {
     public SimpleItemStack getCategoryTemplate(String category) {
         SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
         if (itemTemplate == null) {
-            log.severe("Could not find category '" + category + "'");
+            LushRewards.getInstance().getLogger().severe("Could not find category '" + category + "'");
             return new SimpleItemStack();
         }
 
@@ -201,7 +205,7 @@ public class ConfigManager {
     public SimpleItemStack getItemTemplate(String key) {
         SimpleItemStack itemTemplate = globalItemTemplates.get(key);
         if (itemTemplate == null) {
-            log.severe("Could not find item-template '" + key + "'");
+            LushRewards.getInstance().getLogger().severe("Could not find item-template '" + key + "'");
             return new SimpleItemStack();
         }
 
@@ -268,7 +272,7 @@ public class ConfigManager {
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
                 globalItemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
-                log.info("Loaded global item-template: " + categorySection.getName());
+                LushRewards.getInstance().getLogger().info("Loaded global item-template: " + categorySection.getName());
             }
         });
     }
@@ -287,7 +291,7 @@ public class ConfigManager {
             rewardsSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
                     rewardTemplates.put(rewardSection.getName(), Reward.loadReward(rewardSection));
-                    log.info("Loaded reward-template: " + rewardSection.getName());
+                    LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());
                 }
             });
         }

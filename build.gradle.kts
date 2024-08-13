@@ -24,17 +24,17 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:${findProperty("minecraftVersion")}-R0.1-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:${findProperty("floodgateVersion")}-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:${findProperty("placeholderapiVersion")}")
-    compileOnly("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
-    compileOnly("org.postgresql:postgresql:${findProperty("postgresqlVersion")}")
 
     implementation("org.bstats:bstats-bukkit:${findProperty("bStatsVersion")}")
     implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
     implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
+    implementation("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
+    implementation("org.postgresql:postgresql:${findProperty("postgresqlVersion")}")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks {
