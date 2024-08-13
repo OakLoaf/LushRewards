@@ -47,6 +47,7 @@ tasks {
         relocate("org.enchantedskies", "org.lushplugins.lushrewards.libraries.enchantedskies")
         relocate("org.lushplugins.lushlib", "org.lushplugins.lushrewards.libraries.lushlib")
         relocate("space.arim.morepaperlib", "org.lushplugins.lushrewards.libraries.morepaperlib")
+        relocate("com.mysql", "org.lushplugins.lushrewards.libraries.mysql")
 
         minimize {
             exclude(dependency("com.mysql:.*:.*"))
