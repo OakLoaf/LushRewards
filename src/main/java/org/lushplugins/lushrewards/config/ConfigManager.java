@@ -1,30 +1,31 @@
 package org.lushplugins.lushrewards.config;
 
-import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.DataManager;
-import org.lushplugins.lushrewards.data.JsonStorage;
-import org.lushplugins.lushrewards.data.MySqlStorage;
-import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.rewards.Reward;
-import org.lushplugins.lushrewards.utils.Debugger;
-import org.lushplugins.lushlib.manager.GuiManager;
-import org.lushplugins.lushlib.module.Module;
-import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
-import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.enchantedskies.EnchantedStorage.Storage;
+import org.lushplugins.lushlib.manager.GuiManager;
+import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushlib.utils.FilenameUtils;
+import org.lushplugins.lushlib.utils.SimpleItemStack;
+import org.lushplugins.lushlib.utils.StringUtils;
+import org.lushplugins.lushrewards.LushRewards;
+import org.lushplugins.lushrewards.data.DataManager;
+import org.lushplugins.lushrewards.data.JsonStorage;
+import org.lushplugins.lushrewards.data.MySqlStorage;
+import org.lushplugins.lushrewards.data.PostgreSqlStorage;
+import org.lushplugins.lushrewards.module.RewardModule;
+import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
+import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import org.lushplugins.lushrewards.rewards.Reward;
+import org.lushplugins.lushrewards.utils.Debugger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -136,19 +137,37 @@ public class ConfigManager {
         }
 
         YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
-        String storageType = storageConfig.getString("type", "yaml");
-        switch (storageType) {
-            case "mysql" -> storage = new MySqlStorage(
-                storageConfig.getString("mysql.host"),
-                storageConfig.getInt("mysql.port"),
-                storageConfig.getString("mysql.name"),
-                storageConfig.getString("mysql.user"),
-                storageConfig.getString("mysql.password")
-            );
-            case "json" -> storage = new JsonStorage();
+        String storageType = storageConfig.getString("type", "json");
+
+        boolean isOldFormat = storageConfig.contains("mysql");
+        LushRewards.getInstance().getLogger().warning("Old storage format detected, please update your storage.yml file.");
+
+        String selectedType = switch (storageType) {
+            case "mysql", "postgres" -> {
+                String host = storageConfig.getString(isOldFormat ? "mysql.host" : "storage.host");
+                int port = storageConfig.getInt(isOldFormat ? "mysql.port" : "storage.port");
+                String databaseName = storageConfig.getString(isOldFormat ? "mysql.name" : "storage.database");
+                String user = storageConfig.getString(isOldFormat ? "mysql.user": "storage.user");
+                String password = storageConfig.getString(isOldFormat ? "mysql.password" : "storage.password");
+                String schema = storageConfig.getString("storage.schema");
+
+                if (storageType.equals("postgres")) {
+                    storage = new PostgreSqlStorage(host, port, databaseName, user, password, schema);
+                } else {
+                    storage = new MySqlStorage(host, port, databaseName, user, password);
+                }
+                yield storageType;
+            }
+            case "json" -> {
+                storage = new JsonStorage();
+                yield storageType;
+            }
             default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
-        }
+        };
+        LushRewards.getInstance().getLogger().info(String.format("Using '%s' database", selectedType));
     }
+
+
 
     public String getMessage(String messageName) {
         return getMessage(messageName, "");

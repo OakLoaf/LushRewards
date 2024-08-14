@@ -1,9 +1,12 @@
-# Where user data will be stored (Options: json, mysql)
+# Where user data will be stored (Options: json, mysql, postgres)
 type: json
 
-mysql:
+storage:
   host: localhost
+  # Mysql default port: 3306
+  # Postgres default port: 5432
   port: 3306
-  name: dbName
+  database: dbName
+  schema: schemaName
   user: user
   password: pass

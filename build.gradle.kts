@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version("8.1.1")
+    id("com.gradleup.shadow") version("8.3.0")
 }
 
 group = "org.lushplugins"
@@ -30,6 +30,7 @@ dependencies {
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
     implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
     implementation("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
+    implementation("org.postgresql:postgresql:${findProperty("postgresqlVersion")}")
 }
 
 java {
@@ -50,6 +51,7 @@ tasks {
 
         minimize {
             exclude(dependency("com.mysql:.*:.*"))
+            exclude(dependency("org.postgresql:.*:.*"))
         }
 
         val folder = System.getenv("pluginFolder")
