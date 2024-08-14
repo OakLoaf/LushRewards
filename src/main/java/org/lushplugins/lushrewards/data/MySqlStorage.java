@@ -35,16 +35,14 @@ public class MySqlStorage extends AbstractSqlStorage {
     protected void assertColumn(String table, String column, String type) {
         assertTable(table);
 
-        String query = String.format("SELECT %s FROM %s", column, table);
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(query)
+             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT %s FROM %s", column, table))
         ) {
             stmt.executeQuery();
         } catch (SQLException assertException) {
             if (assertException.getErrorCode() == 1054) { // Undefined column error code in MySQL
-                String statement = MessageFormat.format("ALTER TABLE {0} ADD COLUMN {1} {2};", table, column, type);
                 try (Connection conn = conn();
-                     PreparedStatement stmt = conn.prepareStatement(statement)
+                     PreparedStatement stmt = conn.prepareStatement(MessageFormat.format("ALTER TABLE {0} ADD COLUMN {1} {2};", table, column, type))
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {

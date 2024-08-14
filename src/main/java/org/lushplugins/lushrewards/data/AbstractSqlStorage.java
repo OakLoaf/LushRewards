@@ -53,9 +53,8 @@ public abstract class AbstractSqlStorage implements Storage<DataManager.StorageD
         }
         assertJsonColumn(table, column);
 
-        String selectStatement = String.format("SELECT %s FROM %s WHERE uuid = ?;", column, table);
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(selectStatement)
+             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT %s FROM %s WHERE uuid = ?;", column, table))
         ) {
             setUUIDToStatement(stmt, 1, uuid);
 
@@ -114,9 +113,8 @@ public abstract class AbstractSqlStorage implements Storage<DataManager.StorageD
 
 
     protected void assertTable(String table) {
-        String statement = String.format("CREATE TABLE IF NOT EXISTS %s (uuid UUID NOT NULL, PRIMARY KEY (uuid));", table);
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(statement)
+             PreparedStatement stmt = conn.prepareStatement(String.format("CREATE TABLE IF NOT EXISTS %s (uuid UUID NOT NULL, PRIMARY KEY (uuid));", table))
         ) {
             stmt.execute();
         } catch (SQLException e) {
