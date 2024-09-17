@@ -17,7 +17,7 @@ repositories {
     maven("https://repo.lushplugins.org/snapshots/") // LushLib
     maven("https://repo.xemor.zip/releases/") // EnchantedStorage
     maven("https://mvn-repo.arim.space/lesser-gpl3/") // MorePaperLib
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
+    maven("https://repo.helpch.at/releases/") // PlaceholderAPI
 }
 
 dependencies {
