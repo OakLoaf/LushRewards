@@ -21,6 +21,10 @@ enable-notifications: true
 # Upcoming category to display
 upcoming-category: large
 
+reward-placeholders:
+  claimed: "true" # %claimed% (When reward day is claimed)
+  unclaimed: "false" # %claimed% (When reward day is unclaimed)
+
 # List of rewards (%player% - The user being given the reward)
 daily-rewards:
   default:

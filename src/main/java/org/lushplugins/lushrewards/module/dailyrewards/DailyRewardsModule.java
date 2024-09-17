@@ -37,6 +37,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     private Sound defaultRedeemSound;
     private String upcomingCategory;
     private boolean dateAsAmount;
+    private String rewardPlaceholderClaimed;
+    private String rewardPlaceholderUnclaimed;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
     private Integer requiredPlaytime; // This is subject to change - TODO: Properly implement conditions
@@ -70,6 +72,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         String guiTitle = config.getString("gui.title", "&8&lDaily Rewards");
         this.dateAsAmount = config.getBoolean("gui.date-as-amount", false);
+        this.rewardPlaceholderClaimed = config.getString("reward-placeholders.claimed", "true");
+        this.rewardPlaceholderUnclaimed = config.getString("reward-placeholders.unclaimed", "false");
         this.scrollType = DailyRewardsGui.ScrollType.valueOf(config.getString("gui.scroll-type", "MONTH").toUpperCase());
         String templateType = config.getString("gui.template", "DEFAULT").toUpperCase();
         GuiFormat.GuiTemplate guiTemplate = templateType.equals("CUSTOM") ? new GuiFormat.GuiTemplate(config.getStringList("gui.format")) : GuiFormat.GuiTemplate.valueOf(templateType);
@@ -343,6 +347,14 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
     public boolean showDateAsAmount() {
         return dateAsAmount;
+    }
+
+    public String getRewardPlaceholderClaimed() {
+        return rewardPlaceholderClaimed;
+    }
+
+    public String getRewardPlaceholderUnclaimed() {
+        return rewardPlaceholderUnclaimed;
     }
 
     public DailyRewardsGui.ScrollType getScrollType() {
