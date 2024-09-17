@@ -167,6 +167,16 @@ public class DailyRewardsGui extends Gui {
 
                                         removeButton(slot);
 
+                                        Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
+
+                                        module.claimRewards(player);
+
+                                        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+                                            if (module instanceof PlaytimeRewardsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
+                                                playtimeModule.claimRewards(player);
+                                            }
+                                        });
+
                                         SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
                                         if (collectedItem.getDisplayName() != null) {
                                             collectedItem.setDisplayName(collectedItem.getDisplayName()
@@ -182,16 +192,6 @@ public class DailyRewardsGui extends Gui {
                                         collectedItem.parseColors(player);
 
                                         inventory.setItem(slot, collectedItem.asItemStack(player, true));
-
-                                        Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
-
-                                        module.claimRewards(player);
-
-                                        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
-                                            if (module instanceof PlaytimeRewardsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
-                                                playtimeModule.claimRewards(player);
-                                            }
-                                        });
                                     });
                                 }
 
