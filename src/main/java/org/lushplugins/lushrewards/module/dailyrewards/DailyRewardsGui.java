@@ -121,6 +121,7 @@ public class DailyRewardsGui extends Gui {
 
                                     if (displayItem.getDisplayName() != null) {
                                         displayItem.setDisplayName(displayItem.getDisplayName()
+                                            .replace("%claimed%", String.valueOf(itemTemplate.equals("collected-reward")))
                                             .replace("%day%", String.valueOf(dayIndex.get()))
                                             .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
                                             .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
@@ -132,7 +133,8 @@ public class DailyRewardsGui extends Gui {
 
                                     if (displayItem.getLore() != null) {
                                         displayItem.setLore(displayItem.getLore().stream().map(line ->
-                                            line.replace("%day%", String.valueOf(dayIndex.get()))
+                                            line.replace("%claimed%", String.valueOf(itemTemplate.equals("collected-reward")))
+                                                .replace("%day%", String.valueOf(dayIndex.get()))
                                                 .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
                                                 .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
                                                 .replace("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
@@ -168,7 +170,8 @@ public class DailyRewardsGui extends Gui {
                                         SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
                                         if (collectedItem.getDisplayName() != null) {
                                             collectedItem.setDisplayName(collectedItem.getDisplayName()
-                                                .replace("%day%", String.valueOf(currDayNum))
+                                                .replace("%claimed%", String.valueOf(itemTemplate.equals("collected-reward"))
+                                                .replace("%day%", String.valueOf(currDayNum)))
                                                 .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
                                                 .replace("%month%", dateIndex[0].getMonth().getDisplayName(TextStyle.FULL, Locale.US))
                                                 .replace("%month_num%", String.valueOf(dateIndex[0].getMonthValue()))
