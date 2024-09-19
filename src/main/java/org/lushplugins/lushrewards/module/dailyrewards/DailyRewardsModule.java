@@ -193,7 +193,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         LocalDate lastCollectedDate = userData.getLastCollectedDate();
-        if (!streakBypass || lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
+        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)));
+
+
+        if (missedDay && !streakBypass) {
             userData.setStreak(1);
         } else {
             userData.incrementStreak();
@@ -238,11 +241,13 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             return;
         }
 
+        LocalDate lastCollectedDate = userData.getLastCollectedDate();
+        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)));
+
         switch (getRewardMode()) {
             case STREAK -> {
                 // Resets RewardUser to Day 1 if a day has been missed
-                LocalDate lastCollectedDate = userData.getLastCollectedDate();
-                if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
+                if (missedDay) {
                     userData.setDayNum(1);
                     userData.setStreak(1);
                     userData.clearCollectedDays();
@@ -259,9 +264,14 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
             case DEFAULT -> userData.setDayNum((int) (LocalDate.now().toEpochDay() - userData.getStartDate().toEpochDay()) + 1);
         }
 
+        if (missedDay && !streakBypass) {
+            userData.setStreak(1);
+        }
+
         int resetDay = getResetDay();
         if (resetDay > 0 && userData.getDayNum() > resetDay) {
             userData.setDayNum(1);
+            userData.clearCollectedDays();
         }
 
         userData.setLastJoinDate(LocalDate.now());
