@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lushplugins.lushlib.command.SubCommand;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushrewards.utils.PlayerUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -295,18 +296,13 @@ public class EditUserSubCommand extends SubCommand {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean setDay(CommandSender sender, String nameOrUuid, List<RewardModule> modules, int dayNum) {
-        Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
-        if (player != null) {
-            uuid = player.getUniqueId();
-        } else {
-            try {
-                uuid = UUID.fromString(nameOrUuid);
-            } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
-                    .replace("%player%", nameOrUuid));
-                return false;
-            }
+        try {
+            uuid = PlayerUtils.getUniqueId(nameOrUuid);
+        } catch (IllegalArgumentException e) {
+            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
+                .replace("%player%", nameOrUuid));
+            return false;
         }
 
         for (Module module : modules) {
@@ -326,18 +322,13 @@ public class EditUserSubCommand extends SubCommand {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean setStreak(CommandSender sender, String nameOrUuid, List<RewardModule> modules, int streak) {
-        Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
-        if (player != null) {
-            uuid = player.getUniqueId();
-        } else {
-            try {
-                uuid = UUID.fromString(nameOrUuid);
-            } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
-                    .replace("%player%", nameOrUuid));
-                return false;
-            }
+        try {
+            uuid = PlayerUtils.getUniqueId(nameOrUuid);
+        } catch (IllegalArgumentException e) {
+            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
+                .replace("%player%", nameOrUuid));
+            return false;
         }
 
         for (Module module : modules) {
@@ -353,30 +344,22 @@ public class EditUserSubCommand extends SubCommand {
     }
 
     private static boolean removeCollectedDays(CommandSender sender, String nameOrUuid, List<RewardModule> modules) {
-        Player player = Bukkit.getPlayer(nameOrUuid);
         UUID uuid;
-        if (player != null) {
-            uuid = player.getUniqueId();
-        } else {
-            try {
-                uuid = UUID.fromString(nameOrUuid);
-            } catch (IllegalArgumentException e) {
-                ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
-                    .replace("%player%", nameOrUuid));
-                return false;
-            }
+        try {
+            uuid = PlayerUtils.getUniqueId(nameOrUuid);
+        } catch (IllegalArgumentException e) {
+            ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("unknown-player")
+                .replace("%player%", nameOrUuid));
+            return false;
         }
 
-        if (player != null) {
-            for (Module module : modules) {
-                if (module instanceof DailyRewardsModule dailyRewardsModule) {
-                    dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
-                        userData.clearCollectedDays();
-                        userData.setLastCollectedDate(null);
-
-                        dailyRewardsModule.saveUserData(uuid, userData);
-                    });
-                }
+        for (Module module : modules) {
+            if (module instanceof DailyRewardsModule dailyRewardsModule) {
+                dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
+                    userData.clearCollectedDays();
+                    userData.setLastCollectedDate(null);
+                    dailyRewardsModule.saveUserData(uuid, userData);
+                });
             }
         }
 
