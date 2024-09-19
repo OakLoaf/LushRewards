@@ -12,6 +12,8 @@ reward-mode: streak
 reset-days-at: -1
 # Whether players will receive all rewards on a day or just the one with the highest priority
 allow-reward-stacking: false
+# Whether streaks will continue to increase following missed days (This is intended for use during server maintenance periods)
+streak-bypass: false
 
 # The redeem sound to play if unspecified
 default-redeem-sound: ENTITY_PLAYER_LEVELUP

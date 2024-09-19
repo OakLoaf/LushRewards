@@ -34,6 +34,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     private int resetDaysAt;
     private RewardMode rewardMode;
     private boolean allowRewardsStacking;
+    private boolean streakBypass;
     private Sound defaultRedeemSound;
     private String upcomingCategory;
     private boolean dateAsAmount;
@@ -66,6 +67,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         this.resetDaysAt = config.getInt("reset-days-at", -1);
         this.rewardMode = StringUtils.getEnum(config.getString("reward-mode", config.getBoolean("streak-mode") ? "streak" : "default"), RewardMode.class).orElse(RewardMode.DEFAULT);
         this.allowRewardsStacking = config.getBoolean("allow-reward-stacking", true);
+        this.streakBypass = config.getBoolean("streak-bypass");
+
         this.defaultRedeemSound = StringUtils.getEnum(config.getString("default-redeem-sound", "none"), Sound.class).orElse(null);
         setShouldNotify(config.getBoolean("enable-notifications", true));
         this.upcomingCategory = config.getString("upcoming-category");
@@ -190,7 +193,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         LocalDate lastCollectedDate = userData.getLastCollectedDate();
-        if (lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
+        if (!streakBypass || lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)))) {
             userData.setStreak(1);
         } else {
             userData.incrementStreak();
