@@ -222,7 +222,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
                 Debugger.sendDebugMessage("Successfully gave rewards to " + player.getName(), Debugger.DebugMode.DAILY);
                 ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("daily-reward-given"));
 
-                player.playSound(player.getLocation(), priorityReward.getSound(), 1f, 1f);
+                player.playSound(player.getLocation(), priorityReward.getSound() != null ? priorityReward.getSound() : this.getDefaultRedeemSound(), 1f, 1f);
             });
 
         return true;
