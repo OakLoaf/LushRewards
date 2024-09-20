@@ -140,7 +140,7 @@ public class ConfigManager {
         String storageType = storageConfig.getString("type", "json");
 
         boolean isOldFormat = storageConfig.contains("mysql");
-        LushRewards.getInstance().getLogger().warning("Old storage format detected, please update your storage.yml file.");
+        LushRewards.getInstance().getLogger().warning("Deprecated: The 'mysql' section in the storage.yml has been renamed to 'storage'");
 
         String selectedType = switch (storageType) {
             case "mysql", "postgres" -> {
