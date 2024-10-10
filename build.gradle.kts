@@ -21,10 +21,14 @@ repositories {
 }
 
 dependencies {
+    // Dependencies
     compileOnly("org.spigotmc:spigot-api:${findProperty("minecraftVersion")}-R0.1-SNAPSHOT")
+
+    // Soft Dependencies
     compileOnly("org.geysermc.floodgate:api:${findProperty("floodgateVersion")}-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:${findProperty("placeholderapiVersion")}")
 
+    // Libraries
     implementation("org.bstats:bstats-bukkit:${findProperty("bStatsVersion")}")
     implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
