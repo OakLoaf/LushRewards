@@ -1,8 +1,9 @@
-package org.lushplugins.lushrewards.data;
+package org.lushplugins.lushrewards.olddata;
 
 import com.google.gson.JsonObject;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.config.ConfigManager;
+import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.UserDataModule;
 import org.lushplugins.lushlib.manager.Manager;
 import org.bukkit.Bukkit;
@@ -20,24 +21,24 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class DataManager extends Manager {
-    private IOHandler<StorageData, StorageLocation> ioHandler;
+    private IOHandler<StorageData, StorageLocation> storageManager;
     private final ConcurrentHashMap<UUID, RewardUser> rewardUsersCache = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
         ConfigManager configManager = LushRewards.getInstance().getConfigManager();
-        ioHandler = new IOHandler<>(configManager.getStorage());
-        ioHandler.enable();
+        storageManager = new IOHandler<>(configManager.getStorage());
+        storageManager.enable();
 
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player.getUniqueId()).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
 
     @Override
     public void onDisable() {
-        if (ioHandler != null) {
+        if (storageManager != null) {
             saveCachedRewardUsers();
-            ioHandler.disable();
-            ioHandler = null;
+            storageManager.disable();
+            storageManager = null;
         }
     }
 
@@ -150,7 +151,7 @@ public class DataManager extends Manager {
     public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(@NotNull UUID uuid, String moduleId, Class<T> dataClass) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        ioHandler.loadData(new StorageLocation(uuid, moduleId))
+        storageManager.loadData(new StorageLocation(uuid, moduleId))
             .orTimeout(15, TimeUnit.SECONDS)
             .whenComplete((storageData, exception) -> {
                 if (exception != null) {
@@ -207,7 +208,7 @@ public class DataManager extends Manager {
     }
 
     public <T extends UserDataModule.UserData> CompletableFuture<Boolean> saveUserData(@NotNull UUID uuid, T userData) {
-        return CompletableFuture.supplyAsync(() -> ioHandler.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson())))
+        return CompletableFuture.supplyAsync(() -> storageManager.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson())))
             .orTimeout(30, TimeUnit.SECONDS)
             .handle((storageData, exception) -> {
                 if (exception != null) {

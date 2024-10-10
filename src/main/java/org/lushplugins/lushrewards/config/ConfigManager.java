@@ -11,10 +11,10 @@ import org.lushplugins.lushlib.utils.FilenameUtils;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.DataManager;
-import org.lushplugins.lushrewards.data.JsonStorage;
-import org.lushplugins.lushrewards.data.MySqlStorage;
-import org.lushplugins.lushrewards.data.PostgreSqlStorage;
+import org.lushplugins.lushrewards.olddata.DataManager;
+import org.lushplugins.lushrewards.olddata.JsonStorage;
+import org.lushplugins.lushrewards.olddata.MySqlStorage;
+import org.lushplugins.lushrewards.olddata.PostgreSqlStorage;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
@@ -164,7 +164,7 @@ public class ConfigManager {
             }
             default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
         };
-        LushRewards.getInstance().getLogger().info(String.format("Using '%s' database", selectedType));
+        LushRewards.getInstance().getLogger().info("Using '" + selectedType +"' database");
     }
 
 

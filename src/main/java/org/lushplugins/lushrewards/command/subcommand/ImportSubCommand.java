@@ -1,7 +1,7 @@
 package org.lushplugins.lushrewards.command.subcommand;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.converter.Converter;
+import org.lushplugins.lushrewards.olddata.converter.Converter;
 import org.lushplugins.lushrewards.importer.DailyRewardsPlusImporter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.command.SubCommand;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.importer.NDailyRewardsImporter;
-import org.lushplugins.lushrewards.data.converter.Version3DataMigrator;
+import org.lushplugins.lushrewards.olddata.converter.Version3DataMigrator;
 
 import java.io.FileNotFoundException;
 import java.time.Instant;

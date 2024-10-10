@@ -33,6 +33,7 @@ dependencies {
     implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
     implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
+    implementation("com.zaxxer:HikariCP:${findProperty("hikariCPVersion")}")
     implementation("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
     implementation("org.postgresql:postgresql:${findProperty("postgresqlVersion")}")
 }
