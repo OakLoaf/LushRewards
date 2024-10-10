@@ -3,7 +3,7 @@ package org.lushplugins.lushrewards.importer;
 import org.lushplugins.lushrewards.LushRewards;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushrewards.data.converter.Converter;
+import org.lushplugins.lushrewards.olddata.converter.Converter;
 
 import java.io.File;
 import java.io.FileNotFoundException;

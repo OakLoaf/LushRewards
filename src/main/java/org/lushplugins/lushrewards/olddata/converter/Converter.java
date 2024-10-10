@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.data.converter;
+package org.lushplugins.lushrewards.olddata.converter;
 
 public abstract class Converter {
     private final String name;

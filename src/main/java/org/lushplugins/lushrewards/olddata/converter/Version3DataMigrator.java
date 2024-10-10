@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.data.converter;
+package org.lushplugins.lushrewards.olddata.converter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -6,7 +6,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lushplugins.lushlib.utils.FilenameUtils;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.converter.Converter;
 
 import java.io.File;
 import java.io.FileNotFoundException;

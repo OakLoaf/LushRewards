@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.data;
+package org.lushplugins.lushrewards.olddata;
 
 import com.google.gson.JsonObject;
 import org.lushplugins.lushrewards.LushRewards;

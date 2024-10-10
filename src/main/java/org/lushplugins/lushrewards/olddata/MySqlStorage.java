@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.data;
+package org.lushplugins.lushrewards.olddata;
 
 import com.google.gson.JsonObject;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -20,8 +20,8 @@ public class MySqlStorage extends AbstractSqlStorage {
 
     @Override
     protected String getUpsertStatement(String table, String column) {
-        return MessageFormat.format(
-                "REPLACE INTO {0}(uuid, {1}) VALUES(?, ?);",
+        return String.format(
+                "REPLACE INTO %s(uuid, %s) VALUES(?, ?);",
                 table, column
         );
     }
@@ -42,7 +42,7 @@ public class MySqlStorage extends AbstractSqlStorage {
         } catch (SQLException assertException) {
             if (assertException.getErrorCode() == 1054) { // Undefined column error code in MySQL
                 try (Connection conn = conn();
-                     PreparedStatement stmt = conn.prepareStatement(MessageFormat.format("ALTER TABLE {0} ADD COLUMN {1} {2};", table, column, type))
+                     PreparedStatement stmt = conn.prepareStatement(String.format("ALTER TABLE %s ADD COLUMN %s %s;", table, column, type))
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {
