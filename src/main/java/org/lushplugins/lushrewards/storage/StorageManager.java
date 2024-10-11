@@ -1,17 +1,21 @@
 package org.lushplugins.lushrewards.storage;
 
+import com.google.gson.JsonObject;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.UserDataModule;
-import org.lushplugins.lushrewards.storage.type.SQLStorage;
+import org.lushplugins.lushrewards.storage.type.JsonStorage;
+import org.lushplugins.lushrewards.storage.type.MySQLStorage;
+import org.lushplugins.lushrewards.storage.type.PostgreSQLStorage;
+import org.lushplugins.lushrewards.storage.type.SQLiteStorage;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 
 public class StorageManager {
     private final ExecutorService threads = Executors.newFixedThreadPool(1);
@@ -28,13 +32,13 @@ public class StorageManager {
 
         String storageType = config.getString("type", "null");
         switch (config.getString("type", "null")) {
-            case "mysql", "mariadb" -> storage = new SQLStorage();
-//            case "postgres" -> storage = ...
-//            case "sqlite" -> storage = ...
-//            case "json" -> storage = ...
+            case "mysql", "mariadb" -> storage = new MySQLStorage();
+            case "postgres" -> storage = new PostgreSQLStorage();
+            case "sqlite" -> storage = new SQLiteStorage();
+            case "json" -> storage = new JsonStorage();
             default -> {
-//                storage = ...
-                LushRewards.getInstance().getLogger().severe("'" + storageType + "' is not a valid storage type, default to json");
+                storage = new JsonStorage();
+                LushRewards.getInstance().getLogger().severe("'" + storageType + "' is not a valid storage type, default to json storage.");
             }
         }
 
@@ -55,20 +59,12 @@ public class StorageManager {
         }
     }
 
-    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
-        return runAsync(() -> storage.loadRewardUser(uuid));
+    public CompletableFuture<JsonObject> loadModuleUserData(UUID uuid, String moduleId) {
+        return runAsync(() -> storage.loadModuleUserDataJson(uuid, moduleId));
     }
 
-    public CompletableFuture<Void> saveRewardUser(RewardUser rewardUser) {
-        return runAsync(() -> storage.saveRewardUser(rewardUser));
-    }
-
-    public <T extends UserDataModule.UserData> CompletableFuture<T> loadModuleUserData(UUID uuid, UserDataModule<T> module) {
-        return runAsync(() -> storage.loadModuleUserData(uuid, module));
-    }
-
-    public <T extends UserDataModule.UserData> CompletableFuture<Void> saveModuleUserData(UUID uuid, UserDataModule<T> module) {
-        return runAsync(() -> storage.saveModuleUserData(uuid, module));
+    public CompletableFuture<Void> saveModuleUserData(UserDataModule.UserData userData) {
+        return runAsync(() -> storage.saveModuleUserData(userData));
     }
 
     private <T> CompletableFuture<T> runAsync(Callable<T> callable) {
@@ -77,7 +73,7 @@ public class StorageManager {
             try {
                 future.complete(callable.call());
             } catch (Throwable e) {
-                e.printStackTrace();
+                LushRewards.getInstance().getLogger().log(Level.WARNING, "Caught unhandled storage error: ", e);
                 future.completeExceptionally(e);
             }
         });
@@ -91,7 +87,7 @@ public class StorageManager {
                 runnable.run();
                 future.complete(null);
             } catch (Throwable e) {
-                e.printStackTrace();
+                LushRewards.getInstance().getLogger().log(Level.WARNING, "Caught unhandled storage error: ", e);
                 future.completeExceptionally(e);
             }
         });

@@ -3,7 +3,7 @@ package org.lushplugins.lushrewards.importer;
 import org.lushplugins.lushrewards.LushRewards;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushrewards.olddata.converter.Converter;
+import org.lushplugins.lushrewards.storage.migrator.Migrator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public abstract class ConfigImporter extends Converter {
+public abstract class ConfigImporter extends Migrator {
     private final File dataFolder;
 
     public ConfigImporter(String pluginName) throws FileNotFoundException {

@@ -1,9 +1,9 @@
-package org.lushplugins.lushrewards.olddata.converter;
+package org.lushplugins.lushrewards.storage.migrator;
 
-public abstract class Converter {
+public abstract class Migrator {
     private final String name;
 
-    public Converter(String name) {
+    public Migrator(String name) {
         this.name = name;
     }
 

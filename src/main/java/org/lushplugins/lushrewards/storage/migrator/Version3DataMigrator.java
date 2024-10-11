@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.olddata.converter;
+package org.lushplugins.lushrewards.storage.migrator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public class Version3DataMigrator extends Converter {
+public class Version3DataMigrator extends Migrator {
     private final File version2DataFolder;
     private final File lushDataFolder;
 
