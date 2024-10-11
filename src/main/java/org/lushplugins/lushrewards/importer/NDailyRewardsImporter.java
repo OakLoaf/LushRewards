@@ -3,6 +3,7 @@ package org.lushplugins.lushrewards.importer;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.lushplugins.lushrewards.LushRewards;
@@ -69,8 +70,9 @@ public class NDailyRewardsImporter extends ConfigImporter {
                         rewards.forEach(reward -> reward.setMessage(messages.get(0)));
                     }
 
-                    SimpleItemStack displayItem = new SimpleItemStack();
-                    displayItem.setLore(rewardSection.getStringList("lore"));
+                    DisplayItemStack displayItem = DisplayItemStack.builder()
+                        .setLore(rewardSection.getStringList("lore"))
+                        .build();
 
                     DailyRewardCollection rewardCollection = new DailyRewardCollection(null, null, null, dayNum, null, rewards, 0, "small", displayItem, null);
                     rewardCollection.save(localRewardsConfig.createSection("daily-rewards.day-" + dayNum));

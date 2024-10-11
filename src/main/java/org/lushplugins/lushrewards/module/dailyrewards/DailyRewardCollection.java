@@ -1,11 +1,12 @@
 package org.lushplugins.lushrewards.module.dailyrewards;
 
+import org.lushplugins.lushlib.utils.DisplayItemStack;
+import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.exceptions.InvalidRewardException;
 
 import org.lushplugins.lushrewards.rewards.Reward;
 import org.lushplugins.lushrewards.rewards.collections.RewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,7 +27,7 @@ public class DailyRewardCollection extends RewardCollection {
     private final Integer rewardDayNum;
     private final Integer repeatsUntilDay;
 
-    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable LocalDate rewardDate, @Nullable LocalDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound) {
+    public DailyRewardCollection(@Nullable Integer repeatFrequency, @Nullable LocalDate rewardDate, @Nullable LocalDate repeatsUntilDate, @Nullable Integer rewardDayNum, @Nullable Integer repeatsUntilDay, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable DisplayItemStack displayItem, @Nullable Sound sound) {
         super(rewards, priority, category, displayItem, sound);
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntilDay != null || repeatsUntilDate != null ? 1 : 0);
         this.rewardDate = rewardDate;
@@ -110,7 +111,7 @@ public class DailyRewardCollection extends RewardCollection {
             configurationSection.set("category", category);
         }
         if (displayItem != null && !displayItem.isBlank()) {
-            displayItem.save(configurationSection.createSection("display-item"));
+            YamlConverter.setDisplayItem(configurationSection.createSection("display-item"), displayItem);
         }
         if (sound != null) {
             configurationSection.set("redeem-sound", sound.name());
@@ -174,8 +175,8 @@ public class DailyRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
         ConfigurationSection itemSection = rewardCollectionSection.getConfigurationSection("display-item");
-        SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
-        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
+        DisplayItemStack displayItem = itemSection != null ? YamlConverter.getDisplayItem(itemSection) : DisplayItemStack.empty();
+        Debugger.sendDebugMessage("Reward collection item set to: " + displayItem, debugMode);
 
         Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "none"), Sound.class).orElse(null);
 
@@ -185,7 +186,7 @@ public class DailyRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return new DailyRewardCollection(repeatFrequency, rewardDate, repeatsUntilDate, rewardDayNum, repeatsUntilDay, rewardList, priority, category, itemStack, redeemSound);
+        return new DailyRewardCollection(repeatFrequency, rewardDate, repeatsUntilDate, rewardDayNum, repeatsUntilDay, rewardList, priority, category, displayItem, redeemSound);
     }
 
     public static DailyRewardCollection empty() {

@@ -7,9 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.enchantedskies.EnchantedStorage.Storage;
 import org.lushplugins.lushlib.manager.GuiManager;
 import org.lushplugins.lushlib.module.Module;
-import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
-import org.lushplugins.lushlib.utils.StringUtils;
+import org.lushplugins.lushlib.utils.*;
+import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.olddata.DataManager;
 import org.lushplugins.lushrewards.olddata.JsonStorage;
@@ -33,8 +32,8 @@ public class ConfigManager {
     private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
     private static LocalDate currentDate;
 
-    private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DisplayItemStack> categoryItems = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DisplayItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Reward> rewardTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
     private Storage<DataManager.StorageData, DataManager.StorageLocation> storage;
@@ -187,29 +186,29 @@ public class ConfigManager {
         return messages.values();
     }
 
-    public SimpleItemStack getCategoryTemplate(String category) {
-        SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
+    public DisplayItemStack getCategoryTemplate(String category) {
+        DisplayItemStack itemTemplate = categoryItems.get(category.toLowerCase());
         if (itemTemplate == null) {
             LushRewards.getInstance().getLogger().severe("Could not find category '" + category + "'");
-            return new SimpleItemStack();
+            return DisplayItemStack.empty();
         }
 
-        return itemTemplate.clone();
+        return itemTemplate;
     }
 
-    public SimpleItemStack getItemTemplate(String key, RewardModule module) {
-        SimpleItemStack itemTemplate = module.getItemTemplate(key);
+    public DisplayItemStack getItemTemplate(String key, RewardModule module) {
+        DisplayItemStack itemTemplate = module.getItemTemplate(key);
         return itemTemplate.isBlank() ? getItemTemplate(key) : itemTemplate;
     }
 
-    public SimpleItemStack getItemTemplate(String key) {
-        SimpleItemStack itemTemplate = globalItemTemplates.get(key);
+    public DisplayItemStack getItemTemplate(String key) {
+        DisplayItemStack itemTemplate = globalItemTemplates.get(key);
         if (itemTemplate == null) {
             LushRewards.getInstance().getLogger().severe("Could not find item-template '" + key + "'");
-            return new SimpleItemStack();
+            return DisplayItemStack.empty();
         }
 
-        return itemTemplate.clone();
+        return itemTemplate;
     }
 
     public Reward getRewardTemplate(String name) {
@@ -254,7 +253,7 @@ public class ConfigManager {
         // Repopulates category map
         categoriesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
-                categoryItems.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                categoryItems.put(categorySection.getName(), YamlConverter.getDisplayItem(categorySection));
             }
         });
     }
@@ -271,7 +270,7 @@ public class ConfigManager {
         // Repopulates category map
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
-                globalItemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                globalItemTemplates.put(categorySection.getName(), YamlConverter.getDisplayItem(categorySection));
                 LushRewards.getInstance().getLogger().info("Loaded global item-template: " + categorySection.getName());
             }
         });

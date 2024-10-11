@@ -1,9 +1,11 @@
 package org.lushplugins.lushrewards.rewards.collections;
 
+import org.lushplugins.lushlib.utils.DisplayItemStack;
+import org.lushplugins.lushlib.utils.converter.MapConverter;
+import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.rewards.Reward;
 import org.lushplugins.lushrewards.utils.Debugger;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,10 +22,10 @@ public class RewardCollection {
     protected final Collection<Reward> rewards;
     protected final int priority;
     protected final String category;
-    protected final SimpleItemStack displayItem;
+    protected final DisplayItemStack displayItem;
     protected final Sound sound;
 
-    public RewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound) {
+    public RewardCollection(@Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable DisplayItemStack displayItem, @Nullable Sound sound) {
         this.rewards = rewards != null ? rewards : Collections.emptyList();
         this.priority = priority;
         this.category = category;
@@ -43,7 +45,7 @@ public class RewardCollection {
         return category;
     }
 
-    public SimpleItemStack getDisplayItem() {
+    public DisplayItemStack getDisplayItem() {
         return displayItem != null ? displayItem : LushRewards.getInstance().getConfigManager().getCategoryTemplate(category);
     }
 
@@ -82,8 +84,8 @@ public class RewardCollection {
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
         ConfigurationSection itemSection = rewardCollectionSection.getConfigurationSection("display-item");
-        SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
-        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
+        DisplayItemStack displayItem = itemSection != null ? YamlConverter.getDisplayItem(itemSection) : DisplayItemStack.empty();
+        Debugger.sendDebugMessage("Reward collection item set to: " + displayItem, debugMode);
 
         Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "ENTITY_EXPERIENCE_ORB_PICKUP"), Sound.class).orElse(null);
 
@@ -93,7 +95,7 @@ public class RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return rewardList != null ? new RewardCollection(rewardList, 0, category, itemStack, redeemSound) : RewardCollection.empty();
+        return rewardList != null ? new RewardCollection(rewardList, 0, category, displayItem, redeemSound) : RewardCollection.empty();
     }
 
     @NotNull
@@ -109,7 +111,7 @@ public class RewardCollection {
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
         Map<?, ?> itemMap = (Map<?, ?>) rewardCollectionMap.get("display-item");
-        SimpleItemStack itemStack = itemMap != null ? SimpleItemStack.from(itemMap) : new SimpleItemStack();
+        DisplayItemStack itemStack = itemMap != null ? MapConverter.getDisplayItemBuilder(itemMap).build() : DisplayItemStack.empty();
         Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
 
         Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? StringUtils.getEnum((String) rewardCollectionMap.get("redeem-sound"), Sound.class).orElse(null) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
