@@ -1,14 +1,16 @@
 package org.lushplugins.lushrewards.module.dailyrewards;
 
 import com.google.common.collect.TreeMultimap;
+import org.bukkit.inventory.Inventory;
+import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushrewards.LushRewards;
+import org.lushplugins.lushrewards.config.ConfigManager;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushrewards.rewards.collections.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -35,7 +37,10 @@ public class DailyRewardsGui extends Gui {
     }
 
     @Override
-    public void recalculateContents() {
+    public void refresh() {
+        Inventory inventory = this.getInventory();
+        Player player = this.getPlayer();
+
         inventory.clear();
         clearButtons();
 
@@ -43,10 +48,10 @@ public class DailyRewardsGui extends Gui {
             .completeOnTimeout(null, 15, TimeUnit.SECONDS)
             .thenAccept(userData -> LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                 if (userData == null) {
-                    SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
-                    errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
-                    errorItem.setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"));
-                    errorItem.parseColors(player);
+                    DisplayItemStack errorItem = DisplayItemStack.builder(Material.BARRIER)
+                        .setDisplayName("&#ff6969Failed to load rewards user data try relogging")
+                        .setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"))
+                        .build();
 
                     inventory.setItem(4, errorItem.asItemStack(player, true));
                     return;
@@ -85,6 +90,7 @@ public class DailyRewardsGui extends Gui {
                     }
                 }
 
+                ConfigManager configManager = LushRewards.getInstance().getConfigManager();
                 TreeMultimap<Character, Integer> slotMap = guiTemplate.getSlotMap();
                 HashSet<Integer> collectedDays = userData.getCollectedDays();
                 for (Character character : slotMap.keySet()) {
@@ -92,15 +98,14 @@ public class DailyRewardsGui extends Gui {
                         case 'R' -> slotMap.get(character).forEach(slot -> {
                             ItemStack itemStack;
                             if (module.getScrollType().equals(ScrollType.MONTH) && dateIndex[0].getMonthValue() != LocalDate.now().getMonthValue()) {
-                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf('#'), module);
+                                DisplayItemStack.Builder displayItemBuilder = DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf('#'), module));
 
-                                if (!simpleItemStack.hasType()) {
-                                    simpleItemStack.setType(Material.STONE);
+                                if (!displayItemBuilder.hasType()) {
+                                    displayItemBuilder.setType(Material.STONE);
                                     LushRewards.getInstance().getLogger().severe("Failed to display custom item-template '#' as it does not specify a valid material");
                                 }
-                                simpleItemStack.parseColors(player);
 
-                                itemStack = simpleItemStack.asItemStack(player);
+                                itemStack = displayItemBuilder.build().asItemStack(player, true);
                             } else {
                                 // Get the day's reward for the current slot
                                 RewardDay rewardDay = module.getRewardDay(dateIndex[0], dayIndex.get());
@@ -115,12 +120,14 @@ public class DailyRewardsGui extends Gui {
                                     itemTemplate = "default-reward";
                                 }
 
-                                SimpleItemStack displayItem;
+                                DisplayItemStack.Builder displayItemBuilder;
                                 if (!rewardDay.isEmpty()) {
-                                    displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(priorityReward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate, module), priorityReward.getDisplayItem());
+                                    displayItemBuilder = DisplayItemStack.builder(configManager.getCategoryTemplate(priorityReward.getCategory())).overwrite(
+                                        DisplayItemStack.builder(configManager.getItemTemplate(itemTemplate, module)),
+                                        DisplayItemStack.builder(priorityReward.getDisplayItem()));
 
-                                    if (displayItem.getDisplayName() != null) {
-                                        displayItem.setDisplayName(displayItem.getDisplayName()
+                                    if (displayItemBuilder.getDisplayName() != null) {
+                                        displayItemBuilder.setDisplayName(displayItemBuilder.getDisplayName()
                                             .replace("%claimed%", itemTemplate.equals("collected-reward") ? module.getRewardPlaceholderClaimed() : module.getRewardPlaceholderUnclaimed())
                                             .replace("%day%", String.valueOf(dayIndex.get()))
                                             .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
@@ -131,8 +138,8 @@ public class DailyRewardsGui extends Gui {
                                             .replace("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
                                     }
 
-                                    if (displayItem.getLore() != null) {
-                                        displayItem.setLore(displayItem.getLore().stream().map(line ->
+                                    if (displayItemBuilder.getLore() != null) {
+                                        displayItemBuilder.setLore(displayItemBuilder.getLore().stream().map(line ->
                                             line.replace("%claimed%", itemTemplate.equals("collected-reward") ? module.getRewardPlaceholderClaimed() : module.getRewardPlaceholderUnclaimed())
                                                 .replace("%day%", String.valueOf(dayIndex.get()))
                                                 .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
@@ -144,13 +151,13 @@ public class DailyRewardsGui extends Gui {
                                         ).toList());
                                     }
 
-                                    displayItem.parseColors(player);
+                                    displayItemBuilder.parseColors(player);
                                 } else {
-                                    displayItem = new SimpleItemStack(Material.AIR);
+                                    displayItemBuilder = DisplayItemStack.builder(Material.AIR);
                                 }
 
                                 try {
-                                    itemStack = displayItem.asItemStack(player);
+                                    itemStack = displayItemBuilder.build().asItemStack(player);
                                 } catch (IllegalArgumentException e) {
                                     LushRewards.getInstance().getLogger().severe("Failed to display item-template '" + itemTemplate + "' as it does not specify a valid material");
                                     itemStack = new ItemStack(Material.STONE);
@@ -177,9 +184,11 @@ public class DailyRewardsGui extends Gui {
                                             }
                                         });
 
-                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
-                                        if (collectedItem.getDisplayName() != null) {
-                                            collectedItem.setDisplayName(collectedItem.getDisplayName()
+                                        DisplayItemStack.Builder collectedItemBuilder = DisplayItemStack.builder(currItem).overwrite(
+                                            DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module)));
+
+                                        if (collectedItemBuilder.getDisplayName() != null) {
+                                            collectedItemBuilder.setDisplayName(collectedItemBuilder.getDisplayName()
                                                 .replace("%claimed%", itemTemplate.equals("collected-reward") ? module.getRewardPlaceholderClaimed() : module.getRewardPlaceholderUnclaimed())
                                                 .replace("%day%", String.valueOf(currDayNum))
                                                 .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
@@ -189,9 +198,9 @@ public class DailyRewardsGui extends Gui {
                                                 .replace("%date%", dateIndex[0].format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                                                 .replace("%date_us%", dateIndex[0].format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
                                         }
-                                        collectedItem.parseColors(player);
+                                        collectedItemBuilder.parseColors(player);
 
-                                        inventory.setItem(slot, collectedItem.asItemStack(player, true));
+                                        inventory.setItem(slot, collectedItemBuilder.build().asItemStack(player, true));
                                     });
                                 }
 
@@ -213,13 +222,14 @@ public class DailyRewardsGui extends Gui {
                             // Adds the upcoming reward to the GUI if it exists
                             if (upcomingReward.isPresent()) {
                                 DailyRewardCollection upcomingRewardCollection = upcomingReward.get();
-                                SimpleItemStack categoryItem = LushRewards.getInstance().getConfigManager().getCategoryTemplate(upcomingCategory);
 
                                 // Get the day's reward for the current slot
-                                SimpleItemStack simpleItemStack = SimpleItemStack.overwrite(categoryItem, LushRewards.getInstance().getConfigManager().getItemTemplate("upcoming-reward", module), upcomingRewardCollection.getDisplayItem());
+                                DisplayItemStack.Builder categoryItemBuilder = DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getCategoryTemplate(upcomingCategory)).overwrite(
+                                    DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getItemTemplate("upcoming-reward", module)),
+                                    DisplayItemStack.builder(upcomingRewardCollection.getDisplayItem()));
 
-                                if (simpleItemStack.getDisplayName() != null) {
-                                    simpleItemStack.setDisplayName(ChatColorHandler.translate(simpleItemStack
+                                if (categoryItemBuilder.getDisplayName() != null) {
+                                    categoryItemBuilder.setDisplayName(ChatColorHandler.translate(categoryItemBuilder
                                             .getDisplayName()
                                             .replace("%day%", String.valueOf(upcomingRewardCollection.getRewardDayNum()))
                                             .replace("%month_day%", String.valueOf(dateIndex[0].getDayOfMonth()))
@@ -231,26 +241,28 @@ public class DailyRewardsGui extends Gui {
                                         player));
                                 }
 
-                                if (simpleItemStack.getLore() != null) {
-                                    simpleItemStack.setLore(simpleItemStack.getLore().stream().map(line -> ChatColorHandler.translate(line, player)).toList());
+                                if (categoryItemBuilder.getLore() != null) {
+                                    categoryItemBuilder.setLore(categoryItemBuilder.getLore().stream().map(line -> ChatColorHandler.translate(line, player)).toList());
                                 }
 
-                                ItemStack itemStack = simpleItemStack.asItemStack(player);
+                                ItemStack itemStack = categoryItemBuilder.build().asItemStack(player);
                                 slotMap.get(character).forEach(slot -> inventory.setItem(slot, itemStack));
                             }
                         }
                         case ' ' ->
                             slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                         default -> slotMap.get(character).forEach(slot -> {
-                            SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character), module);
+                            DisplayItemStack item = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character), module);
 
-                            if (!simpleItemStack.hasType()) {
-                                simpleItemStack.setType(Material.RED_STAINED_GLASS_PANE);
+                            if (!item.hasType()) {
+                                item = DisplayItemStack.builder(item)
+                                    .setType(Material.RED_STAINED_GLASS_PANE)
+                                    .build();
+
                                 LushRewards.getInstance().getLogger().severe("Failed to display custom item-template '" + character + "' as it does not specify a valid material");
                             }
-                            simpleItemStack.parseColors(player);
 
-                            inventory.setItem(slot, simpleItemStack.asItemStack(player));
+                            inventory.setItem(slot, item.asItemStack(player, true));
                         });
                     }
                 }

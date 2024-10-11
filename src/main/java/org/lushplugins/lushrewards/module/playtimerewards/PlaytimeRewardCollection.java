@@ -1,9 +1,11 @@
 package org.lushplugins.lushrewards.module.playtimerewards;
 
+import org.lushplugins.lushlib.utils.DisplayItemStack;
+import org.lushplugins.lushlib.utils.converter.MapConverter;
+import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.rewards.Reward;
 import org.lushplugins.lushrewards.rewards.collections.RewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,7 +22,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
     private final int repeatsUntil;
     private final boolean hideFromGui;
 
-    public PlaytimeRewardCollection(int startMinute, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable SimpleItemStack displayItem, @Nullable Sound sound, boolean hideFromGui) {
+    public PlaytimeRewardCollection(int startMinute, @Nullable Integer repeatFrequency, @Nullable Integer repeatsUntil, @Nullable Collection<Reward> rewards, int priority, @Nullable String category, @Nullable DisplayItemStack displayItem, @Nullable Sound sound, boolean hideFromGui) {
         super(rewards, priority, category, displayItem, sound);
         this.startMinute = startMinute;
         this.repeatFrequency = repeatFrequency != null && repeatFrequency != 0 ? repeatFrequency : (repeatsUntil != null ? 1 : 0);
@@ -91,8 +93,8 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
         ConfigurationSection itemSection = rewardCollectionSection.getConfigurationSection("display-item");
-        SimpleItemStack itemStack = itemSection != null ? SimpleItemStack.from(itemSection) : new SimpleItemStack();
-        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
+        DisplayItemStack displayItem = itemSection != null ? YamlConverter.getDisplayItem(itemSection) : DisplayItemStack.empty();
+        Debugger.sendDebugMessage("Reward collection item set to: " + displayItem, debugMode);
 
         Sound redeemSound = StringUtils.getEnum(rewardCollectionSection.getString("redeem-sound", "none"), Sound.class).orElse(null);
         boolean hideFromGui = rewardCollectionSection.getBoolean("hide-from-gui");
@@ -102,7 +104,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
-        return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound, hideFromGui);
+        return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, displayItem, redeemSound, hideFromGui);
     }
 
     @NotNull
@@ -126,8 +128,8 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Reward collection category set to " + category, debugMode);
 
         Map<?, ?> itemMap = (Map<?, ?>) rewardCollectionMap.get("display-item");
-        SimpleItemStack itemStack = itemMap != null ? SimpleItemStack.from(itemMap) : new SimpleItemStack();
-        Debugger.sendDebugMessage("Reward collection item set to: " + itemStack, debugMode);
+        DisplayItemStack displayItem = itemMap != null ? MapConverter.getDisplayItem(itemMap) : DisplayItemStack.empty();
+        Debugger.sendDebugMessage("Reward collection item set to: " + displayItem, debugMode);
 
         Sound redeemSound = rewardCollectionMap.containsKey("redeem-sound") ? StringUtils.getEnum((String) rewardCollectionMap.get("redeem-sound"), Sound.class).orElse(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) : Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
         boolean showsInGui = rewardCollectionMap.containsKey("hide-from-gui") && (boolean) rewardCollectionMap.get("hide-from-gui");
@@ -138,7 +140,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionMap.toString()) : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionMap + "'", debugMode);
 
-        return rewardList != null ? new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, itemStack, redeemSound, showsInGui) : PlaytimeRewardCollection.empty();
+        return rewardList != null ? new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, displayItem, redeemSound, showsInGui) : PlaytimeRewardCollection.empty();
     }
 
     public static PlaytimeRewardCollection empty() {

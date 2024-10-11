@@ -1,6 +1,8 @@
 package org.lushplugins.lushrewards.module.playtimerewards;
 
 import com.google.common.collect.TreeMultimap;
+import org.bukkit.inventory.Inventory;
+import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.RewardModule;
@@ -15,7 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushlib.utils.Pair;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushrewards.utils.MathUtils;
 
 import java.util.Comparator;
@@ -35,7 +36,10 @@ public class PlaytimeRewardsGui extends Gui {
     }
 
     @Override
-    public void recalculateContents() {
+    public void refresh() {
+        Inventory inventory = this.getInventory();
+        Player player = this.getPlayer();
+
         inventory.clear();
         clearButtons();
 
@@ -46,10 +50,10 @@ public class PlaytimeRewardsGui extends Gui {
                 .completeOnTimeout(null, 15, TimeUnit.SECONDS)
                 .thenAccept(userData -> LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                     if (userData == null) {
-                        SimpleItemStack errorItem = new SimpleItemStack(Material.BARRIER);
-                        errorItem.setDisplayName("&#ff6969Failed to load rewards user data try relogging");
-                        errorItem.setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"));
-                        errorItem.parseColors(player);
+                        DisplayItemStack errorItem = DisplayItemStack.builder(Material.BARRIER)
+                            .setDisplayName("&#ff6969Failed to load rewards user data try relogging")
+                            .setLore(List.of("&7&oIf this continues please", "&7&oreport to your server administrator"))
+                            .build();
 
                         inventory.setItem(4, errorItem.asItemStack(player, true));
 
@@ -84,12 +88,14 @@ public class PlaytimeRewardsGui extends Gui {
                     for (Character character : slotMap.keySet()) {
                         switch (character) {
                             case 'A' -> slotMap.get(character).forEach(slot -> {
-                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate("claim-all", module);
+                                DisplayItemStack displayItem = LushRewards.getInstance().getConfigManager().getItemTemplate("claim-all", module);
                                 if (module.hasClaimableRewards(player)) {
-                                    simpleItemStack.setEnchantGlow(true);
+                                    displayItem = DisplayItemStack.builder(displayItem)
+                                        .setEnchantGlow(true)
+                                        .build();
                                 }
 
-                                inventory.setItem(slot, simpleItemStack.asItemStack(player, true));
+                                inventory.setItem(slot, displayItem.asItemStack(player, true));
 
                                 addButton(slot, event -> {
                                     removeButton(slot);
@@ -122,19 +128,22 @@ public class PlaytimeRewardsGui extends Gui {
                                     itemTemplate = "default-reward";
                                 }
 
-                                SimpleItemStack displayItem = SimpleItemStack.overwrite(LushRewards.getInstance().getConfigManager().getCategoryTemplate(reward.getCategory()), LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate, module), reward.getDisplayItem());
-                                if (displayItem.getDisplayName() != null) {
-                                    displayItem.setDisplayName(displayItem.getDisplayName()
+                                DisplayItemStack.Builder displayItemBuilder = DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getCategoryTemplate(reward.getCategory()))
+                                    .overwrite(DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getItemTemplate(itemTemplate, module)))
+                                    .overwrite(DisplayItemStack.builder(reward.getDisplayItem()));
+
+                                if (displayItemBuilder.getDisplayName() != null) {
+                                    displayItemBuilder.setDisplayName(displayItemBuilder.getDisplayName()
                                         .replace("%minutes%", String.valueOf(minutes)));
                                 }
 
-                                if (displayItem.getLore() != null) {
-                                    displayItem.setLore(displayItem.getLore().stream().map(line ->
+                                if (displayItemBuilder.getLore() != null) {
+                                    displayItemBuilder.setLore(displayItemBuilder.getLore().stream().map(line ->
                                         line.replace("%minutes%", String.valueOf(minutes))
                                     ).toList());
                                 }
 
-                                displayItem.parseColors(player);
+                                displayItemBuilder.parseColors(player);
 
                                 if (module.hasClaimableRewards(player, playtimeTracker.getGlobalPlaytime())) {
                                     addButton(slot, (event) -> {
@@ -146,38 +155,41 @@ public class PlaytimeRewardsGui extends Gui {
 
                                         removeButton(slot);
 
-                                        SimpleItemStack collectedItem = SimpleItemStack.overwrite(SimpleItemStack.from(currItem), LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module));
-                                        if (collectedItem.getDisplayName() != null) {
-                                            collectedItem.setDisplayName(collectedItem.getDisplayName()
+                                        DisplayItemStack.Builder collectedItemBuilder = DisplayItemStack.builder(currItem)
+                                            .overwrite(DisplayItemStack.builder(LushRewards.getInstance().getConfigManager().getItemTemplate("collected-reward", module)));
+
+                                        if (collectedItemBuilder.getDisplayName() != null) {
+                                            collectedItemBuilder.setDisplayName(collectedItemBuilder.getDisplayName()
                                                 .replace("%minutes%", String.valueOf(minutes)));
                                         }
-                                        collectedItem.parseColors(player);
 
-                                        inventory.setItem(slot, collectedItem.asItemStack(player, true));
+                                        inventory.setItem(slot, collectedItemBuilder.build().asItemStack(player, true));
 
                                         Debugger.sendDebugMessage("Starting reward process for " + player.getName(), Debugger.DebugMode.ALL);
                                         if (module.hasClaimableRewards(player, playtimeTracker.getGlobalPlaytime())) {
                                             module.claimRewards(player, playtimeTracker.getGlobalPlaytime());
                                         }
 
-                                        recalculateContents();
+                                        refresh();
                                     });
                                 }
 
-                                inventory.setItem(slot, displayItem.asItemStack(player, true));
+                                inventory.setItem(slot, displayItemBuilder.build().asItemStack(player, true));
                             });
                             case ' ' ->
                                 slotMap.get(character).forEach(slot -> inventory.setItem(slot, new ItemStack(Material.AIR)));
                             default -> slotMap.get(character).forEach(slot -> {
-                                SimpleItemStack simpleItemStack = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character), module);
+                                DisplayItemStack displayItem = LushRewards.getInstance().getConfigManager().getItemTemplate(String.valueOf(character), module);
 
-                                if (!simpleItemStack.hasType()) {
-                                    simpleItemStack.setType(Material.RED_STAINED_GLASS_PANE);
+                                if (!displayItem.hasType()) {
+                                    displayItem = DisplayItemStack.builder(displayItem)
+                                        .setType(Material.RED_STAINED_GLASS_PANE)
+                                        .build();
+
                                     LushRewards.getInstance().getLogger().severe("Failed to display custom item-template '" + character + "' as it does not specify a valid material");
                                 }
-                                simpleItemStack.parseColors(player);
 
-                                inventory.setItem(slot, simpleItemStack.asItemStack(player));
+                                inventory.setItem(slot, displayItem.asItemStack(player, true));
                             });
                         }
                     }
