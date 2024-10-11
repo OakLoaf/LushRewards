@@ -125,7 +125,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
             userData.setStartDate(LocalDate.now());
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
-            saveUserData(userData.getUniqueId(), userData);
+            saveUserData(userData);
         }
 
         globalPlaytime = globalPlaytime != null ? globalPlaytime : rewardUser.getMinutesPlayed();
@@ -162,7 +162,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         HashMap<PlaytimeRewardCollection, Integer> rewards = getRewardCollectionsInRange(lastCollectedPlaytime, playtime);
         if (rewards.isEmpty()) {
             if (saveUserData) {
-                saveUserData(userData.getUniqueId(), userData);
+                saveUserData(userData);
             }
             return false;
         }
@@ -187,7 +187,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             .replace("%total_hours%", String.valueOf((int) Math.floor(playtime / 60D))));
 
         userData.setLastCollectedPlaytime(globalPlaytime);
-        saveUserData(userData.getUniqueId(), userData);
+        saveUserData(userData);
         return true;
     }
 

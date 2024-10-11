@@ -1,7 +1,7 @@
-package org.lushplugins.lushrewards.olddata.converter;
+package org.lushplugins.lushrewards.storage.migrator;
 
 // TODO
-public class JsonToMySQL extends Converter {
+public class JsonToMySQL extends Migrator {
 
     public JsonToMySQL(String name) {
         super(name);

@@ -1,17 +1,14 @@
-package org.lushplugins.lushrewards.olddata;
+package org.lushplugins.lushrewards.data;
 
-import com.google.gson.JsonObject;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.config.ConfigManager;
-import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.UserDataModule;
 import org.lushplugins.lushlib.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.enchantedskies.EnchantedStorage.IOHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.storage.StorageManager;
 
 import java.time.LocalDate;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,14 +18,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class DataManager extends Manager {
-    private IOHandler<StorageData, StorageLocation> storageManager;
+    private StorageManager storageManager;
     private final ConcurrentHashMap<UUID, RewardUser> rewardUsersCache = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
-        ConfigManager configManager = LushRewards.getInstance().getConfigManager();
-        storageManager = new IOHandler<>(configManager.getStorage());
-        storageManager.enable();
+        storageManager = new StorageManager();
 
         Bukkit.getOnlinePlayers().forEach(player -> getOrLoadRewardUser(player.getUniqueId()).thenAccept((rewardUser) -> rewardUser.setUsername(player.getName())));
     }
@@ -64,6 +59,7 @@ public class DataManager extends Manager {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public CompletableFuture<RewardUser> loadRewardUser(@NotNull UUID uuid) {
         return loadRewardUser(uuid, true);
     }
@@ -101,19 +97,20 @@ public class DataManager extends Manager {
         });
     }
 
+    public void saveCachedRewardUsers() {
+        rewardUsersCache.values().forEach(this::saveRewardUser);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public CompletableFuture<Boolean> saveRewardUser(RewardUser rewardUser) {
+        return saveUserData(rewardUser);
+    }
+
     public void saveRewardUser(Player player) {
         RewardUser rewardUser = getRewardUser(player);
         if (rewardUser != null) {
             saveRewardUser(rewardUser);
         }
-    }
-
-    public void saveCachedRewardUsers() {
-        rewardUsersCache.values().forEach(this::saveRewardUser);
-    }
-
-    public CompletableFuture<Boolean> saveRewardUser(RewardUser rewardUser) {
-        return saveUserData(rewardUser.getUniqueId(), rewardUser);
     }
 
     public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, UserDataModule<T> module) {
@@ -151,27 +148,24 @@ public class DataManager extends Manager {
     public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(@NotNull UUID uuid, String moduleId, Class<T> dataClass) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        storageManager.loadData(new StorageLocation(uuid, moduleId))
+        storageManager.loadModuleUserData(uuid, moduleId)
             .orTimeout(15, TimeUnit.SECONDS)
-            .whenComplete((storageData, exception) -> {
+            .whenComplete((json, exception) -> {
                 if (exception != null) {
                     LushRewards.getInstance().log(Level.WARNING, "Caught error when parsing data:", exception);
                     future.complete(null);
                     return;
                 }
 
-                if (storageData == null) {
+                if (json == null) {
                     LushRewards.getInstance().getLogger().info("No storage data found for " + uuid);
                     future.complete(null);
                     return;
                 }
 
                 try {
-                    JsonObject json = storageData.json();
-                    if (json != null) {
-                        json.addProperty("uuid", uuid.toString());
-                        json.addProperty("moduleId", moduleId);
-                    }
+                    json.addProperty("uuid", uuid.toString());
+                    json.addProperty("moduleId", moduleId);
 
                     T userData = LushRewards.getInstance().getGson().fromJson(json, dataClass);
                     if (userData == null) {
@@ -192,7 +186,7 @@ public class DataManager extends Manager {
                             if (resetPlaytimeAt > 0 && !playtimeUserData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
                                 playtimeUserData.setStartDate(LocalDate.now());
                                 playtimeUserData.setPreviousDayEndPlaytime(playtimeUserData.getLastCollectedPlaytime());
-                                saveUserData(userData.getUniqueId(), userData);
+                                saveUserData(userData);
                             }
                         }
                     }
@@ -207,14 +201,15 @@ public class DataManager extends Manager {
         return future;
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<Boolean> saveUserData(@NotNull UUID uuid, T userData) {
-        return CompletableFuture.supplyAsync(() -> storageManager.saveData(new StorageData(uuid, userData.getModuleId(), userData.asJson())))
+    public CompletableFuture<Boolean> saveUserData(UserDataModule.UserData userData) {
+        return CompletableFuture.supplyAsync(() -> storageManager.saveModuleUserData(userData))
             .orTimeout(30, TimeUnit.SECONDS)
             .handle((storageData, exception) -> {
                 if (exception != null) {
                     LushRewards.getInstance().log(Level.WARNING, "Caught error when saving data:", exception);
                     return false;
                 }
+
                 return storageData != null;
             });
     }
@@ -254,15 +249,9 @@ public class DataManager extends Manager {
     public CompletableFuture<Boolean> saveModuleUserData(UUID uuid, UserDataModule<?> userDataModule) {
         UserDataModule.UserData userData = userDataModule.getUserData(uuid);
         if (userData != null) {
-            return saveUserData(uuid, userData);
+            return saveUserData(userData);
         } else {
             return CompletableFuture.completedFuture(true);
         }
-    }
-
-    public record StorageLocation(@NotNull UUID uuid, @Nullable String moduleId) {
-    }
-
-    public record StorageData(@NotNull UUID uuid, @Nullable String moduleId, @Nullable JsonObject json) {
     }
 }

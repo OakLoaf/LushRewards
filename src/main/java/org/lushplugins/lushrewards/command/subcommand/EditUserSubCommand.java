@@ -311,7 +311,7 @@ public class EditUserSubCommand extends SubCommand {
                     if (userData != null) {
                         userData.setDayNum(dayNum);
                         userData.setLastCollectedDate(LocalDate.of(1971, 10, 1)); // The date Walt Disney World was opened
-                        dailyRewardsModule.saveUserData(uuid, userData);
+                        dailyRewardsModule.saveUserData(userData);
                     }
                 });
             }
@@ -335,7 +335,7 @@ public class EditUserSubCommand extends SubCommand {
             if (module instanceof DailyRewardsModule dailyRewardsModule) {
                 dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                     userData.setStreak(streak);
-                    dailyRewardsModule.saveUserData(uuid, userData);
+                    dailyRewardsModule.saveUserData(userData);
                 });
             }
         }
@@ -358,7 +358,7 @@ public class EditUserSubCommand extends SubCommand {
                 dailyRewardsModule.getOrLoadUserData(uuid, false).thenAccept(userData -> {
                     userData.clearCollectedDays();
                     userData.setLastCollectedDate(null);
-                    dailyRewardsModule.saveUserData(uuid, userData);
+                    dailyRewardsModule.saveUserData(userData);
                 });
             }
         }

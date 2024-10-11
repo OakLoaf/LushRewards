@@ -4,16 +4,11 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.enchantedskies.EnchantedStorage.Storage;
 import org.lushplugins.lushlib.manager.GuiManager;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushlib.utils.*;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.olddata.DataManager;
-import org.lushplugins.lushrewards.olddata.JsonStorage;
-import org.lushplugins.lushrewards.olddata.MySqlStorage;
-import org.lushplugins.lushrewards.olddata.PostgreSqlStorage;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
@@ -36,7 +31,6 @@ public class ConfigManager {
     private final ConcurrentHashMap<String, DisplayItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Reward> rewardTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
-    private Storage<DataManager.StorageData, DataManager.StorageLocation> storage;
     private boolean performanceMode;
 
     private boolean playtimeIgnoreAfk;
@@ -103,8 +97,7 @@ public class ConfigManager {
                 }
             });
         } catch (IOException e) {
-            plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files");
-            e.printStackTrace();
+            plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files", e);
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);
@@ -134,36 +127,6 @@ public class ConfigManager {
         } else {
             plugin.unregisterModule(RewardModule.Type.PLAYTIME_TRACKER);
         }
-
-        YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
-        String storageType = storageConfig.getString("type", "json");
-
-        boolean isOldFormat = storageConfig.contains("mysql");
-        LushRewards.getInstance().getLogger().warning("Deprecated: The 'mysql' section in the storage.yml has been renamed to 'storage'");
-
-        String selectedType = switch (storageType) {
-            case "mysql", "postgres" -> {
-                String host = storageConfig.getString(isOldFormat ? "mysql.host" : "storage.host");
-                int port = storageConfig.getInt(isOldFormat ? "mysql.port" : "storage.port");
-                String databaseName = storageConfig.getString(isOldFormat ? "mysql.name" : "storage.database");
-                String user = storageConfig.getString(isOldFormat ? "mysql.user": "storage.user");
-                String password = storageConfig.getString(isOldFormat ? "mysql.password" : "storage.password");
-                String schema = storageConfig.getString("storage.schema");
-
-                if (storageType.equals("postgres")) {
-                    storage = new PostgreSqlStorage(host, port, databaseName, user, password, schema);
-                } else {
-                    storage = new MySqlStorage(host, port, databaseName, user, password);
-                }
-                yield storageType;
-            }
-            case "json" -> {
-                storage = new JsonStorage();
-                yield storageType;
-            }
-            default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
-        };
-        LushRewards.getInstance().getLogger().info("Using '" + selectedType +"' database");
     }
 
 
@@ -213,10 +176,6 @@ public class ConfigManager {
 
     public Reward getRewardTemplate(String name) {
         return rewardTemplates.get(name).clone();
-    }
-
-    public Storage<DataManager.StorageData, DataManager.StorageLocation> getStorage() {
-        return storage;
     }
 
     public boolean isPerformanceModeEnabled() {
