@@ -15,7 +15,6 @@ repositories {
     maven("https://repo.opencollab.dev/main/") // Floodgate
     maven("https://repo.lushplugins.org/releases/") // LushLib
     maven("https://repo.lushplugins.org/snapshots/") // LushLib
-    maven("https://repo.xemor.zip/releases/") // EnchantedStorage
     maven("https://mvn-repo.arim.space/lesser-gpl3/") // MorePaperLib
     maven("https://repo.helpch.at/releases/") // PlaceholderAPI
 }
@@ -30,11 +29,11 @@ dependencies {
 
     // Libraries
     implementation("org.bstats:bstats-bukkit:${findProperty("bStatsVersion")}")
-    implementation("org.enchantedskies:EnchantedStorage:${findProperty("enchantedStorageVersion")}")
     implementation("org.lushplugins:LushLib:${findProperty("lushLibVersion")}")
     implementation("space.arim.morepaperlib:morepaperlib:${findProperty("morePaperLibVersion")}")
     implementation("com.zaxxer:HikariCP:${findProperty("hikariCPVersion")}")
     implementation("com.mysql:mysql-connector-j:${findProperty("mysqlConnectorVersion")}")
+    // TODO: Add SQLite driver
     implementation("org.postgresql:postgresql:${findProperty("postgresqlVersion")}")
 }
 
