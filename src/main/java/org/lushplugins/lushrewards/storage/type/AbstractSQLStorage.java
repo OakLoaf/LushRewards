@@ -43,7 +43,7 @@ public abstract class AbstractSQLStorage extends Storage {
         assertJsonColumn(table, column);
 
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement("SELECT `" + column + "` FROM `" + table + "` WHERE uuid = ?;")
+             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT `%s` FROM `%s` WHERE uuid = ?;", column, table))
         ) {
             setUUIDToStatement(stmt, 1, uuid);
 
@@ -100,7 +100,7 @@ public abstract class AbstractSQLStorage extends Storage {
     protected void assertTable(String table) {
         try (Connection conn = conn();
              PreparedStatement stmt = conn.prepareStatement(
-                 "CREATE TABLE IF NOT EXISTS `" + table + "`(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));")
+                 String.format("CREATE TABLE IF NOT EXISTS `%s`(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));"), table))
         ) {
             stmt.execute();
         } catch (SQLException e) {
