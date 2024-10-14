@@ -100,7 +100,7 @@ public abstract class AbstractSQLStorage extends Storage {
     protected void assertTable(String table) {
         try (Connection conn = conn();
              PreparedStatement stmt = conn.prepareStatement(
-                 String.format("CREATE TABLE IF NOT EXISTS `%s`(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));"), table))
+                 String.format("CREATE TABLE IF NOT EXISTS `%s`(uuid CHAR(36) NOT NULL, PRIMARY KEY (uuid));", table))
         ) {
             stmt.execute();
         } catch (SQLException e) {
