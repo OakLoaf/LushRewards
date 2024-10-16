@@ -15,11 +15,6 @@ import java.util.logging.Level;
 public class MySQLStorage extends AbstractSQLStorage {
 
     @Override
-    protected String getInsertOrUpdateStatement(String table, String column) {
-        return String.format("REPLACE INTO `%s`(uuid, `%s`) VALUES(?, ?);", table, column);
-    }
-
-    @Override
     protected void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException {
         stmt.setString(index, uuid.toString());
     }
@@ -44,7 +39,7 @@ public class MySQLStorage extends AbstractSQLStorage {
                 )) {
                     stmt.execute();
                 } catch (SQLException alterException) {
-                    LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to assert column: ", alterException);
+                    LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to create column: ", alterException);
                 }
             } else {
                 LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to assert column: ", assertException);

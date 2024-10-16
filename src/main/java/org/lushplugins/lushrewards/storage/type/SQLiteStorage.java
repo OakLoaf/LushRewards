@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
@@ -20,6 +21,29 @@ public class SQLiteStorage extends MySQLStorage {
         } catch (SQLException e) {
             LushRewards.getInstance().log(Level.SEVERE, "An error occurred whilst getting a connection: ", e);
             return null;
+        }
+    }
+
+    @Override
+    protected void assertColumn(String table, String column, String type) {
+        assertTable(table);
+
+        try (Connection conn = conn();
+             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT `%s` FROM `%s`", column, table))
+        ) {
+            stmt.executeQuery();
+        } catch (SQLException assertException) {
+            if (assertException.getMessage().contains("no such column")) { // Undefined column error code
+                try (Connection conn = conn(); PreparedStatement stmt = conn.prepareStatement(
+                    String.format("ALTER TABLE `%s` ADD COLUMN `%s` %s;", table, column, type)
+                )) {
+                    stmt.execute();
+                } catch (SQLException alterException) {
+                    LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to create column: ", alterException);
+                }
+            } else {
+                LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to assert column: ", assertException);
+            }
         }
     }
 

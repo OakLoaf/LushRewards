@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -67,7 +68,7 @@ public abstract class AbstractSQLStorage extends Storage {
     @Override
     public void saveModuleUserData(UserDataModule.UserData userData) {
         UUID uuid = userData.getUniqueId();
-        String module = userData.getModuleId();
+        String moduleId = userData.getModuleId();
         JsonObject json = userData.asJson();
         if (json == null) {
             throw new NullPointerException("JsonObject cannot be null when saving");
@@ -75,12 +76,12 @@ public abstract class AbstractSQLStorage extends Storage {
 
         String table;
         String column;
-        if (module != null) {
+        if (moduleId != null) {
             table = MODULES_TABLE_NAME;
-            column = module + "_data";
+            column = moduleId + "_data";
         } else {
             table = TABLE_NAME;
-            column = "root_data";
+            column = "data";
         }
         column = formatHeader(column);
 
@@ -108,7 +109,12 @@ public abstract class AbstractSQLStorage extends Storage {
         }
     }
 
-    protected abstract String getInsertOrUpdateStatement(String table, String column);
+    protected String getInsertOrUpdateStatement(String table, String column) {
+        return MessageFormat.format(
+            "INSERT INTO `{0}`(uuid, `{1}`) VALUES(?, ?) ON CONFLICT (uuid) DO UPDATE SET `{1}` = EXCLUDED.`{1}`;",
+            table, column
+        );
+    }
 
     protected abstract void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException;
 
