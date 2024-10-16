@@ -132,7 +132,14 @@ public class ConfigManager {
 
 
     public String getMessage(String messageName) {
-        return getMessage(messageName, "");
+        String def;
+        if (messageName.equals("confirm-command")) {
+            def = "&#ffe27aAre you sure you want to do that? Type &#e0c01b'%command%' &#ffe27ato confirm";
+        } else {
+            def = "";
+        }
+
+        return getMessage(messageName, def);
     }
 
     public String getMessage(String messageName, String def) {

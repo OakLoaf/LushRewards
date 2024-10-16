@@ -99,8 +99,8 @@ public class EditUserSubCommand extends SubCommand {
             switch (args.length) {
                 case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
                     .replace("%command-usage%", "/rewards edit-user <module-id> reset-days <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-days")
-                    .replace("%target%", args[0]));
+                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("confirm-command")
+                    .replace("%command", String.format("/rewards edit-user <module-id> reset-days %s confirm", args[0])));
                 case 2 -> {
                     if (!args[1].equalsIgnoreCase("confirm")) {
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
@@ -146,9 +146,8 @@ public class EditUserSubCommand extends SubCommand {
             switch (args.length) {
                 case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
                     .replace("%command-usage%", "/rewards edit-user <module-id> set-days <player> <day-num>"));
-                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-days")
-                    .replace("%target%", args[0])
-                    .replace("%day%", args[1]));
+                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("confirm-command")
+                    .replace("%command%", String.format("/rewards edit-user <module-id> set-days %s %s confirm", args[0], args[1])));
                 case 3 -> {
                     if (!args[2].equalsIgnoreCase("confirm")) {
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
@@ -203,8 +202,8 @@ public class EditUserSubCommand extends SubCommand {
             switch (args.length) {
                 case 0 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
                     .replace("%command-usage%", "/rewards edit-user <module-id> reset-streak <player>"));
-                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("reset-streak")
-                    .replace("%target%", args[0]));
+                case 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("confirm-command")
+                    .replace("%command%", String.format("/rewards edit-user <module-id> reset-streak %s confirm", args[0])));
                 case 2 -> {
                     if (!args[1].equalsIgnoreCase("confirm")) {
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
@@ -249,9 +248,8 @@ public class EditUserSubCommand extends SubCommand {
             switch (args.length) {
                 case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
                     .replace("%command-usage%", "/rewards edit-user <module-id> set-streak <player> <streak>"));
-                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-streak")
-                    .replace("%target%", args[0])
-                    .replace("%streak%", args[1]));
+                case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("confirm-command")
+                    .replace("%command%", String.format("/rewards edit-user <module-id> set-streak %s %s confirm", args[0], args[1])));
                 case 3 -> {
                     if (!args[2].equalsIgnoreCase("confirm")) {
                         ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
