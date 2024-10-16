@@ -68,9 +68,10 @@ public class DataManager extends Manager {
         CompletableFuture<RewardUser> future = new CompletableFuture<>();
 
         loadUserData(uuid, null, RewardUser.class).thenAccept(rewardUser -> {
-            if (cacheUser) {
+            if (rewardUser != null && cacheUser) {
                 rewardUsersCache.put(uuid, rewardUser);
             }
+
             future.complete(rewardUser);
         });
 
@@ -131,15 +132,14 @@ public class DataManager extends Manager {
     }
 
     public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, UserDataModule<T> module, boolean cacheUser) {
-        CompletableFuture<T> future = loadUserData(uuid, module.getId(), module.getUserDataClass());
-        future.thenAccept(userData -> {
-            if (userData == null) {
-                userData = module.getDefaultData(uuid);
-            }
+        CompletableFuture<T> future = new CompletableFuture<>();
 
-            if (cacheUser) {
+        loadUserData(uuid, module.getId(), module.getUserDataClass()).thenAccept(userData -> {
+            if (userData != null && cacheUser) {
                 module.cacheUserData(uuid, userData);
             }
+
+            future.complete(userData);
         });
 
         return future;
@@ -158,8 +158,23 @@ public class DataManager extends Manager {
                 }
 
                 if (json == null) {
-                    LushRewards.getInstance().getLogger().info("No storage data found for " + uuid);
-                    future.complete(null);
+                    LushRewards.getInstance().getLogger().info("No storage data found for '" + uuid + "' for module '" + (moduleId != null ? moduleId : "main") + "', creating default data!");
+
+                    if (moduleId != null) {
+                        UserDataModule<?> module = (UserDataModule<?>) LushRewards.getInstance().getModule(moduleId).orElse(null);
+                        if (module != null) {
+                            T userData = dataClass.cast(module.getDefaultData(uuid));
+                            saveUserData(userData).thenAccept((ignored) -> future.complete(userData));
+                        } else {
+                            future.complete(null);
+                        }
+                    } else if (dataClass.isAssignableFrom(RewardUser.class)) {
+                        T userData = dataClass.cast(new RewardUser(uuid, null, 0));
+                        saveUserData(userData).thenAccept((ignored) -> future.complete(userData));
+                    } else {
+                        future.complete(null);
+                    }
+
                     return;
                 }
 
@@ -169,14 +184,8 @@ public class DataManager extends Manager {
 
                     T userData = LushRewards.getInstance().getGson().fromJson(json, dataClass);
                     if (userData == null) {
-                        if (moduleId != null) {
-                            UserDataModule<?> module = (UserDataModule<?>) LushRewards.getInstance().getModule(moduleId).orElse(null);
-                            if (module != null) {
-                                userData = dataClass.cast(module.getDefaultData(uuid));
-                            }
-                        } else if (dataClass.isAssignableFrom(RewardUser.class)) {
-                            userData = dataClass.cast(new RewardUser(uuid, null, 0));
-                        }
+                        future.complete(null);
+                        return;
                     }
 
                     if (userData instanceof PlaytimeRewardsModule.UserData playtimeUserData) {
