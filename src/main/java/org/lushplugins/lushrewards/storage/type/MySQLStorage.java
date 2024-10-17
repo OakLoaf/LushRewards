@@ -9,10 +9,19 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class MySQLStorage extends AbstractSQLStorage {
+
+    @Override
+    protected String getInsertOrUpdateStatement(String table, String column) {
+        return MessageFormat.format(
+            "INSERT INTO `{0}` (uuid, `{1}`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `{1}` = VALUES(`{1}`);",
+            table, column
+        );
+    }
 
     @Override
     protected void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException {
