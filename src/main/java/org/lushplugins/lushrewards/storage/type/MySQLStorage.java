@@ -52,7 +52,14 @@ public class MySQLStorage extends AbstractSQLStorage {
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setServerName(config.getString("host"));
         dataSource.setPortNumber(config.getInt("port"));
-        dataSource.setDatabaseName(config.getString("database"));
+
+        if (config.contains("name")) {
+            LushRewards.getInstance().getLogger().warning("Deprecated: The 'storage.name' path in the storage.yml has been renamed to 'storage.database'");
+            dataSource.setDatabaseName(config.getString("name"));
+        } else {
+            dataSource.setDatabaseName(config.getString("database"));
+        }
+
         dataSource.setUser(config.getString("user"));
         dataSource.setPassword(config.getString("password"));
 
