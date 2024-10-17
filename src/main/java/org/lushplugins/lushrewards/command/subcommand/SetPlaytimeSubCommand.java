@@ -27,9 +27,8 @@ public class SetPlaytimeSubCommand extends SubCommand {
         switch (args.length) {
             case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
                 .replace("%command-usage%", "/rewards edit-user <module-id> set-playtime <player> <playtime>"));
-            case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("set-playtime")
-                .replace("%target%", args[0])
-                .replace("%playtime%", args[1]));
+            case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("confirm-command")
+                .replace("%command%", String.format("/rewards set-playtime %s %s confirm", args[0], args[1])));
             case 3 -> {
                 if (!args[2].equalsIgnoreCase("confirm")) {
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")

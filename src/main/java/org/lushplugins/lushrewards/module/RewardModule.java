@@ -1,10 +1,11 @@
 package org.lushplugins.lushrewards.module;
 
+import org.lushplugins.lushlib.utils.DisplayItemStack;
+import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
 import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +15,7 @@ public abstract class RewardModule extends Module {
     protected final File moduleFile;
     private final boolean requiresTimeTracker;
     private boolean shouldNotify = false;
-    private final ConcurrentHashMap<String, SimpleItemStack> itemTemplates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DisplayItemStack> itemTemplates = new ConcurrentHashMap<>();
 
     public RewardModule(String id, File moduleFile) {
         super(id);
@@ -49,9 +50,9 @@ public abstract class RewardModule extends Module {
         this.shouldNotify = shouldNotify;
     }
 
-    public SimpleItemStack getItemTemplate(String key) {
-        SimpleItemStack itemTemplate = itemTemplates.get(key);
-        return itemTemplate != null ? itemTemplate.clone() : new SimpleItemStack();
+    public DisplayItemStack getItemTemplate(String key) {
+        DisplayItemStack itemTemplate = itemTemplates.get(key);
+        return itemTemplate != null ? itemTemplate : DisplayItemStack.empty();
     }
 
     public void reloadItemTemplates(ConfigurationSection itemTemplatesSection) {
@@ -66,7 +67,7 @@ public abstract class RewardModule extends Module {
         // Repopulates category map
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
-                itemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                itemTemplates.put(categorySection.getName(), YamlConverter.getDisplayItem(categorySection));
                 LushRewards.getInstance().getLogger().info("Loaded item-template: " + categorySection.getName());
             }
         });

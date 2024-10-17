@@ -204,7 +204,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         userData.setLastCollectedDate(LocalDate.now());
         userData.addCollectedDay(userData.getDayNum());
-        this.saveUserData(player.getUniqueId(), userData)
+        this.saveUserData(userData)
             .thenAccept(success -> {
                 if (!success) {
                     LushRewards.getInstance().getLogger().severe("Something went wrong when saving data for '" + player.getName() + "' (" + player.getUniqueId() + ")");
@@ -235,7 +235,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         LocalDate lastJoinDate = userData.getLastJoinDate();
         if (lastJoinDate == null) {
             userData.setLastJoinDate(LocalDate.now());
-            saveUserData(userData.getUniqueId(), userData);
+            saveUserData(userData);
             return;
         } else if (lastJoinDate.isEqual(LocalDate.now())) {
             return;
@@ -275,7 +275,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         userData.setLastJoinDate(LocalDate.now());
-        saveUserData(userData.getUniqueId(), userData);
+        saveUserData(userData);
     }
 
     @NotNull

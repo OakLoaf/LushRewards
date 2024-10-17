@@ -1,6 +1,5 @@
 package org.lushplugins.lushrewards.module.playtimerewards;
 
-import org.lushplugins.lushlib.utils.Pair;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushlib.module.Module;

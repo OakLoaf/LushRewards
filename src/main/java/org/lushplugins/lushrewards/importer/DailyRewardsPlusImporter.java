@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.importer;
 
+import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardCollection;
 import org.lushplugins.lushrewards.rewards.custom.ConsoleCommandReward;
@@ -96,19 +97,21 @@ public class DailyRewardsPlusImporter extends ConfigImporter {
                 rewards.add(reward);
 
                 String displayMaterialRaw = rewardSection.getString("RewardIcon");
-                SimpleItemStack displayItem = new SimpleItemStack();
+                DisplayItemStack.Builder displayItemBuilder;
                 if (displayMaterialRaw != null && !displayMaterialRaw.isBlank()) {
-                    displayItem = new SimpleItemStack(StringUtils.getEnum(displayMaterialRaw, Material.class).orElse(null));
+                    displayItemBuilder = DisplayItemStack.builder(StringUtils.getEnum(displayMaterialRaw, Material.class).orElse(null));
                     if (rewardSection.getBoolean("Extras.Enchanted")) {
-                        displayItem.setEnchantGlow(true);
+                        displayItemBuilder.setEnchantGlow(true);
                     }
+                } else {
+                    displayItemBuilder = DisplayItemStack.builder();
                 }
 
                 if (importingConfig.getBoolean("ShowDayQuantity")) {
-                    displayItem.setAmount(Math.min(dayNum, 64));
+                    displayItemBuilder.setAmount(Math.min(dayNum, 64));
                 }
 
-                DailyRewardCollection rewardCollection = new DailyRewardCollection(null, null, null, dayNum, null, rewards, 0, "small", displayItem, null);
+                DailyRewardCollection rewardCollection = new DailyRewardCollection(null, null, null, dayNum, null, rewards, 0, "small", displayItemBuilder.build(), null);
                 rewardCollection.save(localRewardsConfig.createSection("daily-rewards.day-" + dayNum));
             }
         });

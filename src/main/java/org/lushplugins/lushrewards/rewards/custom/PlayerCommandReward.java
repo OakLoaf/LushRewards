@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.rewards.custom;
 
+import org.lushplugins.lushlib.libraries.chatcolor.parsers.ParserTypes;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.HookId;
@@ -7,7 +8,7 @@ import org.lushplugins.lushrewards.rewards.Reward;
 import org.lushplugins.lushrewards.utils.SchedulerType;
 import org.lushplugins.lushlib.hook.Hook;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
-import org.lushplugins.lushlib.libraries.chatcolor.parsers.custom.PlaceholderAPIParser;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -36,7 +37,7 @@ public class PlayerCommandReward extends Reward {
             commandRaw = commandRaw
                 .replace("%user%", player.getName())
                 .replace("%player%", player.getName());
-            String command = ChatColorHandler.translate(commandRaw, player, List.of(PlaceholderAPIParser.class));
+            String command = ChatColorHandler.translate(commandRaw, player, ParserTypes.placeholder());
 
             boolean dispatchCommand = true;
             if (command.startsWith("java:")) {

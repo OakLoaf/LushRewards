@@ -1,5 +1,5 @@
-# Where user data will be stored (Options: json, mysql, postgres)
-type: json
+# Where user data will be stored (Options: json, sqlite, mysql, postgres)
+type: sqlite
 
 storage:
   host: localhost
@@ -7,6 +7,6 @@ storage:
   # Postgres default port: 5432
   port: 3306
   database: dbName
-  schema: schemaName
+  schema: schemaName # Only used in Postgres
   user: user
   password: pass

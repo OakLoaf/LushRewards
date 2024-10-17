@@ -1,6 +1,5 @@
 package org.lushplugins.lushrewards.module.playtimetracker;
 
-import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.RewardModule;

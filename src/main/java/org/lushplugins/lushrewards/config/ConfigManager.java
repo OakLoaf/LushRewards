@@ -4,17 +4,11 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.enchantedskies.EnchantedStorage.Storage;
 import org.lushplugins.lushlib.manager.GuiManager;
 import org.lushplugins.lushlib.module.Module;
-import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushlib.utils.SimpleItemStack;
-import org.lushplugins.lushlib.utils.StringUtils;
+import org.lushplugins.lushlib.utils.*;
+import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.DataManager;
-import org.lushplugins.lushrewards.data.JsonStorage;
-import org.lushplugins.lushrewards.data.MySqlStorage;
-import org.lushplugins.lushrewards.data.PostgreSqlStorage;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
@@ -33,11 +27,10 @@ public class ConfigManager {
     private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
     private static LocalDate currentDate;
 
-    private final ConcurrentHashMap<String, SimpleItemStack> categoryItems = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SimpleItemStack> globalItemTemplates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DisplayItemStack> categoryItems = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DisplayItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Reward> rewardTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> messages = new ConcurrentHashMap<>();
-    private Storage<DataManager.StorageData, DataManager.StorageLocation> storage;
     private boolean performanceMode;
 
     private boolean playtimeIgnoreAfk;
@@ -104,8 +97,7 @@ public class ConfigManager {
                 }
             });
         } catch (IOException e) {
-            plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files");
-            e.printStackTrace();
+            plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files", e);
         }
 
         boolean enableUpdater = config.getBoolean("enable-updater", true);
@@ -135,42 +127,19 @@ public class ConfigManager {
         } else {
             plugin.unregisterModule(RewardModule.Type.PLAYTIME_TRACKER);
         }
-
-        YamlConfiguration storageConfig = YamlConfiguration.loadConfiguration(new File(LushRewards.getInstance().getDataFolder(), "storage.yml"));
-        String storageType = storageConfig.getString("type", "json");
-
-        boolean isOldFormat = storageConfig.contains("mysql");
-        LushRewards.getInstance().getLogger().warning("Deprecated: The 'mysql' section in the storage.yml has been renamed to 'storage'");
-
-        String selectedType = switch (storageType) {
-            case "mysql", "postgres" -> {
-                String host = storageConfig.getString(isOldFormat ? "mysql.host" : "storage.host");
-                int port = storageConfig.getInt(isOldFormat ? "mysql.port" : "storage.port");
-                String databaseName = storageConfig.getString(isOldFormat ? "mysql.name" : "storage.database");
-                String user = storageConfig.getString(isOldFormat ? "mysql.user": "storage.user");
-                String password = storageConfig.getString(isOldFormat ? "mysql.password" : "storage.password");
-                String schema = storageConfig.getString("storage.schema");
-
-                if (storageType.equals("postgres")) {
-                    storage = new PostgreSqlStorage(host, port, databaseName, user, password, schema);
-                } else {
-                    storage = new MySqlStorage(host, port, databaseName, user, password);
-                }
-                yield storageType;
-            }
-            case "json" -> {
-                storage = new JsonStorage();
-                yield storageType;
-            }
-            default -> throw new IllegalArgumentException("'" + storageType + "' is not a valid storage type.");
-        };
-        LushRewards.getInstance().getLogger().info(String.format("Using '%s' database", selectedType));
     }
 
 
 
     public String getMessage(String messageName) {
-        return getMessage(messageName, "");
+        String def;
+        if (messageName.equals("confirm-command")) {
+            def = "&#ffe27aAre you sure you want to do that? Type &#e0c01b'%command%' &#ffe27ato confirm";
+        } else {
+            def = "";
+        }
+
+        return getMessage(messageName, def);
     }
 
     public String getMessage(String messageName, String def) {
@@ -187,37 +156,33 @@ public class ConfigManager {
         return messages.values();
     }
 
-    public SimpleItemStack getCategoryTemplate(String category) {
-        SimpleItemStack itemTemplate = categoryItems.get(category.toLowerCase());
+    public DisplayItemStack getCategoryTemplate(String category) {
+        DisplayItemStack itemTemplate = categoryItems.get(category.toLowerCase());
         if (itemTemplate == null) {
             LushRewards.getInstance().getLogger().severe("Could not find category '" + category + "'");
-            return new SimpleItemStack();
+            return DisplayItemStack.empty();
         }
 
-        return itemTemplate.clone();
+        return itemTemplate;
     }
 
-    public SimpleItemStack getItemTemplate(String key, RewardModule module) {
-        SimpleItemStack itemTemplate = module.getItemTemplate(key);
+    public DisplayItemStack getItemTemplate(String key, RewardModule module) {
+        DisplayItemStack itemTemplate = module.getItemTemplate(key);
         return itemTemplate.isBlank() ? getItemTemplate(key) : itemTemplate;
     }
 
-    public SimpleItemStack getItemTemplate(String key) {
-        SimpleItemStack itemTemplate = globalItemTemplates.get(key);
+    public DisplayItemStack getItemTemplate(String key) {
+        DisplayItemStack itemTemplate = globalItemTemplates.get(key);
         if (itemTemplate == null) {
             LushRewards.getInstance().getLogger().severe("Could not find item-template '" + key + "'");
-            return new SimpleItemStack();
+            return DisplayItemStack.empty();
         }
 
-        return itemTemplate.clone();
+        return itemTemplate;
     }
 
     public Reward getRewardTemplate(String name) {
         return rewardTemplates.get(name).clone();
-    }
-
-    public Storage<DataManager.StorageData, DataManager.StorageLocation> getStorage() {
-        return storage;
     }
 
     public boolean isPerformanceModeEnabled() {
@@ -254,7 +219,7 @@ public class ConfigManager {
         // Repopulates category map
         categoriesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
-                categoryItems.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                categoryItems.put(categorySection.getName(), YamlConverter.getDisplayItem(categorySection));
             }
         });
     }
@@ -271,7 +236,7 @@ public class ConfigManager {
         // Repopulates category map
         itemTemplatesSection.getValues(false).forEach((key, value) -> {
             if (value instanceof ConfigurationSection categorySection) {
-                globalItemTemplates.put(categorySection.getName(), SimpleItemStack.from(categorySection));
+                globalItemTemplates.put(categorySection.getName(), YamlConverter.getDisplayItem(categorySection));
                 LushRewards.getInstance().getLogger().info("Loaded global item-template: " + categorySection.getName());
             }
         });

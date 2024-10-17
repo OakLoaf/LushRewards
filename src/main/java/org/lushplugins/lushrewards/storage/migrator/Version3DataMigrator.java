@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.data.converter;
+package org.lushplugins.lushrewards.storage.migrator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -6,7 +6,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lushplugins.lushlib.utils.FilenameUtils;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.converter.Converter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +19,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public class Version3DataMigrator extends Converter {
+public class Version3DataMigrator extends Migrator {
     private final File version2DataFolder;
     private final File lushDataFolder;
 

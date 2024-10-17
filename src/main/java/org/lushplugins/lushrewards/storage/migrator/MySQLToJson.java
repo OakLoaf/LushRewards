@@ -1,7 +1,7 @@
-package org.lushplugins.lushrewards.data.converter;
+package org.lushplugins.lushrewards.storage.migrator;
 
-// TODO
-public class MySQLToJson extends Converter {
+// TODO: Create and implement migrator
+public class MySQLToJson extends Migrator {
 
     public MySQLToJson(String name) {
         super(name);
