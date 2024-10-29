@@ -9,10 +9,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 
 public class SQLiteStorage extends MySQLStorage {
     private static final String DATABASE_PATH = new File(LushRewards.getInstance().getDataFolder(), "data.db").getAbsolutePath();
+
+    @Override
+    protected String getInsertOrUpdateStatement(String table, String column) {
+        return MessageFormat.format(
+            "INSERT INTO `{0}`(uuid, `{1}`) VALUES(?, ?) ON CONFLICT (uuid) DO UPDATE SET `{1}` = EXCLUDED.`{1}`;",
+            table, column
+        );
+    }
 
     @Override
     protected Connection conn() {
