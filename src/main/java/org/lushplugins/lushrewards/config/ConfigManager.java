@@ -255,8 +255,13 @@ public class ConfigManager {
         if (rewardsSection != null) {
             rewardsSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
-                    rewardTemplates.put(rewardSection.getName(), Reward.loadReward(rewardSection));
-                    LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());
+                    Reward reward = Reward.loadReward(rewardSection);
+                    if (reward != null) {
+                        rewardTemplates.put(rewardSection.getName(), reward);
+                        LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());
+                    } else {
+                        LushRewards.getInstance().getLogger().info("Failed to load reward-template: " + rewardSection.getName());
+                    }
                 }
             });
         }
