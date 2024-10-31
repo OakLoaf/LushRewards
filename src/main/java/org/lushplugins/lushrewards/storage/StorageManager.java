@@ -54,7 +54,7 @@ public class StorageManager {
 
     public void disable() {
         if (storage != null) {
-            storage.disable();
+            runAsync(storage::disable);
         }
     }
 
