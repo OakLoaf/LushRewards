@@ -20,8 +20,14 @@ permissions:
   lushrewards.use:
     description: Allows player to use the LushRewards plugin
     default: true
-  lushrewards.use.*:
-    description: Allows player to use a specific LushRewards module
+  lushrewards.use.daily-rewards:
+    description: Allows player to use daily rewards module
+    default: true
+  lushrewards.use.daily-playtime-rewards:
+    description: Allows player to use daily playtime rewards module
+    default: true
+  lushrewards.use.global-playtime-rewards:
+    description: Allows player to use global playtime rewards module
     default: true
   lushrewards.reload:
     description: Allows player to reload the LushRewards plugin
