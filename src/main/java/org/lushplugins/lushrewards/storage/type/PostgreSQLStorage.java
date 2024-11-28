@@ -20,8 +20,8 @@ public class PostgreSQLStorage extends AbstractSQLStorage {
     @Override
     protected String getInsertOrUpdateStatement(String table, String column) {
         return MessageFormat.format(
-            "INSERT INTO `{0}`(uuid, `{1}`) VALUES(?, ?) ON CONFLICT (uuid) DO UPDATE SET `{1}` = EXCLUDED.`{1}`;",
-            table, column
+                "INSERT INTO {0}(uuid, {1}) VALUES(?, ?) ON CONFLICT (uuid) DO UPDATE SET {1} = EXCLUDED.{1};",
+                table, column
         );
     }
 
@@ -48,13 +48,13 @@ public class PostgreSQLStorage extends AbstractSQLStorage {
         assertTable(table);
 
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT `%s` FROM `%s`", column, table))
+             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT %s FROM %s", column, table))
         ) {
             stmt.executeQuery();
         } catch (SQLException assertException) {
             if (Objects.equals(assertException.getSQLState(), "42703")) { // Undefined column error code
                 try (Connection conn = conn();
-                     PreparedStatement stmt = conn.prepareStatement(String.format("ALTER TABLE `%s` ADD COLUMN `%s` %s;", table, column, type))
+                     PreparedStatement stmt = conn.prepareStatement(String.format("ALTER TABLE %s ADD COLUMN %s %s;", table, column, type))
                 ) {
                     stmt.execute();
                 } catch (SQLException alterException) {
@@ -63,6 +63,18 @@ public class PostgreSQLStorage extends AbstractSQLStorage {
             } else {
                 LushRewards.getInstance().log(Level.SEVERE, "Error while asserting column", assertException);
             }
+        }
+    }
+
+    @Override
+    protected void assertTable(String table) {
+        try (Connection conn = conn();
+             PreparedStatement stmt = conn.prepareStatement(
+                     String.format("CREATE TABLE IF NOT EXISTS %s(uuid UUID NOT NULL, PRIMARY KEY (uuid));", table))
+        ) {
+            stmt.execute();
+        } catch (SQLException e) {
+            LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to assert table: ", e);
         }
     }
 
