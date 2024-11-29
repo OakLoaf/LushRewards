@@ -15,9 +15,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.lushrewards.utils.Debugger;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -123,7 +125,9 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         }
 
         if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
+            Debugger.sendDebugMessage(String.format("Set start date for %s to %s (Module: %s)", userData.getUniqueId(), LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE), this.getId()), Debugger.DebugMode.PLAYTIME);
             userData.setStartDate(LocalDate.now());
+            Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s to %s (Module: %s)", userData.getUniqueId(), userData.getLastCollectedPlaytime(), this.getId()), Debugger.DebugMode.PLAYTIME);
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
             saveUserData(userData);
         }
@@ -149,7 +153,9 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
         boolean saveUserData = false;
         if (resetPlaytimeAt > 0 && userData.getStartDate().isEqual(LocalDate.now().minusDays(resetPlaytimeAt))) {
+            Debugger.sendDebugMessage(String.format("Set start date for %s to %s (Module: %s)", userData.getUniqueId(), LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE), this.getId()), Debugger.DebugMode.PLAYTIME);
             userData.setStartDate(LocalDate.now());
+            Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s to %s (Module: %s)", userData.getUniqueId(), userData.getLastCollectedPlaytime(), this.getId()), Debugger.DebugMode.PLAYTIME);
             userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
             saveUserData = true;
         }
