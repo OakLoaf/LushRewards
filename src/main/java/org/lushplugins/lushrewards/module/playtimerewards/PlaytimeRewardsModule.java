@@ -127,8 +127,8 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
             Debugger.sendDebugMessage(String.format("Set start date for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE), LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE), this.getId()), Debugger.DebugMode.PLAYTIME);
             userData.setStartDate(LocalDate.now());
-            Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getPreviousDayEndPlaytime(), userData.getLastCollectedPlaytime(), this.getId()), Debugger.DebugMode.PLAYTIME);
-            userData.setPreviousDayEndPlaytime(userData.getLastCollectedPlaytime());
+            Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getPreviousDayEndPlaytime(), rewardUser.getMinutesPlayed(), this.getId()), Debugger.DebugMode.PLAYTIME);
+            userData.setPreviousDayEndPlaytime(rewardUser.getMinutesPlayed());
             saveUserData(userData);
         }
 
