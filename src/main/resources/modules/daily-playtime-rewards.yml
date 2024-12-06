@@ -5,7 +5,7 @@ enabled: true
 # How often (in days) to reset (0 to disable)
 reset-playtime-at: 1
 # Time in minutes between checking whether any online players need to receive rewards (-1 to disable)
-refresh-time: 30
+refresh-time: 1
 # Whether notifications should be sent when rewards are claimable
 enable-notifications: true
 
