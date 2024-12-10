@@ -137,7 +137,7 @@ public class PlaytimeRewardsGui extends Gui {
                                         .replace("%minutes%", String.valueOf(minutes)));
                                 }
 
-                                if (displayItemBuilder.getLore() != null) {
+                                if (displayItemBuilder.hasLore()) {
                                     displayItemBuilder.setLore(displayItemBuilder.getLore().stream().map(line ->
                                         line.replace("%minutes%", String.valueOf(minutes))
                                     ).toList());
