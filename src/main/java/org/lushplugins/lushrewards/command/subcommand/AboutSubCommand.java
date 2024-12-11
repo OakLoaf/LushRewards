@@ -13,9 +13,9 @@ public class AboutSubCommand extends SubCommand {
         "&7Reward your players each day for logging in and also reward ",
         "&7them for their time spent on the server with playtime rewards!",
         "&r",
-        "&7Author: &#f7ba6fDav_e_",
+        "&7Author: &#f7ba6fLushPlugins",
         "&r",
-        "&7Wiki: &#f7ba6fhttps://dave-12.gitbook.io/lush-rewards",
+        "&7Wiki: &#f7ba6fhttps://docs.lushplugins.org/lush-rewards",
         "&7Support: &#f7ba6fhttps://discord.gg/p3duRZsZ2f"
     };
 

@@ -1,4 +1,4 @@
-# For more details on configuring LushRewards check out the documentation at https://dave-12.gitbook.io/lush-rewards
+# For more details on configuring LushRewards check out the documentation at https://docs.lushplugins.org/lush-rewards
 
 # If false then playtime will include afk/idle time
 playtime-ignore-afk: true

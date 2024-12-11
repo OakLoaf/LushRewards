@@ -31,7 +31,7 @@ gui:
   title: "   &#529bf2&lGlobal Playtime Rewards"
   scroll-type: FIXED
   # Available templates: DEFAULT, COMPACT
-  # Read https://dave-12.gitbook.io/lush-rewards/configuring/gui-templates#custom-templates for more info on
+  # Read https://docs.lushplugins.org/lush-rewards/configuring/gui-templates#custom-templates for more info on
   # creating and using templates
   template: "BORDERED_LARGE"
   item-templates:
