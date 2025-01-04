@@ -55,8 +55,12 @@ public final class LushRewards extends SpigotPlugin {
     public void onLoad() {
         plugin = this;
         morePaperLib = new MorePaperLib(plugin);
-
         LushLib.getInstance().enable(this);
+
+        registerManager(
+            new RewardModuleTypeManager(),
+            new RewardManager()
+        );
     }
 
     @Override
@@ -79,11 +83,6 @@ public final class LushRewards extends SpigotPlugin {
             }
             getLogger().info("Finished importing data (took " + (Instant.now().toEpochMilli() - start) + "ms)");
         }
-
-        registerManager(
-            new RewardModuleTypeManager(),
-            new RewardManager()
-        );
 
         updater = new Updater(this, "djC8I9ui", "lushrewards.update", "rewards update");
         notificationHandler = new NotificationHandler();
@@ -143,7 +142,6 @@ public final class LushRewards extends SpigotPlugin {
         localPlaceholders = null;
 
         morePaperLib.scheduling().cancelGlobalTasks();
-        LushLib.getInstance().disable();
     }
 
     public ConfigManager getConfigManager() {
