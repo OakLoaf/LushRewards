@@ -70,8 +70,10 @@ public class DailyRewardsGui extends Gui {
                         int rewardDisplaySize = guiTemplate.countChar('R');
 
                         int endDay = rewardDisplaySize;
-                        while (currDayNum > endDay) {
-                            endDay += rewardDisplaySize;
+                        if (rewardDisplaySize >= 1) {
+                            while (currDayNum > endDay) {
+                                endDay += rewardDisplaySize;
+                            }
                         }
 
                         dayIndex.set(endDay - (rewardDisplaySize - 1));
