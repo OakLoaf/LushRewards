@@ -71,7 +71,7 @@ public class DailyRewardsPlaceholder {
                 DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
                 return String.valueOf(userData.getHighestStreak());
             } else {
-                return null;
+                return "0";
             }
         }));
         placeholderCache.add(new SimplePlaceholder("streak", (params, player) -> {
@@ -84,7 +84,7 @@ public class DailyRewardsPlaceholder {
                 DailyRewardsModule.UserData userData = module.getUserData(player.getUniqueId());
                 return String.valueOf(userData.getStreak());
             } else {
-                return null;
+                return "0";
             }
         }));
         placeholderCache.add(new SimplePlaceholder("total_rewards", (params, player) -> {
