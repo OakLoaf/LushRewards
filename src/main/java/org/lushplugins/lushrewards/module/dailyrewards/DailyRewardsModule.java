@@ -231,6 +231,11 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         return true;
     }
 
+    @Override
+    public boolean requiresPlaytimeTracker() {
+        return requiredPlaytime != null;
+    }
+
     public void checkRewardDay(UserData userData) {
         LocalDate lastJoinDate = userData.getLastJoinDate();
         if (lastJoinDate == null) {
