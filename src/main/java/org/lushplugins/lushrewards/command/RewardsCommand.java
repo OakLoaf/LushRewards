@@ -45,7 +45,7 @@ public class RewardsCommand extends Command {
             .findFirst()
             .ifPresentOrElse(
                 module -> new DailyRewardsGui((DailyRewardsModule) module, player).open(),
-                () -> ChatColorHandler.sendMessage(player, "&#ff6969Daily Rewards module is disabled")
+                () -> ChatColorHandler.sendMessage(player, "&#ff6969The daily rewards module is disabled or you don't have permission")
             );
 
         return true;
