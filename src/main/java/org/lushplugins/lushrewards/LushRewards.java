@@ -98,7 +98,7 @@ public final class LushRewards extends SpigotPlugin {
         addHook("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
         getHooks().forEach(Module::enable);
 
-        new RewardUserListener().registerListeners();
+        registerListener(new RewardUserListener());
 
         registerCommand(new RewardsCommand());
 

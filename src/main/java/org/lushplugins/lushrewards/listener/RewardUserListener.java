@@ -1,12 +1,12 @@
 package org.lushplugins.lushrewards.listener;
 
+import org.bukkit.event.Listener;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTracker;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
-import org.lushplugins.lushlib.listener.EventListener;
 import org.lushplugins.lushlib.utils.Updater;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +17,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-public class RewardUserListener implements EventListener {
+public class RewardUserListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
