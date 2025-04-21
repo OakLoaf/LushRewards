@@ -75,3 +75,9 @@ gui:
     collected-reward:
       material: clock
       display-name: "&#f5e389%minutes% Minutes - Collected"
+    'P':
+      material: player_head
+      display-name: "&#A5B8FE&lProfile:"
+      skull-texture: mirror
+      lore:
+        - "&#c4f8ffNext Reward in: &f%lushrewards_daily-playtime-rewards_time_until_next_reward%"
