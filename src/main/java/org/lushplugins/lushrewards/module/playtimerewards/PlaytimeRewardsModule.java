@@ -114,7 +114,11 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     }
 
     public void checkForReset(RewardUser rewardUser, UserData userData) {
-        if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
+        if (resetPlaytimeAt <= 0) {
+            return;
+        }
+
+        if (!userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
             Debugger.sendDebugMessage(String.format("Set start date for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE), LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE), this.getId()), Debugger.DebugMode.PLAYTIME);
             userData.setStartDate(LocalDate.now());
             Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getPreviousDayEndPlaytime(), rewardUser.getMinutesPlayed(), this.getId()), Debugger.DebugMode.PLAYTIME);
@@ -124,6 +128,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     }
 
     public void checkAllOnlineForReset() {
+        if (resetPlaytimeAt <= 0) {
+            return;
+        }
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
             UserData userData = getUserData(player.getUniqueId());
