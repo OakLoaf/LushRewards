@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.module.playtimerewards;
 
+import org.bukkit.Bukkit;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.exceptions.InvalidRewardException;
@@ -112,6 +113,28 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         userDataCache.clear();
     }
 
+    public void checkForReset(RewardUser rewardUser, UserData userData) {
+        if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
+            Debugger.sendDebugMessage(String.format("Set start date for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE), LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE), this.getId()), Debugger.DebugMode.PLAYTIME);
+            userData.setStartDate(LocalDate.now());
+            Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getPreviousDayEndPlaytime(), rewardUser.getMinutesPlayed(), this.getId()), Debugger.DebugMode.PLAYTIME);
+            userData.setPreviousDayEndPlaytime(rewardUser.getMinutesPlayed());
+            saveUserData(userData);
+        }
+    }
+
+    public void checkAllOnlineForReset() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+            UserData userData = getUserData(player.getUniqueId());
+            if (rewardUser == null || userData == null) {
+                continue;
+            }
+
+            checkForReset(rewardUser, userData);
+        }
+    }
+
     @Override
     public boolean hasClaimableRewards(Player player) {
         return hasClaimableRewards(player, null);
@@ -124,13 +147,7 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             return false;
         }
 
-        if (resetPlaytimeAt > 0 && !userData.getStartDate().isAfter(LocalDate.now().minusDays(resetPlaytimeAt))) {
-            Debugger.sendDebugMessage(String.format("Set start date for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE), LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE), this.getId()), Debugger.DebugMode.PLAYTIME);
-            userData.setStartDate(LocalDate.now());
-            Debugger.sendDebugMessage(String.format("Set previous day end playtime for %s from %s to %s (Module: %s)", userData.getUniqueId(), userData.getPreviousDayEndPlaytime(), rewardUser.getMinutesPlayed(), this.getId()), Debugger.DebugMode.PLAYTIME);
-            userData.setPreviousDayEndPlaytime(rewardUser.getMinutesPlayed());
-            saveUserData(userData);
-        }
+        checkForReset(rewardUser, userData);
 
         globalPlaytime = globalPlaytime != null ? globalPlaytime : rewardUser.getMinutesPlayed();
         int previousDayEnd = userData.getPreviousDayEndPlaytime();

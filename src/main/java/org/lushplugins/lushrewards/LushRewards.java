@@ -7,6 +7,7 @@ import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.command.RewardsCommand;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
+import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushrewards.storage.migrator.Version3DataMigrator;
 import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
 import org.lushplugins.lushrewards.module.RewardModule;
@@ -28,8 +29,10 @@ import space.arim.morepaperlib.MorePaperLib;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public final class LushRewards extends SpigotPlugin {
@@ -107,6 +110,18 @@ public final class LushRewards extends SpigotPlugin {
                 Bukkit.getOnlinePlayers().forEach(playtimeTracker::startPlaytimeTracker);
             }
         });
+
+        morePaperLib.scheduling().asyncScheduler().runAtFixedRate(
+            () -> {
+                for (RewardModule module : LushRewards.getInstance().getEnabledRewardModules()) {
+                    if (module instanceof PlaytimeRewardsModule playtimeModule) {
+                        playtimeModule.checkAllOnlineForReset();
+                    }
+                }
+            },
+            Duration.of(1, ChronoUnit.MINUTES),
+            Duration.of(1, ChronoUnit.MINUTES)
+        );
 
         new Metrics(this, 22119);
     }
