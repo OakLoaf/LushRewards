@@ -115,6 +115,8 @@ public final class LushRewards extends SpigotPlugin {
             () -> {
                 for (RewardModule module : LushRewards.getInstance().getEnabledRewardModules()) {
                     if (module instanceof PlaytimeRewardsModule playtimeModule) {
+                        // TODO: Work out better way of running when a new day occurs
+                        // eg. object that contains current date - when date changes then run check?
                         playtimeModule.checkAllOnlineForReset();
                     }
                 }
