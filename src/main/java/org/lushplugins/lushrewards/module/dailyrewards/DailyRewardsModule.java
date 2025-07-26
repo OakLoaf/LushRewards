@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.module.dailyrewards;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.data.RewardUser;
@@ -42,7 +43,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     private String rewardPlaceholderUnclaimed;
     private DailyRewardsGui.ScrollType scrollType;
     private GuiFormat guiFormat;
-    private Integer requiredPlaytime; // This is subject to change - TODO: Properly implement conditions
+    private @ApiStatus.Internal Integer requiredPlaytime; // TODO: Properly implement conditions
 
     public DailyRewardsModule(String id, File moduleFile) {
         super(id, moduleFile);
