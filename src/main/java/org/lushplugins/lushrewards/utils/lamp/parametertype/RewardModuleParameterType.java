@@ -19,6 +19,7 @@ public class RewardModuleParameterType implements ParameterType<CommandActor, Re
 
     @Override
     public @NotNull SuggestionProvider<CommandActor> defaultSuggestions() {
+        // TODO: Add permission check to only tab-complete modules that the user has permission for
         return (context) -> LushRewards.getInstance().getEnabledRewardModules().stream()
             .map(Module::getId)
             .toList();

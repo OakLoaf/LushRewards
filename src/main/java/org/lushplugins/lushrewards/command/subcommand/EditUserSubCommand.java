@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: Migrate to Lamp
 public class EditUserSubCommand extends SubCommand {
 
     public EditUserSubCommand() {

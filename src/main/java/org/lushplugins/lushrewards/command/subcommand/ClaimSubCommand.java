@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// TODO: Migrate to Lamp
 public class ClaimSubCommand extends SubCommand {
 
     public ClaimSubCommand() {

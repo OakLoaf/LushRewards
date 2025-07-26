@@ -12,6 +12,7 @@ import org.lushplugins.lushlib.module.Module;
 
 import java.util.List;
 
+// TODO: Migrate to Lamp
 public class GuiSubCommand extends SubCommand {
 
     public GuiSubCommand() {
