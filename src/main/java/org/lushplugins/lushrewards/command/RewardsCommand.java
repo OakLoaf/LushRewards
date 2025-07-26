@@ -9,11 +9,6 @@ import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsGui;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsModule;
 import org.lushplugins.lushrewards.migrator.Migrator;
-import org.lushplugins.nbsminecraft.NBSAPI;
-import org.lushplugins.nbsminecraft.platform.bukkit.player.BukkitSongPlayer;
-import org.lushplugins.nbsminecraft.platform.bukkit.utils.BukkitAudioListener;
-import org.lushplugins.nbsminecraft.player.SongPlayer;
-import org.lushplugins.nbsminecraft.player.emitter.GlobalSoundEmitter;
 import org.lushplugins.pluginupdater.api.updater.Updater;
 import org.lushplugins.rewardsapi.api.RewardsAPI;
 import revxrsal.commands.annotation.Command;
@@ -21,7 +16,6 @@ import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
-import java.io.File;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
