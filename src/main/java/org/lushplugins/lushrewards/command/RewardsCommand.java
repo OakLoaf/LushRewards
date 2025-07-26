@@ -123,14 +123,6 @@ public class RewardsCommand {
     @Subcommand("version")
     @CommandPermission("lushrewards.version")
     public String version(BukkitCommandActor actor) {
-        SongPlayer songPlayer = BukkitSongPlayer.builder()
-            .soundEmitter(new GlobalSoundEmitter())
-            .queue(NBSAPI.INSTANCE.readSongFile(new File(LushRewards.getInstance().getDataFolder(), "determination.nbs")))
-            .build();
-
-        songPlayer.addListener(new BukkitAudioListener(actor.requirePlayer()));
-        songPlayer.play();
-
         return "&#a8e1ffYou are currently running &#58b1e0LushRewards &#a8e1ffversion &#58b1e0" + LushRewards.getInstance().getDescription().getVersion();
     }
 }
