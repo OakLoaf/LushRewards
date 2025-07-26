@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.importer;
+package org.lushplugins.lushrewards.migrator.importer;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -9,9 +9,9 @@ import org.lushplugins.lushlib.utils.StringUtils;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardCollection;
-import org.lushplugins.lushrewards.rewards.Reward;
-import org.lushplugins.lushrewards.rewards.custom.ConsoleCommandReward;
-import org.lushplugins.lushrewards.rewards.custom.PlayerCommandReward;
+import org.lushplugins.rewardsapi.api.reward.Reward;
+import org.lushplugins.rewardsapi.api.reward.type.ConsoleCommandReward;
+import org.lushplugins.rewardsapi.api.reward.type.PlayerCommandReward;
 
 import java.io.File;
 import java.io.FileNotFoundException;

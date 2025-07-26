@@ -73,11 +73,6 @@ public abstract class RewardModule extends Module {
         });
     }
 
-    @FunctionalInterface
-    public interface Constructor<T extends RewardModule> {
-        T build(String id, File file) ;
-    }
-
     public static class Type {
         public static final String DAILY_REWARDS = "daily-rewards";
         public static final String PLAYTIME_REWARDS = "playtime-rewards";

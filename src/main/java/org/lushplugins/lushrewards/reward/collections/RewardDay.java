@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.rewards.collections;
+package org.lushplugins.lushrewards.reward.collections;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

@@ -31,30 +31,36 @@ public class StorageManager {
         FileConfiguration config = LushRewards.getInstance().getConfigResource("storage.yml");
 
         String storageType = config.getString("type", "null");
-        switch (config.getString("type", "null")) {
-            case "mysql", "mariadb" -> storage = new MySQLStorage();
-            case "postgres" -> storage = new PostgreSQLStorage();
-            case "sqlite" -> storage = new SQLiteStorage();
-            case "json" -> storage = new JsonStorage();
+        this.storage = switch (storageType) {
+            case "mysql", "mariadb" -> new MySQLStorage();
+            case "postgres" -> new PostgreSQLStorage();
+            case "sqlite" -> new SQLiteStorage();
+            case "json" -> new JsonStorage();
             default -> {
-                storage = new JsonStorage();
-                LushRewards.getInstance().getLogger().severe("'" + storageType + "' is not a valid storage type, default to json storage.");
+                LushRewards.getInstance().getLogger().severe("'%s' is not a valid storage type, defaulting to json storage."
+                    .formatted(storageType));
+                yield new JsonStorage();
             }
-        }
+        };
 
-        boolean outdated = config.contains("mysql");
-        if (outdated) {
+        LushRewards.getInstance().getLogger().info("Setting up '%s' database".formatted(storageType));
+
+        ConfigurationSection storageSection;
+        if (config.contains("mysql")) {
+            storageSection = config.getConfigurationSection("mysql");
             LushRewards.getInstance().getLogger().warning("Deprecated: The 'mysql' section in the storage.yml has been renamed to 'storage'");
+        } else {
+            storageSection = config.getConfigurationSection("storage");
         }
 
-        LushRewards.getInstance().getLogger().info("Setting up '" + storageType +"' database");
-        ConfigurationSection storageSection = outdated ? config.getConfigurationSection("mysql") : config.getConfigurationSection("storage");
-        storage.enable(storageSection);
+        this.storage.enable(storageSection);
     }
 
-    public void disable() {
-        if (storage != null) {
-            runAsync(storage::disable);
+    public CompletableFuture<Void> disable() {
+        if (this.storage != null) {
+            return runAsync(this.storage::disable);
+        } else {
+            return CompletableFuture.completedFuture(null);
         }
     }
 

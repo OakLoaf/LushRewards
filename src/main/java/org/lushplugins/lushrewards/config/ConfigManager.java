@@ -10,10 +10,11 @@ import org.lushplugins.lushlib.utils.*;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
+import org.lushplugins.lushrewards.module.RewardModuleTypes;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.rewards.Reward;
 import org.lushplugins.lushrewards.utils.Debugger;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
+import org.lushplugins.rewardsapi.api.reward.Reward;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,18 +80,17 @@ public class ConfigManager {
                         return;
                     }
 
-                    String rewardsType;
+                    String rewardModuleType;
                     if (moduleConfig.contains("type")) {
-                        rewardsType = moduleConfig.getString("type");
+                        rewardModuleType = moduleConfig.getString("type");
                     } else if (moduleId.contains("playtime")) {
-                        rewardsType = "playtime-rewards";
+                        rewardModuleType = "playtime-rewards";
                     } else {
-                        rewardsType = moduleId;
+                        rewardModuleType = moduleId;
                     }
 
-                    RewardModuleTypeManager rewardModuleTypes = LushRewards.getInstance().getManager(RewardModuleTypeManager.class).orElseThrow();
-                    if (rewardsType != null && rewardModuleTypes.isRegistered(rewardsType)) {
-                        plugin.registerModule(rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile));
+                    if (rewardModuleType != null && RewardModuleTypes.contains(rewardModuleType)) {
+                        plugin.registerModule(RewardModuleTypes.constructModuleType(rewardModuleType, moduleId, moduleFile));
                     } else {
                         plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'type'");
                     }
@@ -100,11 +100,12 @@ public class ConfigManager {
             plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files", e);
         }
 
-        boolean enableUpdater = config.getBoolean("enable-updater", true);
-        plugin.getUpdater().setEnabled(enableUpdater);
-        if (enableUpdater) {
-            plugin.getUpdater().queueCheck();
-        }
+        // TODO:
+//        boolean enableUpdater = config.getBoolean("enable-updater", true);
+//        plugin.getUpdater().setEnabled(enableUpdater);
+//        if (enableUpdater) {
+//            plugin.getUpdater().queueCheck();
+//        }
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
@@ -255,7 +256,7 @@ public class ConfigManager {
         if (rewardsSection != null) {
             rewardsSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
-                    Reward reward = Reward.loadReward(rewardSection);
+                    Reward reward = RewardsAPI.readReward(rewardSection);
                     if (reward != null) {
                         rewardTemplates.put(rewardSection.getName(), reward);
                         LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());

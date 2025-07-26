@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.storage.migrator;
+package org.lushplugins.lushrewards.migrator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

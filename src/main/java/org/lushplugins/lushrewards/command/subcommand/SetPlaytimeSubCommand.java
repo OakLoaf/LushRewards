@@ -26,13 +26,13 @@ public class SetPlaytimeSubCommand extends SubCommand {
     public boolean execute(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command command, @NotNull String label, @NotNull String[] args, @NotNull String[] fullArgs) {
         switch (args.length) {
             case 0, 1 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
-                .replace("%command-usage%", "/rewards edit-user <module-id> set-playtime <player> <playtime>"));
+                .replace("%command-usage%", "/rewards set-playtime <player> <playtime>"));
             case 2 -> ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("confirm-command")
                 .replace("%command%", String.format("/rewards set-playtime %s %s confirm", args[0], args[1])));
             case 3 -> {
                 if (!args[2].equalsIgnoreCase("confirm")) {
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
-                        .replace("%command-usage%", "/rewards edit-user <module-id> set-playtime <player> <playtime> confirm"));
+                        .replace("%command-usage%", "/rewards set-playtime <player> <playtime> confirm"));
                     return true;
                 }
 
@@ -41,7 +41,7 @@ public class SetPlaytimeSubCommand extends SubCommand {
                     playtime = Integer.parseInt(args[1]);
                 } catch (NumberFormatException e) {
                     ChatColorHandler.sendMessage(sender, LushRewards.getInstance().getConfigManager().getMessage("incorrect-usage")
-                        .replace("%command-usage%", "/rewards edit-user <module-id> set-playtime <player> <playtime> confirm"));
+                        .replace("%command-usage%", "/rewards set-playtime <player> <playtime> confirm"));
                     return true;
                 }
 

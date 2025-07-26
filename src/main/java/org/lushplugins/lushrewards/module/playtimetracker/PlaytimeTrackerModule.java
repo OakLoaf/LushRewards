@@ -4,6 +4,7 @@ import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
@@ -23,7 +24,7 @@ public class PlaytimeTrackerModule extends Module {
     public void onEnable() {
         playtimeTrackers = new ConcurrentHashMap<>();
 
-        heartbeat = LushRewards.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
+        heartbeat = RewardsAPI.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
                 if (LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).isEmpty()) {
                     heartbeat.cancel();

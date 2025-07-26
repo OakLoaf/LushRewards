@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.exceptions;
+package org.lushplugins.lushrewards.exception;
 
 public class InvalidRewardException extends RuntimeException {
 

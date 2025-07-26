@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushlib.utils.Pair;
 import org.lushplugins.lushrewards.utils.MathUtils;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
 
 import java.util.Comparator;
 import java.util.List;
@@ -48,7 +49,7 @@ public class PlaytimeRewardsGui extends Gui {
 
             module.getOrLoadUserData(player.getUniqueId(), true)
                 .completeOnTimeout(null, 15, TimeUnit.SECONDS)
-                .thenAccept(userData -> LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
+                .thenAccept(userData -> RewardsAPI.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                     if (userData == null) {
                         DisplayItemStack errorItem = DisplayItemStack.builder(Material.BARRIER)
                             .setDisplayName("&#ff6969Failed to load rewards user data try relogging")

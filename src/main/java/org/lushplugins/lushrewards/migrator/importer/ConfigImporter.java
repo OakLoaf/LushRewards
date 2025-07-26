@@ -1,9 +1,9 @@
-package org.lushplugins.lushrewards.importer;
+package org.lushplugins.lushrewards.migrator.importer;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushlib.utils.FilenameUtils;
-import org.lushplugins.lushrewards.storage.migrator.Migrator;
+import org.lushplugins.lushrewards.migrator.Migrator;
 
 import java.io.File;
 import java.io.FileNotFoundException;

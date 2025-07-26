@@ -4,6 +4,7 @@ import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.api.event.RewardUserPlaytimeChangeEvent;
 import org.lushplugins.lushrewards.module.UserDataModule;
 import org.jetbrains.annotations.NotNull;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
 
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class RewardUser extends UserDataModule.UserData {
     }
 
     public void setMinutesPlayed(int minutesPlayed) {
-        LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> LushRewards.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
+        RewardsAPI.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> LushRewards.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
 
         this.minutesPlayed = minutesPlayed;
         LushRewards.getInstance().getDataManager().saveRewardUser(this);

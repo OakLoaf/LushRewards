@@ -7,7 +7,7 @@ import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.config.ConfigManager;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
-import org.lushplugins.lushrewards.rewards.collections.RewardDay;
+import org.lushplugins.lushrewards.reward.collections.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -46,7 +47,7 @@ public class DailyRewardsGui extends Gui {
 
         module.getOrLoadUserData(player.getUniqueId(), true)
             .completeOnTimeout(null, 15, TimeUnit.SECONDS)
-            .thenAccept(userData -> LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
+            .thenAccept(userData -> RewardsAPI.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> {
                 if (userData == null) {
                     DisplayItemStack errorItem = DisplayItemStack.builder(Material.BARRIER)
                         .setDisplayName("&#ff6969Failed to load rewards user data try relogging")

@@ -3,14 +3,15 @@ package org.lushplugins.lushrewards.module.playtimerewards;
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.converter.MapConverter;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
-import org.lushplugins.lushrewards.rewards.Reward;
-import org.lushplugins.lushrewards.rewards.collections.RewardCollection;
+import org.lushplugins.lushrewards.reward.collections.RewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
+import org.lushplugins.rewardsapi.api.reward.Reward;
 
 import java.util.Collection;
 import java.util.List;
@@ -101,7 +102,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = rewardCollectionSection.getMapList("rewards");
 
-        List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
+        List<Reward> rewardList = !rewardMaps.isEmpty() ? RewardsAPI.readRewards(rewardMaps, rewardCollectionSection.getCurrentPath() + ".rewards") : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionSection.getCurrentPath() + "'", debugMode);
 
         return new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, displayItem, redeemSound, hideFromGui);
@@ -137,7 +138,7 @@ public class PlaytimeRewardCollection extends RewardCollection {
         Debugger.sendDebugMessage("Attempting to load rewards", debugMode);
         List<Map<?, ?>> rewardMaps = (List<Map<?, ?>>) rewardCollectionMap.get("rewards");
 
-        List<Reward> rewardList = !rewardMaps.isEmpty() ? Reward.loadRewards(rewardMaps, rewardCollectionMap.toString()) : null;
+        List<Reward> rewardList = !rewardMaps.isEmpty() ? RewardsAPI.readRewards(rewardMaps, rewardCollectionMap.toString()) : null;
         Debugger.sendDebugMessage("Successfully loaded " + (rewardList != null ? rewardList.size() : 0) + " rewards from '" + rewardCollectionMap + "'", debugMode);
 
         return rewardList != null ? new PlaytimeRewardCollection(minutes, repeatFrequency, repeatsUntil, rewardList, priority, category, displayItem, redeemSound, showsInGui) : PlaytimeRewardCollection.empty();

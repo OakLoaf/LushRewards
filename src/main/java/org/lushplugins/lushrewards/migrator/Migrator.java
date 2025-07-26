@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.storage.migrator;
+package org.lushplugins.lushrewards.migrator;
 
 public abstract class Migrator {
     private final String name;

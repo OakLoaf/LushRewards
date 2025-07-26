@@ -3,6 +3,7 @@ package org.lushplugins.lushrewards.notifications;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.bukkit.Bukkit;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.time.Duration;
@@ -22,7 +23,7 @@ public class NotificationHandler {
             notificationTask.cancel();
         }
 
-        this.notificationTask = LushRewards.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
+        this.notificationTask = RewardsAPI.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
             if (LushRewards.getInstance().getEnabledRewardModules().stream().anyMatch(rewardModule -> rewardModule.shouldNotify() && rewardModule.hasClaimableRewards(player) && player.hasPermission("lushrewards.use." + rewardModule.getId()))) {
                 ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("reminder"));
                 player.playSound(player.getLocation(), LushRewards.getInstance().getConfigManager().getReminderSound(), 1f, 1.5f);
