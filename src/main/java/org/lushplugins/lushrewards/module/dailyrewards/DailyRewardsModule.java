@@ -275,6 +275,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         int resetDay = getResetDay();
         if (resetDay > 0 && userData.getDayNum() > resetDay) {
+            userData.setStartDate(LocalDate.now());
             userData.setDayNum(1);
             userData.clearCollectedDays();
         }
@@ -436,7 +437,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     }
 
     public static class UserData extends UserDataModule.UserData {
-        private final LocalDate startDate;
+        private LocalDate startDate;
         private LocalDate lastJoinDate;
         private LocalDate lastCollectedDate;
         private final HashSet<Integer> collectedDays;
@@ -500,6 +501,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         public LocalDate getStartDate() {
             return this.startDate;
+        }
+
+        public void setStartDate(LocalDate date) {
+            this.startDate = date;
         }
 
         @Nullable
