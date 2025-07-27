@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.bstats.bukkit.Metrics;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.command.RewardsCommand;
+import org.lushplugins.lushrewards.data.RewardUser;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
@@ -13,6 +14,7 @@ import org.lushplugins.lushrewards.migrator.Version3DataMigrator;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.notifications.NotificationHandler;
+import org.lushplugins.lushrewards.utils.lamp.contextparameter.RewardUserContextParameter;
 import org.lushplugins.lushrewards.utils.lamp.parametertype.MigratorParameterType;
 import org.lushplugins.lushrewards.utils.lamp.parametertype.RewardModuleParameterType;
 import org.lushplugins.lushrewards.utils.lamp.response.StringMessageResponseHandler;
@@ -140,6 +142,7 @@ public final class LushRewards extends SpigotPlugin {
 
         BukkitLamp.builder(this)
             .parameterTypes(parameterTypes -> parameterTypes
+                .addContextParameter(RewardUser.class, new RewardUserContextParameter())
                 .addParameterType(Migrator.class, new MigratorParameterType())
                 .addParameterType(RewardModule.class, new RewardModuleParameterType()))
             .responseHandler(String.class, new StringMessageResponseHandler())

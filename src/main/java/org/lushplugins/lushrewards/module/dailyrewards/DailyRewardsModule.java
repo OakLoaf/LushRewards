@@ -194,7 +194,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         LocalDate lastCollectedDate = userData.getLastCollectedDate();
-        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)));
+        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(UserData.NEVER_COLLECTED));
 
 
         if (missedDay && !streakBypass) {
@@ -248,7 +248,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         LocalDate lastCollectedDate = userData.getLastCollectedDate();
-        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(LocalDate.of(1971, 10, 1)));
+        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(UserData.NEVER_COLLECTED));
 
         switch (getRewardMode()) {
             case STREAK -> {
@@ -438,6 +438,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     }
 
     public static class UserData extends UserDataModule.UserData {
+        public static final LocalDate NEVER_COLLECTED = LocalDate.of(1971, 10, 1); // The date Walt Disney World was opened
+
         private LocalDate startDate;
         private LocalDate lastJoinDate;
         private LocalDate lastCollectedDate;
@@ -494,6 +496,10 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         public int getHighestStreak() {
             return highestStreak;
+        }
+
+        public void setHighestStreak(int highestStreak) {
+            this.highestStreak = highestStreak;
         }
 
         public LocalDate getExpectedDateOnDayNum(int dayNum) {
