@@ -65,6 +65,7 @@ public final class LushRewards extends SpigotPlugin {
 
         RewardsAPI.setMorePaperLib(new MorePaperLib(this));
         RewardsAPI.setLogger(this.getLogger());
+        // TODO: Make TemplateReward class so that references don't break on reload
         RewardTypes.register("template", (map) -> {
             String template = (String) map.get("template");
             return LushRewards.getInstance().getConfigManager().getRewardTemplate(template);
