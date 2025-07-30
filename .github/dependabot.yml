@@ -4,3 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+    ignore:
+      - dependency-name: "com.mysql:mysql-connector-j"
+      - dependency-name: "org.xerial:sqlite-jdbc"
