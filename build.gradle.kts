@@ -30,9 +30,10 @@ dependencies {
 
     // Libraries
     implementation("org.lushplugins:RewardsAPI:2.0.0-alpha1")
-    implementation("org.lushplugins:LushLib:0.10.77")
+    implementation("org.lushplugins:LushLib:0.10.79")
     implementation("io.github.revxrsal:lamp.common:4.0.0-rc.12")
     implementation("io.github.revxrsal:lamp.bukkit:4.0.0-rc.12")
+    implementation("org.lushplugins:PlaceholderHandler:1.0.0-alpha6")
     implementation("org.lushplugins.pluginupdater:PluginUpdater-API:1.0.3")
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.zaxxer:HikariCP:5.0.1")

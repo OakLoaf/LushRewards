@@ -3,33 +3,28 @@ package org.lushplugins.lushrewards.module.dailyrewards;
 import org.jetbrains.annotations.ApiStatus;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.module.StoresUserData;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.exception.InvalidRewardException;
 import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.UserDataModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.reward.collections.RewardDay;
+import org.lushplugins.lushrewards.reward.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class DailyRewardsModule extends RewardModule implements UserDataModule<DailyRewardsModule.UserData>, GuiDisplayer {
-    private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
+@StoresUserData(DailyRewardsUserData.class)
+public class DailyRewardsModule extends RewardModule implements GuiDisplayer {
     private HashSet<DailyRewardCollection> rewards;
     private DailyRewardsPlaceholder placeholder;
     private int resetDaysAt;
@@ -45,23 +40,12 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     private GuiFormat guiFormat;
     private @ApiStatus.Internal Integer requiredPlaytime; // TODO: Properly implement conditions
 
-    public DailyRewardsModule(String id, File moduleFile) {
-        super(id, moduleFile);
-    }
+    public DailyRewardsModule(String id, ConfigurationSection config) {
+        super(id, config);
 
-    @Override
-    public void onEnable() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(moduleFile);
-        if (!config.getBoolean("enabled", true)) {
-            LushRewards.getInstance().getLogger().info("Module '" + id + "' is disabled in it's configuration");
-            this.disable();
-            return;
-        }
-
-        ConfigurationSection configurationSection = config.getConfigurationSection("daily-rewards");
-        if (configurationSection == null) {
-            LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in '" + moduleFile.getName() + "'");
-            this.disable();
+        ConfigurationSection rewardsSection = config.getConfigurationSection("daily-rewards");
+        if (rewardsSection == null) {
+            LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'daily-rewards' section in '" + id + "'");
             return;
         }
 
@@ -92,7 +76,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         this.rewards = new HashSet<>();
 
         LocalDate today = LocalDate.now();
-        for (Object entry : configurationSection.getValues(false).values()) {
+        for (Object entry : rewardsSection.getValues(false).values()) {
             if (entry instanceof ConfigurationSection rewardSection) {
                 DailyRewardCollection dailyRewardCollection;
                 try {
@@ -138,23 +122,8 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         placeholder = new DailyRewardsPlaceholder(id);
         placeholder.register();
 
-        LushRewards.getInstance().getLogger().info("Successfully loaded " + rewards.size() + " reward collections from '" + configurationSection.getCurrentPath() + "'");
-    }
-
-    @Override
-    public void onDisable() {
-        if (rewards != null) {
-            rewards.clear();
-            rewards = null;
-        }
-
-        if (placeholder != null) {
-            placeholder.unregister();
-            placeholder = null;
-        }
-
-        guiFormat = null;
-        userDataCache.clear();
+        LushRewards.getInstance().getLogger().info("Successfully loaded %s reward collections from '%s'"
+            .formatted(rewards.size(), rewardsSection.getCurrentPath()));
     }
 
     public boolean meetsRequiredPlaytime(Player player) {
@@ -164,37 +133,37 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
 
         Optional<Module> optionalModule = LushRewards.getInstance().getModule(Type.PLAYTIME_TRACKER);
         if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule module) {
-            return module.getPlaytimeTracker(player.getUniqueId()).getTotalSessionPlaytime() > requiredPlaytime;
+            return module.getPlaytimeTracker(player.getUniqueId()).getSessionPlaytime() > requiredPlaytime;
         }
 
         return true;
     }
 
     @Override
-    public boolean hasClaimableRewards(Player player) {
+    public boolean hasClaimableRewards(Player player, RewardUser user) {
+        DailyRewardsUserData userData = user.getModuleData(this.id, DailyRewardsUserData.class);
+
         return userDataCache.containsKey(player.getUniqueId()) && !this.getUserData(player.getUniqueId()).hasCollectedToday() && meetsRequiredPlaytime(player);
     }
 
     @Override
-    public boolean claimRewards(Player player) {
+    public boolean claimRewards(Player player, RewardUser user) {
         if (!meetsRequiredPlaytime(player)) {
             ChatColorHandler.sendMessage(player, "&#ff6969You must have been online for " + requiredPlaytime + " minutes to claim these rewards");
             return false;
         }
 
-        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-
-        UserData userData = this.getUserData(player.getUniqueId());
-        if (rewardUser == null || userData == null) {
-            ChatColorHandler.sendMessage(player, "&#ff6969Failed to collect your reward user data, try relogging. If this continues inform an administrator");
-            LushRewards.getInstance().getLogger().warning("Failed to collect reward user data for '" + player.getName() + "', reward user was '" + (rewardUser != null ? "found" : "not found") + "', user data was '" + (userData != null ? "found" : "not found") + "'");
+        DailyRewardsUserData userData = user.getModuleData(this.id, DailyRewardsUserData.class);
+        if (userData == null) {
+            ChatColorHandler.sendMessage(player, "&#ff6969Failed to collect your rewards data, try relogging. If this continues inform an administrator");
+            LushRewards.getInstance().getLogger().warning("Failed to collect '%s' module user data for '%s'".formatted(this.id, player.getName()));
             return false;
         } else if (userData.hasCollectedToday()) {
             return false;
         }
 
         LocalDate lastCollectedDate = userData.getLastCollectedDate();
-        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(UserData.NEVER_COLLECTED));
+        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(DailyRewardsUserData.NEVER_COLLECTED));
 
 
         if (missedDay && !streakBypass) {
@@ -237,18 +206,18 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         return requiredPlaytime != null;
     }
 
-    public void checkRewardDay(UserData userData) {
+    public void checkRewardDay(UUID uuid, DailyRewardsUserData userData) {
         LocalDate lastJoinDate = userData.getLastJoinDate();
         if (lastJoinDate == null) {
             userData.setLastJoinDate(LocalDate.now());
-            saveUserData(userData);
+            LushRewards.getInstance().getStorageManager().saveCachedRewardUser(uuid);
             return;
         } else if (lastJoinDate.isEqual(LocalDate.now())) {
             return;
         }
 
         LocalDate lastCollectedDate = userData.getLastCollectedDate();
-        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(UserData.NEVER_COLLECTED));
+        boolean missedDay = lastCollectedDate == null || (lastCollectedDate.isBefore(LocalDate.now().minusDays(1)) && !lastCollectedDate.isEqual(DailyRewardsUserData.NEVER_COLLECTED));
 
         switch (getRewardMode()) {
             case STREAK -> {
@@ -282,7 +251,7 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
         }
 
         userData.setLastJoinDate(LocalDate.now());
-        saveUserData(userData);
+        LushRewards.getInstance().getStorageManager().saveCachedRewardUser(uuid);
     }
 
     @NotNull
@@ -388,160 +357,6 @@ public class DailyRewardsModule extends RewardModule implements UserDataModule<D
     @Override
     public Gui getGui(Player player) {
         return new DailyRewardsGui(this, player);
-    }
-
-    @Override
-    public UserData getDefaultData(UUID uuid) {
-        return new UserData(uuid, id, null, 1, 0, 0, LocalDate.now(), null, new HashSet<>());
-    }
-
-    @Override
-    public UserData getUserData(UUID uuid) {
-        return userDataCache.get(uuid);
-    }
-
-    @Override
-    public CompletableFuture<UserData> getOrLoadUserData(UUID uuid, boolean cacheUser) {
-        CompletableFuture<UserData> future = LushRewards.getInstance().getDataManager().getOrLoadUserData(uuid, this, cacheUser);
-        if (cacheUser) {
-            future.thenAccept(this::checkRewardDay);
-        }
-
-        return future;
-    }
-
-    @Override
-    public CompletableFuture<UserData> loadUserData(UUID uuid, boolean cacheUser) {
-        CompletableFuture<UserData> future = LushRewards.getInstance().getDataManager().loadUserData(uuid, this, cacheUser);
-        if (cacheUser) {
-            future.thenAccept(this::checkRewardDay);
-        }
-
-        return future;
-    }
-
-    @Override
-    public void cacheUserData(UUID uuid, UserDataModule.UserData userData) {
-        if (userData instanceof UserData data) {
-            userDataCache.put(uuid, data);
-        }
-    }
-
-    @Override
-    public void uncacheUserData(UUID uuid) {
-        userDataCache.remove(uuid);
-    }
-
-    @Override
-    public Class<UserData> getUserDataClass() {
-        return UserData.class;
-    }
-
-    public static class UserData extends UserDataModule.UserData {
-        public static final LocalDate NEVER_COLLECTED = LocalDate.of(1971, 10, 1); // The date Walt Disney World was opened
-
-        private LocalDate startDate;
-        private LocalDate lastJoinDate;
-        private LocalDate lastCollectedDate;
-        private final HashSet<Integer> collectedDays;
-        private int dayNum;
-        private int streak;
-        private int highestStreak;
-
-        public UserData(UUID uuid, String moduleId, LocalDate lastJoinDate, int dayNum, int streak, int highestStreak, LocalDate startDate, LocalDate lastCollectedDate, HashSet<Integer> collectedDays) {
-            super(uuid, moduleId);
-            this.startDate = startDate;
-            this.lastJoinDate = lastJoinDate;
-            this.lastCollectedDate = lastCollectedDate;
-            this.collectedDays = collectedDays;
-            this.dayNum = dayNum;
-            this.streak = streak;
-            this.highestStreak = highestStreak;
-        }
-
-        public LocalDate getLastJoinDate() {
-            return lastJoinDate;
-        }
-
-        public void setLastJoinDate(LocalDate lastJoinDate) {
-            this.lastJoinDate = lastJoinDate;
-        }
-
-        public int getDayNum() {
-            return dayNum;
-        }
-
-        public void setDayNum(int dayNum) {
-            this.dayNum = dayNum;
-        }
-
-        public void incrementDayNum() {
-            this.dayNum++;
-        }
-
-        public int getStreak() {
-            return streak;
-        }
-
-        public void setStreak(int streak) {
-            this.streak = streak;
-            if (streak > highestStreak) {
-                highestStreak = streak;
-            }
-        }
-
-        public void incrementStreak() {
-            setStreak(this.streak + 1);
-        }
-
-        public int getHighestStreak() {
-            return highestStreak;
-        }
-
-        public void setHighestStreak(int highestStreak) {
-            this.highestStreak = highestStreak;
-        }
-
-        public LocalDate getExpectedDateOnDayNum(int dayNum) {
-            return LocalDate.now().plusDays(dayNum - getDayNum());
-        }
-
-        public LocalDate getStartDate() {
-            return this.startDate;
-        }
-
-        public void setStartDate(LocalDate date) {
-            this.startDate = date;
-        }
-
-        @Nullable
-        public LocalDate getLastCollectedDate() {
-            return this.lastCollectedDate;
-        }
-
-        public void setLastCollectedDate(LocalDate date) {
-            this.lastCollectedDate = date;
-        }
-
-        public boolean hasCollectedToday() {
-            return lastCollectedDate != null && lastCollectedDate.isEqual(LocalDate.now());
-        }
-
-        public HashSet<Integer> getCollectedDays() {
-            return collectedDays;
-        }
-
-        public boolean hasCollectedDay(int dayNum) {
-            return collectedDays.contains(dayNum);
-        }
-
-        public void addCollectedDay(int dayNum) {
-            collectedDays.add(dayNum);
-        }
-
-        public void clearCollectedDays() {
-            collectedDays.clear();
-        }
     }
 
     public enum RewardMode {

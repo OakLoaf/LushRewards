@@ -1,6 +1,6 @@
 package org.lushplugins.lushrewards.module;
 
-import java.io.File;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class RewardModuleType<T extends RewardModule> {
     private final String type;
@@ -15,12 +15,12 @@ public class RewardModuleType<T extends RewardModule> {
         return type;
     }
 
-    public T build(String id, File file) {
-        return this.constructor.build(id, file);
+    public T build(String id, ConfigurationSection config) {
+        return this.constructor.build(id, config);
     }
 
     @FunctionalInterface
     public interface Constructor<T extends RewardModule> {
-        T build(String id, File file);
+        T build(String id, ConfigurationSection config);
     }
 }

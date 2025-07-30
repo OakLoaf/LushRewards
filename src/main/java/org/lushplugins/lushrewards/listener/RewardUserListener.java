@@ -2,7 +2,7 @@ package org.lushplugins.lushrewards.listener;
 
 import org.bukkit.event.Listener;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTracker;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;

@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.reward.collections;
+package org.lushplugins.lushrewards.reward;
 
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.converter.MapConverter;

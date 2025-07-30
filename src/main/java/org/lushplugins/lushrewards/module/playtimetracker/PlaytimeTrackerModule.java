@@ -31,7 +31,11 @@ public class PlaytimeTrackerModule extends Module {
                     return;
                 }
 
-                playtimeTrackers.values().forEach(PlaytimeTracker::tick);
+                playtimeTrackers.values().forEach(playtimeTracker -> {
+                    if (!playtimeTracker.tick()) {
+                        this.stopPlaytimeTracker(playtimeTracker.getPlayer().getUniqueId());
+                    }
+                });
             },
             Duration.of(0, ChronoUnit.MILLIS),
             Duration.of(1000, ChronoUnit.MILLIS)

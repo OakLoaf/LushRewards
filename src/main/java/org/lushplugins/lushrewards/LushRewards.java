@@ -3,9 +3,15 @@ package org.lushplugins.lushrewards;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bstats.bukkit.Metrics;
+import org.lushplugins.lushlib.libraries.jackson.databind.ObjectMapper;
+import org.lushplugins.lushlib.libraries.jackson.databind.PropertyNamingStrategies;
+import org.lushplugins.lushlib.libraries.jackson.dataformat.yaml.YAMLFactory;
 import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushlib.serializer.JacksonHelper;
 import org.lushplugins.lushrewards.command.RewardsCommand;
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.module.RewardModuleManager;
+import org.lushplugins.lushrewards.storage.StorageManager;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.hook.FloodgateHook;
 import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
@@ -13,7 +19,8 @@ import org.lushplugins.lushrewards.migrator.Migrator;
 import org.lushplugins.lushrewards.migrator.Version3DataMigrator;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.notifications.NotificationHandler;
+import org.lushplugins.lushrewards.notification.NotificationHandler;
+import org.lushplugins.lushrewards.user.UserCache;
 import org.lushplugins.lushrewards.utils.lamp.contextparameter.RewardUserContextParameter;
 import org.lushplugins.lushrewards.utils.lamp.parametertype.MigratorParameterType;
 import org.lushplugins.lushrewards.utils.lamp.parametertype.RewardModuleParameterType;
@@ -23,7 +30,7 @@ import org.lushplugins.lushrewards.utils.gson.LocalDateTypeAdapter;
 import org.lushplugins.lushrewards.utils.gson.UserDataExclusionStrategy;
 import org.bukkit.Bukkit;
 import org.lushplugins.lushrewards.config.ConfigManager;
-import org.lushplugins.lushrewards.data.DataManager;
+import org.lushplugins.lushrewards.user.DataManager;
 import org.lushplugins.lushrewards.listener.RewardUserListener;
 import org.bukkit.util.FileUtil;
 import org.lushplugins.lushlib.LushLib;
@@ -43,14 +50,21 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public final class LushRewards extends SpigotPlugin {
-    private static final Gson GSON;
+    public static final ObjectMapper YAML_MAPPER = JacksonHelper.addCustomSerializers(new ObjectMapper(new YAMLFactory())
+        .setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE));
+    public static final ObjectMapper BASIC_JSON_MAPPER = new ObjectMapper();
+    private static final Gson GSON; // TODO: Remove
+
     private static LushRewards plugin;
 
     private Updater updater;
     private ConfigManager configManager;
-    private DataManager dataManager;
+    private RewardModuleManager rewardModuleManager;
+    private DataManager dataManager; // TODO: Remove
     private NotificationHandler notificationHandler;
     private LocalPlaceholders localPlaceholders;
+    private UserCache userCache;
+    private StorageManager storageManager;
 
     static {
         GSON = new GsonBuilder()
@@ -95,6 +109,21 @@ public final class LushRewards extends SpigotPlugin {
             getLogger().info("Finished importing data (took " + (Instant.now().toEpochMilli() - start) + "ms)");
         }
 
+        this.notificationHandler = new NotificationHandler();
+        this.localPlaceholders = new LocalPlaceholders();
+
+        this.configManager = new ConfigManager();
+        this.configManager.reloadConfig();
+
+        this.rewardModuleManager = new RewardModuleManager();
+        this.rewardModuleManager.reloadModules();
+
+        this.userCache = new UserCache(this);
+        this.storageManager = new StorageManager();
+
+        this.dataManager = new DataManager();
+        this.dataManager.enable();
+
         this.updater = new Updater.Builder(this)
             .modrinth("djC8I9ui", true)
             .checkSchedule(600)
@@ -103,22 +132,11 @@ public final class LushRewards extends SpigotPlugin {
             .notificationMessage("&#ffe27aA new &#e0c01b%plugin% &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!")
             .build();
 
-        notificationHandler = new NotificationHandler();
-        localPlaceholders = new LocalPlaceholders();
-
-        configManager = new ConfigManager();
-        configManager.reloadConfig();
-
-        dataManager = new DataManager();
-        dataManager.enable();
-
         ifPluginEnabled("floodgate", () -> registerHook(new FloodgateHook()));
         ifPluginEnabled("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
         getHooks().forEach(Module::enable);
 
         registerListener(new RewardUserListener());
-
-//        registerCommand(new RewardsCommand());
 
         getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
             if (module instanceof PlaytimeTrackerModule playtimeTracker) {
@@ -128,7 +146,7 @@ public final class LushRewards extends SpigotPlugin {
 
         RewardsAPI.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
-                for (RewardModule module : LushRewards.getInstance().getEnabledRewardModules()) {
+                for (RewardModule module : LushRewards.getInstance().getRewardModuleManager().getRewardModules()) {
                     if (module instanceof PlaytimeRewardsModule playtimeModule) {
                         // TODO: Work out better way of running when a new day occurs
                         // eg. object that contains current date - when date changes then run check?
@@ -184,6 +202,10 @@ public final class LushRewards extends SpigotPlugin {
         return configManager;
     }
 
+    public RewardModuleManager getRewardModuleManager() {
+        return rewardModuleManager;
+    }
+
     public DataManager getDataManager() {
         return dataManager;
     }
@@ -198,6 +220,14 @@ public final class LushRewards extends SpigotPlugin {
 
     public Updater getUpdater() {
         return updater;
+    }
+
+    public UserCache getUserCache() {
+        return userCache;
+    }
+
+    public StorageManager getStorageManager() {
+        return storageManager;
     }
 
     public Gson getGson() {

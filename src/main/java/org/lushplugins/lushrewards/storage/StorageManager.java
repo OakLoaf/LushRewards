@@ -1,15 +1,15 @@
 package org.lushplugins.lushrewards.storage;
 
-import com.google.gson.JsonObject;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.UserDataModule;
 import org.lushplugins.lushrewards.storage.type.JsonStorage;
 import org.lushplugins.lushrewards.storage.type.MySQLStorage;
 import org.lushplugins.lushrewards.storage.type.PostgreSQLStorage;
 import org.lushplugins.lushrewards.storage.type.SQLiteStorage;
+import org.lushplugins.lushrewards.user.RewardUser;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -22,16 +22,27 @@ public class StorageManager {
     private Storage storage;
 
     public StorageManager() {
+        LushRewards.getInstance().saveDefaultResource("storage.yml");
         reload();
+    }
+
+    public void disable() {
+        if (storage != null) {
+            runAsync(storage::disable);
+        }
     }
 
     public void reload() {
         disable();
 
         FileConfiguration config = LushRewards.getInstance().getConfigResource("storage.yml");
+        String storageType = config.getString("type");
+        if (storageType == null) {
+            storageType = "json";
+            LushRewards.getInstance().getLogger().severe("No storage type is defined, defaulting to json storage.");
+        }
 
-        String storageType = config.getString("type", "null");
-        this.storage = switch (storageType) {
+        storage = switch (storageType) {
             case "mysql", "mariadb" -> new MySQLStorage();
             case "postgres" -> new PostgreSQLStorage();
             case "sqlite" -> new SQLiteStorage();
@@ -43,8 +54,6 @@ public class StorageManager {
             }
         };
 
-        LushRewards.getInstance().getLogger().info("Setting up '%s' database".formatted(storageType));
-
         ConfigurationSection storageSection;
         if (config.contains("mysql")) {
             storageSection = config.getConfigurationSection("mysql");
@@ -53,23 +62,23 @@ public class StorageManager {
             storageSection = config.getConfigurationSection("storage");
         }
 
-        this.storage.enable(storageSection);
+        runAsync(() -> storage.enable(storageSection));
     }
 
-    public CompletableFuture<Void> disable() {
-        if (this.storage != null) {
-            return runAsync(this.storage::disable);
-        } else {
-            return CompletableFuture.completedFuture(null);
-        }
+    public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
+        return runAsync(() -> storage.loadRewardUser(uuid));
     }
 
-    public CompletableFuture<JsonObject> loadModuleUserData(UUID uuid, String moduleId) {
-        return runAsync(() -> storage.loadModuleUserDataJson(uuid, moduleId));
+    public CompletableFuture<Void> saveCachedRewardUser(UUID uuid) {
+        return this.saveRewardUser(LushRewards.getInstance().getUserCache().getCachedUser(uuid));
     }
 
-    public CompletableFuture<Void> saveModuleUserData(UserDataModule.UserData userData) {
-        return runAsync(() -> storage.saveModuleUserData(userData));
+    public CompletableFuture<Void> saveRewardUser(RewardUser user) {
+        return runAsync(() -> storage.saveRewardUser(user));
+    }
+
+    public CompletableFuture<Collection<String>> findSimilarUsernames(String input) {
+        return runAsync(() -> storage.findSimilarUsernames(input));
     }
 
     private <T> CompletableFuture<T> runAsync(Callable<T> callable) {

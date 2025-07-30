@@ -4,13 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.UserDataModule;
+import org.lushplugins.lushrewards.module.OldUserDataModule;
 import org.lushplugins.lushrewards.storage.Storage;
 
 import java.io.*;
 import java.util.UUID;
 
-public class JsonStorage extends Storage {
+public class JsonStorage implements Storage {
     private final File storageDir = new File(LushRewards.getInstance().getDataFolder(), "data");
 
     @Override
@@ -22,7 +22,7 @@ public class JsonStorage extends Storage {
     }
 
     @Override
-    public void saveModuleUserData(UserDataModule.UserData userData) {
+    public void saveModuleUserData(OldUserDataModule.UserData userData) {
         if (!storageDir.exists()) {
             storageDir.mkdir();
         }

@@ -2,13 +2,14 @@ package org.lushplugins.lushrewards.module.playtimerewards;
 
 import org.bukkit.Bukkit;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.module.StoresUserData;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.exception.InvalidRewardException;
 import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.UserDataModule;
-import org.lushplugins.lushrewards.reward.collections.RewardCollection;
+import org.lushplugins.lushrewards.module.OldUserDataModule;
+import org.lushplugins.lushrewards.reward.RewardCollection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
@@ -18,14 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushrewards.utils.Debugger;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlaytimeRewardsModule extends RewardModule implements UserDataModule<PlaytimeRewardsModule.UserData>, GuiDisplayer {
-    private final ConcurrentHashMap<UUID, UserData> userDataCache = new ConcurrentHashMap<>();
+@StoresUserData(PlaytimeRewardsUserData.class)
+public class PlaytimeRewardsModule extends RewardModule implements GuiDisplayer {
     private ConcurrentHashMap<Integer, PlaytimeRewardCollection> minutesToReward;
     private PlaytimeRewardsPlaceholder placeholder;
     private int resetPlaytimeAt;
@@ -34,24 +34,13 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
     private GuiFormat guiFormat;
     private PlaytimeRewardsGui.ScrollType scrollType;
 
-    public PlaytimeRewardsModule(String id, File moduleFile) {
-        super(id, moduleFile, true);
-    }
-
-    @Override
-    public void onEnable() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(moduleFile);
-        if (!config.getBoolean("enabled", true)) {
-            LushRewards.getInstance().getLogger().info("Module '" + id + "' is disabled in it's configuration");
-            this.disable();
-            return;
-        }
+    public PlaytimeRewardsModule(String id, ConfigurationSection config) {
+        super(id, config);
 
         // Finds relevant goals section - provides backwards compatibility
         String goalsSection = config.contains("goals") ? "goals" : config.contains("daily-goals") ? "daily-goals" : config.contains("global-goals") ? "global-goals" : null;
         if (goalsSection == null) {
-            LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'goals' section in '" + moduleFile.getName() + "'");
-            this.disable();
+            LushRewards.getInstance().getLogger().severe("Failed to load rewards, could not find 'goals' section in '" + id + "'");
             return;
         }
 
@@ -96,21 +85,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         placeholder.register();
 
         LushRewards.getInstance().getLogger().info("Successfully loaded " + minutesToReward.size() + " reward collections from 'goals'");
-    }
-
-    @Override
-    public void onDisable() {
-        if (minutesToReward != null) {
-            minutesToReward.clear();
-            minutesToReward = null;
-        }
-
-        if (placeholder != null) {
-            placeholder.unregister();
-            placeholder = null;
-        }
-
-        userDataCache.clear();
     }
 
     public void checkForReset(RewardUser rewardUser, UserData userData) {
@@ -224,6 +198,11 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         return true;
     }
 
+    @Override
+    public boolean requiresPlaytimeTracker() {
+        return true;
+    }
+
     public int getResetPlaytimeAt() {
         return resetPlaytimeAt;
     }
@@ -305,70 +284,5 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
 
     public PlaytimeRewardsGui.ScrollType getScrollType() {
         return scrollType;
-    }
-
-    @Override
-    public UserData getDefaultData(UUID uuid) {
-        return new UserData(uuid, id, 0, LocalDate.now(), 0);
-    }
-
-    @Override
-    public UserData getUserData(UUID uuid) {
-        return userDataCache.get(uuid);
-    }
-
-    @Override
-    public void cacheUserData(UUID uuid, UserDataModule.UserData userData) {
-        if (userData instanceof UserData data) {
-            userDataCache.put(uuid, data);
-        }
-    }
-
-    @Override
-    public void uncacheUserData(UUID uuid) {
-        userDataCache.remove(uuid);
-    }
-
-    @Override
-    public Class<UserData> getUserDataClass() {
-        return UserData.class;
-    }
-
-    public static class UserData extends UserDataModule.UserData {
-        private int lastCollectedPlaytime;
-        private LocalDate startDate;
-        private int previousDayEndPlaytime;
-
-        public UserData(UUID uuid, String id, int lastCollectedPlaytime, @NotNull LocalDate startDate, int previousDayEndPlaytime) {
-            super(uuid, id);
-            this.lastCollectedPlaytime = lastCollectedPlaytime;
-            this.startDate = startDate;
-            this.previousDayEndPlaytime = previousDayEndPlaytime;
-        }
-
-        public int getLastCollectedPlaytime() {
-            return lastCollectedPlaytime;
-        }
-
-        public void setLastCollectedPlaytime(int lastCollectedPlaytime) {
-            this.lastCollectedPlaytime = lastCollectedPlaytime;
-        }
-
-        @NotNull
-        public LocalDate getStartDate() {
-            return startDate;
-        }
-
-        public void setStartDate(@NotNull LocalDate startDate) {
-            this.startDate = startDate;
-        }
-
-        public int getPreviousDayEndPlaytime() {
-            return previousDayEndPlaytime;
-        }
-
-        public void setPreviousDayEndPlaytime(int previousDayEndPlaytime) {
-            this.previousDayEndPlaytime = previousDayEndPlaytime;
-        }
     }
 }

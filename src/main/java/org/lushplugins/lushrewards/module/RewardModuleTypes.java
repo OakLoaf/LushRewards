@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.module;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsModule;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ public class RewardModuleTypes {
         types.remove(type);
     }
 
-    public static RewardModule constructModuleType(String type, String moduleId, File moduleFile) {
-        return types.containsKey(type) ? types.get(type).build(moduleId, moduleFile) : null;
+    public static RewardModule constructModuleType(String type, String moduleId, ConfigurationSection config) {
+        return types.containsKey(type) ? types.get(type).build(moduleId, config) : null;
     }
 }

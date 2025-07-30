@@ -1,18 +1,23 @@
 package org.lushplugins.lushrewards.storage;
 
-import com.google.gson.JsonObject;
 import org.bukkit.configuration.ConfigurationSection;
-import org.lushplugins.lushrewards.module.UserDataModule;
+import org.lushplugins.lushrewards.user.ModuleUserData;
+import org.lushplugins.lushrewards.user.RewardUser;
 
+import java.util.Collection;
 import java.util.UUID;
 
-public abstract class Storage {
+public interface Storage {
 
-    public void enable(ConfigurationSection config) {}
+    default void enable(ConfigurationSection config) {}
 
-    public void disable() {}
+    default void disable() {}
 
-    public abstract JsonObject loadModuleUserDataJson(UUID uuid, String moduleId);
+    RewardUser loadRewardUser(UUID uuid);
 
-    public abstract void saveModuleUserData(UserDataModule.UserData userData);
+    void saveRewardUser(RewardUser user);
+
+    void saveModuleUserData(ModuleUserData userData);
+
+    Collection<String> findSimilarUsernames(String input);
 }

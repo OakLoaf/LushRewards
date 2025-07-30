@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface UserDataModule<T extends UserDataModule.UserData> {
+public interface OldUserDataModule<T extends OldUserDataModule.UserData> {
 
     String getId();
 

@@ -3,7 +3,7 @@ package org.lushplugins.lushrewards.module.playtimerewards;
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.converter.MapConverter;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
-import org.lushplugins.lushrewards.reward.collections.RewardCollection;
+import org.lushplugins.lushrewards.reward.RewardCollection;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.bukkit.Sound;

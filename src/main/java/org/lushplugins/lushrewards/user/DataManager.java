@@ -1,7 +1,7 @@
-package org.lushplugins.lushrewards.data;
+package org.lushplugins.lushrewards.user;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.UserDataModule;
+import org.lushplugins.lushrewards.module.OldUserDataModule;
 import org.lushplugins.lushlib.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -107,18 +107,11 @@ public class DataManager extends Manager {
         return saveUserData(rewardUser);
     }
 
-    public void saveRewardUser(Player player) {
-        RewardUser rewardUser = getRewardUser(player);
-        if (rewardUser != null) {
-            saveRewardUser(rewardUser);
-        }
-    }
-
-    public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, UserDataModule<T> module) {
+    public <T extends OldUserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, OldUserDataModule<T> module) {
         return getOrLoadUserData(uuid, module, true);
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, UserDataModule<T> module, boolean cacheUser) {
+    public <T extends OldUserDataModule.UserData> CompletableFuture<T> getOrLoadUserData(UUID uuid, OldUserDataModule<T> module, boolean cacheUser) {
         T userData = module.getUserData(uuid);
         if (userData != null) {
             return CompletableFuture.completedFuture(userData);
@@ -127,11 +120,11 @@ public class DataManager extends Manager {
         }
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, UserDataModule<T> module) {
+    public <T extends OldUserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, OldUserDataModule<T> module) {
         return loadUserData(uuid, module, true);
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, UserDataModule<T> module, boolean cacheUser) {
+    public <T extends OldUserDataModule.UserData> CompletableFuture<T> loadUserData(UUID uuid, OldUserDataModule<T> module, boolean cacheUser) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         loadUserData(uuid, module.getId(), module.getUserDataClass()).thenAccept(userData -> {
@@ -145,7 +138,7 @@ public class DataManager extends Manager {
         return future;
     }
 
-    public <T extends UserDataModule.UserData> CompletableFuture<T> loadUserData(@NotNull UUID uuid, String moduleId, Class<T> dataClass) {
+    public <T extends OldUserDataModule.UserData> CompletableFuture<T> loadUserData(@NotNull UUID uuid, String moduleId, Class<T> dataClass) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         storageManager.loadModuleUserData(uuid, moduleId)
@@ -161,7 +154,7 @@ public class DataManager extends Manager {
                     LushRewards.getInstance().getLogger().info("No storage data found for '" + uuid + "' for module '" + (moduleId != null ? moduleId : "main") + "', creating default data!");
 
                     if (moduleId != null) {
-                        UserDataModule<?> module = (UserDataModule<?>) LushRewards.getInstance().getModule(moduleId).orElse(null);
+                        OldUserDataModule<?> module = (OldUserDataModule<?>) LushRewards.getInstance().getModule(moduleId).orElse(null);
                         if (module != null) {
                             T userData = dataClass.cast(module.getDefaultData(uuid));
                             saveUserData(userData).thenAccept((ignored) -> future.complete(userData));
@@ -210,7 +203,7 @@ public class DataManager extends Manager {
         return future;
     }
 
-    public CompletableFuture<Boolean> saveUserData(UserDataModule.UserData userData) {
+    public CompletableFuture<Boolean> saveUserData(OldUserDataModule.UserData userData) {
         return CompletableFuture.supplyAsync(() -> storageManager.saveModuleUserData(userData))
             .orTimeout(30, TimeUnit.SECONDS)
             .handle((storageData, exception) -> {
@@ -225,7 +218,7 @@ public class DataManager extends Manager {
 
     public void loadModulesUserData(UUID uuid) {
         LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
+            if (module instanceof OldUserDataModule<?> userDataModule) {
                 userDataModule.getOrLoadUserData(uuid, true);
             }
         });
@@ -233,7 +226,7 @@ public class DataManager extends Manager {
 
     public void unloadModulesUserData(UUID uuid) {
         LushRewards.getInstance().getRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
+            if (module instanceof OldUserDataModule<?> userDataModule) {
                 userDataModule.uncacheUserData(uuid);
             }
         });
@@ -241,7 +234,7 @@ public class DataManager extends Manager {
 
     public void saveModulesUserData(UUID uuid) {
         LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
+            if (module instanceof OldUserDataModule<?> userDataModule) {
                 saveModuleUserData(uuid, userDataModule);
             }
         });
@@ -249,14 +242,14 @@ public class DataManager extends Manager {
 
     public void saveModuleUserData(UUID uuid, String moduleId) {
         LushRewards.getInstance().getModule(moduleId).ifPresent(module -> {
-            if (module instanceof UserDataModule<?> userDataModule) {
+            if (module instanceof OldUserDataModule<?> userDataModule) {
                 saveModuleUserData(uuid, userDataModule);
             }
         });
     }
 
-    public CompletableFuture<Boolean> saveModuleUserData(UUID uuid, UserDataModule<?> userDataModule) {
-        UserDataModule.UserData userData = userDataModule.getUserData(uuid);
+    public CompletableFuture<Boolean> saveModuleUserData(UUID uuid, OldUserDataModule<?> userDataModule) {
+        OldUserDataModule.UserData userData = userDataModule.getUserData(uuid);
         if (userData != null) {
             return saveUserData(userData);
         } else {

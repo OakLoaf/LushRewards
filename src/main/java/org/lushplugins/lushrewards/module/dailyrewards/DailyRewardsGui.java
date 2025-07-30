@@ -7,7 +7,7 @@ import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.config.ConfigManager;
 import org.lushplugins.lushrewards.gui.GuiFormat;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
-import org.lushplugins.lushrewards.reward.collections.RewardDay;
+import org.lushplugins.lushrewards.reward.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;

@@ -4,43 +4,37 @@ import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
 import org.bukkit.configuration.ConfigurationSection;
-import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
+import org.lushplugins.lushrewards.user.RewardUser;
 
-import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings("unused")
-public abstract class RewardModule extends Module {
-    protected final File moduleFile;
-    private final boolean requiresTimeTracker;
-    private boolean shouldNotify = false;
-    private final ConcurrentHashMap<String, DisplayItemStack> itemTemplates = new ConcurrentHashMap<>();
+public abstract class RewardModule {
+    protected final String id;
+    protected boolean shouldNotify = false;
+    protected final ConcurrentHashMap<String, DisplayItemStack> itemTemplates = new ConcurrentHashMap<>();
 
-    public RewardModule(String id, File moduleFile) {
-        super(id);
-        this.moduleFile = moduleFile;
-        this.requiresTimeTracker = false;
+    public RewardModule(String id, ConfigurationSection config) {
+        this.id = id;
     }
 
-    public RewardModule(String id, File moduleFile, boolean requiresTimeTracker) {
-        super(id);
-        this.moduleFile = moduleFile;
-        this.requiresTimeTracker = requiresTimeTracker;
+    public String getId() {
+        return id;
     }
 
-    public abstract boolean hasClaimableRewards(Player player);
+    public abstract boolean requiresPlaytimeTracker();
+
+    public abstract boolean hasClaimableRewards(Player player, RewardUser user);
+
+    public boolean hasClaimableRewards(Player player) {
+        RewardUser user = LushRewards.getInstance().getUserCache().getCachedUser(player.getUniqueId());
+        return hasClaimableRewards(player, user);
+    }
 
     @SuppressWarnings("UnusedReturnValue")
-    public abstract boolean claimRewards(Player player);
+    public abstract boolean claimRewards(Player player, RewardUser user);
 
-    public File getModuleFile() {
-        return moduleFile;
-    }
 
-    public boolean requiresPlaytimeTracker() {
-        return requiresTimeTracker;
-    }
 
     public boolean shouldNotify() {
         return shouldNotify;
@@ -74,8 +68,6 @@ public abstract class RewardModule extends Module {
     }
 
     public static class Type {
-        public static final String DAILY_REWARDS = "daily-rewards";
-        public static final String PLAYTIME_REWARDS = "playtime-rewards";
         public static final String PLAYTIME_TRACKER = "playtime-tracker";
     }
 }

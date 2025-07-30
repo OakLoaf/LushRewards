@@ -5,7 +5,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lushplugins.lushlib.manager.GuiManager;
-import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushlib.utils.*;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
@@ -21,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -28,6 +28,7 @@ public class ConfigManager {
     private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
     private static LocalDate currentDate;
 
+    private Map<String, RewardModule> modules;
     private final ConcurrentHashMap<String, DisplayItemStack> categoryItems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, DisplayItemStack> globalItemTemplates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Reward> rewardTemplates = new ConcurrentHashMap<>();
@@ -40,21 +41,13 @@ public class ConfigManager {
 
     public ConfigManager() {
         LushRewards plugin = LushRewards.getInstance();
-        if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
-            plugin.saveDefaultResource("reward-templates.yml");
-            plugin.saveDefaultResource("modules/daily-rewards.yml");
-            plugin.saveDefaultResource("modules/daily-playtime-rewards.yml");
-            plugin.saveDefaultResource("modules/global-playtime-rewards.yml");
-        }
-
         plugin.saveDefaultConfig();
-        plugin.saveDefaultResource("storage.yml");
+        plugin.saveDefaultResource("reward-templates.yml");
     }
 
     public void reloadConfig() {
         LushRewards plugin = LushRewards.getInstance();
         plugin.getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
-        plugin.getRewardModules().forEach(module -> plugin.unregisterModule(module.getId()));
 
         plugin.reloadConfig();
         FileConfiguration config = plugin.getConfig();
@@ -69,31 +62,34 @@ public class ConfigManager {
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
         reminderSound = StringUtils.getEnum(config.getString("reminder-sound", "none"), Sound.class).orElse(null);
 
+        modules = new ConcurrentHashMap<>();
         try {
             Files.newDirectoryStream(MODULES_FOLDER.toPath(), "*.yml").forEach(entry -> {
                 File moduleFile = entry.toFile();
                 String moduleId = FilenameUtils.removeExtension(moduleFile.getName());
+                if (!config.getBoolean("modules." + moduleId, true)) {
+                    return;
+                }
+
                 YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
-                if (moduleConfig.getBoolean("enabled", true) && config.getBoolean("modules." + moduleId, true)) {
-                    if (plugin.getModule(moduleId).isPresent()) {
-                        plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
-                        return;
-                    }
+                if (!moduleConfig.getBoolean("enabled", true)) {
+                    return;
+                }
 
-                    String rewardModuleType;
-                    if (moduleConfig.contains("type")) {
-                        rewardModuleType = moduleConfig.getString("type");
-                    } else if (moduleId.contains("playtime")) {
-                        rewardModuleType = "playtime-rewards";
-                    } else {
-                        rewardModuleType = moduleId;
-                    }
+                String rewardModuleType;
+                if (moduleConfig.contains("type")) {
+                    rewardModuleType = moduleConfig.getString("type");
+                } else if (moduleId.contains("playtime")) {
+                    rewardModuleType = "playtime-rewards";
+                } else {
+                    rewardModuleType = moduleId;
+                }
 
-                    if (rewardModuleType != null && RewardModuleTypes.contains(rewardModuleType)) {
-                        plugin.registerModule(RewardModuleTypes.constructModuleType(rewardModuleType, moduleId, moduleFile));
-                    } else {
-                        plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'type'");
-                    }
+                if (rewardModuleType != null && RewardModuleTypes.contains(rewardModuleType)) {
+                    modules.put(moduleId, RewardModuleTypes.constructModuleType(rewardModuleType, moduleId, moduleConfig));
+                } else {
+                    plugin.log(Level.SEVERE, "Module with id '%s' failed to register due to invalid value at 'type'"
+                        .formatted(moduleId));
                 }
             });
         } catch (IOException e) {
@@ -112,25 +108,7 @@ public class ConfigManager {
         reloadRewardTemplates();
         reloadMessages(config.getConfigurationSection("messages"));
         plugin.getNotificationHandler().reloadNotifications();
-
-        if (plugin.getDataManager() != null) {
-            plugin.getDataManager().reloadRewardUsers(true);
-        }
-
-        plugin.getRewardModules().forEach(Module::reload);
-
-        if (plugin.getEnabledRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
-            if (LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).isEmpty()) {
-                PlaytimeTrackerModule playtimeTrackerModule = new PlaytimeTrackerModule();
-                plugin.registerModule(playtimeTrackerModule);
-                playtimeTrackerModule.enable();
-            }
-        } else {
-            plugin.unregisterModule(RewardModule.Type.PLAYTIME_TRACKER);
-        }
     }
-
-
 
     public String getMessage(String messageName) {
         String def;
@@ -151,10 +129,6 @@ public class ConfigManager {
         } else {
             return output;
         }
-    }
-
-    public Collection<String> getMessages() {
-        return messages.values();
     }
 
     public DisplayItemStack getCategoryTemplate(String category) {

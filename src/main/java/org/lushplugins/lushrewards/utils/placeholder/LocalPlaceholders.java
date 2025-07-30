@@ -62,6 +62,7 @@ public class LocalPlaceholders {
             }
         }));
 
+        // TODO: Deprecate
         registerPlaceholder(new SimplePlaceholder("total_session_playtime", (params, player) -> {
             if (player == null) {
                 return null;
@@ -69,7 +70,7 @@ public class LocalPlaceholders {
 
             Optional<Module> optionalPlaytimeTracker = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
             if (optionalPlaytimeTracker.isPresent() && optionalPlaytimeTracker.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
-                return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getTotalSessionPlaytime());
+                return String.valueOf(playtimeTrackerModule.getPlaytimeTracker(player.getUniqueId()).getSessionPlaytime());
             } else {
                 return null;
             }

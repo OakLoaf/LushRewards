@@ -1,7 +1,7 @@
 package org.lushplugins.lushrewards.module.playtimetracker;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.module.RewardModule;
 import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushlib.module.Module;
@@ -15,8 +15,17 @@ public class PlaytimeTracker {
     private final Player player;
     private SimpleLocation lastLocation;
     private boolean afk;
+    /**
+     * Current session time (in seconds)
+     */
     private int sessionTime;
+    /**
+     * Current idle time (in seconds), returns {@code 0} if not idle
+     */
     private int idleTime;
+    /**
+     * All-time playtime (in minutes), this value excludes idle time
+     */
     private int globalTime;
 
     public PlaytimeTracker(Player player) {
@@ -30,29 +39,39 @@ public class PlaytimeTracker {
         this.sessionTime = 0;
         this.idleTime = 0;
         this.globalTime = rewardUser.getMinutesPlayed();
-        updateLocation();
+        this.lastLocation = SimpleLocation.adapt(player.getLocation());
     }
 
-    public void tick() {
-        if (!player.isOnline()) {
-            Optional<Module> optionalModule = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
-            if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
-                playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
-            }
+    public Player getPlayer() {
+        return player;
+    }
 
-            return;
-        }
+    public boolean hasMoved() {
+        return !SimpleLocation.adapt(player.getLocation()).equals(lastLocation);
+    }
 
-        if (LushRewards.getInstance().getConfigManager().getPlaytimeIgnoreAfk()) {
-            whileActive();
-        } else {
-            if (hasMoved()) {
-                updateLocation();
-                whileActive();
-            } else {
-                whileInactive();
-            }
-        }
+    public int getSessionPlaytime() {
+        return (int) Math.floor(sessionTime / 60f);
+    }
+
+    public int getTotalSessionPlaytime() {
+        return (int) Math.floor((sessionTime + idleTime) / 60f);
+    }
+
+    public boolean isIdle() {
+        return idleTime == 0;
+    }
+
+    public int getIdlePlaytime() {
+        return idleTime;
+    }
+
+    public int getGlobalPlaytime() {
+        return globalTime;
+    }
+
+    public void setGlobalPlaytime(int globalPlaytime) {
+        globalTime = globalPlaytime;
     }
 
     public void whileActive() {
@@ -76,6 +95,26 @@ public class PlaytimeTracker {
         }
     }
 
+    public boolean tick() {
+        if (!player.isOnline()) {
+            return false;
+        }
+
+        if (LushRewards.getInstance().getConfigManager().getPlaytimeIgnoreAfk()) {
+            whileActive();
+        } else {
+            if (hasMoved()) {
+                this.lastLocation = SimpleLocation.adapt(player.getLocation());
+                whileActive();
+            } else {
+                whileInactive();
+            }
+        }
+
+        return true;
+    }
+
+    // TODO: Remove?
     public void saveData() {
         LushRewards.getInstance().getDataManager().getOrLoadRewardUser(player.getUniqueId(), false).thenAccept(rewardUser -> rewardUser.setMinutesPlayed(globalTime));
     }
@@ -92,15 +131,13 @@ public class PlaytimeTracker {
         globalTime++;
 
         if (player.hasPermission("lushrewards.use")) {
-            for (Module module : LushRewards.getInstance().getModules()) {
+            for (PlaytimeRewardsModule module : LushRewards.getInstance().getRewardModuleManager().getRewardModules(PlaytimeRewardsModule.class)) {
                 if (!player.hasPermission("lushrewards.use." + module.getId())) {
                     continue;
                 }
 
-                if (module instanceof PlaytimeRewardsModule playtimeRewardsModule) {
-                    if (playtimeRewardsModule.getRefreshTime() > 0 && globalTime % playtimeRewardsModule.getRefreshTime() == 0) {
-                        playtimeRewardsModule.claimRewards(player);
-                    }
+                if (module.getRefreshTime() > 0 && globalTime % module.getRefreshTime() == 0) {
+                    module.claimRewards(player);
                 }
             }
         }
@@ -116,33 +153,5 @@ public class PlaytimeTracker {
                 }
             }
         }
-    }
-
-    public void updateLocation() {
-        this.lastLocation = SimpleLocation.adapt(player.getLocation());
-    }
-
-    public boolean hasMoved() {
-        return !SimpleLocation.adapt(player.getLocation()).equals(lastLocation);
-    }
-
-    public int getIdlePlaytime() {
-        return idleTime;
-    }
-
-    public int getSessionPlaytime() {
-        return (int) Math.floor(sessionTime / 60f);
-    }
-
-    public int getTotalSessionPlaytime() {
-        return (int) Math.floor((sessionTime + idleTime) / 60f);
-    }
-
-    public int getGlobalPlaytime() {
-        return globalTime;
-    }
-
-    public void setGlobalPlaytime(int globalPlaytime) {
-        globalTime = globalPlaytime;
     }
 }

@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.notifications;
+package org.lushplugins.lushrewards.notification;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;

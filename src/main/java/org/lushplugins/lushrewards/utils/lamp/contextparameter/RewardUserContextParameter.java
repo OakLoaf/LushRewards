@@ -2,7 +2,7 @@ package org.lushplugins.lushrewards.utils.lamp.contextparameter;
 
 import org.jetbrains.annotations.NotNull;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.user.RewardUser;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.command.CommandParameter;
 import revxrsal.commands.node.ExecutionContext;

@@ -6,20 +6,22 @@ import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.module.RewardModule;
+import org.lushplugins.lushrewards.module.OldUserDataModule;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsGui;
 import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsModule;
 import org.lushplugins.lushrewards.migrator.Migrator;
 import org.lushplugins.pluginupdater.api.updater.Updater;
 import org.lushplugins.rewardsapi.api.RewardsAPI;
 import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.exception.CommandErrorException;
-import revxrsal.commands.exception.NoPermissionException;
 
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("unused")
 @Command("rewards")
@@ -31,7 +33,7 @@ public class RewardsCommand {
         LushRewards.getInstance().getConfigManager().checkRefresh();
 
         Player player = actor.requirePlayer();
-        LushRewards.getInstance().getModules().stream()
+        LushRewards.getInstance().getRewardModuleManager().getRewardModules().stream()
             .filter(module -> module instanceof DailyRewardsModule && player.hasPermission("lushrewards.use." + module.getId()))
             .findFirst()
             .ifPresentOrElse(
@@ -56,9 +58,46 @@ public class RewardsCommand {
     }
 
     @Subcommand("claim")
-    public String claim() {
+    public void claim(BukkitCommandActor actor, @Optional RewardModule module) {
+        Player player = actor.requirePlayer();
 
-        return null;
+        AtomicInteger rewardsGiven = new AtomicInteger();
+        if (module != null) {
+            if (claim(player, module)) {
+                rewardsGiven.getAndIncrement();
+            }
+        } else {
+            for (RewardModule enabledModule : LushRewards.getInstance().getEnabledRewardModules()) {
+                if (claim(player, enabledModule)) {
+                    rewardsGiven.getAndIncrement();
+                }
+            }
+        }
+
+        if (rewardsGiven.get() == 0) {
+            ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("no-rewards-available"));
+        }
+    }
+
+    /**
+     * @return whether a reward has been claimed
+     */
+    private boolean claim(Player player, RewardModule module) {
+        if (!player.hasPermission("lushrewards.use." + module.getId())) {
+            return false;
+        }
+
+        if (module.hasClaimableRewards(player)) {
+            if (module instanceof OldUserDataModule<?> userDataModule) {
+                userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player));
+                return true;
+            } else {
+                module.claimRewards(player);
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 
     @Subcommand("gui")
