@@ -109,8 +109,6 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
             placeholder.unregister();
             placeholder = null;
         }
-
-        userDataCache.clear();
     }
 
     public void checkForReset(RewardUser rewardUser, UserData userData) {
