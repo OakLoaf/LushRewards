@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.module;
+package org.lushplugins.lushrewards.reward.module;
 
 import com.google.gson.JsonObject;
 import org.lushplugins.lushrewards.LushRewards;

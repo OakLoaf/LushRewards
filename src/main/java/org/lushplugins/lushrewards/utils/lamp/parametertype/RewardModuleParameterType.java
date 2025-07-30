@@ -3,7 +3,7 @@ package org.lushplugins.lushrewards.utils.lamp.parametertype;
 import org.jetbrains.annotations.NotNull;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.RewardModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
 import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.command.CommandActor;
 import revxrsal.commands.node.ExecutionContext;

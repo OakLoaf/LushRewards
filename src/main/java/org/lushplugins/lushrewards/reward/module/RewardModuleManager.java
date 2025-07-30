@@ -1,7 +1,7 @@
-package org.lushplugins.lushrewards.module;
+package org.lushplugins.lushrewards.reward.module;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import org.lushplugins.lushrewards.playtimetracker.PlaytimeTrackerModule;
 
 import java.io.File;
 import java.util.*;
@@ -40,22 +40,27 @@ public class RewardModuleManager {
         }
     }
 
-    public RewardModule getRewardModule(String id) {
+    public RewardModule getModule(String id) {
         return modules.get(id);
     }
 
-    public Collection<RewardModule> getRewardModules() {
+    public <T extends RewardModule> T getModule(String id, Class<T> moduleType) {
+        RewardModule module = getModule(id);
+        return moduleType.isInstance(module) ? moduleType.cast(module) : null;
+    }
+
+    public Collection<RewardModule> getModules() {
         return modules.values();
     }
 
-    public <T extends RewardModule> List<T> getRewardModules(Class<T> clazz) {
+    public <T extends RewardModule> List<T> getModules(Class<T> moduleType) {
         return modules.values().stream()
-            .filter(clazz::isInstance)
-            .map(clazz::cast)
+            .filter(moduleType::isInstance)
+            .map(moduleType::cast)
             .toList();
     }
 
-    public Set<String> getRewardModuleIds() {
+    public Set<String> getModuleIds() {
         return modules.keySet();
     }
 }

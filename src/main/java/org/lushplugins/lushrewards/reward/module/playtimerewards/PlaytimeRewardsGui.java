@@ -1,13 +1,13 @@
-package org.lushplugins.lushrewards.module.playtimerewards;
+package org.lushplugins.lushrewards.reward.module.playtimerewards;
 
 import com.google.common.collect.TreeMultimap;
 import org.bukkit.inventory.Inventory;
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiFormat;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTracker;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
+import org.lushplugins.lushrewards.playtimetracker.PlaytimeTracker;
+import org.lushplugins.lushrewards.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.lushplugins.lushlib.gui.inventory.Gui;

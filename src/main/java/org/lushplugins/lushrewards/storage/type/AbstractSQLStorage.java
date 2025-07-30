@@ -6,7 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushlib.libraries.jackson.core.JsonProcessingException;
 import org.lushplugins.lushlib.libraries.jackson.core.type.TypeReference;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.OldUserDataModule;
+import org.lushplugins.lushrewards.reward.module.OldUserDataModule;
 import org.lushplugins.lushrewards.storage.Storage;
 import org.lushplugins.lushrewards.user.ModuleUserData;
 import org.lushplugins.lushrewards.user.RewardUser;

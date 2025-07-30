@@ -1,7 +1,7 @@
-package org.lushplugins.lushrewards.module.playtimetracker;
+package org.lushplugins.lushrewards.playtimetracker;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.RewardModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
 import org.lushplugins.lushlib.module.Module;
 import org.bukkit.entity.Player;
 import org.lushplugins.rewardsapi.api.RewardsAPI;

@@ -2,7 +2,7 @@ package org.lushplugins.lushrewards.migrator.importer;
 
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardCollection;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardCollection;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.module;
+package org.lushplugins.lushrewards.reward.module;
 
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;

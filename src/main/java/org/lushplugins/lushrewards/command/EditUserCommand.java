@@ -1,12 +1,10 @@
 package org.lushplugins.lushrewards.command;
 
-import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsUserData;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsUserData;
-import org.lushplugins.lushrewards.user.ModuleUserData;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsUserData;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsUserData;
 import org.lushplugins.lushrewards.user.RewardUser;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsModule;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsModule;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.annotation.CommandPermission;

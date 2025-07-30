@@ -1,14 +1,14 @@
-package org.lushplugins.lushrewards.module.playtimerewards;
+package org.lushplugins.lushrewards.reward.module.playtimerewards;
 
 import org.bukkit.Bukkit;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.StoresUserData;
+import org.lushplugins.lushrewards.reward.module.StoresUserData;
 import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.exception.InvalidRewardException;
 import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.gui.GuiFormat;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.OldUserDataModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
+import org.lushplugins.lushrewards.reward.module.OldUserDataModule;
 import org.lushplugins.lushrewards.reward.RewardCollection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.lushplugins.lushlib.gui.inventory.Gui;

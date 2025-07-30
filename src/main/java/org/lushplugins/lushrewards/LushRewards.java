@@ -3,22 +3,23 @@ package org.lushplugins.lushrewards;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.entity.Player;
 import org.lushplugins.lushlib.libraries.jackson.databind.ObjectMapper;
 import org.lushplugins.lushlib.libraries.jackson.databind.PropertyNamingStrategies;
 import org.lushplugins.lushlib.libraries.jackson.dataformat.yaml.YAMLFactory;
-import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushlib.serializer.JacksonHelper;
 import org.lushplugins.lushrewards.command.RewardsCommand;
-import org.lushplugins.lushrewards.module.RewardModuleManager;
+import org.lushplugins.lushrewards.reward.module.RewardModuleManager;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsModule;
+import org.lushplugins.lushrewards.placeholder.DailyRewardsPlaceholders;
+import org.lushplugins.lushrewards.placeholder.Placeholders;
 import org.lushplugins.lushrewards.storage.StorageManager;
 import org.lushplugins.lushrewards.user.RewardUser;
-import org.lushplugins.lushrewards.hook.FloodgateHook;
-import org.lushplugins.lushrewards.hook.PlaceholderAPIHook;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushrewards.migrator.Migrator;
 import org.lushplugins.lushrewards.migrator.Version3DataMigrator;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
+import org.lushplugins.lushrewards.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.notification.NotificationHandler;
 import org.lushplugins.lushrewards.user.UserCache;
 import org.lushplugins.lushrewards.utils.lamp.contextparameter.RewardUserContextParameter;
@@ -35,6 +36,8 @@ import org.lushplugins.lushrewards.listener.RewardUserListener;
 import org.bukkit.util.FileUtil;
 import org.lushplugins.lushlib.LushLib;
 import org.lushplugins.lushlib.plugin.SpigotPlugin;
+import org.lushplugins.lushrewards.utils.placeholderhandler.RewardModuleParameterProvider;
+import org.lushplugins.placeholderhandler.PlaceholderHandler;
 import org.lushplugins.pluginupdater.api.updater.Updater;
 import org.lushplugins.rewardsapi.api.RewardsAPI;
 import org.lushplugins.rewardsapi.api.reward.RewardTypes;
@@ -132,10 +135,6 @@ public final class LushRewards extends SpigotPlugin {
             .notificationMessage("&#ffe27aA new &#e0c01b%plugin% &#ffe27aupdate is now available, type &#e0c01b'/rewards update' &#ffe27ato download it!")
             .build();
 
-        ifPluginEnabled("floodgate", () -> registerHook(new FloodgateHook()));
-        ifPluginEnabled("PlaceholderAPI", () -> registerHook(new PlaceholderAPIHook()));
-        getHooks().forEach(Module::enable);
-
         registerListener(new RewardUserListener());
 
         getModule(RewardModule.Type.PLAYTIME_TRACKER).ifPresent(module -> {
@@ -146,7 +145,7 @@ public final class LushRewards extends SpigotPlugin {
 
         RewardsAPI.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(
             () -> {
-                for (RewardModule module : LushRewards.getInstance().getRewardModuleManager().getRewardModules()) {
+                for (RewardModule module : LushRewards.getInstance().getRewardModuleManager().getModules()) {
                     if (module instanceof PlaytimeRewardsModule playtimeModule) {
                         // TODO: Work out better way of running when a new day occurs
                         // eg. object that contains current date - when date changes then run check?
@@ -166,6 +165,18 @@ public final class LushRewards extends SpigotPlugin {
             .responseHandler(String.class, new StringMessageResponseHandler())
             .build()
             .register(new RewardsCommand());
+
+        PlaceholderHandler placeholderHandler = PlaceholderHandler.builder(this)
+            .registerParameterProvider(RewardUser.class, (type, parameter, context) -> {
+                Player player = context.player();
+                return player != null ? this.getUserCache().getCachedUser(player.getUniqueId()) : null;
+            })
+            .registerParameterProvider(RewardModule.class, new RewardModuleParameterProvider<>())
+            .registerParameterProvider(DailyRewardsModule.class, new RewardModuleParameterProvider<>())
+            .registerParameterProvider(PlaytimeRewardsModule.class, new RewardModuleParameterProvider<>())
+            .build();
+        placeholderHandler.register(new Placeholders());
+        placeholderHandler.register(new DailyRewardsPlaceholders());
 
         new Metrics(this, 22119);
     }

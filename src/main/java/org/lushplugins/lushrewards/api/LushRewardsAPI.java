@@ -1,7 +1,7 @@
 package org.lushplugins.lushrewards.api;
 
-import org.lushplugins.lushrewards.module.RewardModuleType;
-import org.lushplugins.lushrewards.module.RewardModuleTypes;
+import org.lushplugins.lushrewards.reward.module.RewardModuleType;
+import org.lushplugins.lushrewards.reward.module.RewardModuleTypes;
 import org.lushplugins.rewardsapi.api.reward.RewardType;
 import org.lushplugins.rewardsapi.api.reward.RewardTypes;
 

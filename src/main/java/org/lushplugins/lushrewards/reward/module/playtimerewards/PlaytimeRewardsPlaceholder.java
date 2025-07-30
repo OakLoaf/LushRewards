@@ -1,11 +1,10 @@
-package org.lushplugins.lushrewards.module.playtimerewards;
+package org.lushplugins.lushrewards.reward.module.playtimerewards;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.utils.MathUtils;
 import org.lushplugins.lushrewards.utils.placeholder.Placeholder;
-import org.lushplugins.lushrewards.utils.placeholder.SimplePlaceholder;
 import org.lushplugins.lushrewards.utils.placeholder.TimePlaceholder;
 
 import java.time.LocalDateTime;
@@ -120,21 +119,5 @@ public class PlaytimeRewardsPlaceholder {
             int remainingMinutes = Math.max(nextRewardMinute - rewardUser.getMinutesPlayed(), 0);
             return remainingMinutes * 60;
         }));
-    }
-
-    private final String id;
-
-    public PlaytimeRewardsPlaceholder(String id) {
-        this.id = id;
-    }
-
-    public void register() {
-        SimplePlaceholder modulePlaceholder = new SimplePlaceholder(id, (params, player) -> null);
-        placeholderCache.forEach(modulePlaceholder::addChild);
-        LushRewards.getInstance().getLocalPlaceholders().registerPlaceholder(modulePlaceholder);
-    }
-
-    public void unregister() {
-        LushRewards.getInstance().getLocalPlaceholders().unregisterPlaceholder(id);
     }
 }

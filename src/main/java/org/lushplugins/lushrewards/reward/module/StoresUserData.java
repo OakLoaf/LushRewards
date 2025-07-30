@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.module;
+package org.lushplugins.lushrewards.reward.module;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

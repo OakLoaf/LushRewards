@@ -8,7 +8,7 @@ import org.lushplugins.lushlib.utils.SimpleItemStack;
 import org.lushplugins.lushlib.utils.StringUtils;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiFormat;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardCollection;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardCollection;
 import org.lushplugins.rewardsapi.api.reward.Reward;
 import org.lushplugins.rewardsapi.api.reward.type.ConsoleCommandReward;
 import org.lushplugins.rewardsapi.api.reward.type.PlayerCommandReward;

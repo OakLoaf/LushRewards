@@ -1,15 +1,15 @@
-package org.lushplugins.lushrewards.module.dailyrewards;
+package org.lushplugins.lushrewards.reward.module.dailyrewards;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.StoresUserData;
+import org.lushplugins.lushrewards.reward.module.StoresUserData;
 import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.lushrewards.exception.InvalidRewardException;
 import org.lushplugins.lushrewards.gui.GuiDisplayer;
 import org.lushplugins.lushrewards.gui.GuiFormat;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
+import org.lushplugins.lushrewards.playtimetracker.PlaytimeTrackerModule;
 import org.lushplugins.lushrewards.reward.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
@@ -22,11 +22,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.Level;
 
 @StoresUserData(DailyRewardsUserData.class)
 public class DailyRewardsModule extends RewardModule implements GuiDisplayer {
     private HashSet<DailyRewardCollection> rewards;
-    private DailyRewardsPlaceholder placeholder;
     private int resetDaysAt;
     private RewardMode rewardMode;
     private boolean allowRewardsStacking;
@@ -119,9 +119,6 @@ public class DailyRewardsModule extends RewardModule implements GuiDisplayer {
             }
         }
 
-        placeholder = new DailyRewardsPlaceholder(id);
-        placeholder.register();
-
         LushRewards.getInstance().getLogger().info("Successfully loaded %s reward collections from '%s'"
             .formatted(rewards.size(), rewardsSection.getCurrentPath()));
     }
@@ -142,8 +139,7 @@ public class DailyRewardsModule extends RewardModule implements GuiDisplayer {
     @Override
     public boolean hasClaimableRewards(Player player, RewardUser user) {
         DailyRewardsUserData userData = user.getModuleData(this.id, DailyRewardsUserData.class);
-
-        return userDataCache.containsKey(player.getUniqueId()) && !this.getUserData(player.getUniqueId()).hasCollectedToday() && meetsRequiredPlaytime(player);
+        return userData.hasCollectedToday() && meetsRequiredPlaytime(player);
     }
 
     @Override
@@ -174,10 +170,10 @@ public class DailyRewardsModule extends RewardModule implements GuiDisplayer {
 
         userData.setLastCollectedDate(LocalDate.now());
         userData.addCollectedDay(userData.getDayNum());
-        this.saveUserData(userData)
-            .thenAccept(success -> {
-                if (!success) {
-                    LushRewards.getInstance().getLogger().severe("Something went wrong when saving data for '" + player.getName() + "' (" + player.getUniqueId() + ")");
+        LushRewards.getInstance().getStorageManager().saveRewardUser(user).whenComplete((ignored, e) -> {
+                if (e != null) {
+                    LushRewards.getInstance().getLogger().log(Level.SEVERE, "Something went wrong when saving data for '%s' (%s)"
+                        .formatted(player.getName(), player.getUniqueId()), e);
                     return;
                 }
 

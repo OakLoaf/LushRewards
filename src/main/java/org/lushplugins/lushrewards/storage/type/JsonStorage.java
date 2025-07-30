@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.OldUserDataModule;
+import org.lushplugins.lushrewards.reward.module.OldUserDataModule;
 import org.lushplugins.lushrewards.storage.Storage;
 
 import java.io.*;

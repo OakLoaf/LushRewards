@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.module.playtimerewards;
+package org.lushplugins.lushrewards.reward.module.playtimerewards;
 
 import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushlib.utils.converter.MapConverter;

@@ -5,11 +5,12 @@ import org.bukkit.entity.Player;
 import org.lushplugins.lushlib.libraries.chatcolor.ChatColorHandler;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.gui.GuiDisplayer;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.OldUserDataModule;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsGui;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
+import org.lushplugins.lushrewards.reward.module.OldUserDataModule;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsGui;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsModule;
 import org.lushplugins.lushrewards.migrator.Migrator;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.lushplugins.pluginupdater.api.updater.Updater;
 import org.lushplugins.rewardsapi.api.RewardsAPI;
 import revxrsal.commands.annotation.Command;
@@ -33,7 +34,7 @@ public class RewardsCommand {
         LushRewards.getInstance().getConfigManager().checkRefresh();
 
         Player player = actor.requirePlayer();
-        LushRewards.getInstance().getRewardModuleManager().getRewardModules().stream()
+        LushRewards.getInstance().getRewardModuleManager().getModules().stream()
             .filter(module -> module instanceof DailyRewardsModule && player.hasPermission("lushrewards.use." + module.getId()))
             .findFirst()
             .ifPresentOrElse(
@@ -58,17 +59,17 @@ public class RewardsCommand {
     }
 
     @Subcommand("claim")
-    public void claim(BukkitCommandActor actor, @Optional RewardModule module) {
+    public void claim(BukkitCommandActor actor, RewardUser user, @Optional RewardModule module) {
         Player player = actor.requirePlayer();
 
         AtomicInteger rewardsGiven = new AtomicInteger();
         if (module != null) {
-            if (claim(player, module)) {
+            if (this.claim(player, user, module)) {
                 rewardsGiven.getAndIncrement();
             }
         } else {
             for (RewardModule enabledModule : LushRewards.getInstance().getEnabledRewardModules()) {
-                if (claim(player, enabledModule)) {
+                if (this.claim(player, user, enabledModule)) {
                     rewardsGiven.getAndIncrement();
                 }
             }
@@ -82,17 +83,17 @@ public class RewardsCommand {
     /**
      * @return whether a reward has been claimed
      */
-    private boolean claim(Player player, RewardModule module) {
+    private boolean claim(Player player, RewardUser user, RewardModule module) {
         if (!player.hasPermission("lushrewards.use." + module.getId())) {
             return false;
         }
 
         if (module.hasClaimableRewards(player)) {
             if (module instanceof OldUserDataModule<?> userDataModule) {
-                userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player));
+                userDataModule.getOrLoadUserData(player.getUniqueId(), true).thenAccept(userData -> module.claimRewards(player, user));
                 return true;
             } else {
-                module.claimRewards(player);
+                module.claimRewards(player, user);
                 return true;
             }
         } else {

@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.module.dailyrewards;
+package org.lushplugins.lushrewards.reward.module.dailyrewards;
 
 import com.google.common.collect.TreeMultimap;
 import org.bukkit.inventory.Inventory;
@@ -6,7 +6,7 @@ import org.lushplugins.lushlib.utils.DisplayItemStack;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.config.ConfigManager;
 import org.lushplugins.lushrewards.gui.GuiFormat;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushrewards.reward.RewardDay;
 import org.lushplugins.lushrewards.utils.Debugger;
 import org.lushplugins.lushlib.gui.inventory.Gui;
@@ -181,9 +181,9 @@ public class DailyRewardsGui extends Gui {
 
                                         module.claimRewards(player);
 
-                                        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
-                                            if (module instanceof PlaytimeRewardsModule playtimeModule && playtimeModule.shouldReceiveWithDailyRewards()) {
-                                                playtimeModule.claimRewards(player);
+                                        LushRewards.getInstance().getRewardModuleManager().getModules(PlaytimeRewardsModule.class).forEach(module -> {
+                                            if (module.shouldReceiveWithDailyRewards()) {
+                                                module.claimRewards(player);
                                             }
                                         });
 

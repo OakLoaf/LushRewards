@@ -1,8 +1,8 @@
-package org.lushplugins.lushrewards.module;
+package org.lushplugins.lushrewards.reward.module;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.lushplugins.lushrewards.module.dailyrewards.DailyRewardsModule;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsModule;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;

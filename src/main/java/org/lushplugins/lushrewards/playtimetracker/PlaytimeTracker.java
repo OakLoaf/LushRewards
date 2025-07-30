@@ -1,9 +1,9 @@
-package org.lushplugins.lushrewards.module.playtimetracker;
+package org.lushplugins.lushrewards.playtimetracker;
 
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.user.RewardUser;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushlib.module.Module;
 import org.lushplugins.lushlib.utils.SimpleLocation;
 import org.bukkit.entity.Player;
@@ -131,7 +131,7 @@ public class PlaytimeTracker {
         globalTime++;
 
         if (player.hasPermission("lushrewards.use")) {
-            for (PlaytimeRewardsModule module : LushRewards.getInstance().getRewardModuleManager().getRewardModules(PlaytimeRewardsModule.class)) {
+            for (PlaytimeRewardsModule module : LushRewards.getInstance().getRewardModuleManager().getModules(PlaytimeRewardsModule.class)) {
                 if (!player.hasPermission("lushrewards.use." + module.getId())) {
                     continue;
                 }

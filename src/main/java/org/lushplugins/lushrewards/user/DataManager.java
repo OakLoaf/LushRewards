@@ -1,13 +1,13 @@
 package org.lushplugins.lushrewards.user;
 
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.OldUserDataModule;
+import org.lushplugins.lushrewards.reward.module.OldUserDataModule;
 import org.lushplugins.lushlib.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lushplugins.lushrewards.module.playtimerewards.PlaytimeRewardsModule;
+import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import org.lushplugins.lushrewards.storage.StorageManager;
 
 import java.time.LocalDate;
@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+// TODO: Remove
 public class DataManager extends Manager {
     private StorageManager storageManager;
     private final ConcurrentHashMap<UUID, RewardUser> rewardUsersCache = new ConcurrentHashMap<>();

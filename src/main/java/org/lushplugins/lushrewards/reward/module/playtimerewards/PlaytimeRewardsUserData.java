@@ -1,4 +1,4 @@
-package org.lushplugins.lushrewards.module.playtimerewards;
+package org.lushplugins.lushrewards.reward.module.playtimerewards;
 
 import org.jetbrains.annotations.NotNull;
 import org.lushplugins.lushlib.libraries.jackson.annotation.JsonCreator;
