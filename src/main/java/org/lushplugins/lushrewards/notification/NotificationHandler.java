@@ -24,7 +24,7 @@ public class NotificationHandler {
         }
 
         this.notificationTask = RewardsAPI.getMorePaperLib().scheduling().asyncScheduler().runAtFixedRate(() -> Bukkit.getOnlinePlayers().forEach(player -> {
-            if (LushRewards.getInstance().getEnabledRewardModules().stream().anyMatch(rewardModule -> rewardModule.shouldNotify() && rewardModule.hasClaimableRewards(player) && player.hasPermission("lushrewards.use." + rewardModule.getId()))) {
+            if (LushRewards.getInstance().getRewardModuleManager().getModules().stream().anyMatch(rewardModule -> rewardModule.shouldNotify() && rewardModule.hasClaimableRewards(player) && player.hasPermission("lushrewards.use." + rewardModule.getId()))) {
                 ChatColorHandler.sendMessage(player, LushRewards.getInstance().getConfigManager().getMessage("reminder"));
                 player.playSound(player.getLocation(), LushRewards.getInstance().getConfigManager().getReminderSound(), 1f, 1.5f);
             }

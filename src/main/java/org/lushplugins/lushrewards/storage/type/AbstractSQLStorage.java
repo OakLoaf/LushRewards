@@ -3,20 +3,14 @@ package org.lushplugins.lushrewards.storage.type;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.configuration.ConfigurationSection;
-import org.lushplugins.lushlib.libraries.jackson.core.JsonProcessingException;
-import org.lushplugins.lushlib.libraries.jackson.core.type.TypeReference;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.reward.module.OldUserDataModule;
 import org.lushplugins.lushrewards.storage.Storage;
-import org.lushplugins.lushrewards.user.ModuleUserData;
-import org.lushplugins.lushrewards.user.RewardUser;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -33,57 +27,9 @@ public abstract class AbstractSQLStorage implements Storage {
     }
 
     @Override
-    public RewardUser loadRewardUser(UUID uuid) {
-        try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(String.format("""
-                 SELECT *
-                 FROM %s
-                 WHERE uuid = ?;
-                 """, USER_TABLE))
-        ) {
-            stmt.setString(1, uuid.toString());
-
-            ResultSet results = stmt.executeQuery();
-            if (results.next()) {
-                Map<String, String> tags;
-                try {
-                    tags = LushTags.BASIC_JSON_MAPPER.readValue(results.getString("tags"), new TypeReference<>() {});
-                } catch (JsonProcessingException e) {
-                    LushTags.getInstance().getLogger().log(Level.SEVERE, "Failed to load user's tags data: ", e);
-                    return null;
-                }
-
-                return new TagsUser(
-                    uuid,
-                    results.getString("username"),
-                    tags
-                );
-            } else {
-                return new TagsUser(uuid, null);
-            }
-        } catch (SQLException e) {
-            LushTags.getInstance().getLogger().log(Level.SEVERE, "Failed to load user's tags data: ", e);
-        }
-
-        return null;
-    }
-
-    @Override
-    public void saveRewardUser(RewardUser user) {
-
-    }
-
     public JsonObject loadModuleUserDataJson(UUID uuid, String moduleId) {
-        String table;
-        String column;
-        if (moduleId != null) {
-            table = USER_MODULES_TABLE;
-            column = moduleId + "_data";
-        } else {
-            table = USER_TABLE;
-            column = "data";
-        }
-        column = formatHeader(column);
+        String table = moduleId != null ? USER_MODULES_TABLE : USER_TABLE;
+        String column = formatHeader(moduleId != null ? moduleId + "_data" : "data");
 
         assertJsonColumn(table, column);
 
@@ -110,24 +56,9 @@ public abstract class AbstractSQLStorage implements Storage {
     }
 
     @Override
-    public void saveModuleUserData(ModuleUserData userData) {
-        UUID uuid = userData.getUniqueId();
-        String moduleId = userData.getModuleId();
-        JsonObject json = userData.asJson();
-        if (json == null) {
-            throw new NullPointerException("JsonObject cannot be null when saving");
-        }
-
-        String table;
-        String column;
-        if (moduleId != null) {
-            table = USER_MODULES_TABLE;
-            column = moduleId + "_data";
-        } else {
-            table = USER_TABLE;
-            column = "data";
-        }
-        column = formatHeader(column);
+    public void saveModuleUserDataJson(UUID uuid, String moduleId, JsonObject json) {
+        String table = moduleId != null ? USER_MODULES_TABLE : USER_TABLE;
+        String column = formatHeader(moduleId != null ? moduleId + "_data" : "data");
 
         assertJsonColumn(table, column);
 

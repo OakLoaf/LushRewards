@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.storage;
 
+import com.google.gson.JsonObject;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.lushplugins.lushrewards.LushRewards;
@@ -7,9 +8,9 @@ import org.lushplugins.lushrewards.storage.type.JsonStorage;
 import org.lushplugins.lushrewards.storage.type.MySQLStorage;
 import org.lushplugins.lushrewards.storage.type.PostgreSQLStorage;
 import org.lushplugins.lushrewards.storage.type.SQLiteStorage;
+import org.lushplugins.lushrewards.user.ModuleUserData;
 import org.lushplugins.lushrewards.user.RewardUser;
 
-import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -65,6 +66,14 @@ public class StorageManager {
         runAsync(() -> storage.enable(storageSection));
     }
 
+    public CompletableFuture<JsonObject> loadModuleUserDataJson(UUID uuid, String moduleId) {
+        return runAsync(() -> storage.loadModuleUserDataJson(uuid, moduleId));
+    }
+
+    public CompletableFuture<Void> saveModuleUserData(ModuleUserData userData) {
+        return runAsync(() -> storage.saveModuleUserData(userData));
+    }
+
     public CompletableFuture<RewardUser> loadRewardUser(UUID uuid) {
         return runAsync(() -> storage.loadRewardUser(uuid));
     }
@@ -77,9 +86,10 @@ public class StorageManager {
         return runAsync(() -> storage.saveRewardUser(user));
     }
 
-    public CompletableFuture<Collection<String>> findSimilarUsernames(String input) {
-        return runAsync(() -> storage.findSimilarUsernames(input));
-    }
+    // TODO
+//    public CompletableFuture<Collection<String>> findSimilarUsernames(String input) {
+//        return runAsync(() -> storage.findSimilarUsernames(input));
+//    }
 
     private <T> CompletableFuture<T> runAsync(Callable<T> callable) {
         CompletableFuture<T> future = new CompletableFuture<>();

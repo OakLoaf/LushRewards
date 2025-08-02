@@ -50,13 +50,16 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 public final class LushRewards extends SpigotPlugin {
     public static final ObjectMapper YAML_MAPPER = JacksonHelper.addCustomSerializers(new ObjectMapper(new YAMLFactory())
         .setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE));
     public static final ObjectMapper BASIC_JSON_MAPPER = new ObjectMapper();
-    private static final Gson GSON; // TODO: Remove
+    public static final Gson GSON = new GsonBuilder()
+        .setPrettyPrinting()
+        .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+        .addSerializationExclusionStrategy(new UserDataExclusionStrategy())
+        .create();
 
     private static LushRewards plugin;
 
@@ -68,14 +71,6 @@ public final class LushRewards extends SpigotPlugin {
     private LocalPlaceholders localPlaceholders;
     private UserCache userCache;
     private StorageManager storageManager;
-
-    static {
-        GSON = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-            .addSerializationExclusionStrategy(new UserDataExclusionStrategy())
-            .create();
-    }
 
     @Override
     public void onLoad() {
@@ -239,24 +234,6 @@ public final class LushRewards extends SpigotPlugin {
 
     public StorageManager getStorageManager() {
         return storageManager;
-    }
-
-    public Gson getGson() {
-        return GSON;
-    }
-
-    public List<RewardModule> getRewardModules() {
-        return modules.values().stream()
-            .filter(module -> module instanceof RewardModule)
-            .map(module -> (RewardModule) module)
-            .toList();
-    }
-
-    public List<RewardModule> getEnabledRewardModules() {
-        return modules.values().stream()
-            .filter(module -> module instanceof RewardModule && module.isEnabled())
-            .map(module -> (RewardModule) module)
-            .toList();
     }
 
     public static LushRewards getInstance() {

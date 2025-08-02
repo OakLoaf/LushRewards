@@ -1,11 +1,14 @@
 package org.lushplugins.lushrewards.user;
 
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.api.event.RewardUserPlaytimeChangeEvent;
-import org.jetbrains.annotations.NotNull;
 import org.lushplugins.rewardsapi.api.RewardsAPI;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,12 +16,17 @@ public class RewardUser {
     private final UUID uuid;
     private String username;
     private int minutesPlayed;
-    private Map<String, ModuleUserData> moduleData;
+    private final Map<String, ModuleUserData> moduleData;
 
-    public RewardUser(@NotNull UUID uuid, String username, int minutesPlayed) {
+    public RewardUser(UUID uuid, @Nullable String username, int minutesPlayed, Map<String, ModuleUserData> moduleData) {
         this.uuid = uuid;
         this.username = username;
         this.minutesPlayed = minutesPlayed;
+        this.moduleData = moduleData;
+    }
+
+    public RewardUser(UUID uuid, @Nullable String username) {
+        this(uuid, username, 0, new HashMap<>());
     }
 
     public UUID getUniqueId() {
@@ -65,5 +73,16 @@ public class RewardUser {
     public <T extends ModuleUserData> T getModuleData(String moduleId, Class<T> moduleType) {
         ModuleUserData userData = moduleData.get(moduleId);
         return moduleType.isInstance(userData) ? moduleType.cast(userData) : null;
+    }
+
+    // TODO: Remove all below methods when possible
+    @ApiStatus.Internal
+    public void addModuleData(String moduleId, ModuleUserData userData) {
+        moduleData.put(moduleId, userData);
+    }
+
+    @ApiStatus.Internal
+    public JsonObject asJson() {
+        return LushRewards.GSON.toJsonTree(this).getAsJsonObject();
     }
 }

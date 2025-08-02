@@ -127,7 +127,7 @@ public class Version3DataMigrator extends Migrator {
         }
 
         FileWriter writer = new FileWriter(new File(lushDataFolder, uuid + ".json"));
-        LushRewards.getInstance().getGson().toJson(json, writer);
+        LushRewards.GSON.toJson(json, writer);
         writer.flush();
     }
 }

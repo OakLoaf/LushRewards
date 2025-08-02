@@ -5,7 +5,6 @@ import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsModule
 import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsModule;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -176,7 +176,7 @@ public class DataManager extends Manager {
                     json.addProperty("uuid", uuid.toString());
                     json.addProperty("moduleId", moduleId);
 
-                    T userData = LushRewards.getInstance().getGson().fromJson(json, dataClass);
+                    T userData = LushRewards.GSON.fromJson(json, dataClass);
                     if (userData == null) {
                         future.complete(null);
                         return;
@@ -218,7 +218,7 @@ public class DataManager extends Manager {
     }
 
     public void loadModulesUserData(UUID uuid) {
-        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+        LushRewards.getInstance().getRewardModuleManager().getModules().forEach(module -> {
             if (module instanceof OldUserDataModule<?> userDataModule) {
                 userDataModule.getOrLoadUserData(uuid, true);
             }
@@ -226,7 +226,7 @@ public class DataManager extends Manager {
     }
 
     public void unloadModulesUserData(UUID uuid) {
-        LushRewards.getInstance().getRewardModules().forEach(module -> {
+        LushRewards.getInstance().getRewardModuleManager().getModules().forEach(module -> {
             if (module instanceof OldUserDataModule<?> userDataModule) {
                 userDataModule.uncacheUserData(uuid);
             }
@@ -234,7 +234,7 @@ public class DataManager extends Manager {
     }
 
     public void saveModulesUserData(UUID uuid) {
-        LushRewards.getInstance().getEnabledRewardModules().forEach(module -> {
+        LushRewards.getInstance().getRewardModuleManager().getModules().forEach(module -> {
             if (module instanceof OldUserDataModule<?> userDataModule) {
                 saveModuleUserData(uuid, userDataModule);
             }

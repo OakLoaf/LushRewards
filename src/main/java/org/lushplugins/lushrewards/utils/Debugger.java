@@ -2,8 +2,6 @@ package org.lushplugins.lushrewards.utils;
 
 import org.lushplugins.lushrewards.LushRewards;
 
-import java.util.logging.Logger;
-
 public class Debugger {
     private static DebugMode debugMode = DebugMode.NONE;
 

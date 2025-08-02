@@ -68,7 +68,7 @@ public class RewardsCommand {
                 rewardsGiven.getAndIncrement();
             }
         } else {
-            for (RewardModule enabledModule : LushRewards.getInstance().getEnabledRewardModules()) {
+            for (RewardModule enabledModule : LushRewards.getInstance().getRewardModuleManager().getModules()) {
                 if (this.claim(player, user, enabledModule)) {
                     rewardsGiven.getAndIncrement();
                 }

@@ -1,15 +1,29 @@
 package org.lushplugins.lushrewards.user;
 
-import org.lushplugins.lushlib.libraries.jackson.core.JsonProcessingException;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.lushplugins.lushrewards.LushRewards;
 
-public abstract class ModuleUserData {
+import java.util.UUID;
 
-    public String asRawJson() {
-        try {
-            return LushRewards.BASIC_JSON_MAPPER.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+public abstract class ModuleUserData {
+    private final UUID uuid;
+    private final String moduleId;
+
+    public ModuleUserData(UUID uuid, String moduleId) {
+        this.uuid = uuid;
+        this.moduleId = moduleId;
+    }
+
+    public @NotNull UUID getUniqueId() {
+        return uuid;
+    }
+
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public JsonObject asJson() {
+        return LushRewards.GSON.toJsonTree(this).getAsJsonObject();
     }
 }

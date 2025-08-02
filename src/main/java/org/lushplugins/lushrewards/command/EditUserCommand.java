@@ -1,5 +1,6 @@
 package org.lushplugins.lushrewards.command;
 
+import org.lushplugins.lushrewards.LushRewards;
 import org.lushplugins.lushrewards.reward.module.dailyrewards.DailyRewardsUserData;
 import org.lushplugins.lushrewards.reward.module.playtimerewards.PlaytimeRewardsUserData;
 import org.lushplugins.lushrewards.user.RewardUser;
@@ -11,7 +12,7 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.time.LocalDate;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 @Command("rewards edit-user <player>")
 public class EditUserCommand {
 
@@ -47,82 +48,91 @@ public class EditUserCommand {
     // TODO: Migrate to Orphan command
     public static class DailyRewards {
 
-        @Subcommand("days set")
+        @Subcommand("<user> days set")
         @CommandPermission("lushrewards.edituser.dailyrewards.daynum.set")
-        // TODO: Add DailyRewardsModule ParameterType
-        public void setDayNum(DailyRewardsModule module, DailyRewardsUserData user, int dayNum) {
+        // TODO: Add DailyRewardsUserData ParameterType
+        public void setDayNum(DailyRewardsUserData user, int dayNum) {
             user.setDayNum(dayNum);
             user.setLastCollectedDate(DailyRewardsUserData.NEVER_COLLECTED);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("days reset")
+        @Subcommand("<user> days reset")
         @CommandPermission("lushrewards.edituser.dailyrewards.daynum.reset")
-        // TODO: Add DailyRewardsModule ParameterType
-        public void resetDayNum(DailyRewardsModule module, DailyRewardsUserData user) {
+        // TODO: Add DailyRewardsUserData ParameterType
+        public void resetDayNum(DailyRewardsUserData user) {
             user.setDayNum(0);
             user.setLastCollectedDate(DailyRewardsUserData.NEVER_COLLECTED);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("streak set")
+        @Subcommand("<user> streak set")
         @CommandPermission("lushrewards.edituser.dailyrewards.streak.set")
-        // TODO: Add DailyRewardsModule ParameterType
-        public void setStreak(DailyRewardsModule module, DailyRewardsUserData user, int streak) {
+        // TODO: Add DailyRewardsUserData ParameterType
+        public void setStreak(DailyRewardsUserData user, int streak) {
             user.setStreak(streak);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("streak reset")
+        @Subcommand("<user> streak reset")
         @CommandPermission("lushrewards.edituser.dailyrewards.streak.reset")
-        // TODO: Add DailyRewardsModule ParameterType
-        public void resetStreak(DailyRewardsModule module, DailyRewardsUserData user) {
+        // TODO: Add DailyRewardsUserData ParameterType
+        public void resetStreak(DailyRewardsUserData user) {
             user.setStreak(0);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("highest-streak set")
+        @Subcommand("<user> highest-streak set")
         @CommandPermission("lushrewards.edituser.dailyrewards.higheststreak.set")
-        // TODO: Add DailyRewardsModule ParameterType
-        public void setHighestStreak(DailyRewardsModule module, DailyRewardsUserData user, int highestStreak) {
+        // TODO: Add DailyRewardsUserData ParameterType
+        public void setHighestStreak(DailyRewardsUserData user, int highestStreak) {
             user.setHighestStreak(highestStreak);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("highest-streak reset")
+        @Subcommand("<user> highest-streak reset")
         @CommandPermission("lushrewards.edituser.dailyrewards.higheststreak.reset")
-        // TODO: Add DailyRewardsModule ParameterType
-        public void resetHighestStreak(DailyRewardsModule module, DailyRewardsUserData user) {
+        // TODO: Add DailyRewardsUserData ParameterType
+        public void resetHighestStreak(DailyRewardsUserData user) {
             user.setHighestStreak(0);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
     }
 
     // TODO: Migrate to Orphan command
     public static class PlaytimeRewards {
 
-        @Subcommand("last-collected-playtime set")
+        @Subcommand("<user> last-collected-playtime set")
         @CommandPermission("lushrewards.edituser.playtimerewards.lastcollectedplaytime.set")
-        // TODO: Add PlaytimeRewardsModule ParameterType
-        public void setLastCollectedPlaytime(PlaytimeRewardsModule module, PlaytimeRewardsUserData user, int lastCollectedPlaytime) {
+        // TODO: Add PlaytimeRewardsUserData ParameterType
+        public void setLastCollectedPlaytime(PlaytimeRewardsUserData user, int lastCollectedPlaytime) {
             user.setLastCollectedPlaytime(lastCollectedPlaytime);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("start-date set")
+        @Subcommand("<user> start-date set")
         @CommandPermission("lushrewards.edituser.playtimerewards.startdate.set")
-        // TODO: Add PlaytimeRewardsModule ParameterType
-        public void setStartDate(PlaytimeRewardsModule module, PlaytimeRewardsUserData user, LocalDate startDate) {
+        // TODO: Add PlaytimeRewardsUserData ParameterType
+        public void setStartDate(PlaytimeRewardsUserData user, LocalDate startDate) {
             user.setStartDate(startDate);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
 
-        @Subcommand("previous-day-end-playtime set")
+        @Subcommand("<user> previous-day-end-playtime set")
         @CommandPermission("lushrewards.edituser.playtimerewards.previousdayendplaytime.set")
-        // TODO: Add PlaytimeRewardsModule ParameterType
-        public void setPreviousDayEndPlaytime(PlaytimeRewardsModule module, PlaytimeRewardsUserData user, int previousDayEndPlaytime) {
+        // TODO: Add PlaytimeRewardsUserData ParameterType
+        public void setPreviousDayEndPlaytime(PlaytimeRewardsUserData user, int previousDayEndPlaytime) {
             user.setPreviousDayEndPlaytime(previousDayEndPlaytime);
-            module.saveUserData(user);
+
+            LushRewards.getInstance().getStorageManager().saveModuleUserData(user);
         }
     }
 }

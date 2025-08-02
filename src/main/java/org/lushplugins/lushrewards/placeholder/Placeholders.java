@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+@SuppressWarnings("unused")
 @Placeholder("lushrewards")
 public class Placeholders {
     private static LocalDateTime MIDNIGHT = LocalDate.now().plusDays(1).atStartOfDay();

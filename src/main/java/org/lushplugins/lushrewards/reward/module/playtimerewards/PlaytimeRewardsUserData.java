@@ -6,21 +6,29 @@ import org.lushplugins.lushlib.libraries.jackson.annotation.JsonProperty;
 import org.lushplugins.lushrewards.user.ModuleUserData;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class PlaytimeRewardsUserData extends ModuleUserData {
     private int lastCollectedPlaytime;
     private LocalDate startDate;
     private int previousDayEndPlaytime;
 
-    @JsonCreator
     public PlaytimeRewardsUserData(
-        @JsonProperty int lastCollectedPlaytime,
-        @JsonProperty @NotNull LocalDate startDate,
-        @JsonProperty int previousDayEndPlaytime
+        UUID uuid,
+        String moduleId,
+        int lastCollectedPlaytime,
+        @NotNull LocalDate startDate,
+        int previousDayEndPlaytime
     ) {
+        super(uuid, moduleId);
         this.lastCollectedPlaytime = lastCollectedPlaytime;
         this.startDate = startDate;
         this.previousDayEndPlaytime = previousDayEndPlaytime;
+    }
+
+    public PlaytimeRewardsUserData(UUID uuid, String moduleId) {
+        this(uuid, moduleId, 0, LocalDate.now(), 0);
     }
 
     public int getLastCollectedPlaytime() {

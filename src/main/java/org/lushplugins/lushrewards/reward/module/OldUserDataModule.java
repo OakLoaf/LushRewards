@@ -51,7 +51,7 @@ public interface OldUserDataModule<T extends OldUserDataModule.UserData> {
         }
 
         public JsonObject asJson() {
-            return LushRewards.getInstance().getGson().toJsonTree(this).getAsJsonObject();
+            return LushRewards.GSON.toJsonTree(this).getAsJsonObject();
         }
     }
 }
