@@ -43,7 +43,7 @@ public class PlaytimeTracker {
             return;
         }
 
-        if (LushRewards.getInstance().getConfigManager().getPlaytimeIgnoreAfk()) {
+        if (!LushRewards.getInstance().getConfigManager().shouldPlaytimeTrackerIgnoreAfk()) {
             whileActive();
         } else {
             if (hasMoved()) {

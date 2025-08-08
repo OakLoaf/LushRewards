@@ -195,7 +195,7 @@ public class ConfigManager {
         }
     }
 
-    public boolean getPlaytimeIgnoreAfk() {
+    public boolean shouldPlaytimeTrackerIgnoreAfk() {
         return playtimeIgnoreAfk;
     }
 
