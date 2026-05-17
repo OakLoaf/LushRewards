@@ -221,10 +221,10 @@ public class PlaytimeRewardsModule extends RewardModule implements UserDataModul
         }
 
         ChatColorHandler.sendMessage(player, rewardMessage
-            .replace("%minutes%", String.valueOf(playtimeSinceLastCollected))
-            .replace("%hours%", String.valueOf((int) Math.floor(playtimeSinceLastCollected / 60D)))
-            .replace("%total_minutes%", String.valueOf(playtime))
-            .replace("%total_hours%", String.valueOf((int) Math.floor(playtime / 60D))));
+            .replace("%minutes%", String.valueOf(playtimeSinceLastCollected - 1))
+            .replace("%hours%", String.valueOf((int) Math.floor((playtimeSinceLastCollected - 1) / 60D)))
+            .replace("%total_minutes%", String.valueOf(playtime - 1))
+            .replace("%total_hours%", String.valueOf((int) Math.floor((playtime - 1) / 60D))));
 
         userData.setLastCollectedPlaytime(globalPlaytime);
         saveUserData(userData);
