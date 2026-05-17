@@ -38,6 +38,7 @@ import org.lushplugins.lushlib.plugin.SpigotPlugin;
 import org.lushplugins.lushrewards.utils.placeholderhandler.RewardModuleParameterProvider;
 import org.lushplugins.placeholderhandler.PlaceholderHandler;
 import org.lushplugins.pluginupdater.api.updater.Updater;
+import org.lushplugins.pluginupdater.paper.api.PaperUpdater;
 import org.lushplugins.rewardsapi.api.RewardsAPI;
 import org.lushplugins.rewardsapi.api.reward.RewardTypes;
 import revxrsal.commands.Lamp;
@@ -104,8 +105,8 @@ public final class LushRewards extends SpigotPlugin {
         this.storageManager = new StorageManager();
 
         if (configManager.isUpdaterEnabled()) {
-            this.updater = new Updater.Builder(this)
-                .modrinth("djC8I9ui", true)
+            this.updater = PaperUpdater.builder(this)
+                .modrinth("djC8I9ui")
                 .checkSchedule(600)
                 .notify(true)
                 .notificationPermission("lushrewards.update")
