@@ -30,10 +30,17 @@ public class RewardUser extends UserDataModule.UserData {
         return this.minutesPlayed;
     }
 
-    public void setMinutesPlayed(int minutesPlayed) {
+    public void setMinutesPlayed(int minutesPlayed, boolean save) {
         LushRewards.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> LushRewards.getInstance().callEvent(new RewardUserPlaytimeChangeEvent(this, this.minutesPlayed, minutesPlayed)));
 
         this.minutesPlayed = minutesPlayed;
-        LushRewards.getInstance().getDataManager().saveRewardUser(this);
+
+        if (save) {
+            LushRewards.getInstance().getDataManager().saveRewardUser(this);
+        }
+    }
+
+    public void setMinutesPlayed(int minutesPlayed) {
+        setMinutesPlayed(minutesPlayed, true);
     }
 }

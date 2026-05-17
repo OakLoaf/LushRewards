@@ -105,15 +105,13 @@ public class PlaytimeTracker {
             }
         }
 
-        if (globalTime % 5 == 0) {
-            RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
-            if (rewardUser != null) {
-                rewardUser.setMinutesPlayed(globalTime);
-            } else {
-                Optional<Module> optionalModule = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
-                if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
-                    playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
-                }
+        RewardUser rewardUser = LushRewards.getInstance().getDataManager().getRewardUser(player);
+        if (rewardUser != null) {
+            rewardUser.setMinutesPlayed(globalTime, globalTime % 5 == 0);
+        } else {
+            Optional<Module> optionalModule = LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER);
+            if (optionalModule.isPresent() && optionalModule.get() instanceof PlaytimeTrackerModule playtimeTrackerModule) {
+                playtimeTrackerModule.stopPlaytimeTracker(player.getUniqueId());
             }
         }
     }
