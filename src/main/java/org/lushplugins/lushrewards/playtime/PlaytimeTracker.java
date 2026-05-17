@@ -135,15 +135,13 @@ public class PlaytimeTracker {
             }
         }
 
-        if (globalTime % 5 == 0) {
-            RewardUser user = LushRewards.getInstance().getUserCache().getCachedUser(player.getUniqueId());
-            if (user != null) {
-                user.setMinutesPlayed(globalTime);
-            } else {
-                LushRewards.getInstance().getPlaytimeTrackerManager().ifEnabled(playtimeTrackerManager -> {
-                    playtimeTrackerManager.stopPlaytimeTracker(player.getUniqueId());
-                });
-            }
+        RewardUser user = LushRewards.getInstance().getUserCache().getCachedUser(player.getUniqueId());
+        if (user != null) {
+            user.setMinutesPlayed(globalTime, globalTime % 5 == 0);
+        } else {
+            LushRewards.getInstance().getPlaytimeTrackerManager().ifEnabled(playtimeTrackerManager -> {
+                playtimeTrackerManager.stopPlaytimeTracker(player.getUniqueId());
+            });
         }
     }
 }
