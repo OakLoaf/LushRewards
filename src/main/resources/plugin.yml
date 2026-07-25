@@ -17,6 +17,8 @@ commands:
     aliases:
     - lushrewards
 permissions:
+  lushrewards.about:
+    default: true
   lushrewards.use:
     description: Allows player to use the LushRewards plugin
     default: true

@@ -16,11 +16,25 @@ import java.util.logging.Level;
 public class MySQLStorage extends AbstractSQLStorage {
 
     @Override
-    protected String getInsertOrUpdateStatement(String table, String column) {
-        return MessageFormat.format(
-            "INSERT INTO `{0}` (uuid, `{1}`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `{1}` = VALUES(`{1}`);",
-            table, column
-        );
+    protected String getInsertOrUpdateRewardUserStatement() {
+        return """
+            INSERT INTO %s (uuid, username, minutesPlayed)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            uuid = VALUES(uuid),
+            username = VALUES(username),
+            minutesPlayed = VALUES(minutesPlayed);
+            """.formatted(USER_TABLE);
+    }
+
+    @Override
+    protected String getInsertOrUpdateModuleUserDataStatement(String table, String column) {
+        return MessageFormat.format("""
+            INSERT INTO `{0}` (uuid, `{1}`)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE
+            `{1}` = VALUES(`{1}`);
+            """, table, column);
     }
 
     @Override

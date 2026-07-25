@@ -1,30 +1,25 @@
 package org.lushplugins.lushrewards.config;
 
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lushplugins.lushlib.manager.GuiManager;
-import org.lushplugins.lushlib.module.Module;
+import org.lushplugins.lushlib.registry.RegistryUtils;
 import org.lushplugins.lushlib.utils.*;
 import org.lushplugins.lushlib.utils.converter.YamlConverter;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.RewardModule;
-import org.lushplugins.lushrewards.module.RewardModuleTypeManager;
-import org.lushplugins.lushrewards.module.playtimetracker.PlaytimeTrackerModule;
-import org.lushplugins.lushrewards.rewards.Reward;
+import org.lushplugins.lushrewards.reward.module.RewardModule;
 import org.lushplugins.lushrewards.utils.Debugger;
+import org.lushplugins.rewardsapi.api.RewardsAPI;
+import org.lushplugins.rewardsapi.api.reward.Reward;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 public class ConfigManager {
-    private static final File MODULES_FOLDER = new File(LushRewards.getInstance().getDataFolder(), "modules");
     private static LocalDate currentDate;
 
     private final ConcurrentHashMap<String, DisplayItemStack> categoryItems = new ConcurrentHashMap<>();
@@ -36,24 +31,18 @@ public class ConfigManager {
     private boolean playtimeIgnoreAfk;
     private int reminderPeriod;
     private Sound reminderSound;
+    private String defaultRewardGui;
+    private boolean enableUpdater;
 
     public ConfigManager() {
         LushRewards plugin = LushRewards.getInstance();
-        if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
-            plugin.saveDefaultResource("reward-templates.yml");
-            plugin.saveDefaultResource("modules/daily-rewards.yml");
-            plugin.saveDefaultResource("modules/daily-playtime-rewards.yml");
-            plugin.saveDefaultResource("modules/global-playtime-rewards.yml");
-        }
-
         plugin.saveDefaultConfig();
-        plugin.saveDefaultResource("storage.yml");
+        plugin.saveDefaultResource("reward-templates.yml");
     }
 
     public void reloadConfig() {
         LushRewards plugin = LushRewards.getInstance();
         plugin.getManager(GuiManager.class).ifPresent(GuiManager::closeAll);
-        plugin.getRewardModules().forEach(module -> plugin.unregisterModule(module.getId()));
 
         plugin.reloadConfig();
         FileConfiguration config = plugin.getConfig();
@@ -66,80 +55,20 @@ public class ConfigManager {
 
         playtimeIgnoreAfk = config.getBoolean("playtime-ignore-afk", true);
         reminderPeriod = config.getInt("reminder-period", 1800) * 20;
-        reminderSound = StringUtils.getEnum(config.getString("reminder-sound", "none"), Sound.class).orElse(null);
+        reminderSound = RegistryUtils.parseString(config.getString("reminder-sound", "none"), Registry.SOUNDS);
+        defaultRewardGui = config.getString("default-reward-gui", "daily-rewards");
 
-        try {
-            Files.newDirectoryStream(MODULES_FOLDER.toPath(), "*.yml").forEach(entry -> {
-                File moduleFile = entry.toFile();
-                String moduleId = FilenameUtils.removeExtension(moduleFile.getName());
-                YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(moduleFile);
-                if (moduleConfig.getBoolean("enabled", true) && config.getBoolean("modules." + moduleId, true)) {
-                    if (plugin.getModule(moduleId).isPresent()) {
-                        plugin.log(Level.SEVERE, "A module with the id '" + moduleId + "' is already registered");
-                        return;
-                    }
-
-                    String rewardsType;
-                    if (moduleConfig.contains("type")) {
-                        rewardsType = moduleConfig.getString("type");
-                    } else if (moduleId.contains("playtime")) {
-                        rewardsType = "playtime-rewards";
-                    } else {
-                        rewardsType = moduleId;
-                    }
-
-                    RewardModuleTypeManager rewardModuleTypes = LushRewards.getInstance().getManager(RewardModuleTypeManager.class).orElseThrow();
-                    if (rewardsType != null && rewardModuleTypes.isRegistered(rewardsType)) {
-                        plugin.registerModule(rewardModuleTypes.loadModuleType(rewardsType, moduleId, moduleFile));
-                    } else {
-                        plugin.log(Level.SEVERE, "Module with id '" + moduleId + "' failed to register due to invalid value at 'type'");
-                    }
-                }
-            });
-        } catch (IOException e) {
-            plugin.log(Level.SEVERE, "Something went wrong whilst reading modules files", e);
-        }
-
-        boolean enableUpdater = config.getBoolean("enable-updater", true);
-        plugin.getUpdater().setEnabled(enableUpdater);
-        if (enableUpdater) {
-            plugin.getUpdater().queueCheck();
-        }
+        enableUpdater = config.getBoolean("enable-updater", true);
 
         reloadCategoryMap(config.getConfigurationSection("categories"));
         reloadItemTemplates(config.getConfigurationSection("item-templates"));
         reloadRewardTemplates();
         reloadMessages(config.getConfigurationSection("messages"));
         plugin.getNotificationHandler().reloadNotifications();
-
-        if (plugin.getDataManager() != null) {
-            plugin.getDataManager().reloadRewardUsers(true);
-        }
-
-        plugin.getRewardModules().forEach(Module::reload);
-
-        if (plugin.getEnabledRewardModules().stream().anyMatch(RewardModule::requiresPlaytimeTracker)) {
-            if (LushRewards.getInstance().getModule(RewardModule.Type.PLAYTIME_TRACKER).isEmpty()) {
-                PlaytimeTrackerModule playtimeTrackerModule = new PlaytimeTrackerModule();
-                plugin.registerModule(playtimeTrackerModule);
-                playtimeTrackerModule.enable();
-            }
-        } else {
-            plugin.unregisterModule(RewardModule.Type.PLAYTIME_TRACKER);
-        }
     }
 
-
-
     public String getMessage(String messageName) {
-        String def;
-        if (messageName.equals("confirm-command")) {
-            def = "&#ffe27aAre you sure you want to do that? Type &#e0c01b'%command%' &#ffe27ato confirm";
-        } else {
-            def = "";
-        }
-
-        return getMessage(messageName, def);
+        return getMessage(messageName, "");
     }
 
     public String getMessage(String messageName, String def) {
@@ -150,10 +79,6 @@ public class ConfigManager {
         } else {
             return output;
         }
-    }
-
-    public Collection<String> getMessages() {
-        return messages.values();
     }
 
     public DisplayItemStack getCategoryTemplate(String category) {
@@ -207,6 +132,14 @@ public class ConfigManager {
         return reminderSound;
     }
 
+    public String getDefaultRewardGui() {
+        return defaultRewardGui;
+    }
+
+    public boolean isUpdaterEnabled() {
+        return enableUpdater;
+    }
+
     private void reloadCategoryMap(ConfigurationSection categoriesSection) {
         // Clears category map
         categoryItems.clear();
@@ -255,7 +188,7 @@ public class ConfigManager {
         if (rewardsSection != null) {
             rewardsSection.getValues(false).forEach((key, value) -> {
                 if (value instanceof ConfigurationSection rewardSection) {
-                    Reward reward = Reward.loadReward(rewardSection);
+                    Reward reward = RewardsAPI.readReward(rewardSection);
                     if (reward != null) {
                         rewardTemplates.put(rewardSection.getName(), reward);
                         LushRewards.getInstance().getLogger().info("Loaded reward-template: " + rewardSection.getName());

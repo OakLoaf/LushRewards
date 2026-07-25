@@ -1,6 +1,6 @@
 package org.lushplugins.lushrewards.api.event;
 
-import org.lushplugins.lushrewards.data.RewardUser;
+import org.lushplugins.lushrewards.user.RewardUser;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 

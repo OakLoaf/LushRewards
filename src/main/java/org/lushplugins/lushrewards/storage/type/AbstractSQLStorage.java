@@ -3,22 +3,26 @@ package org.lushplugins.lushrewards.storage.type;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lushplugins.lushrewards.LushRewards;
-import org.lushplugins.lushrewards.module.UserDataModule;
 import org.lushplugins.lushrewards.storage.Storage;
+import org.lushplugins.lushrewards.user.RewardUser;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public abstract class AbstractSQLStorage extends Storage {
-    protected static final String TABLE_NAME = "lushrewards_users";
-    protected static final String MODULES_TABLE_NAME = "lushrewards_users_modules";
+public abstract class AbstractSQLStorage implements Storage {
+    protected static final String USER_TABLE = "lushrewards_users";
+    protected static final String USER_MODULES_TABLE = USER_TABLE + "_modules";
 
     private DataSource dataSource;
 
@@ -26,25 +30,62 @@ public abstract class AbstractSQLStorage extends Storage {
     public void enable(ConfigurationSection config) {
         this.dataSource = setupDataSource(config);
         testDataSourceConnection();
+        assertRewardUserTable();
     }
 
     @Override
-    public JsonObject loadModuleUserDataJson(UUID uuid, String moduleId) {
-        String table;
-        String column;
-        if (moduleId != null) {
-            table = MODULES_TABLE_NAME;
-            column = moduleId + "_data";
-        } else {
-            table = TABLE_NAME;
-            column = "data";
-        }
-        column = formatHeader(column);
+    public @Nullable RewardUser prepareRewardUser(UUID uuid) {
+        try (Connection conn = conn();
+             PreparedStatement stmt = conn.prepareStatement(String.format("""
+                 SELECT *
+                 FROM %s
+                 WHERE uuid = ?;
+                 """, USER_TABLE))
+        ) {
+            setUUIDToStatement(stmt, 1, uuid);
 
-        assertJsonColumn(table, column);
+            ResultSet results = stmt.executeQuery();
+            return new RewardUser(
+                uuid,
+                results.getString("username"),
+                results.getInt("minutesPlayed")
+            );
+        } catch (SQLException e) {
+            LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to load user data: ", e);
+        }
+
+        return null;
+    }
+
+    protected abstract String getInsertOrUpdateRewardUserStatement();
+
+    @Override
+    public void saveRewardUser(RewardUser user) {
+        try (Connection conn = conn();
+             PreparedStatement stmt = conn.prepareStatement(getInsertOrUpdateRewardUserStatement())
+        ) {
+            setUUIDToStatement(stmt, 1, user.getUniqueId());
+            stmt.setString(2, user.getUsername());
+            stmt.setInt(3, user.getMinutesPlayed());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to save user data: ", e);
+        }
+    }
+
+    @Override
+    public JsonObject loadModuleUserDataJson(UUID uuid, @NotNull String moduleId) {
+        String column = formatHeader(moduleId + "_data");
+
+        assertJsonColumn(USER_MODULES_TABLE, column);
 
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(String.format("SELECT `%s` FROM `%s` WHERE uuid = ?;", column, table))
+             PreparedStatement stmt = conn.prepareStatement(String.format("""
+                 SELECT `%s`
+                 FROM `%s`
+                 WHERE uuid = ?;
+                 """, column, USER_MODULES_TABLE))
         ) {
             setUUIDToStatement(stmt, 1, uuid);
 
@@ -65,30 +106,17 @@ public abstract class AbstractSQLStorage extends Storage {
         return null;
     }
 
-    @Override
-    public void saveModuleUserData(UserDataModule.UserData userData) {
-        UUID uuid = userData.getUniqueId();
-        String moduleId = userData.getModuleId();
-        JsonObject json = userData.asJson();
-        if (json == null) {
-            throw new NullPointerException("JsonObject cannot be null when saving");
-        }
+    protected abstract String getInsertOrUpdateModuleUserDataStatement(String table, String column);
 
-        String table;
-        String column;
-        if (moduleId != null) {
-            table = MODULES_TABLE_NAME;
-            column = moduleId + "_data";
-        } else {
-            table = TABLE_NAME;
-            column = "data";
-        }
-        column = formatHeader(column);
+    @Override
+    public void saveModuleUserDataJson(UUID uuid, String moduleId, JsonObject json) {
+        String table = moduleId != null ? USER_MODULES_TABLE : USER_TABLE;
+        String column = formatHeader(moduleId != null ? moduleId + "_data" : "data");
 
         assertJsonColumn(table, column);
 
         try (Connection conn = conn();
-             PreparedStatement stmt = conn.prepareStatement(getInsertOrUpdateStatement(table, column))
+             PreparedStatement stmt = conn.prepareStatement(getInsertOrUpdateModuleUserDataStatement(table, column))
         ) {
             setUUIDToStatement(stmt, 1, uuid);
             setJsonToStatement(stmt, 2, json);
@@ -98,6 +126,50 @@ public abstract class AbstractSQLStorage extends Storage {
         }
     }
 
+    @Override
+    public Collection<String> findSimilarUsernames(String input) {
+        try (Connection conn = conn();
+             PreparedStatement stmt = conn.prepareStatement(String.format("""
+                 SELECT username
+                 FROM %s
+                 WHERE username LIKE CONCAT(?, '%%')
+                 LIMIT 50;
+                 """, USER_TABLE))
+        ) {
+            stmt.setString(1, input);
+
+            List<String> usernames = new ArrayList<>();
+            ResultSet results = stmt.executeQuery();
+            while (results.next()) {
+                usernames.add(results.getString("username"));
+            }
+
+            return usernames;
+        } catch (SQLException e) {
+            LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to load user data: ", e);
+        }
+
+        return null;
+    }
+
+    protected void assertRewardUserTable() {
+        try (Connection conn = conn();
+             PreparedStatement stmt = conn.prepareStatement(String.format("""
+                 CREATE TABLE IF NOT EXISTS %s (
+                     uuid CHAR(36) NOT NULL,
+                     username TEXT NOT NULL,
+                     minutesPlayed INTEGER NOT NULL,
+                     PRIMARY KEY (uuid)
+                 );
+                 """, USER_TABLE))
+        ) {
+            stmt.execute();
+        } catch (SQLException e) {
+            LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to assert table: ", e);
+        }
+    }
+
+    // TODO: Migrate assertion to run once on reload
     protected void assertTable(String table) {
         try (Connection conn = conn();
              PreparedStatement stmt = conn.prepareStatement(
@@ -108,8 +180,6 @@ public abstract class AbstractSQLStorage extends Storage {
             LushRewards.getInstance().getLogger().log(Level.SEVERE, "Failed to assert table: ", e);
         }
     }
-
-    protected abstract String getInsertOrUpdateStatement(String table, String column);
 
     protected abstract void setUUIDToStatement(PreparedStatement stmt, int index, UUID uuid) throws SQLException;
 

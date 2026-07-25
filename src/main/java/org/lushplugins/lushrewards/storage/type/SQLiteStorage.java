@@ -16,11 +16,25 @@ public class SQLiteStorage extends MySQLStorage {
     private static final String DATABASE_PATH = new File(LushRewards.getInstance().getDataFolder(), "data.db").getAbsolutePath();
 
     @Override
-    protected String getInsertOrUpdateStatement(String table, String column) {
-        return MessageFormat.format(
-            "INSERT INTO `{0}`(uuid, `{1}`) VALUES(?, ?) ON CONFLICT (uuid) DO UPDATE SET `{1}` = EXCLUDED.`{1}`;",
-            table, column
-        );
+    protected String getInsertOrUpdateRewardUserStatement() {
+        return """
+            INSERT INTO %s (uuid, username, minutesPlayed)
+            VALUES (?, ?, ?)
+            ON CONFLICT (uuid) DO UPDATE SET
+            uuid = EXCLUDED.uuid,
+            username = EXCLUDED.username,
+            minutesPlayed = EXCLUDED.minutesPlayed;
+            """.formatted(USER_TABLE);
+    }
+
+    @Override
+    protected String getInsertOrUpdateModuleUserDataStatement(String table, String column) {
+        return MessageFormat.format("""
+            INSERT INTO `{0}` (uuid, `{1}`)
+            VALUES (?, ?)
+            ON CONFLICT (uuid) DO UPDATE SET
+            `{1}` = EXCLUDED.`{1}`;
+            """, table, column);
     }
 
     @Override

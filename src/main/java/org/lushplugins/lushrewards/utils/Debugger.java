@@ -2,15 +2,12 @@ package org.lushplugins.lushrewards.utils;
 
 import org.lushplugins.lushrewards.LushRewards;
 
-import java.util.logging.Logger;
-
 public class Debugger {
-    private static Logger logger;
     private static DebugMode debugMode = DebugMode.NONE;
 
     public static void sendDebugMessage(String string, DebugMode mode) {
         if (debugMode == mode || debugMode == DebugMode.ALL) {
-            getOrInitLogger().info("DEBUG >> " + string);
+            LushRewards.getInstance().getLogger().info("DEBUG >> " + string);
         }
     }
 
@@ -18,14 +15,7 @@ public class Debugger {
         Debugger.debugMode = debugMode;
     }
 
-    private static Logger getOrInitLogger() {
-        if (logger == null) {
-            logger = LushRewards.getInstance().getLogger();
-        }
-
-        return logger;
-    }
-
+    // TODO: Move debug toggle into individual reward modules (in addition to overall debug mode)
     public enum DebugMode {
         NONE,
         PLAYTIME,

@@ -5,7 +5,9 @@ playtime-ignore-afk: true
 # The length in seconds between reminders being sent (Set to -1 to disable)
 reminder-period: 1800
 # The sound that will be played when a player is sent a reminder
-reminder-sound: block_note_block_pling
+reminder-sound: block.note_block.pling
+# The reward module gui to open when running '/rewards'
+default-reward-gui: daily-rewards
 
 # Display items for different reward categories
 categories:
@@ -37,14 +39,6 @@ messages:
   daily-reward-given: "&#b7faa2You have collected today's daily reward"
   playtime-reward-given: "&#b7faa2You have collected your rewards for playing &#66b04f%total_minutes% &#b7faa2minutes"
   no-rewards-available: "&#ff6969You have no rewards to collect"
-  reset: "&#ffe27aAre you sure you want to reset &#e0c01b%target%'s &#ffe27adays? Type &#e0c01b'/rewards edit-user <module-id> reset %target% confirm' &#ffe27ato confirm"
-  set-days-confirm: "&#66b04f%target%'s &#b7faa2day number has been set to &#66b04f%day% &#b7faa2in &#66b04f%module%"
-  set-streak-confirm: "&#66b04f%target%'s &#b7faa2streak has been set to &#66b04f%streak% &#b7faa2in &#66b04f%module%"
-  set-playtime-confirm: "&#66b04f%target%'s &#b7faa2playtime has been set to &#66b04f%playtime%"
-  unknown-player: "&#ff6969Could not find &#d13636%player%"
-  no-permissions: "&#ff6969Insufficient permissions"
-  incorrect-usage: "&#ff6969Incorrect usage try &#d13636%command-usage%"
-  confirm-command: "&#ffe27aAre you sure you want to do that? Type &#e0c01b'%command%' &#ffe27ato confirm"
 
 # Performance mode only stores rewards that are currently viewable to players.
 # The config will automatically reload at the start of each day when enabled
@@ -52,5 +46,5 @@ enable-performance-mode: false
 
 # Debug Modes: none, daily, playtime, all
 debug-mode: none
-# Updater: Disable to turn off update notifications and update command
+# Updater: Disable to turn off update notifications and update command (requires restart to change)
 enable-updater: true

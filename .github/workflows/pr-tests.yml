@@ -1,12 +1,16 @@
-name: Build plugin
-
+name: Run PR Tests
+permissions:
+  contents: read
+  pull-requests: write
 on:
   pull_request:
     types:
+      - opened
       - synchronize
+      - reopened
 
 jobs:
-  build-plugin:
+  build-project:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.gradle
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}

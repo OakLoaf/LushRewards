@@ -1,13 +1,13 @@
 package org.lushplugins.lushrewards.gui;
 
-import org.lushplugins.lushlib.gui.inventory.Gui;
 import org.bukkit.entity.Player;
+import org.lushplugins.guihandler.gui.Gui;
 
 public interface GuiDisplayer {
 
-    Gui getGui(Player player);
+    Gui.Builder getGui();
 
     default void displayGui(Player player) {
-        getGui(player).open();
+        getGui().open(player);
     }
 }
