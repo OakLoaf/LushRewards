@@ -152,7 +152,7 @@ public class RewardsCommand {
     @Subcommand("update")
     @CommandPermission("lushrewards.update")
     public CompletableFuture<String> update() {
-        Updater updater = LushRewards.getInstance().getUpdater();
+        Updater<?> updater = LushRewards.getInstance().getUpdater();
         if (updater == null) {
             return CompletableFuture.completedFuture("&#ff6969The updater is currently disabled");
         }

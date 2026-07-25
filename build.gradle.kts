@@ -14,6 +14,7 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
     maven("https://repo.opencollab.dev/main/") // Floodgate
+    maven("https://repo.lushplugins.org/releases/") // PluginUpdater
     maven("https://repo.lushplugins.org/snapshots/") // LushLib, RewardsAPI
     maven("https://repo.helpch.at/releases/") // PlaceholderAPI
 }
@@ -35,8 +36,8 @@ dependencies {
     implementation("io.github.revxrsal:lamp.bukkit:4.0.0-rc.12")
     implementation("org.lushplugins:GuiHandler:1.0.0-alpha32")
     implementation("org.lushplugins:PlaceholderHandler:1.0.0-alpha6")
-    implementation("org.lushplugins.pluginupdater:updater.common-api:3.0.0")
-    implementation("org.lushplugins.pluginupdater:updater.paper-api:3.0.0")
+    implementation("org.lushplugins.pluginupdater:updater.common-api:4.1.0")
+    implementation("org.lushplugins.pluginupdater:updater.paper-api:4.1.0")
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.bstats:bstats-bukkit:3.0.2")

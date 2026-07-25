@@ -63,7 +63,7 @@ public final class LushRewards extends SpigotPlugin {
     private static LushRewards plugin;
 
     private GuiHandler guiHandler;
-    private Updater updater;
+    private Updater<?> updater;
     private ConfigManager configManager;
     private RewardModuleManager rewardModuleManager;
     private PlaytimeTrackerManager playtimeTrackerManager;
@@ -106,7 +106,8 @@ public final class LushRewards extends SpigotPlugin {
 
         if (configManager.isUpdaterEnabled()) {
             this.updater = PaperUpdater.builder(this)
-                .modrinth("djC8I9ui")
+                .modrinth(modrinth -> modrinth
+                    .projectId("djC8I9ui"))
                 .checkSchedule(600)
                 .notify(true)
                 .notificationPermission("lushrewards.update")
@@ -208,7 +209,7 @@ public final class LushRewards extends SpigotPlugin {
         return guiHandler;
     }
 
-    public @Nullable Updater getUpdater() {
+    public @Nullable Updater<?> getUpdater() {
         return updater;
     }
 
