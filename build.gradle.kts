@@ -52,6 +52,7 @@ tasks {
         relocate("org.lushplugins.lushlib", "org.lushplugins.lushrewards.libraries.lushlib")
         relocate("space.arim.morepaperlib", "org.lushplugins.lushrewards.libraries.morepaperlib")
         relocate("com.mysql", "org.lushplugins.lushrewards.libraries.mysql")
+        relocate("org.postgresql", "org.lushplugins.lushrewards.libraries.postgresql")
 
         minimize {
             exclude(dependency("com.mysql:.*:.*"))
